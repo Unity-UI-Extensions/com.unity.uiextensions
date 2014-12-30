@@ -9,11 +9,11 @@ In this repository is a collection of extension scripts to enhance your Unity UI
 (The majority of the scripts came from the Scripts thread on the [Unity UI forum here](http://bit.ly/UnityUIScriptsForumPost)
 
 These include:
-* UIWindowBase - a flexible / draggable window script full of fixes from the forum in one place (plus a few tweaks of my own)
-* CurvedText - A Text vertex manipulator for those users NOT using TextMeshPro (why ever not?)
-* Gradient - apply vertex colours in a gradient on any UI object
-* RaycastMask - an example of an enhanced mask component able to work with the image data. Enables picking on image parts and not just the Rect Transform
-* TabNavigation - An example Tb navigation script
+* **UIWindowBase**  a flexible / draggable window script full of fixes from the forum in one place (plus a few tweaks of my own)
+* **CurvedText**  a Text vertex manipulator for those users NOT using TextMeshPro (why ever not?)
+* **Gradient**  apply vertex colours in a gradient on any UI object
+* **RaycastMask**  an example of an enhanced mask component able to work with the image data. Enables picking on image parts and not just the Rect Transform
+* **TabNavigation**  An example Tb navigation script
 
 More to come
 
