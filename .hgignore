@@ -1,0 +1,14 @@
+syntax: glob
+Output
+Library
+Temp
+*.csproj
+*.pidb
+*.unityproj
+*.sln
+*.userprefs
+*.suo
+thumbs.db
+obj
+bin
+.JustCode
