@@ -39,3 +39,8 @@ Got a script you want added, then just fork and submit a PR.  All contributions 
 
 All these scripts were put together for my latest book Unity3D UI Essentials
 Check out the [page on my blog](http://bit.ly/Unity3DUIEssentials) for more details and learn all about the inner workings of the new Unity UI System.
+
+### The downloads ###
+As this repo was created to support my new Unity UI Title ["Unity 3D UI Essentials"](http://bit.ly/Unity3DUIEssentials), in the downloads section you will find two custom assets (SpaceShip-DemoScene-Start.unitypackage and RollABallSample-Start.unitypackage).  These are just here as starter scenes for doing UI tasks in the book.
+
+I will add more sample scenes for the UI examples in this repository and detail them above over time.
