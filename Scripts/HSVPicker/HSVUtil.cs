@@ -1,13 +1,11 @@
 ﻿///Credit judah4
 ///Sourced from - http://forum.unity3d.com/threads/color-picker.267043/
 
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 
-
-
+namespace UnityEngine.UI.Extensions
+{
     #region ColorUtilities
 
     public static class HSVUtil
@@ -192,7 +190,7 @@ using System;
 
             var texture = new Texture2D(width, height);
 
-            int ySize = Mathf.Max(1,(int)(1f/(list.Count/interval) * height));
+            int ySize = Mathf.Max(1, (int)(1f / (list.Count / interval) * height));
 
             int colorH = 0;
 
@@ -200,8 +198,8 @@ using System;
             for (float cnt = 0; cnt < list.Count; cnt += interval)
             {
                 color = list[(int)cnt];
-                Color[] colors = new Color[width *ySize];
-                for (int i = 0; i < width * ySize; i++) 
+                Color[] colors = new Color[width * ySize];
+                for (int i = 0; i < width * ySize; i++)
                 {
                     colors[i] = color;
                 }
@@ -247,7 +245,7 @@ using System;
             return GenerateColorTexture(mainColor, new Texture2D(width, height));
         }
 
-        
+
     }
 
     #endregion ColorUtilities
@@ -273,10 +271,8 @@ using System;
 
         public override string ToString()
         {
-            return "{"+H+","+S+","+V+"}";
+            return "{" + H + "," + S + "," + V + "}";
         }
     }
     #endregion HsvColor
-
-
-
+}

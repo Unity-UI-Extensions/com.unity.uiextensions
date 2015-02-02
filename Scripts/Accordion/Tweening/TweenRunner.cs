@@ -3,7 +3,7 @@
 
 using System.Collections;
 
-namespace UnityEngine.UI.Tweens
+namespace UnityEngine.UI.Extensions.Tweens
 {
 	// Tween runner, executes the given tween.
 	// The coroutine will live within the given 

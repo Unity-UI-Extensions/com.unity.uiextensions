@@ -1,15 +1,14 @@
 /// Credit ChoMPHi
 /// Sourced from - http://forum.unity3d.com/threads/script-flippable-for-ui-graphics.291711/
 
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
- 
-namespace UnityEngine.UI
+
+namespace UnityEngine.UI.Extensions
 {
-    [RequireComponent(typeof(RectTransform)), RequireComponent(typeof(Graphic)), DisallowMultipleComponent, AddComponentMenu("UI/Flippable")]
-    public class UIFlippable : MonoBehaviour, IVertexModifier {
-     
+    [RequireComponent(typeof(RectTransform), typeof(Graphic)), DisallowMultipleComponent]
+    [AddComponentMenu("UI/Effects/Extensions/Flippable")]
+    public class UIFlippable : MonoBehaviour, IVertexModifier
+    {     
         [SerializeField] private bool m_Horizontal = false;
         [SerializeField] private bool m_Veritical = false;
      

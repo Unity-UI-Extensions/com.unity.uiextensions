@@ -26,16 +26,13 @@
  * 
  */
 
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
-
-namespace UnityEngine.UI.Extensions {
-
-	
+namespace UnityEngine.UI.Extensions 
+{
 	[RequireComponent(typeof(Canvas))]
+	[AddComponentMenu("UI/Extensions/Selection Box")]
 	public class SelectionBox : MonoBehaviour
 	{
 		

@@ -1,46 +1,36 @@
 ﻿/// Credit Melang 
 /// Sourced from - http://forum.unity3d.com/members/melang.593409/
+/// Updated ddreaper - reworked to 4.6.1 standards
 
-using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using System.Collections;
+namespace UnityEngine.UI
+{
+    [RequireComponent(typeof(InputField))]
+    [AddComponentMenu("UI/Extensions/Return Key Trigger")]
+    public class ReturnKeyTriggersButton : MonoBehaviour, ISubmitHandler
+    {
+        private EventSystem _system;
 
-public class ReturnKeyTriggersButton : MonoBehaviour {
+        public Button button;
+        private bool highlight = true;
+        public float highlightDuration = 0.2f;
+        
+        void Start()
+        {
+            _system = EventSystem.current;
+        }
 
-	EventSystem system;
-	InputField field;
+        void RemoveHighlight()
+        {
+            button.OnPointerExit(new PointerEventData(_system));
+        }
 
-	public UnityEngine.UI.Button button;
-	public bool highlight = true;
-	public float highlightDuration = 0.2f;
+        public void OnSubmit(BaseEventData eventData)
+        {
+            if (highlight) button.OnPointerEnter(new PointerEventData(_system));
+            button.OnPointerClick(new PointerEventData(_system));
 
-	void Start ()
-	{
-
-		system = EventSystemManager.currentSystem;
-
-		field = GetComponent<InputField>();
-
-		field.onSubmit.AddListener(new UnityEngine.Events.UnityAction<string>(OnSubmitField));
-
-	}
-	
-	
-	void OnSubmitField(string value)
-	{
-
-		if (highlight) button.OnPointerEnter(new PointerEventData(system));
-		button.OnPointerClick(new PointerEventData(system));
-
-		if (highlight) Invoke("RemoveHighlight", highlightDuration);
-
-
-	}
-
-	void RemoveHighlight()
-	{
-		button.OnPointerExit(new PointerEventData(system));
-
-	}
+            if (highlight) Invoke("RemoveHighlight", highlightDuration);
+        }
+    }
 }

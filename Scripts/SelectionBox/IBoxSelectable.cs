@@ -3,11 +3,9 @@
 ///Updated Credit BenZed
 ///Sourced from - http://forum.unity3d.com/threads/color-picker.267043/
 
-using UnityEngine;
-using UnityEngine.UI;
-using System.Collections.Generic;
 
-namespace UnityEngine.UI.Extensions {
+namespace UnityEngine.UI.Extensions 
+{
 
 	/*
 	 * Implement this interface on any MonoBehaviour that you'd like to be considered selectable.

@@ -1,12 +1,11 @@
 ﻿/// Credit Melang
 /// Sourced from - http://forum.unity3d.com/members/melang.593409/
 
-using System;
 using System.Collections.Generic;
-namespace UnityEngine.UI
+namespace UnityEngine.UI.Extensions
 {
 	//An outline that looks a bit nicer than the default one. It has less "holes" in the outline by drawing more copies of the effect
-	[AddComponentMenu ("UI/Effects/NicerOutline", 15)]
+	[AddComponentMenu("UI/Effects/Extensions/Nicer Outline")]
 	public class NicerOutline : BaseVertexEffect
 	{
 		[SerializeField]

@@ -41,14 +41,11 @@ break down entirely, but it doesn't really do what you'd want either.
 
 */
 
-using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
-
-namespace UnityEngine.UI
+namespace UnityEngine.UI.Extensions
 {
-	[AddComponentMenu("UI/Effects/Letter Spacing", 14)]
+	[AddComponentMenu("UI/Effects/Extensions/Letter Spacing")]
 	public class LetterSpacing : BaseVertexEffect
 	{
 		[SerializeField]

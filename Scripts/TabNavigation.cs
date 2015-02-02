@@ -5,63 +5,68 @@
 ///                         - updated to support new semantics for EventSystem in later 4.6 builds
 ///                        - autoselect "firstSelectedGameObject" since it doesn't seem to work automatically
 
-using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using System.Collections;
- 
-public class TabNavigationHelper : MonoBehaviour
+
+namespace UnityEngine.UI.Extensions
 {
-    private EventSystem _system;
-   
-    void Start()
+    [RequireComponent(typeof(EventSystem))]
+    [AddComponentMenu("Event/Extensions/Tab Navigation Helper")]
+    public class TabNavigationHelper : MonoBehaviour
     {
-        _system = EventSystem.current;
-    }
- 
-    public void Update()
-    {
-        Selectable next = null;
- 
-        if (Input.GetKeyDown(KeyCode.Tab) && Input.GetKey(KeyCode.LeftShift))
+        private EventSystem _system;
+
+        void Start()
         {
-            if (_system.currentSelectedGameObject != null)
+            _system = GetComponent<EventSystem>();
+            if (_system == null)
             {
-                next = _system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnUp();
+                Debug.LogError("Needs to be attached to the Event System component in the scene");
             }
-            else
+        }
+
+        public void Update()
+        {
+            Selectable next = null;
+
+            if (Input.GetKeyDown(KeyCode.Tab) && Input.GetKey(KeyCode.LeftShift))
+            {
+                if (_system.currentSelectedGameObject != null)
+                {
+                    next = _system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnUp();
+                }
+                else
+                {
+                    next = _system.firstSelectedGameObject.GetComponent<Selectable>();
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                if (_system.currentSelectedGameObject != null)
+                {
+                    next = _system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnDown();
+                }
+                else
+                {
+                    next = _system.firstSelectedGameObject.GetComponent<Selectable>();
+                }
+            }
+            else if (_system.currentSelectedGameObject == null)
             {
                 next = _system.firstSelectedGameObject.GetComponent<Selectable>();
             }
+
+            selectGameObject(next);
         }
-        else if (Input.GetKeyDown(KeyCode.Tab))
+
+        private void selectGameObject(Selectable selectable)
         {
-            if (_system.currentSelectedGameObject != null)
+            if (selectable != null)
             {
-                next = _system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnDown();
+                InputField inputfield = selectable.GetComponent<InputField>();
+                if (inputfield != null) inputfield.OnPointerClick(new PointerEventData(_system));  //if it's an input field, also set the text caret
+
+                _system.SetSelectedGameObject(selectable.gameObject, new BaseEventData(_system));
             }
-            else
-            {
-                next = _system.firstSelectedGameObject.GetComponent<Selectable>();
-            }
-        }
-        else if (_system.currentSelectedGameObject == null)
-        {
-            next = _system.firstSelectedGameObject.GetComponent<Selectable>();
-        }
- 
-        selectGameObject(next);
-    }
- 
-    private void selectGameObject(Selectable selectable)
-    {
-        if (selectable != null)
-        {
-            InputField inputfield = selectable.GetComponent<InputField>();
-            if (inputfield != null) inputfield.OnPointerClick(new PointerEventData(_system));  //if it's an input field, also set the text caret
- 
-            _system.SetSelectedGameObject(selectable.gameObject, new BaseEventData(_system));
         }
     }
 }
- 

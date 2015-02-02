@@ -4,7 +4,7 @@
 using System.Collections;
 using UnityEngine.Events;
 
-namespace UnityEngine.UI.Tweens
+namespace UnityEngine.UI.Extensions.Tweens
 {
 	public struct FloatTween : ITweenValue
 	{

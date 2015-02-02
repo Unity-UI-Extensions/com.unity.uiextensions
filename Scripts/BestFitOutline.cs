@@ -1,11 +1,10 @@
 ﻿/// Credit Melang
 /// Sourced from - http://forum.unity3d.com/members/melang.593409/
 
-using System;
 using System.Collections.Generic;
-namespace UnityEngine.UI
+namespace UnityEngine.UI.Extensions
 {
-	[AddComponentMenu ("UI/Effects/BestFit Outline", 15)]
+    [AddComponentMenu("UI/Effects/Extensions/BestFit Outline")]
 	public class BestFitOutline : Shadow
 	{
 		//
@@ -32,8 +31,6 @@ namespace UnityEngine.UI
 			if (foundtext && foundtext.resizeTextForBestFit)  
 			{
 				best_fit_adjustment = (float)foundtext.cachedTextGenerator.fontSizeUsedForBestFit / (foundtext.resizeTextMaxSize-1); //max size seems to be exclusive 
-				//Debug.Log("best_fit_adjustment:"+best_fit_adjustment);
-			
 			}
 			
 			int start = 0;

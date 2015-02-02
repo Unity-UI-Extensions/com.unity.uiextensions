@@ -3,7 +3,7 @@
 
 using System.Collections;
 
-namespace UnityEngine.UI.Tweens
+namespace UnityEngine.UI.Extensions.Tweens
 {
 	internal interface ITweenValue
 	{

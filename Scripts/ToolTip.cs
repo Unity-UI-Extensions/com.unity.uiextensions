@@ -1,5 +1,7 @@
 /// Credit drHogan 
 /// Sourced from - http://forum.unity3d.com/threads/screenspace-camera-tooltip-controller-sweat-and-tears.293991/#post-1938929
+/// updated ddreaper - refactored code to be more performant.
+/// *Note - only works for Screenspace Camera canvases at present, needs updating to include Screenspace and Worldspace!
 
 //ToolTip is written by Emiliano Pastorelli, H&R Tallinn (Estonia), http://www.hammerandravens.com
 //Copyright (c) 2015 Emiliano Pastorelli, H&R - Hammer&Ravens, Tallinn, Estonia.
@@ -17,144 +19,150 @@
 //IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 //WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
+namespace UnityEngine.UI.Extensions
+{
+    [RequireComponent(typeof(RectTransform))]
+    [AddComponentMenu("UI/Extensions/Tooltip")]
+    public class ToolTip : MonoBehaviour
+    {
+        //text of the tooltip
+        private Text _text;
+        private RectTransform _rectTransform;
 
-public class ToolTip : MonoBehaviour {
+        //if the tooltip is inside a UI element
+        private bool _inside;
 
-	//text of the tooltip
-	public Text text;
+        private bool _xShifted, _yShifted = false;
 
-	//if the tooltip is inside a UI element
-	bool inside;
-	
-	bool xShifted = false;
-	bool yShifted = false;
+        private float width, height, canvasWidth, canvasHeight;
 
-	int textLength;
+        private int screenWidth, screenHeight;
 
-	public float width;
-	public float height;
+        private float YShift,xShift;
 
-	int screenWidth;
-	int screenHeight;
+        private RenderMode _guiMode;
 
-	float canvasWidth;
-	float canvasHeight;
+        private Camera _guiCamera;
 
-	public float yShift;
-	public float xShift;
+        // Use this for initialization
+        public void Awake()
+        {
+            var _canvas = GetComponentInParent<Canvas>();
+            _guiCamera = _canvas.worldCamera;
+            _guiMode = _canvas.renderMode;
+            _rectTransform = GetComponent<RectTransform>();
 
-	int canvasMode;
+            _text = GetComponentInChildren<Text>();
 
-	RenderMode GUIMode;
+            _inside = false;
 
-	Camera GUICamera;
+            //size of the screen
+            screenWidth = Screen.width;
+            screenHeight = Screen.height;
 
-	// Use this for initialization
-	public void Awake () {
+            xShift = 0f;
+            YShift = -30f;
 
-		GUICamera = GameObject.Find("GUICamera").GetComponent<Camera>();
+            _xShifted = _yShifted = false;
 
-		text = this.gameObject.GetComponentInChildren<Text>();
 
-		inside=false;
+            this.gameObject.SetActive(false);
 
-		//size of the screen
-		screenWidth = Screen.width;
-		screenHeight = Screen.height;
+        }
 
-		xShift = 0f;
-		yShift = -30f;
+        //Call this function externally to set the text of the template and activate the tooltip
+        public void SetTooltip(string ttext)
+        {
 
-		xShifted=yShifted=false;
+            if (_guiMode == RenderMode.ScreenSpaceCamera)
+            {
+                //set the text and fit the tooltip panel to the text size
+                _text.text = ttext;
 
-		GUIMode = this.transform.parent.GetComponent<Canvas>().renderMode;
+                _rectTransform.sizeDelta = new Vector2(_text.preferredWidth + 40f, _text.preferredHeight + 25f);
 
-		this.gameObject.SetActive(false);
+                OnScreenSpaceCamera();
 
-	}
+            }
+        }
 
-  //Call this function externally to set the text of the template and activate the tooltip
-	public void SetTooltip(string ttext){
+        //call this function on mouse exit to deactivate the template
+        public void HideTooltip()
+        {
+            if (_guiMode == RenderMode.ScreenSpaceCamera)
+            {
+                this.gameObject.SetActive(false);
+                _inside = false;
+            }
+        }
 
-		if(GUIMode==RenderMode.ScreenSpaceCamera){
-			//set the text and fit the tooltip panel to the text size
-			text.text=ttext;
-			
-			this.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(text.preferredWidth+40f,text.preferredHeight+25f);
-			
-			OnScreenSpaceCamera();
+        // Update is called once per frame
+        void FixedUpdate()
+        {
+            if (_inside)
+            {
+                if (_guiMode == RenderMode.ScreenSpaceCamera)
+                {
+                    OnScreenSpaceCamera();
+                }
+            }
+        }
 
-		}
-	}
+        //main tooltip edge of screen guard and movement
+        public void OnScreenSpaceCamera()
+        {
+            Vector3 newPos = _guiCamera.ScreenToViewportPoint(Input.mousePosition - new Vector3(xShift, YShift, 0f));
+            Vector3 newPosWVP = _guiCamera.ViewportToWorldPoint(newPos);
 
-  //call this function on mouse exit to deactivate the template
-	public void HideTooltip(){
-		if(GUIMode==RenderMode.ScreenSpaceCamera){
-			this.gameObject.SetActive(false);
-			inside=false;
-		}
-	}
+            width = _rectTransform.sizeDelta[0];
+            height = _rectTransform.sizeDelta[1];
 
-	// Update is called once per frame
-	void FixedUpdate () {
-		if(inside){
-			if(GUIMode==RenderMode.ScreenSpaceCamera){
-				OnScreenSpaceCamera();
-			}
-		}
-	}
+            // check and solve problems for the tooltip that goes out of the screen on the horizontal axis
+            float val;
 
-  //main tooltip edge of screen guard and movement
-	public void OnScreenSpaceCamera(){
-		Vector3 newPos = GUICamera.ScreenToViewportPoint(Input.mousePosition-new Vector3(xShift,yShift,0f));
+            Vector3 lowerLeft = _guiCamera.ViewportToWorldPoint(new Vector3(0.0f, 0.0f, 0.0f));
+            Vector3 upperRight = _guiCamera.ViewportToWorldPoint(new Vector3(1.0f, 1.0f, 0.0f));
 
-		width = this.transform.GetComponent<RectTransform>().sizeDelta[0];
-		height = this.transform.GetComponent<RectTransform>().sizeDelta[1];
+            //check for right edge of screen
+            val = (newPosWVP.x + width / 2);
+            if (val > upperRight.x)
+            {
+                Vector3 shifter = new Vector3(val - upperRight.x, 0f, 0f);
+                Vector3 newWorldPos = new Vector3(newPosWVP.x - shifter.x, newPos.y, 0f);
+                newPos.x = _guiCamera.WorldToViewportPoint(newWorldPos).x;
+            }
+            //check for left edge of screen
+            val = (newPosWVP.x - width / 2);
+            if (val < lowerLeft.x)
+            {
+                Vector3 shifter = new Vector3(lowerLeft.x - val, 0f, 0f);
+                Vector3 newWorldPos = new Vector3(newPosWVP.x + shifter.x, newPos.y, 0f);
+                newPos.x = _guiCamera.WorldToViewportPoint(newWorldPos).x;
+            }
 
-		// check and solve problems for the tooltip that goes out of the screen on the horizontal axis
-		float val;
+            // check and solve problems for the tooltip that goes out of the screen on the vertical axis
 
-		Vector3 lowerLeft  = GUICamera.ViewportToWorldPoint(new Vector3(0.0f,0.0f,0.0f));
-		Vector3 upperRight = GUICamera.ViewportToWorldPoint(new Vector3(1.0f,1.0f,0.0f));
+            //check for upper edge of the screen
+            val = (newPosWVP.y + height / 2);
+            if (val > upperRight.y)
+            {
+                Vector3 shifter = new Vector3(0f, 35f + height / 2, 0f);
+                Vector3 newWorldPos = new Vector3(newPos.x, newPosWVP.y - shifter.y, 0f);
+                newPos.y = _guiCamera.WorldToViewportPoint(newWorldPos).y;
+            }
 
-		//check for right edge of screen
-		val = (GUICamera.ViewportToWorldPoint(newPos).x+width/2);
-		if(val>upperRight.x){
-			Vector3 shifter = new Vector3(val-upperRight.x,0f,0f);
-			Vector3 newWorldPos = new Vector3(GUICamera.ViewportToWorldPoint(newPos).x-shifter.x,newPos.y,0f);
-			newPos.x = GUICamera.WorldToViewportPoint(newWorldPos).x;
-		}
-		//check for left edge of screen
-		val = (GUICamera.ViewportToWorldPoint(newPos).x-width/2);
-		if(val<lowerLeft.x){
-			Vector3 shifter = new Vector3(lowerLeft.x-val,0f,0f);
-			Vector3 newWorldPos = new Vector3(GUICamera.ViewportToWorldPoint(newPos).x+shifter.x,newPos.y,0f);
-			newPos.x = GUICamera.WorldToViewportPoint(newWorldPos).x;
-		}
+            //check for lower edge of the screen (if the shifts of the tooltip are kept as in this code, no need for this as the tooltip always appears above the mouse bu default)
+            val = (newPosWVP.y - height / 2);
+            if (val < lowerLeft.y)
+            {
+                Vector3 shifter = new Vector3(0f, 35f + height / 2, 0f);
+                Vector3 newWorldPos = new Vector3(newPos.x, newPosWVP.y + shifter.y, 0f);
+                newPos.y = _guiCamera.WorldToViewportPoint(newWorldPos).y;
+            }
 
-		// check and solve problems for the tooltip that goes out of the screen on the vertical axis
-
-		//check for upper edge of the screen
-		val = (GUICamera.ViewportToWorldPoint(newPos).y+height/2);
-		if(val>upperRight.y){
-			Vector3 shifter = new Vector3(0f,35f+height/2,0f);
-			Vector3 newWorldPos = new Vector3(newPos.x,GUICamera.ViewportToWorldPoint(newPos).y-shifter.y,0f);
-			newPos.y = GUICamera.WorldToViewportPoint(newWorldPos).y;
-		}
-
-		//check for lower edge of the screen (if the shifts of the tooltip are kept as in this code, no need for this as the tooltip always appears above the mouse bu default)
-		val = (GUICamera.ViewportToWorldPoint(newPos).y-height/2);
-		if(val<lowerLeft.y){
-			Vector3 shifter = new Vector3(0f,35f+height/2,0f);
-			Vector3 newWorldPos = new Vector3(newPos.x,GUICamera.ViewportToWorldPoint(newPos).y+shifter.y,0f);
-			newPos.y = GUICamera.WorldToViewportPoint(newWorldPos).y;
-		}
-
-		this.transform.position= new Vector3(GUICamera.ViewportToWorldPoint(newPos).x,GUICamera.ViewportToWorldPoint(newPos).y,0f);
-		this.gameObject.SetActive(true);
-		inside=true;
-	}
+            this.transform.position = new Vector3(newPosWVP.x, newPosWVP.y, 0f);
+            this.gameObject.SetActive(true);
+            _inside = true;
+        }
+    }
 }
