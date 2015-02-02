@@ -1,7 +1,8 @@
-﻿// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/page-2#post-1834806 (with corrections)
-// Scaling fixed for non overlay canvases - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1780612
-// Canvas border fix - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1781658
-// Canvas reset position fix - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1782214
+﻿/// Credit GXMark, alexzzzz, CaoMengde777, TroyDavis  
+/// Original Sourced from (GXMark) - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/page-2#post-1834806 (with corrections)
+/// Scaling fixed for non overlay canvases (alexzzzz) - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1780612
+/// Canvas border fix (CaoMengde777) - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1781658
+/// Canvas reset position fix (TroyDavis)- http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1782214
 
 
 using System;

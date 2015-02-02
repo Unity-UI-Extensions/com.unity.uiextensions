@@ -1,8 +1,10 @@
-//Author: Melang http://forum.unity3d.com/members/melang.593409/
-//Updated omatase 10-18-14 - support for Shift + Tab as well
-//                         - bug fix to prevent crash if no control selected
-//                         - updated to support new semantics for EventSystem in later 4.6 builds
-//                         - autoselect "firstSelectedGameObject" since it doesn't seem to work automatically
+/// Credit Melang 
+/// Sourced from - http://forum.unity3d.com/members/melang.593409/
+/// Updated omatase 10-18-14 - support for Shift + Tab as well
+///                         - bug fix to prevent crash if no control selected
+///                         - updated to support new semantics for EventSystem in later 4.6 builds
+///                        - autoselect "firstSelectedGameObject" since it doesn't seem to work automatically
+
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;

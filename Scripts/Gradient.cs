@@ -1,4 +1,5 @@
-//Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1780095
+/// Credit Breyer
+/// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1780095
 
 using UnityEngine;
 using System.Collections;

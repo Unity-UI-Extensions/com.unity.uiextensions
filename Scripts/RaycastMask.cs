@@ -1,4 +1,6 @@
-//Sourced from - https://github.com/senritsu/unitility/blob/master/Assets/Unitility/GUI/RaycastMask.cs
+/// Credit senritsu 
+/// Sourced from - https://github.com/senritsu/unitility/blob/master/Assets/Unitility/GUI/RaycastMask.cs
+
 /***************************************************************************\
 The MIT License (MIT)
 
