@@ -24,7 +24,7 @@ namespace UnityEditor.UI
         private const string kCheckmarkPath                = "UI/Skin/Checkmark.psd";
 
         private static Vector2 s_ThickGUIElementSize    = new Vector2(kWidth, kThickHeight);
-        private static Vector2 s_ThinGUIElementSize     = new Vector2(kWidth, kThinHeight);
+        //private static Vector2 s_ThinGUIElementSize     = new Vector2(kWidth, kThinHeight);
         private static Vector2 s_ImageGUIElementSize    = new Vector2(100f, 100f);
         private static Color   s_DefaultSelectableColor = new Color(1f, 1f, 1f, 1f);
         #endregion
@@ -205,12 +205,22 @@ namespace UnityEditor.UI
         {
             GameObject horizontalScrollSnapRoot = CreateUIElementRoot("Horizontal Scroll Snap", menuCommand, s_ThickGUIElementSize);
 
+            GameObject childContent = new GameObject("Content");
+            GameObjectUtility.SetParentAndAlign(childContent, horizontalScrollSnapRoot);
+
+            GameObject childPage01 = new GameObject("Page_01");
+            GameObjectUtility.SetParentAndAlign(childPage01, childContent);
+
+            GameObject childText = new GameObject("Text");
+            GameObjectUtility.SetParentAndAlign(childText, childPage01);
+
             // Set RectTransform to stretch
-            RectTransform rectTransform = horizontalScrollSnapRoot.GetComponent<RectTransform>();
-            rectTransform.anchorMin = Vector2.zero;
-            rectTransform.anchorMax = Vector2.one;
-            rectTransform.anchoredPosition = Vector2.zero;
-            rectTransform.sizeDelta = Vector2.zero;
+            RectTransform rectTransformScrollSnapRoot = horizontalScrollSnapRoot.GetComponent<RectTransform>();
+            rectTransformScrollSnapRoot.anchorMin = new Vector2(0.5f, 0.5f);
+            rectTransformScrollSnapRoot.anchorMax = new Vector2(0.5f, 0.5f);
+            rectTransformScrollSnapRoot.anchoredPosition = Vector2.zero;
+            rectTransformScrollSnapRoot.sizeDelta = new Vector2(300f, 150f);
+            
 
             Image image = horizontalScrollSnapRoot.AddComponent<Image>();
             image.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath);
@@ -218,7 +228,48 @@ namespace UnityEditor.UI
             image.color = new Color(1f, 1f, 1f, 0.392f);
 
             ScrollRect sr = horizontalScrollSnapRoot.AddComponent<ScrollRect>();
-            HorizontalScrollSnap HSS = horizontalScrollSnapRoot.AddComponent<HorizontalScrollSnap>();
+            sr.vertical = false;
+            horizontalScrollSnapRoot.AddComponent<HorizontalScrollSnap>();
+
+            //Setup Content container
+            RectTransform rectTransformContent = childContent.AddComponent<RectTransform>();
+            rectTransformContent.anchorMin = Vector2.zero;
+            rectTransformContent.anchorMax = new Vector2(1f, 1f);
+            //rectTransformContent.anchoredPosition = Vector2.zero;
+            rectTransformContent.sizeDelta = Vector2.zero;
+
+            sr.content = rectTransformContent;
+
+            //Setup 1st Child
+            Image pageImage = childPage01.AddComponent<Image>();
+            pageImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+            pageImage.type = Image.Type.Sliced;
+            pageImage.color = s_DefaultSelectableColor; 
+            
+            RectTransform rectTransformPage01 = childPage01.GetComponent<RectTransform>();
+            rectTransformPage01.anchorMin = new Vector2(0f, 0.5f);
+            rectTransformPage01.anchorMax = new Vector2(0f, 0.5f);
+            //rectTransformPage01.anchoredPosition = Vector2.zero;
+            //rectTransformPage01.sizeDelta = Vector2.zero;
+            rectTransformPage01.pivot = new Vector2(0f, 0.5f); 
+            
+            //Setup Text on Page01
+            Text text = childText.AddComponent<Text>();
+            text.text = "Page_01";
+            text.alignment = TextAnchor.MiddleCenter;
+            text.color = new Color(0.196f, 0.196f, 0.196f);
+
+            //Setup Text 1st Child
+            RectTransform rectTransformPage01Text = childText.GetComponent<RectTransform>();
+            rectTransformPage01Text.anchorMin = new Vector2(0.5f, 0.5f);
+            rectTransformPage01Text.anchorMax = new Vector2(0.5f, 0.5f);
+            //rectTransformPage01Text.anchoredPosition = Vector2.zero;
+            //rectTransformPage01Text.sizeDelta = Vector2.zero;
+            rectTransformPage01Text.pivot = new Vector2(0.5f, 0.5f);
+
+
+            //Need to add example child components like in the Asset (SJ)
+
             Selection.activeGameObject = horizontalScrollSnapRoot;
         }
 
@@ -264,6 +315,7 @@ namespace UnityEditor.UI
         {
             GameObject go = CreateUIElementRoot("UI Window Base", menuCommand, s_ThickGUIElementSize);
             go.AddComponent<UIWindowBase>();
+            go.AddComponent<Image>();
             Selection.activeGameObject = go;
         }
 
@@ -288,13 +340,14 @@ namespace UnityEditor.UI
 
         }
 
-        [MenuItem("GameObject/UI/Extensions/ComboBox", false, 2002)]
-        static public void AddComboBox(MenuCommand menuCommand)
-        {
-            GameObject go = CreateUIElementRoot("ComboBox", menuCommand, s_ThickGUIElementSize);
-            go.AddComponent<ComboBox>();
-            Selection.activeGameObject = go;
-        }
+        //Awaiting updated control from autor - Use PreFab for now
+        //[MenuItem("GameObject/UI/Extensions/ComboBox", false, 2002)]
+        //static public void AddComboBox(MenuCommand menuCommand)
+        //{
+        //    GameObject go = CreateUIElementRoot("ComboBox", menuCommand, s_ThickGUIElementSize);
+        //    go.AddComponent<ComboBox>();
+        //    Selection.activeGameObject = go;
+        //}
 
         [MenuItem("GameObject/UI/Extensions/Selection Box", false, 2009)]
         static public void AddSelectionBox(MenuCommand menuCommand)
@@ -302,15 +355,30 @@ namespace UnityEditor.UI
             var go = CreateNewUI();
             go.name = "Selection Box";
             GameObjectUtility.SetParentAndAlign(go, menuCommand.context as GameObject);
-            if (go.transform.parent as RectTransform)
-            {
-                RectTransform rect = go.transform as RectTransform;
-                rect.anchorMin = Vector2.zero;
-                rect.anchorMax = Vector2.one;
-                rect.anchoredPosition = Vector2.zero;
-                rect.sizeDelta = Vector2.zero;
-            }
-            go.AddComponent<SelectionBox>();
+            RectTransform rect = go.transform as RectTransform;
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.anchoredPosition = Vector2.zero;
+            rect.sizeDelta = Vector2.zero;
+
+            Image image = go.AddComponent<Image>();
+            image.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath);
+            image.type = Image.Type.Sliced;
+            image.fillCenter = false;
+            image.color = new Color(1f, 1f, 1f, 0.392f);
+
+
+            SelectionBox selectableArea = go.AddComponent<SelectionBox>();
+            selectableArea.selectionMask = rect;
+            selectableArea.color = new Color(0.816f, 0.816f, 0.816f, 0.353f);
+
+
+            GameObject childSelectableItem = new GameObject("Selectable");
+            GameObjectUtility.SetParentAndAlign(childSelectableItem, go);
+            childSelectableItem.AddComponent<Image>();
+            childSelectableItem.AddComponent<ExampleSelectable>();
+
+
             Selection.activeGameObject = go;
         }
 
