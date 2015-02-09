@@ -13,39 +13,39 @@ These include:
 ## New Controls ##
 ================
 
-Control | Description | Menu Command | Component Command | Notes
---------- | -------------- | ---------------------- | ---------------------------- | -------
-**Accordion** | An Acordian style control with animated segments. Sourced from [here](http://forum.unity3d.com/threads/accordion-type-layout.271818/). For more details, [see this video demonstration](https://www.youtube.com/watch?v=YSOSVTU5klw) | N/A | Component / UI / Extensions / AccordionGroup |
- | | | Component / UI / Extensions / AccordionItem | 
-**ComboBox** | A styled Combo Box control | UI / Extensions / Combobox | UI / Extensions / Combobox | Still being improved by author
-**HSVPicker** | A colour picker UI | N/A | UI / Extensions / HSVPicker | Project folder incluses prefab
-**SelectionBox** | An RTS style selection box control | UI / Extensions / Selection Box | UI / Extensions / Selection Box | Needs documentation on use, selection area defines the area on screen that is selectable.  Uses script on selectable items on screen
-**HorizontalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Horizontal Scroll Snap | UI / Extensions / Horizontal Scroll Snap |
-**UIButton** | Improved Button control with additional events | UI / Extensions / UI Button | UI / Extensions / UI Button |
-**UIWindowBase** | A draggable Window implementation | UI / Extensions / UI Window Base | UI / Extensions / UI Window Base |
+Control | Description | Menu Command | Component Command | Notes | Credits
+--------- | -------------- | ---------------------- | ---------------------------- | ------- | ----------
+**Accordion** | An Acordian style control with animated segments. Sourced from [here](http://forum.unity3d.com/threads/accordion-type-layout.271818/). For more details, [see this video demonstration](https://www.youtube.com/watch?v=YSOSVTU5klw) | N/A | Component / UI / Extensions / AccordionGroup | | ChoMPHi
+ | | | Component / UI / Extensions / AccordionItem |  | ChoMPHi
+**ComboBox** | A styled Combo Box control | UI / Extensions / Combobox | UI / Extensions / Combobox | Still being improved by author | perchik
+**HSVPicker** | A colour picker UI | N/A | UI / Extensions / HSVPicker | Project folder includes prefab | judah4
+**SelectionBox** | An RTS style selection box control | UI / Extensions / Selection Box | UI / Extensions / Selection Box | Needs documentation on use, selection area defines the area on screen that is selectable.  Uses script on selectable items on screen | Korindian, BenZed
+**HorizontalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Horizontal Scroll Snap | UI / Extensions / Horizontal Scroll Snap | | BinaryX
+**UIButton** | Improved Button control with additional events | UI / Extensions / UI Button | UI / Extensions / UI Button | | AriathTheWise
+**UIWindowBase** | A draggable Window implementation | UI / Extensions / UI Window Base | UI / Extensions / UI Window Base | | GXMark, alexzzzz, CaoMengde777, TroyDavis 
 
 ## Effect components ##
 =====================
 
-Effect   | Description | Component Command | Notes
---------- | -------------- | ---------------------------- | -------
-**BestFitOutline** | An improved outline effect | UI / Effects / Extensions / Best Fit Outline | 
-**CurvedText** | A Text vertex manipulator for those users NOT using TextMeshPro (why ever not?) | UI / Effects / Extensons / Curved Text | 
-**Gradient**  | Apply vertex colours in a gradient on any UI object | UI / Effects / Extensions / Gradient |
-**LetterSpacing** | Allows finers control of text spacing |  UI / Effects / Extensions / Letter Spacing |
-**NicerOutline** | Another outline control | UI / Effects / Extensions / Nicer Outline |
-**RaycastMask** | An example of an enhanced mask component able to work with the image data. Enables picking on image parts and not just the Rect Transform | UI / Effects / Extensions / Raycast Mask |
-**UIFlippable** | Image component effect to flip the graphic | UI / Effects / Extensions / UI Flippable |
+Effect   | Description | Component Command | Notes  | Credits
+--------- | -------------- | ---------------------------- | ------- | -----------
+**BestFitOutline** | An improved outline effect | UI / Effects / Extensions / Best Fit Outline | | Melang
+**CurvedText** | A Text vertex manipulator for those users NOT using TextMeshPro (why ever not?) | UI / Effects / Extensons / Curved Text | | Breyer
+**Gradient**  | Apply vertex colours in a gradient on any UI object | UI / Effects / Extensions / Gradient | | Breyer
+**LetterSpacing** | Allows finers control of text spacing |  UI / Effects / Extensions / Letter Spacing | | Deeperbeige
+**NicerOutline** | Another outline control | UI / Effects / Extensions / Nicer Outline | | Melang
+**RaycastMask** | An example of an enhanced mask component able to work with the image data. Enables picking on image parts and not just the Rect Transform | UI / Effects / Extensions / Raycast Mask | | senritsu
+**UIFlippable** | Image component effect to flip the graphic | UI / Effects / Extensions / UI Flippable | | ChoMPHi
 
 
 ## Additional Components##
 =======================
 
-Component | Description | Component Command | Notes
---------- | -------------- | ---------------------------- | -------
-**ReturnKeyTrigger** | Does something?? | UI / Extensions / ReturnKey Trigger |
-**TabNavigation**  | An example Tb navigation script | UI / Extensions / Tab Navigation |
-**uGUITools | | Menu / uGUI |
+Component | Description | Component Command | Notes | Credits
+--------- | -------------- | ---------------------------- | ------- | ------
+**ReturnKeyTrigger** | Does something?? | UI / Extensions / ReturnKey Trigger | | Melang, ddreaper
+**TabNavigation**  | An example Tab navigation script | UI / Extensions / Tab Navigation | | Melang, omatase
+**uGUITools** | | Menu / uGUI | | Senshi
 
 
 *More to come*
@@ -57,6 +57,13 @@ Either clone / download this repository to your machine and then copy the script
 ### Contribution guidelines ###
 
 Got a script you want added, then just fork and submit a PR.  All contributions accepted (including fixes)
+Just ensure 
+* The header of the script matches the standard used in all scripts
+* The script uses the **Unity.UI.Extensions** namespace so they do not affect any other developments
+* (optional) Add Component and Editor options where possible (editor options are in the Editor\UIExtensionsMenuOptions.cs file)
+
+### License ###
+All scripts conform to the BSD license and are free to use / distribute.  See the [LICENSE](https://bitbucket.org/ddreaper/unity-ui-extensions/src/6d03f25b0150994afa97c6a55854d6ae696cad13/LICENSE?at=default) file for more information 
 
 ### Like what you see? ###
 
