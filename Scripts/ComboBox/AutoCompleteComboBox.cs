@@ -7,8 +7,8 @@ using System.Linq;
 namespace UnityEngine.UI.Extensions
 {
     [RequireComponent(typeof(RectTransform))]
-    [AddComponentMenu("UI/Extensions/ComboBox")]
-    public class ComboBox : MonoBehaviour
+    [AddComponentMenu("UI/Extensions/AutoComplete ComboBox")]
+    public class AutoCompleteComboBox : MonoBehaviour
     {
         public Color disabledTextColor;
         public DropDownListItem SelectedItem { get; private set; } //outside world gets to get this, not set it
@@ -39,6 +39,7 @@ namespace UnityEngine.UI.Extensions
         private ScrollRect _scrollRect;
 
         private List<string> _panelItems; //items that will get shown in the dropdown
+        private List<string> _prunedPanelItems; //items that used to show in the dropdown
 
         private Dictionary<string, GameObject> panelObjects;
         
@@ -117,6 +118,7 @@ namespace UnityEngine.UI.Extensions
             }
             panelObjects = new Dictionary<string, GameObject>();
 
+            _prunedPanelItems = new List<string>();
             _panelItems = AvailableOptions.ToList();
 
             RebuildPanel();
@@ -166,6 +168,7 @@ namespace UnityEngine.UI.Extensions
             }
             _panelItems.Sort();
 
+            _prunedPanelItems.Clear();
             List<GameObject> itemObjs = new List<GameObject>(panelObjects.Values);
             panelObjects.Clear();
 
@@ -282,6 +285,7 @@ namespace UnityEngine.UI.Extensions
         public void OnValueChanged(string currText)
         {
             Text = currText;
+            PruneItems(currText);
             RedrawPanel();
             //Debug.Log("value changed to: " + currText);
 
@@ -312,6 +316,28 @@ namespace UnityEngine.UI.Extensions
             else if (directClick)
             {
                 // scrollOffset = Mathf.RoundToInt(itemsPanelRT.anchoredPosition.y / _rectTransform.sizeDelta.y); 
+            }
+        }
+
+        private void PruneItems(string currText)
+        {
+            List<string> notToPrune = _panelItems.Where(x => x.ToLower().Contains(currText.ToLower())).ToList();
+            List<string> toPrune = _panelItems.Except(notToPrune).ToList();
+            foreach (string key in toPrune)
+            {
+                //            Debug.Log("pruning key " + key);
+                panelObjects[key].SetActive(false);
+                _panelItems.Remove(key);
+                _prunedPanelItems.Add(key);
+            }
+
+            List<string> toAddBack = _prunedPanelItems.Where(x => x.ToLower().Contains(currText)).ToList();
+            foreach (string key in toAddBack)
+            {
+                //            Debug.Log("adding back key " + key);
+                panelObjects[key].SetActive(true);
+                _panelItems.Add(key);
+                _prunedPanelItems.Remove(key);
             }
         }
     }

@@ -5,7 +5,8 @@ using System;
 
 namespace UnityEngine.UI.Extensions
 {
-    public class ComboBoxItem
+    [Serializable]
+    public class DropDownListItem
     {
         [SerializeField]
         private string _caption;
@@ -64,33 +65,36 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-
+        [SerializeField]
+        private string _id;
+        ///<summary>
+        ///ID exists so that an item can have a caption and a value like in traditional windows forms. Ie. an item may be a student's name, and the ID can be the student's ID number
+        ///</summary>
+        public string ID
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
 
         public Action OnSelect; //action to be called when this item is selected
 
         internal Action OnUpdate; //action to be called when something changes.  
 
-        ///<remarks> Value exists so that an item can have a caption and a value, like in traditional windows forms. Ie. an item may be a student's name, and the value could be the student's ID number</remarks>
-        private string _value;
-
-
         /// <summary>
-        /// Constructor for ComboBoxOptions
+        /// Constructor for Drop Down List panelItems
         /// </summary>
         /// <param name="caption">Caption for the item </param>
-        /// <param name="val">Value of the item </param>
+        /// <param name="val">ID of the item </param>
         /// <param name="image"></param>
         /// <param name="disabled">Should the item start disabled</param>
         /// <param name="onSelect">Action to be called when this item is selected</param>
-        public ComboBoxItem(string caption = "", string val = "", Sprite image = null, bool disabled = false, Action onSelect = null)
+        public DropDownListItem(string caption = "", string inId = "", Sprite image = null, bool disabled = false, Action onSelect = null)
         {
             _caption = caption;
             _image = image;
-            _value = val;
+            _id = inId;
             _isDisabled = disabled;
             OnSelect = onSelect;
         }
-
-
     }
 }
