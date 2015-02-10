@@ -10,7 +10,7 @@ namespace UnityEngine.UI.Extensions
 	/// <summary>
 	/// Layout Group controller that arranges children in rows, fitting as many on a line until total width exceeds parent bounds
 	/// </summary>
-    [AddComponentMenu("UI/Extensions/Flow Layout Group")]
+	[AddComponentMenu("Layout/Extensions/Flow Layout Group")]
 	public class FlowLayoutGroup : LayoutGroup
 	{
 		public float Spacing = 0f;
@@ -51,7 +51,7 @@ namespace UnityEngine.UI.Extensions
 			get
 			{
 				return childAlignment == TextAnchor.LowerCenter || childAlignment == TextAnchor.MiddleCenter ||
-				       childAlignment == TextAnchor.UpperCenter;
+					   childAlignment == TextAnchor.UpperCenter;
 			}
 		}
 
@@ -60,7 +60,7 @@ namespace UnityEngine.UI.Extensions
 			get
 			{
 				return childAlignment == TextAnchor.LowerRight || childAlignment == TextAnchor.MiddleRight ||
-				       childAlignment == TextAnchor.UpperRight;
+					   childAlignment == TextAnchor.UpperRight;
 			}
 		}
 
@@ -69,7 +69,7 @@ namespace UnityEngine.UI.Extensions
 			get
 			{
 				return childAlignment == TextAnchor.MiddleLeft || childAlignment == TextAnchor.MiddleRight ||
-				       childAlignment == TextAnchor.MiddleCenter;
+					   childAlignment == TextAnchor.MiddleCenter;
 			}
 		}
 

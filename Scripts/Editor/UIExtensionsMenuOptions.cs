@@ -213,14 +213,11 @@ namespace UnityEditor.UI
         {
             GameObject horizontalScrollSnapRoot = CreateUIElementRoot("Horizontal Scroll Snap", menuCommand, s_ThickGUIElementSize);
 
-            GameObject childContent = new GameObject("Content");
-            GameObjectUtility.SetParentAndAlign(childContent, horizontalScrollSnapRoot);
+            GameObject childContent = CreateUIObject("Content", horizontalScrollSnapRoot);
 
-            GameObject childPage01 = new GameObject("Page_01");
-            GameObjectUtility.SetParentAndAlign(childPage01, childContent);
+            GameObject childPage01 = CreateUIObject("Page_01", childContent);
 
-            GameObject childText = new GameObject("Text");
-            GameObjectUtility.SetParentAndAlign(childText, childPage01);
+            GameObject childText = CreateUIObject("Text", childPage01);
 
             // Set RectTransform to stretch
             RectTransform rectTransformScrollSnapRoot = horizontalScrollSnapRoot.GetComponent<RectTransform>();
@@ -285,8 +282,7 @@ namespace UnityEditor.UI
         static public void AddUIButton(MenuCommand menuCommand)
         {
             GameObject uiButtonRoot = CreateUIElementRoot("UI Button", menuCommand, s_ThickGUIElementSize);
-            GameObject childText = new GameObject("Text");
-            GameObjectUtility.SetParentAndAlign(childText, uiButtonRoot);
+            GameObject childText = CreateUIObject("Text", uiButtonRoot);
 
             Image image = uiButtonRoot.AddComponent<Image>();
             image.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
@@ -348,6 +344,102 @@ namespace UnityEditor.UI
 
         }
 
+        [MenuItem("GameObject/UI/Extensions/AutoComplete ComboBox", false)]
+        static public void AddAutoCompleteComboBox(MenuCommand menuCommand)
+        {
+            GameObject autoCompleteComboBoxRoot = CreateUIElementRoot("AutoCompleteComboBox", menuCommand, s_ThickGUIElementSize);
+
+            //Create Template
+            GameObject itemTemplate = AddButtonAsChild(autoCompleteComboBoxRoot);
+
+            //Create Inputfield
+            GameObject inputField = AddInputFieldAsChild(autoCompleteComboBoxRoot);
+
+            //Create Overlay
+            GameObject overlay = CreateUIObject("Overlay", autoCompleteComboBoxRoot);
+            GameObject overlayScrollPanel = CreateUIObject("ScrollPanel", overlay);
+            GameObject overlayScrollPanelItems = CreateUIObject("Items", overlayScrollPanel);
+            GameObject overlayScrollPanelScrollBar = AddScrollbarAsChild(overlayScrollPanel);
+
+            //Create Arrow Button
+            GameObject arrowButton = AddButtonAsChild(autoCompleteComboBoxRoot);
+            
+            //Setup ComboBox
+            var autoCompleteComboBox = autoCompleteComboBoxRoot.AddComponent<AutoCompleteComboBox>();
+            var cbbRT = autoCompleteComboBoxRoot.GetComponent<RectTransform>();
+
+            //Setup Template
+            itemTemplate.name = "ItemTemplate";
+            var itemTemplateRT = itemTemplate.GetComponent<RectTransform>();
+            itemTemplateRT.sizeDelta = cbbRT.sizeDelta;
+            var itemTemplateButton = itemTemplate.GetComponent<Button>();
+            itemTemplateButton.transition = Selectable.Transition.None;
+            var itemTemplateLayoutElement = itemTemplate.AddComponent<LayoutElement>();
+            itemTemplateLayoutElement.minHeight = cbbRT.rect.height;
+            itemTemplate.SetActive(false);
+
+            //Setup InputField
+            var inputFieldRT = inputField.GetComponent<RectTransform>();
+            inputFieldRT.anchorMin = Vector2.zero;
+            inputFieldRT.anchorMax = Vector2.one;
+            inputFieldRT.sizeDelta = Vector2.zero;
+            Events.UnityEventTools.AddPersistentListener<string>(inputField.GetComponent<InputField>().onValueChange, new UnityEngine.Events.UnityAction<string>(autoCompleteComboBox.OnValueChanged));
+
+            //Setup Overlay
+            var overlayRT = overlay.GetComponent<RectTransform>();
+            overlayRT.anchorMin = new Vector2(0f, 1f);
+            overlayRT.anchorMax = new Vector2(0f, 1f);
+            overlayRT.sizeDelta = new Vector2(0f, 1f);
+            overlayRT.pivot = new Vector2(0f, 1f);
+            overlay.AddComponent<Image>().color = new Color(0.243f, 0.871f, 0f, 0f);
+            Events.UnityEventTools.AddBoolPersistentListener(overlay.AddComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(autoCompleteComboBox.ToggleDropdownPanel), true);
+            //Overlay Scroll Panel
+            var overlayScrollPanelRT = overlayScrollPanel.GetComponent<RectTransform>();
+            overlayScrollPanelRT.position += new Vector3(0, -cbbRT.sizeDelta.y, 0);
+            overlayScrollPanelRT.anchorMin = new Vector2(0f, 1f);
+            overlayScrollPanelRT.anchorMax = new Vector2(0f, 1f);
+            overlayScrollPanelRT.sizeDelta = new Vector2(cbbRT.sizeDelta.x, cbbRT.sizeDelta.y * 3);
+            overlayScrollPanelRT.pivot = new Vector2(0f, 1f);
+            overlayScrollPanel.AddComponent<Image>();
+            overlayScrollPanel.AddComponent<Mask>();
+            var scrollRect = overlayScrollPanel.AddComponent<ScrollRect>();
+            scrollRect.horizontal = false;
+            scrollRect.movementType = ScrollRect.MovementType.Clamped;
+            scrollRect.verticalScrollbar = overlayScrollPanelScrollBar.GetComponent<Scrollbar>();
+            //Overlay Items list
+            var overlayScrollPanelItemsRT = overlayScrollPanelItems.GetComponent<RectTransform>();
+            overlayScrollPanelItemsRT.position += new Vector3(5, 0, 0);
+            overlayScrollPanelItemsRT.anchorMin = new Vector2(0f, 1f);
+            overlayScrollPanelItemsRT.anchorMax = new Vector2(0f, 1f);
+            overlayScrollPanelItemsRT.sizeDelta = new Vector2(120f, 5f);
+            overlayScrollPanelItemsRT.pivot = new Vector2(0f, 1f);
+            scrollRect.content = overlayScrollPanelItemsRT;
+            var overlayScrollPanelItemsVLG = overlayScrollPanelItems.AddComponent<VerticalLayoutGroup>();
+            overlayScrollPanelItemsVLG.padding = new RectOffset(0, 0, 5, 0);
+            var overlayScrollPanelItemsFitter = overlayScrollPanelItems.AddComponent<ContentSizeFitter>();
+            overlayScrollPanelItemsFitter.verticalFit = ContentSizeFitter.FitMode.MinSize;
+            //Overlay Scrollbar
+            var overlayScrollPanelScrollbarRT = overlayScrollPanelScrollBar.GetComponent<RectTransform>();
+            overlayScrollPanelScrollbarRT.anchorMin = new Vector2(1f, 0f);
+            overlayScrollPanelScrollbarRT.anchorMax = Vector2.one;
+            overlayScrollPanelScrollbarRT.sizeDelta = new Vector2(cbbRT.sizeDelta.y, 0f);
+            overlayScrollPanelScrollbarRT.pivot = Vector2.one;
+            overlayScrollPanelScrollbarRT.GetComponent<Scrollbar>().direction = Scrollbar.Direction.BottomToTop;
+            overlayScrollPanelScrollBar.transform.GetChild(0).name = "SlidingArea";
+
+            //Arrow Button
+            arrowButton.name = "ArrowBtn";
+            var arrowButtonRT = arrowButton.GetComponent<RectTransform>();
+            arrowButtonRT.anchorMin = Vector2.one;
+            arrowButtonRT.anchorMax = Vector2.one;
+            arrowButtonRT.sizeDelta = new Vector2(cbbRT.sizeDelta.y, cbbRT.sizeDelta.y);
+            arrowButtonRT.pivot = Vector2.one;
+            Events.UnityEventTools.AddBoolPersistentListener(arrowButton.GetComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(autoCompleteComboBox.ToggleDropdownPanel), true);
+            arrowButton.GetComponentInChildren<Text>().text = "▼";
+
+            Selection.activeGameObject = autoCompleteComboBoxRoot;
+        }
+
         [MenuItem("GameObject/UI/Extensions/ComboBox", false)]
         static public void AddComboBox(MenuCommand menuCommand)
         {
@@ -367,7 +459,7 @@ namespace UnityEditor.UI
 
             //Create Arrow Button
             GameObject arrowButton = AddButtonAsChild(comboBoxRoot);
-            
+
             //Setup ComboBox
             var comboBox = comboBoxRoot.AddComponent<ComboBox>();
             var cbbRT = comboBoxRoot.GetComponent<RectTransform>();
@@ -444,6 +536,138 @@ namespace UnityEditor.UI
             Selection.activeGameObject = comboBoxRoot;
         }
 
+        [MenuItem("GameObject/UI/Extensions/DropDownList", false)]
+        static public void AddDropDownList(MenuCommand menuCommand)
+        {
+            GameObject dropDownListRoot = CreateUIElementRoot("DropDownList", menuCommand, s_ThickGUIElementSize);
+
+            //Create Template
+            GameObject itemTemplate = AddButtonAsChild(dropDownListRoot);
+            GameObject itemTemplateImage = AddImageAsChild(itemTemplate);
+            itemTemplateImage.GetComponent<Transform>().SetSiblingIndex(0);
+
+            //Create Main Button
+            GameObject mainButton = AddButtonAsChild(dropDownListRoot);
+            GameObject mainButtonImage = AddImageAsChild(mainButton);
+            mainButtonImage.GetComponent<Transform>().SetSiblingIndex(0);
+
+            //Create Overlay
+            GameObject overlay = CreateUIObject("Overlay", dropDownListRoot);
+            GameObject overlayScrollPanel = CreateUIObject("ScrollPanel", overlay);
+            GameObject overlayScrollPanelItems = CreateUIObject("Items", overlayScrollPanel);
+            GameObject overlayScrollPanelScrollBar = AddScrollbarAsChild(overlayScrollPanel);
+
+            //Create Arrow Button
+            GameObject arrowText = AddTextAsChild(dropDownListRoot);
+
+            //Setup DropDownList
+            var dropDownList = dropDownListRoot.AddComponent<DropDownList>();
+            var cbbRT = dropDownListRoot.GetComponent<RectTransform>();
+
+            //Setup Template
+            itemTemplate.name = "ItemTemplate";
+            var itemTemplateRT = itemTemplate.GetComponent<RectTransform>();
+            itemTemplateRT.sizeDelta = cbbRT.sizeDelta;
+            var itemTemplateButton = itemTemplate.GetComponent<Button>();
+            itemTemplateButton.transition = Selectable.Transition.None;
+            var itemTemplateLayoutElement = itemTemplate.AddComponent<LayoutElement>();
+            itemTemplateLayoutElement.minHeight = cbbRT.rect.height;
+            itemTemplate.SetActive(false);
+            //Item Template Image
+            var itemTemplateImageRT = itemTemplateImage.GetComponent<RectTransform>();
+            itemTemplateImageRT.anchorMin = Vector2.zero;
+            itemTemplateImageRT.anchorMax = new Vector2(0f, 1f);
+            itemTemplateImageRT.pivot = new Vector2(0f, 1f);
+            itemTemplateImageRT.sizeDelta = Vector2.one;
+            itemTemplateImageRT.offsetMin = new Vector2(4f, 4f);
+            itemTemplateImageRT.offsetMax = new Vector2(22f, -4f);
+            itemTemplateImage.GetComponent<Image>().color = new Color(0, 0, 0, 0);
+
+            //Setup Main Button
+            mainButton.name = "MainButton";
+            var mainButtonRT = mainButton.GetComponent<RectTransform>();
+            mainButtonRT.anchorMin = Vector2.zero;
+            mainButtonRT.anchorMax = Vector2.one;
+            mainButtonRT.sizeDelta = Vector2.zero;
+            Events.UnityEventTools.AddBoolPersistentListener(mainButton.GetComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(dropDownList.ToggleDropdownPanel), true);
+            var mainButtonText = mainButton.GetComponentInChildren<Text>();
+            mainButtonText.alignment = TextAnchor.MiddleLeft;
+            mainButtonText.text = "Select Item...";
+            var mainButtonTextRT = mainButtonText.GetComponent<RectTransform>();
+            mainButtonTextRT.anchorMin = Vector2.zero;
+            mainButtonTextRT.anchorMin = Vector2.zero;
+            mainButtonTextRT.pivot = new Vector2(0f, 1f);
+            mainButtonTextRT.offsetMin = new Vector2(10f,0f);
+            mainButtonTextRT.offsetMax = new Vector2(-4f,0f);
+            //Main Button Image
+            var mainButtonImageRT = mainButtonImage.GetComponent<RectTransform>();
+            mainButtonImageRT.anchorMin = Vector2.zero;
+            mainButtonImageRT.anchorMax = new Vector2(0f, 1f);
+            mainButtonImageRT.pivot = new Vector2(0f, 1f);
+            mainButtonImageRT.sizeDelta = Vector2.one;
+            mainButtonImageRT.offsetMin = new Vector2(4f, 4f);
+            mainButtonImageRT.offsetMax = new Vector2(22f, -4f);
+            mainButtonImageRT.GetComponent<Image>().color = new Color(1, 1, 1, 0);
+ 
+
+            //Setup Overlay
+            var overlayRT = overlay.GetComponent<RectTransform>();
+            overlayRT.anchorMin = new Vector2(0f, 1f);
+            overlayRT.anchorMax = new Vector2(0f, 1f);
+            overlayRT.sizeDelta = new Vector2(0f, 1f);
+            overlayRT.pivot = new Vector2(0f, 1f);
+            overlay.AddComponent<Image>().color = new Color(0.243f, 0.871f, 0f, 0f);
+            Events.UnityEventTools.AddBoolPersistentListener(overlay.AddComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(dropDownList.ToggleDropdownPanel), true);
+            //Overlay Scroll Panel
+            var overlayScrollPanelRT = overlayScrollPanel.GetComponent<RectTransform>();
+            overlayScrollPanelRT.position += new Vector3(0, -cbbRT.sizeDelta.y, 0);
+            overlayScrollPanelRT.anchorMin = new Vector2(0f, 1f);
+            overlayScrollPanelRT.anchorMax = new Vector2(0f, 1f);
+            overlayScrollPanelRT.sizeDelta = new Vector2(cbbRT.sizeDelta.x, cbbRT.sizeDelta.y * 3);
+            overlayScrollPanelRT.pivot = new Vector2(0f, 1f);
+            overlayScrollPanel.AddComponent<Image>();
+            overlayScrollPanel.AddComponent<Mask>();
+            var scrollRect = overlayScrollPanel.AddComponent<ScrollRect>();
+            scrollRect.horizontal = false;
+            scrollRect.movementType = ScrollRect.MovementType.Clamped;
+            scrollRect.verticalScrollbar = overlayScrollPanelScrollBar.GetComponent<Scrollbar>();
+            //Overlay Items list
+            var overlayScrollPanelItemsRT = overlayScrollPanelItems.GetComponent<RectTransform>();
+            overlayScrollPanelItemsRT.position += new Vector3(5, 0, 0);
+            overlayScrollPanelItemsRT.anchorMin = new Vector2(0f, 1f);
+            overlayScrollPanelItemsRT.anchorMax = new Vector2(0f, 1f);
+            overlayScrollPanelItemsRT.sizeDelta = new Vector2(120f, 5f);
+            overlayScrollPanelItemsRT.pivot = new Vector2(0f, 1f);
+            scrollRect.content = overlayScrollPanelItemsRT;
+            var overlayScrollPanelItemsVLG = overlayScrollPanelItems.AddComponent<VerticalLayoutGroup>();
+            overlayScrollPanelItemsVLG.padding = new RectOffset(0, 0, 5, 0);
+            var overlayScrollPanelItemsFitter = overlayScrollPanelItems.AddComponent<ContentSizeFitter>();
+            overlayScrollPanelItemsFitter.verticalFit = ContentSizeFitter.FitMode.MinSize;
+            //Overlay Scrollbar
+            var overlayScrollPanelScrollbarRT = overlayScrollPanelScrollBar.GetComponent<RectTransform>();
+            overlayScrollPanelScrollbarRT.anchorMin = new Vector2(1f, 0f);
+            overlayScrollPanelScrollbarRT.anchorMax = Vector2.one;
+            overlayScrollPanelScrollbarRT.sizeDelta = new Vector2(cbbRT.sizeDelta.y, 0f);
+            overlayScrollPanelScrollbarRT.pivot = Vector2.one;
+            overlayScrollPanelScrollbarRT.GetComponent<Scrollbar>().direction = Scrollbar.Direction.BottomToTop;
+            overlayScrollPanelScrollBar.transform.GetChild(0).name = "SlidingArea";
+
+            //Arrow Button
+            arrowText.name = "Arrow";
+            var arrowTextRT = arrowText.GetComponent<RectTransform>();
+            arrowTextRT.anchorMin = new Vector2(1f, 0f);
+            arrowTextRT.anchorMax = Vector2.one;
+            arrowTextRT.sizeDelta = new Vector2(cbbRT.sizeDelta.y, cbbRT.sizeDelta.y);
+            arrowTextRT.pivot = new Vector2(1f, 0.5f);
+            var arrowTextComponent = arrowText.GetComponent<Text>();
+            arrowTextComponent.text = "▼";
+            arrowTextComponent.alignment = TextAnchor.MiddleCenter;
+            var arrowTextCanvasGroup = arrowText.AddComponent<CanvasGroup>();
+            arrowTextCanvasGroup.interactable = false;
+            arrowTextCanvasGroup.blocksRaycasts = false;
+            Selection.activeGameObject = dropDownListRoot;
+        }
+
         [MenuItem("GameObject/UI/Extensions/Selection Box", false)]
         static public void AddSelectionBox(MenuCommand menuCommand)
         {
@@ -468,13 +692,59 @@ namespace UnityEditor.UI
             selectableArea.color = new Color(0.816f, 0.816f, 0.816f, 0.353f);
 
 
-            GameObject childSelectableItem = new GameObject("Selectable");
-            GameObjectUtility.SetParentAndAlign(childSelectableItem, go);
+            GameObject childSelectableItem = CreateUIObject("Selectable", go);
             childSelectableItem.AddComponent<Image>();
             childSelectableItem.AddComponent<ExampleSelectable>();
 
 
             Selection.activeGameObject = go;
+        }
+
+        [MenuItem("GameObject/UI/Extensions/Bound Tooltip/Tooltip", false)]
+        static public void AddBoundTooltip(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("Tooltip", menuCommand, s_ImageGUIElementSize);
+            var tooltip = go.AddComponent<BoundTooltipTrigger>();
+            tooltip.text = "This is my Tooltip Text";
+            var boundTooltip = go.AddComponent<Image>();
+            boundTooltip.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath); 
+
+            // if there is no ToolTipItem add one...
+            CreateToolTipItem(false, go);
+            Selection.activeGameObject = go;
+        }
+
+        private static void CreateToolTipItem(bool select)
+        {
+            CreateToolTipItem(select, null);
+        }
+
+        private static void CreateToolTipItem(bool select, GameObject parent)
+        {
+            var btti = Object.FindObjectOfType<BoundTooltipItem>();
+            if (btti == null)
+            {
+                var boundTooltipItem = CreateUIObject("ToolTipItem", parent.GetComponentInParent<Canvas>().gameObject);
+                btti = boundTooltipItem.AddComponent<BoundTooltipItem>();
+                var boundTooltipItemCanvasGroup = boundTooltipItem.AddComponent<CanvasGroup>();
+                boundTooltipItemCanvasGroup.interactable = false;
+                boundTooltipItemCanvasGroup.blocksRaycasts = false;
+                var boundTooltipItemImage = boundTooltipItem.AddComponent<Image>();
+                boundTooltipItemImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath); 
+                var boundTooltipItemText = CreateUIObject("Text", boundTooltipItem);
+                var boundTooltipItemTextRT = boundTooltipItemText.GetComponent<RectTransform>();
+                boundTooltipItemTextRT.anchorMin = Vector2.zero;
+                boundTooltipItemTextRT.anchorMax = Vector2.one;
+                boundTooltipItemTextRT.sizeDelta = Vector2.one;
+                var boundTooltipItemTextcomponent = boundTooltipItemText.AddComponent<Text>();
+                boundTooltipItemTextcomponent.alignment = TextAnchor.MiddleCenter;
+                Undo.RegisterCreatedObjectUndo(boundTooltipItem, "Create " + boundTooltipItem.name);
+            }
+
+            if (select && btti != null)
+            {
+                Selection.activeGameObject = btti.gameObject;
+            }
         }
 
         #endregion
@@ -573,6 +843,15 @@ namespace UnityEditor.UI
             return go;
         }
 
+        private static GameObject AddImageAsChild(GameObject parent)
+        {
+            GameObject go = CreateUIObject("Image", parent);
+
+            go.AddComponent<Image>();
+
+            return go;
+        }
+
         private static GameObject AddButtonAsChild(GameObject parent)
         {
             GameObject buttonRoot = CreateUIObject("Button", parent);
@@ -600,6 +879,7 @@ namespace UnityEditor.UI
 
             return buttonRoot;
         }
+
         #endregion
     }
 }

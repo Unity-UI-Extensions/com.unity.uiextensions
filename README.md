@@ -23,6 +23,11 @@ Control | Description | Menu Command | Component Command | Notes | Credits
 **HorizontalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Horizontal Scroll Snap | UI / Extensions / Horizontal Scroll Snap | | BinaryX
 **UIButton** | Improved Button control with additional events | UI / Extensions / UI Button | UI / Extensions / UI Button | | AriathTheWise
 **UIWindowBase** | A draggable Window implementation | UI / Extensions / UI Window Base | UI / Extensions / UI Window Base | | GXMark, alexzzzz, CaoMengde777, TroyDavis 
+**ComboBox** | A fixed combobox implementation for text | UI / Extensions / ComboBox | UI / Extensions / ComboBox | | Perchik
+**AutoCompleteComboBox** | A text combobox with autocomplete selection | UI / Extensions / AutoComplete ComboBox | UI / Extensions / AutoComplete ComboBox | | Perchik
+**DropDownList** | A basic drop down list with text and image support | UI / Extensions / Dropdown List | UI / Extensions / Dropdown List | | Perchik
+**BoundToolTip** | An alternate Tooltip implementation with central listener | UI / Extensions / Bound Tooltip / Tooltip | UI / Extensions / Bound Tooltip / Tooltip Item | Offset and tooltip placement needs work | Martin Sharkbomb
+ | | | UI / Extensions / Bound Tooltip / Tooltip Trigger |  | Martin Sharkbomb
 
 ## Effect components ##
 =====================
@@ -46,6 +51,7 @@ Component | Description | Component Command | Notes | Credits
 **ReturnKeyTrigger** | Does something?? | UI / Extensions / ReturnKey Trigger | | Melang, ddreaper
 **TabNavigation**  | An example Tab navigation script | UI / Extensions / Tab Navigation | | Melang, omatase
 **uGUITools** | | Menu / uGUI | | Senshi
+**FlowLayoutGroup** | A more rugged grid style layout group  | Layout / Extensions / Flow Layout Group | [Example Video](https://www.youtube.com/watch?v=tMe_3tJTZvc) | Simie
 
 
 *More to come*
