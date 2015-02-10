@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
@@ -27,6 +27,7 @@ namespace UnityEditor.UI
         //private static Vector2 s_ThinGUIElementSize     = new Vector2(kWidth, kThinHeight);
         private static Vector2 s_ImageGUIElementSize    = new Vector2(100f, 100f);
         private static Color   s_DefaultSelectableColor = new Color(1f, 1f, 1f, 1f);
+        private static Color s_TextColor = new Color(50f / 255f, 50f / 255f, 50f / 255f, 1f);
         #endregion
         #region Unity Builder methods - Do not change unless UI Source (Editor\MenuOptions) changes
         private static void SetPositionVisibleinSceneView(RectTransform canvasRTransform, RectTransform itemTransform)
@@ -105,7 +106,6 @@ namespace UnityEditor.UI
             return go;
         }
 
-        [MenuItem("GameObject/UI/Canvas", false, 2009)]
         static public void AddCanvas(MenuCommand menuCommand)
         {
             var go = CreateNewUI();
@@ -195,12 +195,20 @@ namespace UnityEditor.UI
             colors.pressedColor = new Color(0.698f, 0.698f, 0.698f);
             colors.disabledColor = new Color(0.521f, 0.521f, 0.521f);
         }
+
+        private static void SetDefaultTextValues(Text lbl)
+        {
+            // Set text values we want across UI elements in default controls.
+            // Don't set values which are the same as the default values for the Text component,
+            // since there's no point in that, and it's good to keep them as consistent as possible.
+            lbl.color = s_TextColor;
+        }
         #endregion
         #endregion
 
         #region UI Extensions "Create" Menu items
 
-        [MenuItem("GameObject/UI/Extensions/Horizontal�Scroll�Snap", false, 2000)]
+        [MenuItem("GameObject/UI/Extensions/Horizontal Scroll Snap", false)]
         static public void AddHorizontalScrollSnap(MenuCommand menuCommand)
         {
             GameObject horizontalScrollSnapRoot = CreateUIElementRoot("Horizontal Scroll Snap", menuCommand, s_ThickGUIElementSize);
@@ -273,7 +281,7 @@ namespace UnityEditor.UI
             Selection.activeGameObject = horizontalScrollSnapRoot;
         }
 
-        [MenuItem("GameObject/UI/Extensions/UI Button", false, 2001)]
+        [MenuItem("GameObject/UI/Extensions/UI Button", false)]
         static public void AddUIButton(MenuCommand menuCommand)
         {
             GameObject uiButtonRoot = CreateUIElementRoot("UI Button", menuCommand, s_ThickGUIElementSize);
@@ -301,7 +309,7 @@ namespace UnityEditor.UI
             Selection.activeGameObject = uiButtonRoot;
         }
 
-        [MenuItem("GameObject/UI/Extensions/UI Flippable", false, 2003)]
+        [MenuItem("GameObject/UI/Extensions/UI Flippable", false)]
         static public void AddUIFlippableImage(MenuCommand menuCommand)
         {
             GameObject go = CreateUIElementRoot("UI Flippable", menuCommand, s_ImageGUIElementSize);
@@ -310,7 +318,7 @@ namespace UnityEditor.UI
             Selection.activeGameObject = go;
         }
 
-        [MenuItem("GameObject/UI/Extensions/UI Window Base", false, 2004)]
+        [MenuItem("GameObject/UI/Extensions/UI Window Base", false)]
         static public void AddUIWindowBase(MenuCommand menuCommand)
         {
             GameObject go = CreateUIElementRoot("UI Window Base", menuCommand, s_ThickGUIElementSize);
@@ -319,7 +327,7 @@ namespace UnityEditor.UI
             Selection.activeGameObject = go;
         }
 
-        [MenuItem("GameObject/UI/Extensions/Accordion/Accordion Group", false, 2002)]
+        [MenuItem("GameObject/UI/Extensions/Accordion/Accordion Group", false)]
         static public void AddAccordionGroup(MenuCommand menuCommand)
         {
             GameObject go = CreateUIElementRoot("Accordion Group", menuCommand, s_ThickGUIElementSize);
@@ -330,7 +338,7 @@ namespace UnityEditor.UI
             Selection.activeGameObject = go;
         }
 
-        [MenuItem("GameObject/UI/Extensions/Accordion/Accordion Element", false, 2002)]
+        [MenuItem("GameObject/UI/Extensions/Accordion/Accordion Element", false)]
         static public void AddAccordionElement(MenuCommand menuCommand)
         {
             GameObject go = CreateUIElementRoot("Accordion Element", menuCommand, s_ThickGUIElementSize);
@@ -340,16 +348,103 @@ namespace UnityEditor.UI
 
         }
 
-        //Awaiting updated control from autor - Use PreFab for now
-        //[MenuItem("GameObject/UI/Extensions/ComboBox", false, 2002)]
-        //static public void AddComboBox(MenuCommand menuCommand)
-        //{
-        //    GameObject go = CreateUIElementRoot("ComboBox", menuCommand, s_ThickGUIElementSize);
-        //    go.AddComponent<ComboBox>();
-        //    Selection.activeGameObject = go;
-        //}
+        [MenuItem("GameObject/UI/Extensions/ComboBox", false)]
+        static public void AddComboBox(MenuCommand menuCommand)
+        {
+            GameObject comboBoxRoot = CreateUIElementRoot("ComboBox", menuCommand, s_ThickGUIElementSize);
 
-        [MenuItem("GameObject/UI/Extensions/Selection Box", false, 2009)]
+            //Create Template
+            GameObject itemTemplate = AddButtonAsChild(comboBoxRoot);
+
+            //Create Inputfield
+            GameObject inputField = AddInputFieldAsChild(comboBoxRoot);
+
+            //Create Overlay
+            GameObject overlay = CreateUIObject("Overlay", comboBoxRoot);
+            GameObject overlayScrollPanel = CreateUIObject("ScrollPanel", overlay);
+            GameObject overlayScrollPanelItems = CreateUIObject("Items", overlayScrollPanel);
+            GameObject overlayScrollPanelScrollBar = AddScrollbarAsChild(overlayScrollPanel);
+
+            //Create Arrow Button
+            GameObject arrowButton = AddButtonAsChild(comboBoxRoot);
+            
+            //Setup ComboBox
+            var comboBox = comboBoxRoot.AddComponent<ComboBox>();
+            var cbbRT = comboBoxRoot.GetComponent<RectTransform>();
+
+            //Setup Template
+            itemTemplate.name = "ItemTemplate";
+            var itemTemplateRT = itemTemplate.GetComponent<RectTransform>();
+            itemTemplateRT.sizeDelta = cbbRT.sizeDelta;
+            var itemTemplateButton = itemTemplate.GetComponent<Button>();
+            itemTemplateButton.transition = Selectable.Transition.None;
+            var itemTemplateLayoutElement = itemTemplate.AddComponent<LayoutElement>();
+            itemTemplateLayoutElement.minHeight = cbbRT.rect.height;
+            itemTemplate.SetActive(false);
+
+            //Setup InputField
+            var inputFieldRT = inputField.GetComponent<RectTransform>();
+            inputFieldRT.anchorMin = Vector2.zero;
+            inputFieldRT.anchorMax = Vector2.one;
+            inputFieldRT.sizeDelta = Vector2.zero;
+            Events.UnityEventTools.AddPersistentListener<string>(inputField.GetComponent<InputField>().onValueChange, new UnityEngine.Events.UnityAction<string>(comboBox.OnValueChanged));
+
+            //Setup Overlay
+            var overlayRT = overlay.GetComponent<RectTransform>();
+            overlayRT.anchorMin = new Vector2(0f, 1f);
+            overlayRT.anchorMax = new Vector2(0f, 1f);
+            overlayRT.sizeDelta = new Vector2(0f, 1f);
+            overlayRT.pivot = new Vector2(0f, 1f);
+            overlay.AddComponent<Image>().color = new Color(0.243f, 0.871f, 0f, 0f);
+            Events.UnityEventTools.AddBoolPersistentListener(overlay.AddComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(comboBox.ToggleDropdownPanel), true);
+            //Overlay Scroll Panel
+            var overlayScrollPanelRT = overlayScrollPanel.GetComponent<RectTransform>();
+            overlayScrollPanelRT.position += new Vector3(0, -cbbRT.sizeDelta.y, 0);
+            overlayScrollPanelRT.anchorMin = new Vector2(0f, 1f);
+            overlayScrollPanelRT.anchorMax = new Vector2(0f, 1f);
+            overlayScrollPanelRT.sizeDelta = new Vector2(cbbRT.sizeDelta.x, cbbRT.sizeDelta.y * 3);
+            overlayScrollPanelRT.pivot = new Vector2(0f, 1f);
+            overlayScrollPanel.AddComponent<Image>();
+            overlayScrollPanel.AddComponent<Mask>();
+            var scrollRect = overlayScrollPanel.AddComponent<ScrollRect>();
+            scrollRect.horizontal = false;
+            scrollRect.movementType = ScrollRect.MovementType.Clamped;
+            scrollRect.verticalScrollbar = overlayScrollPanelScrollBar.GetComponent<Scrollbar>();
+            //Overlay Items list
+            var overlayScrollPanelItemsRT = overlayScrollPanelItems.GetComponent<RectTransform>();
+            overlayScrollPanelItemsRT.position += new Vector3(5, 0, 0);
+            overlayScrollPanelItemsRT.anchorMin = new Vector2(0f, 1f);
+            overlayScrollPanelItemsRT.anchorMax = new Vector2(0f, 1f);
+            overlayScrollPanelItemsRT.sizeDelta = new Vector2(120f, 5f);
+            overlayScrollPanelItemsRT.pivot = new Vector2(0f, 1f);
+            scrollRect.content = overlayScrollPanelItemsRT;
+            var overlayScrollPanelItemsVLG = overlayScrollPanelItems.AddComponent<VerticalLayoutGroup>();
+            overlayScrollPanelItemsVLG.padding = new RectOffset(0, 0, 5, 0);
+            var overlayScrollPanelItemsFitter = overlayScrollPanelItems.AddComponent<ContentSizeFitter>();
+            overlayScrollPanelItemsFitter.verticalFit = ContentSizeFitter.FitMode.MinSize;
+            //Overlay Scrollbar
+            var overlayScrollPanelScrollbarRT = overlayScrollPanelScrollBar.GetComponent<RectTransform>();
+            overlayScrollPanelScrollbarRT.anchorMin = new Vector2(1f, 0f);
+            overlayScrollPanelScrollbarRT.anchorMax = Vector2.one;
+            overlayScrollPanelScrollbarRT.sizeDelta = new Vector2(cbbRT.sizeDelta.y, 0f);
+            overlayScrollPanelScrollbarRT.pivot = Vector2.one;
+            overlayScrollPanelScrollbarRT.GetComponent<Scrollbar>().direction = Scrollbar.Direction.BottomToTop;
+            overlayScrollPanelScrollBar.transform.GetChild(0).name = "SlidingArea";
+
+            //Arrow Button
+            arrowButton.name = "ArrowBtn";
+            var arrowButtonRT = arrowButton.GetComponent<RectTransform>();
+            arrowButtonRT.anchorMin = Vector2.one;
+            arrowButtonRT.anchorMax = Vector2.one;
+            arrowButtonRT.sizeDelta = new Vector2(cbbRT.sizeDelta.y, cbbRT.sizeDelta.y);
+            arrowButtonRT.pivot = Vector2.one;
+            Events.UnityEventTools.AddBoolPersistentListener(arrowButton.GetComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(comboBox.ToggleDropdownPanel), true);
+            arrowButton.GetComponentInChildren<Text>().text = "▼";
+
+            Selection.activeGameObject = comboBoxRoot;
+        }
+
+        [MenuItem("GameObject/UI/Extensions/Selection Box", false)]
         static public void AddSelectionBox(MenuCommand menuCommand)
         {
             var go = CreateNewUI();
@@ -382,6 +477,129 @@ namespace UnityEditor.UI
             Selection.activeGameObject = go;
         }
 
+        #endregion
+
+        #region Helper Functions
+        private static GameObject AddInputFieldAsChild(GameObject parent)
+        {
+            GameObject root = CreateUIObject("InputField", parent);
+
+            GameObject childPlaceholder = CreateUIObject("Placeholder", root);
+            GameObject childText = CreateUIObject("Text", root);
+
+            Image image = root.AddComponent<Image>();
+            image.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kInputFieldBackgroundPath);
+            image.type = Image.Type.Sliced;
+            image.color = s_DefaultSelectableColor;
+
+            InputField inputField = root.AddComponent<InputField>();
+            SetDefaultColorTransitionValues(inputField);
+
+            Text text = childText.AddComponent<Text>();
+            text.text = "";
+            text.supportRichText = false;
+            SetDefaultTextValues(text);
+
+            Text placeholder = childPlaceholder.AddComponent<Text>();
+            placeholder.text = "Enter text...";
+            placeholder.fontStyle = FontStyle.Italic;
+            // Make placeholder color half as opaque as normal text color.
+            Color placeholderColor = text.color;
+            placeholderColor.a *= 0.5f;
+            placeholder.color = placeholderColor;
+
+            RectTransform textRectTransform = childText.GetComponent<RectTransform>();
+            textRectTransform.anchorMin = Vector2.zero;
+            textRectTransform.anchorMax = Vector2.one;
+            textRectTransform.sizeDelta = Vector2.zero;
+            textRectTransform.offsetMin = new Vector2(10, 6);
+            textRectTransform.offsetMax = new Vector2(-10, -7);
+
+            RectTransform placeholderRectTransform = childPlaceholder.GetComponent<RectTransform>();
+            placeholderRectTransform.anchorMin = Vector2.zero;
+            placeholderRectTransform.anchorMax = Vector2.one;
+            placeholderRectTransform.sizeDelta = Vector2.zero;
+            placeholderRectTransform.offsetMin = new Vector2(10, 6);
+            placeholderRectTransform.offsetMax = new Vector2(-10, -7);
+
+            inputField.textComponent = text;
+            inputField.placeholder = placeholder;
+
+            return root;
+        }
+
+        private static GameObject AddScrollbarAsChild(GameObject parent)
+        {
+            // Create GOs Hierarchy
+            GameObject scrollbarRoot = CreateUIObject("Scrollbar", parent);
+
+            GameObject sliderArea = CreateUIObject("Sliding Area", scrollbarRoot);
+            GameObject handle = CreateUIObject("Handle", sliderArea);
+
+            Image bgImage = scrollbarRoot.AddComponent<Image>();
+            bgImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath);
+            bgImage.type = Image.Type.Sliced;
+            bgImage.color = s_DefaultSelectableColor;
+
+            Image handleImage = handle.AddComponent<Image>();
+            handleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+            handleImage.type = Image.Type.Sliced;
+            handleImage.color = s_DefaultSelectableColor;
+
+            RectTransform sliderAreaRect = sliderArea.GetComponent<RectTransform>();
+            sliderAreaRect.sizeDelta = new Vector2(-20, -20);
+            sliderAreaRect.anchorMin = Vector2.zero;
+            sliderAreaRect.anchorMax = Vector2.one;
+
+            RectTransform handleRect = handle.GetComponent<RectTransform>();
+            handleRect.sizeDelta = new Vector2(20, 20);
+
+            Scrollbar scrollbar = scrollbarRoot.AddComponent<Scrollbar>();
+            scrollbar.handleRect = handleRect;
+            scrollbar.targetGraphic = handleImage;
+            SetDefaultColorTransitionValues(scrollbar);
+
+            return scrollbarRoot;
+        }
+
+        private static GameObject AddTextAsChild(GameObject parent)
+        {
+            GameObject go = CreateUIObject("Text", parent);
+
+            Text lbl = go.AddComponent<Text>();
+            lbl.text = "New Text";
+            SetDefaultTextValues(lbl);
+
+            return go;
+        }
+
+        private static GameObject AddButtonAsChild(GameObject parent)
+        {
+            GameObject buttonRoot = CreateUIObject("Button", parent);
+
+            GameObject childText = new GameObject("Text");
+            GameObjectUtility.SetParentAndAlign(childText, buttonRoot);
+
+            Image image = buttonRoot.AddComponent<Image>();
+            image.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+            image.type = Image.Type.Sliced;
+            image.color = s_DefaultSelectableColor;
+
+            Button bt = buttonRoot.AddComponent<Button>();
+            SetDefaultColorTransitionValues(bt);
+
+            Text text = childText.AddComponent<Text>();
+            text.text = "Button";
+            text.alignment = TextAnchor.MiddleCenter;
+            SetDefaultTextValues(text);
+
+            RectTransform textRectTransform = childText.GetComponent<RectTransform>();
+            textRectTransform.anchorMin = Vector2.zero;
+            textRectTransform.anchorMax = Vector2.one;
+            textRectTransform.sizeDelta = Vector2.zero;
+
+            return buttonRoot;
+        }
         #endregion
     }
 }
