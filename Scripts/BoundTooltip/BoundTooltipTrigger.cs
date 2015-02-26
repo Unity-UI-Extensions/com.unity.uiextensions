@@ -1,5 +1,5 @@
-﻿///Credit Martin Sharkbomb
-///Sourced from - http://forum.unity3d.com/threads/tooltips.264395/#post-1957075
+﻿///Credit Martin Nerurkar // www.martin.nerurkar.de // www.sharkbombs.com
+///Sourced from - http://www.sharkbombs.com/2015/02/10/tooltips-with-the-new-unity-ui-ugui/
 
 using UnityEngine.EventSystems;
 

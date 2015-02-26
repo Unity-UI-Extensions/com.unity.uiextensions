@@ -24,7 +24,7 @@ namespace UnityEditor.UI
         private const string kCheckmarkPath                = "UI/Skin/Checkmark.psd";
 
         private static Vector2 s_ThickGUIElementSize    = new Vector2(kWidth, kThickHeight);
-        //private static Vector2 s_ThinGUIElementSize     = new Vector2(kWidth, kThinHeight);
+        private static Vector2 s_ThinGUIElementSize     = new Vector2(kWidth, kThinHeight);
         private static Vector2 s_ImageGUIElementSize    = new Vector2(100f, 100f);
         private static Color   s_DefaultSelectableColor = new Color(1f, 1f, 1f, 1f);
         private static Color s_TextColor = new Color(50f / 255f, 50f / 255f, 50f / 255f, 1f);
@@ -137,7 +137,6 @@ namespace UnityEditor.UI
             return root;
         }
 
-        [MenuItem("GameObject/UI/EventSystem", false, 2010)]
         public static void CreateEventSystem(MenuCommand menuCommand)
         {
             GameObject parent = menuCommand.context as GameObject;
@@ -746,6 +745,52 @@ namespace UnityEditor.UI
                 Selection.activeGameObject = btti.gameObject;
             }
         }
+
+        [MenuItem("GameObject/UI/Extensions/Progress Bar", false)]
+        static public void AddSlider(MenuCommand menuCommand)
+        {
+            // Create GOs Hierarchy
+            GameObject root = CreateUIElementRoot("Progress Bar", menuCommand, s_ThinGUIElementSize);
+
+            GameObject background = CreateUIObject("Background", root);
+            GameObject fillArea = CreateUIObject("Fill Area", root);
+            GameObject fill = CreateUIObject("Fill", fillArea);
+
+            // Background
+            Image backgroundImage = background.AddComponent<Image>();
+            backgroundImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath);
+            backgroundImage.type = Image.Type.Sliced;
+            backgroundImage.color = s_DefaultSelectableColor;
+            RectTransform backgroundRect = background.GetComponent<RectTransform>();
+            backgroundRect.anchorMin = new Vector2(0, 0.25f);
+            backgroundRect.anchorMax = new Vector2(1, 0.75f);
+            backgroundRect.sizeDelta = new Vector2(0, 0);
+
+            // Fill Area
+            RectTransform fillAreaRect = fillArea.GetComponent<RectTransform>();
+            fillAreaRect.anchorMin = new Vector2(0, 0.25f);
+            fillAreaRect.anchorMax = new Vector2(1, 0.75f);
+            fillAreaRect.anchoredPosition = Vector2.zero;
+            fillAreaRect.sizeDelta = Vector2.zero;
+
+            // Fill
+            Image fillImage = fill.AddComponent<Image>();
+            fillImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+            fillImage.type = Image.Type.Sliced;
+            fillImage.color = s_DefaultSelectableColor;
+
+            RectTransform fillRect = fill.GetComponent<RectTransform>();
+            fillRect.sizeDelta = Vector2.zero;
+
+            // Setup slider component
+            Slider slider = root.AddComponent<Slider>();
+            slider.value = 0;
+            slider.fillRect = fill.GetComponent<RectTransform>();
+            slider.targetGraphic = fillImage;
+            slider.direction = Slider.Direction.LeftToRight;
+            SetDefaultColorTransitionValues(slider);
+        }
+
 
         #endregion
 
