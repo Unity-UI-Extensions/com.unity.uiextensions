@@ -137,7 +137,6 @@ namespace UnityEditor.UI
             return root;
         }
 
-        [MenuItem("GameObject/UI/EventSystem", false, 2010)]
         public static void CreateEventSystem(MenuCommand menuCommand)
         {
             GameObject parent = menuCommand.context as GameObject;
