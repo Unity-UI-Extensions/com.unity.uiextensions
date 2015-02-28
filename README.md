@@ -8,7 +8,7 @@ This is an extension project for the new Unity UI system which can be found at:
 In this repository is a collection of extension scripts to enhance your Unity UI experience. These scripts have been gathered from many sources and combined and improved over time.
 (The majority of the scripts came from the Scripts thread on the [Unity UI forum here](http://bit.ly/UnityUIScriptsForumPost))
 You can either download / fork the project to access the scripts, or you can download this precompiled Unity Asset, chock full of goodness
-### [Unity UI Extensions Unity Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions.unitypackage?pk=550018)###
+### [Unity UI Extensions Unity Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions.unitypackage)###
 ---
 
 ## Controls and extensions listed in this project are: ##
