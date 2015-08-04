@@ -84,9 +84,9 @@ namespace UnityEngine.UI.Extensions
             {
                 image.color = color;
             }
-            else if (renderer)
+            else if (GetComponent<UnityEngine.Renderer>())
             {
-                renderer.material.color = color;
+                GetComponent<UnityEngine.Renderer>().material.color = color;
             }
 
 

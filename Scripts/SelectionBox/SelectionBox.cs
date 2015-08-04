@@ -235,7 +235,7 @@ namespace UnityEngine.UI.Extensions
 				} else {
 					//If it doesn't have a rectTransform, we need to get the radius so we can use it as an area around the center to detect a click.
 					//This works because a 2D or 3D renderer will both return a radius
-					var radius = selectable.transform.renderer.bounds.extents.magnitude;
+					var radius = selectable.transform.GetComponent<UnityEngine.Renderer>().bounds.extents.magnitude;
 					
 					var selectableScreenPoint = GetScreenPointOfSelectable(selectable);
 					
