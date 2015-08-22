@@ -70,7 +70,7 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 
-		public void Awake()
+		public void Start()
 		{
 			Initialize();
 		}
