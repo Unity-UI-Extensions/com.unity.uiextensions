@@ -4,103 +4,101 @@
 Simply place the script on the ScrollRect that contains the selectable children we'll be scroling to
 and drag'n'drop the RectTransform of the options "container" that we'll be scrolling.*/
 
-using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class UIScrollToSelection : MonoBehaviour {
+namespace UnityEngine.UI.Extensions
+{
+    public class UIScrollToSelection : MonoBehaviour
+    {
 
-/* ### VARIABLES ============================================================== */
+        /* ### VARIABLES ============================================================== */
 
-	// settings
-	public float scrollSpeed = 10f;
-	
-	[SerializeField]
-	private RectTransform layoutListGroup;
+        // settings
+        public float scrollSpeed = 10f;
 
-	// temporary variables
-	private RectTransform targetScrollObject;
-	private bool scrollToSelection = true;
+        [SerializeField]
+        private RectTransform layoutListGroup;
 
-	// references
-	private RectTransform scrollWindow;
-	private RectTransform currentCanvas;
-	private ScrollRect targetScrollRect;
-	
+        // temporary variables
+        private RectTransform targetScrollObject;
+        private bool scrollToSelection = true;
 
-/* ### MAIN METHODS =========================================================== */
-	// Use this for initialization
-	private void Start () {
-		targetScrollRect = GetComponent<ScrollRect>();
-		scrollWindow = targetScrollRect.GetComponent<RectTransform>();
-		currentCanvas = transform.root.GetComponent<RectTransform>();
-	}
-	
-	// Update is called once per frame
-	private void Update () {
-		ScrollRectToLevelSelection();
-	}
+        // references
+        private RectTransform scrollWindow;
+        private RectTransform currentCanvas;
+        private ScrollRect targetScrollRect;
 
-	private void ScrollRectToLevelSelection (){
-		// check main references
-		bool referencesAreIncorrect =
-			(targetScrollRect == null || layoutListGroup == null || scrollWindow == null);
-		if (referencesAreIncorrect == true){
-			return;
-		}
+        private EventSystem events = EventSystem.current;
 
-		// get calculation references
-		EventSystem events = EventSystem.current;
-		RectTransform selection = events.currentSelectedGameObject != null ?
-			events.currentSelectedGameObject.GetComponent<RectTransform>() :
-			null;
-		RectTransform lastSelection = events.lastSelectedGameObject != null ?
-			events.lastSelectedGameObject.GetComponent<RectTransform>() :
-			selection;
+        /* ### MAIN METHODS =========================================================== */
+        // Use this for initialization
+        private void Start()
+        {
+            targetScrollRect = GetComponent<ScrollRect>();
+            scrollWindow = targetScrollRect.GetComponent<RectTransform>();
+            currentCanvas = transform.root.GetComponent<RectTransform>();
+        }
 
-		if (selection != targetScrollObject)
-			scrollToSelection = true;
+        // Update is called once per frame
+        private void Update()
+        {
+            ScrollRectToLevelSelection();
+        }
 
-		// check if scrolling is possible
-		bool isScrollDirectionUnknown =
-			(selection == null || lastSelection == null || scrollToSelection == false);
+        private void ScrollRectToLevelSelection()
+        {
+            // check main references
+            bool referencesAreIncorrect =
+                (targetScrollRect == null || layoutListGroup == null || scrollWindow == null);
+            if (referencesAreIncorrect == true)
+            {
+                return;
+            }
 
-		if (isScrollDirectionUnknown == true || selection.transform.parent != layoutListGroup.transform)
-			return;
+            // get calculation references
+            RectTransform selection = events.currentSelectedGameObject != null ?
+                events.currentSelectedGameObject.GetComponent<RectTransform>() :
+                null;
+            RectTransform lastSelection = events.lastSelectedGameObject != null ?
+                events.lastSelectedGameObject.GetComponent<RectTransform>() :
+                selection;
 
-		// move the current scroll rect to correct position
-		float selectionPos = -selection.anchoredPosition.y;
-		int direction =	(int)Mathf.Sign(selection.anchoredPosition.y - lastSelection.anchoredPosition.y);
+            if (selection != targetScrollObject)
+                scrollToSelection = true;
 
-		float elementHeight = layoutListGroup.sizeDelta.y / layoutListGroup.transform.childCount;
-		float maskHeight = currentCanvas.sizeDelta.y + scrollWindow.sizeDelta.y;
-		float listPixelAnchor = layoutListGroup.anchoredPosition.y;
+            // check if scrolling is possible
+            bool isScrollDirectionUnknown =
+                (selection == null || lastSelection == null || scrollToSelection == false);
 
-		// get the element offset value depending on the cursor move direction
-		float offlimitsValue = 0;
-		if (direction > 0 && selectionPos < listPixelAnchor)
-		{
-			offlimitsValue = listPixelAnchor - selectionPos;
-		}
-		if (direction < 0 && selectionPos + elementHeight > listPixelAnchor + maskHeight)
-		{
-			offlimitsValue = (listPixelAnchor + maskHeight) - (selectionPos + elementHeight);
-		}
-		// move the target scroll rect
-		targetScrollRect.verticalNormalizedPosition +=
-			(offlimitsValue / layoutListGroup.sizeDelta.y) * Time.deltaTime * scrollSpeed;
-		// check if we reached our destination
-		if (Mathf.Abs(offlimitsValue) < 2f)
-			scrollToSelection = false;
-		// save last object we were "heading to" to prevent blocking
-		targetScrollObject = selection;
-	}
+            if (isScrollDirectionUnknown == true || selection.transform.parent != layoutListGroup.transform)
+                return;
 
-/* ### ENUMS ================================================================== */
-	
+            // move the current scroll rect to correct position
+            float selectionPos = -selection.anchoredPosition.y;
+            int direction = (int)Mathf.Sign(selection.anchoredPosition.y - lastSelection.anchoredPosition.y);
 
-/* ### CUSTOM TYPES =========================================================== */
-	
-	
+            float elementHeight = layoutListGroup.sizeDelta.y / layoutListGroup.transform.childCount;
+            float maskHeight = currentCanvas.sizeDelta.y + scrollWindow.sizeDelta.y;
+            float listPixelAnchor = layoutListGroup.anchoredPosition.y;
+
+            // get the element offset value depending on the cursor move direction
+            float offlimitsValue = 0;
+            if (direction > 0 && selectionPos < listPixelAnchor)
+            {
+                offlimitsValue = listPixelAnchor - selectionPos;
+            }
+            if (direction < 0 && selectionPos + elementHeight > listPixelAnchor + maskHeight)
+            {
+                offlimitsValue = (listPixelAnchor + maskHeight) - (selectionPos + elementHeight);
+            }
+            // move the target scroll rect
+            targetScrollRect.verticalNormalizedPosition +=
+                (offlimitsValue / layoutListGroup.sizeDelta.y) * Time.deltaTime * scrollSpeed;
+            // check if we reached our destination
+            if (Mathf.Abs(offlimitsValue) < 2f)
+                scrollToSelection = false;
+            // save last object we were "heading to" to prevent blocking
+            targetScrollObject = selection;
+        }
+    }
 }
