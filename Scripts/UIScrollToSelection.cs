@@ -1,4 +1,5 @@
-﻿/// sourced from: http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/page-2#post-2011648
+﻿/// Credit zero3growlithe
+/// sourced from: http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/page-2#post-2011648
 
 /*USAGE:
 Simply place the script on the ScrollRect that contains the selectable children we'll be scroling to
@@ -8,10 +9,11 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
+    [RequireComponent(typeof(ScrollRect))]
     public class UIScrollToSelection : MonoBehaviour
     {
 
-        /* ### VARIABLES ============================================================== */
+        #region Variables
 
         // settings
         public float scrollSpeed = 10f;
@@ -29,8 +31,8 @@ namespace UnityEngine.UI.Extensions
         private ScrollRect targetScrollRect;
 
         private EventSystem events = EventSystem.current;
+        #endregion
 
-        /* ### MAIN METHODS =========================================================== */
         // Use this for initialization
         private void Start()
         {

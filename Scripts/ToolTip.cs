@@ -32,11 +32,11 @@ namespace UnityEngine.UI.Extensions
         //if the tooltip is inside a UI element
         private bool _inside;
 
-        private bool _xShifted, _yShifted = false;
+        // private bool _xShifted, _yShifted = false;
 
         private float width, height, canvasWidth, canvasHeight;
 
-        private int screenWidth, screenHeight;
+        // private int screenWidth, screenHeight;
 
         private float YShift,xShift;
 
@@ -57,17 +57,15 @@ namespace UnityEngine.UI.Extensions
             _inside = false;
 
             //size of the screen
-            screenWidth = Screen.width;
-            screenHeight = Screen.height;
+            // screenWidth = Screen.width;
+            // screenHeight = Screen.height;
 
             xShift = 0f;
             YShift = -30f;
 
-            _xShifted = _yShifted = false;
-
+            // _xShifted = _yShifted = false;
 
             this.gameObject.SetActive(false);
-
         }
 
         //Call this function externally to set the text of the template and activate the tooltip

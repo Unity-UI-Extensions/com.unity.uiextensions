@@ -5,15 +5,19 @@ namespace UnityEngine.UI.Extensions
 {
     public class ColorPickerTester : MonoBehaviour
     {
-        public Renderer renderer;
+        public Renderer pickerRenderer;
         public HSVPicker picker;
 
+        void Awake()
+        {
+            pickerRenderer = GetComponent<Renderer>();
+        }
         // Use this for initialization
         void Start()
         {
             picker.onValueChanged.AddListener(color =>
             {
-                renderer.material.color = color;
+                pickerRenderer.material.color = color;
             });
         }
     }

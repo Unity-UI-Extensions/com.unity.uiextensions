@@ -236,7 +236,7 @@ namespace UnityEditor.UI
             horizontalScrollSnapRoot.AddComponent<HorizontalScrollSnap>();
 
             //Setup Content container
-            RectTransform rectTransformContent = childContent.AddComponent<RectTransform>();
+            RectTransform rectTransformContent = childContent.GetComponent<RectTransform>();
             rectTransformContent.anchorMin = Vector2.zero;
             rectTransformContent.anchorMax = new Vector2(1f, 1f);
             //rectTransformContent.anchoredPosition = Vector2.zero;
@@ -791,6 +791,21 @@ namespace UnityEditor.UI
             SetDefaultColorTransitionValues(slider);
         }
 
+        [MenuItem("GameObject/UI/Extensions/UI Line Renderer", false)]
+        static public void AddUILineRenderer(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("UI LineRenderer", menuCommand, s_ImageGUIElementSize);
+            go.AddComponent<UILineRenderer>();
+            Selection.activeGameObject = go;
+        }
+
+        [MenuItem("GameObject/UI/Extensions/UI Line Texture Renderer", false)]
+        static public void AddUILineTextureRenderer(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("UI LineTextureRenderer", menuCommand, s_ImageGUIElementSize);
+            go.AddComponent<UILineTextureRenderer>();
+            Selection.activeGameObject = go;
+        }
 
         #endregion
 
