@@ -323,8 +323,9 @@ namespace UnityEditor.UI
             pageImage.color = s_DefaultSelectableColor;
 
             RectTransform rectTransformPage01 = childPage01.GetComponent<RectTransform>();
-            rectTransformPage01.anchorMin = new Vector2(0f, 0.5f);
-            rectTransformPage01.anchorMax = new Vector2(0f, 0.5f);
+            rectTransformPage01.anchorMin = new Vector2(0.5f, 0f);
+            rectTransformPage01.anchorMax = new Vector2(0.5f, 0f);
+            rectTransformPage01.anchoredPosition = new Vector2(-rectTransformPage01.sizeDelta.x / 2, rectTransformPage01.sizeDelta.y / 2);
             //rectTransformPage01.anchoredPosition = Vector2.zero;
             //rectTransformPage01.sizeDelta = Vector2.zero;
             rectTransformPage01.pivot = new Vector2(0f, 0.5f);
