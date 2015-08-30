@@ -1,4 +1,4 @@
-﻿/// Credit Martin Sharkbomb 
+﻿/// Credit jonbro5556 
 /// Based on original LineRender script by jack.sydorenko 
 /// Sourced from - http://forum.unity3d.com/threads/new-ui-and-line-drawing.253772/
 

@@ -14,7 +14,7 @@ namespace UnityEngine.EventSystems.Extensions
         /// <summary>
         /// The Input axis name used to activate the object under the reticle.
         /// </summary>
-        public string activateAxis = "Interact";
+        public string activateAxis = "Submit";
 
         /// <summary>
         /// The aimer offset position. Aimer is center screen use this offset to change that.

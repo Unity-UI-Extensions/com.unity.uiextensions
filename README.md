@@ -14,7 +14,7 @@ You can either download / fork the project to access the scripts, or you can dow
 
 ## Controls and extensions listed in this project are: ##
 
-## New Controls ##
+## Controls ##
 ================
 
 Control | Description | Menu Command | Component Command | Notes | Credits
@@ -25,6 +25,7 @@ Control | Description | Menu Command | Component Command | Notes | Credits
 **HSVPicker** | A colour picker UI | N/A | UI / Extensions / HSVPicker | Project folder includes prefab | judah4
 **SelectionBox** | An RTS style selection box control | UI / Extensions / Selection Box | UI / Extensions / Selection Box | Needs documentation on use, selection area defines the area on screen that is selectable.  Uses script on selectable items on screen | Korindian, BenZed
 **HorizontalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Horizontal Scroll Snap | UI / Extensions / Horizontal Scroll Snap | | BinaryX
+**VerticalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Vertical Scroll Snap | UI / Extensions / Vertical Scroll Snap | | BinaryX, Simon Darkside Jackson
 **UIButton** | Improved Button control with additional events | UI / Extensions / UI Button | UI / Extensions / UI Button | | AriathTheWise
 **UIWindowBase** | A draggable Window implementation | UI / Extensions / UI Window Base | UI / Extensions / UI Window Base | | GXMark, alexzzzz, CaoMengde777, TroyDavis 
 **ComboBox** | A fixed combobox implementation for text | UI / Extensions / ComboBox | UI / Extensions / ComboBox | | Perchik
@@ -32,6 +33,8 @@ Control | Description | Menu Command | Component Command | Notes | Credits
 **DropDownList** | A basic drop down list with text and image support | UI / Extensions / Dropdown List | UI / Extensions / Dropdown List | | Perchik
 **BoundToolTip** | An alternate Tooltip implementation with central listener | UI / Extensions / Bound Tooltip / Tooltip | UI / Extensions / Bound Tooltip / Tooltip Item | Offset and tooltip placement needs work | Martin Sharkbomb
  | | | UI / Extensions / Bound Tooltip / Tooltip Trigger |  | Martin Sharkbomb
+**LineRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / UI Line Renderer | UI / Extensions / UI Line Renderer | Can be applied to a Canvas or other Graphic bearing UI GO | jack.sydorenko
+**UILineTextureRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / UI Line Texture Renderer | UI / Extensions / UI Line Texture Renderer | Can be applied to a Canvas or other Graphic bearing UI GO, with Texture support | jack.sydorenko, jonbro5556
 
 ## Effect components ##
 =====================
@@ -53,16 +56,23 @@ Effect   | Description | Component Command | Notes  | Credits
 Component | Description | Component Command | Notes | Credits
 --------- | -------------- | ---------------------------- | ------- | ------
 **ReturnKeyTrigger** | Does something?? | UI / Extensions / ReturnKey Trigger | | Melang, ddreaper
-**TabNavigation**  | An example Tab navigation script | UI / Extensions / Tab Navigation | | Melang, omatase
+**TabNavigation**  | An example Tab navigation script, updated to add manual navigation | UI / Extensions / Tab Navigation | | Melang, omatase
 **uGUITools** | | Menu / uGUI | | Senshi
 **FlowLayoutGroup** | A more rugged grid style layout group  | Layout / Extensions / Flow Layout Group | [Example Video](https://www.youtube.com/watch?v=tMe_3tJTZvc) | Simie
+**ScrollRectTweener** | Tweening solution for ScrollRects, add smoothing automatically  | UI / Extensions / ScrollRectTweener |  | Martin Sharkbomb
+**ScrollRectLinker** | ScrollRect Linker script, enable multiple ScrollRects to move together  | UI / Extensions / ScrollRectLinker |  | Martin Sharkbomb
+**ScrollRectEx** | Improved ScrollRect control, enables support for Nested ScrollRects  | UI / Extensions / ScrollRectEx |  | CaptainSchnittchen, GamesRUs
+**InputFocus** | Enhanced InputField control for forms, enables Enter to submit and other features  | UI / Extensions / InputFocus |  | Zelek
+**ImageExtended** | Improved Image control with rotation support and use of filled type without an Image (useful for masks)  | UI / Extensions / Image Extended |  | Ges
+**UIScrollToSelection** | Enables a ScrollRect to scroll based on the selected child automatically  | UI / Extensions / UIScrollToSelection |  | zero3growlithe
+**AimerInputModule** | Replacement Input module to allow for a reciclue to interace with WorldSpace canvas UI  | UI / Extensions / Aimer Input Module |  | Chris Trueman
 
 
 *More to come*
 
 ### How do I get set up? ###
 
-Either clone / download this repository to your machine and then copy the scripts in, or use the pre-packaged .UnityPackage and import it as a custom package in to your project.
+Either clone / download this repository to your machine and then copy the scripts in, or use the pre-packaged .UnityPackage for your version of Unity and import it as a custom package in to your project.
 
 ### Contribution guidelines ###
 
