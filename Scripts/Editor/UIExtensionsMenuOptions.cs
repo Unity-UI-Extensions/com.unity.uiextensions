@@ -233,6 +233,7 @@ namespace UnityEditor.UI
 
             ScrollRect sr = horizontalScrollSnapRoot.AddComponent<ScrollRect>();
             sr.vertical = false;
+            sr.horizontal = true;
             horizontalScrollSnapRoot.AddComponent<HorizontalScrollSnap>();
 
             //Setup Content container
@@ -276,6 +277,78 @@ namespace UnityEditor.UI
 
             Selection.activeGameObject = horizontalScrollSnapRoot;
         }
+
+        [MenuItem("GameObject/UI/Extensions/Vertical Scroll Snap", false)]
+        static public void AddVerticallScrollSnap(MenuCommand menuCommand)
+        {
+            GameObject verticalScrollSnapRoot = CreateUIElementRoot("Vertical Scroll Snap", menuCommand, s_ThickGUIElementSize);
+
+            GameObject childContent = CreateUIObject("Content", verticalScrollSnapRoot);
+
+            GameObject childPage01 = CreateUIObject("Page_01", childContent);
+
+            GameObject childText = CreateUIObject("Text", childPage01);
+
+            // Set RectTransform to stretch
+            RectTransform rectTransformScrollSnapRoot = verticalScrollSnapRoot.GetComponent<RectTransform>();
+            rectTransformScrollSnapRoot.anchorMin = new Vector2(0.5f, 0.5f);
+            rectTransformScrollSnapRoot.anchorMax = new Vector2(0.5f, 0.5f);
+            rectTransformScrollSnapRoot.anchoredPosition = Vector2.zero;
+            rectTransformScrollSnapRoot.sizeDelta = new Vector2(300f, 150f);
+
+
+            Image image = verticalScrollSnapRoot.AddComponent<Image>();
+            image.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath);
+            image.type = Image.Type.Sliced;
+            image.color = new Color(1f, 1f, 1f, 0.392f);
+
+            ScrollRect sr = verticalScrollSnapRoot.AddComponent<ScrollRect>();
+            sr.vertical = true;
+            sr.horizontal = false;
+            verticalScrollSnapRoot.AddComponent<VerticalScrollSnap>();
+
+            //Setup Content container
+            RectTransform rectTransformContent = childContent.GetComponent<RectTransform>();
+            rectTransformContent.anchorMin = Vector2.zero;
+            rectTransformContent.anchorMax = new Vector2(1f, 1f);
+            //rectTransformContent.anchoredPosition = Vector2.zero;
+            rectTransformContent.sizeDelta = Vector2.zero;
+
+            sr.content = rectTransformContent;
+
+            //Setup 1st Child
+            Image pageImage = childPage01.AddComponent<Image>();
+            pageImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+            pageImage.type = Image.Type.Sliced;
+            pageImage.color = s_DefaultSelectableColor;
+
+            RectTransform rectTransformPage01 = childPage01.GetComponent<RectTransform>();
+            rectTransformPage01.anchorMin = new Vector2(0f, 0.5f);
+            rectTransformPage01.anchorMax = new Vector2(0f, 0.5f);
+            //rectTransformPage01.anchoredPosition = Vector2.zero;
+            //rectTransformPage01.sizeDelta = Vector2.zero;
+            rectTransformPage01.pivot = new Vector2(0f, 0.5f);
+
+            //Setup Text on Page01
+            Text text = childText.AddComponent<Text>();
+            text.text = "Page_01";
+            text.alignment = TextAnchor.MiddleCenter;
+            text.color = new Color(0.196f, 0.196f, 0.196f);
+
+            //Setup Text 1st Child
+            RectTransform rectTransformPage01Text = childText.GetComponent<RectTransform>();
+            rectTransformPage01Text.anchorMin = new Vector2(0.5f, 0.5f);
+            rectTransformPage01Text.anchorMax = new Vector2(0.5f, 0.5f);
+            //rectTransformPage01Text.anchoredPosition = Vector2.zero;
+            //rectTransformPage01Text.sizeDelta = Vector2.zero;
+            rectTransformPage01Text.pivot = new Vector2(0.5f, 0.5f);
+
+
+            //Need to add example child components like in the Asset (SJ)
+
+            Selection.activeGameObject = verticalScrollSnapRoot;
+        }
+
 
         [MenuItem("GameObject/UI/Extensions/UI Button", false)]
         static public void AddUIButton(MenuCommand menuCommand)
