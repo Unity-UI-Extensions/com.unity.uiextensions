@@ -15,6 +15,11 @@ In this repository is a collection of extension scripts to enhance your Unity UI
 You can either download / fork the project to access the scripts, or you can download this precompiled Unity Asset, chock full of goodness
 ### [Unity UI Extensions Unity 4.x Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-4.x.unitypackage)###
 ### [Unity UI Extensions Unity 5.1 Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.1.unitypackage)###
+
+##Getting Started##
+To get started with the project, here's a little guide:
+
+[![View Getting Started Video](http://img.youtube.com/vi/sVLeYmsNQAI/0.jpg)](http://www.youtube.com/watch?v=sVLeYmsNQAI "Unity UI getting started video")
 ---
 
 ## Controls and extensions listed in this project are: ##
@@ -26,20 +31,20 @@ Control | Description | Menu Command | Component Command | Notes | Credits
 --------- | -------------- | ---------------------- | ---------------------------- | ------- | ----------
 **Accordion** | An Acordian style control with animated segments. Sourced from [here](http://forum.unity3d.com/threads/accordion-type-layout.271818/). For more details, [see this video demonstration](https://www.youtube.com/watch?v=YSOSVTU5klw) | N/A | Component / UI / Extensions / AccordionGroup | | ChoMPHi
  | | | Component / UI / Extensions / AccordionItem |  | ChoMPHi
-**ComboBox** | A styled Combo Box control | UI / Extensions / Combobox | UI / Extensions / Combobox | Still being improved by author | perchik
 **HSVPicker** | A colour picker UI | N/A | UI / Extensions / HSVPicker | Project folder includes prefab | judah4
-**SelectionBox** | An RTS style selection box control | UI / Extensions / Selection Box | UI / Extensions / Selection Box | Needs documentation on use, selection area defines the area on screen that is selectable.  Uses script on selectable items on screen | Korindian, BenZed
-**HorizontalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Horizontal Scroll Snap | UI / Extensions / Horizontal Scroll Snap | | BinaryX
-**VerticalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Vertical Scroll Snap | UI / Extensions / Vertical Scroll Snap | | BinaryX, Simon Darkside Jackson
-**UIButton** | Improved Button control with additional events | UI / Extensions / UI Button | UI / Extensions / UI Button | | AriathTheWise
-**UIWindowBase** | A draggable Window implementation | UI / Extensions / UI Window Base | UI / Extensions / UI Window Base | | GXMark, alexzzzz, CaoMengde777, TroyDavis 
-**ComboBox** | A fixed combobox implementation for text | UI / Extensions / ComboBox | UI / Extensions / ComboBox | | Perchik
-**AutoCompleteComboBox** | A text combobox with autocomplete selection | UI / Extensions / AutoComplete ComboBox | UI / Extensions / AutoComplete ComboBox | | Perchik
-**DropDownList** | A basic drop down list with text and image support | UI / Extensions / Dropdown List | UI / Extensions / Dropdown List | | Perchik
+**SelectionBox** | An RTS style selection box control | UI / Extensions / Selection Box | UI / Extensions / Selection Box |[tutorial video](https://www.youtube.com/watch?v=UtM3HejKL5s)| Korindian, BenZed
+**HorizontalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Horizontal Scroll Snap | UI / Extensions / Horizontal Scroll Snap |[tutorial video](https://www.youtube.com/watch?v=KJlIlWHlfMo)| BinaryX
+**VerticalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Vertical Scroll Snap | UI / Extensions / Vertical Scroll Snap |[tutorial video](https://www.youtube.com/watch?v=KJlIlWHlfMo)| BinaryX, Simon Darkside Jackson
+**UIButton** | Improved Button control with additional events | UI / Extensions / UI Button | UI / Extensions / UI Button |[tutorial video](https://www.youtube.com/watch?v=Htt2RNa2qy0)| AriathTheWise
+**UIFlippable** | Improved Image control with image flipping options | UI / Extensions / UI Flippable | UI / Extensions / Flippable |[tutorial video](https://www.youtube.com/watch?v=Htt2RNa2qy0)| ChoMPHi
+**UIWindowBase** | A draggable Window implementation | UI / Extensions / UI Window Base | UI / Extensions / UI Window Base |[tutorial video](https://www.youtube.com/watch?v=Htt2RNa2qy0)| GXMark, alexzzzz, CaoMengde777, TroyDavis 
+**ComboBox** | A fixed combobox implementation for text | UI / Extensions / ComboBox | UI / Extensions / ComboBox |[tutorial video](https://www.youtube.com/watch?v=JrEfs47FoOE)| Perchik
+**AutoCompleteComboBox** | A text combobox with autocomplete selection | UI / Extensions / AutoComplete ComboBox | UI / Extensions / AutoComplete ComboBox |[tutorial video](https://www.youtube.com/watch?v=JrEfs47FoOE)| Perchik
+**DropDownList** | A basic drop down list with text and image support | UI / Extensions / Dropdown List | UI / Extensions / Dropdown List |[tutorial video](https://www.youtube.com/watch?v=JrEfs47FoOE)| Perchik
 **BoundToolTip** | An alternate Tooltip implementation with central listener | UI / Extensions / Bound Tooltip / Tooltip | UI / Extensions / Bound Tooltip / Tooltip Item | Offset and tooltip placement needs work | Martin Sharkbomb
  | | | UI / Extensions / Bound Tooltip / Tooltip Trigger |  | Martin Sharkbomb
-**LineRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / UI Line Renderer | UI / Extensions / UI Line Renderer | Can be applied to a Canvas or other Graphic bearing UI GO | jack.sydorenko
-**UILineTextureRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / UI Line Texture Renderer | UI / Extensions / UI Line Texture Renderer | Can be applied to a Canvas or other Graphic bearing UI GO, with Texture support | jack.sydorenko, jonbro5556
+**LineRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / UI Line Renderer | UI / Extensions / UI Line Renderer |[tutorial video](https://www.youtube.com/watch?v=OElcWAZGHi0)| jack.sydorenko
+**UILineTextureRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / UI Line Texture Renderer | UI / Extensions / UI Line Texture Renderer |[tutorial video](https://www.youtube.com/watch?v=OElcWAZGHi0)| jack.sydorenko, jonbro5556
 
 ## Effect components ##
 =====================
