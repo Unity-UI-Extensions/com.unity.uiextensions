@@ -3,8 +3,8 @@
 This is an extension project for the new Unity UI system which can be found at:
 [Unity UI Source](https://bitbucket.org/Unity-Technologies/ui)
 
-Intro
-![Introduction Video](https://www.youtube.com/watch?v=njoIeE4akq0 "Optional title")
+##Intro##
+For more info, here's a little [Introduction Video](https://www.youtube.com/watch?v=njoIeE4akq0) for the project
 
 ### What is this repository for? ###
 
