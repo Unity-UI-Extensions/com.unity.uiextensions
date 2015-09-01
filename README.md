@@ -5,6 +5,7 @@ This is an extension project for the new Unity UI system which can be found at:
 
 ##Intro##
 For more info, here's a little [Introduction Video](https://www.youtube.com/embed/njoIeE4akq0) for the project
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/njoIeE4akq0/0.jpg)](http://www.youtube.com/watch?v=njoIeE4akq0 "Unity UI Extensions intro video")
 
 ### What is this repository for? ###
 
