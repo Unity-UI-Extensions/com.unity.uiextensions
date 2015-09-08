@@ -3,6 +3,8 @@
 This is an extension project for the new Unity UI system which can be found at:
 [Unity UI Source](https://bitbucket.org/Unity-Technologies/ui)
 
+#*Note# The extensions aren't compatible with 5.2 just yet, will get a 5.2 package out soon.  Just a few class/function renames and so on.
+
 ##Intro##
 For more info, here's a little introduction video for the project:
 
