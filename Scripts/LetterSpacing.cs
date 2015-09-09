@@ -46,7 +46,7 @@ using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
 {
 	[AddComponentMenu("UI/Effects/Extensions/Letter Spacing")]
-	public class LetterSpacing : BaseVertexEffect
+	public class LetterSpacing : BaseMeshEffect
 	{
 		[SerializeField]
 		private float m_spacing = 0f;
@@ -72,11 +72,13 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 		
-		public override void ModifyVertices(List<UIVertex> verts)
+		public override void ModifyMesh(Mesh mesh)
 		{
 			if (! IsActive()) return;
-			
-			Text text = GetComponent<Text>();
+
+            Vector3[] verts = mesh.vertices;
+
+            Text text = GetComponent<Text>();
 			if (text == null)
 			{
 				Debug.LogWarning("LetterSpacing: Missing Text component");
@@ -123,19 +125,19 @@ namespace UnityEngine.UI.Extensions
 					int idx4 = glyphIdx * 4 + 3;
 					
 					// Check for truncated text (doesn't generate verts for all characters)
-					if (idx4 > verts.Count - 1) return;
+					if (idx4 > verts.Length - 1) return;
 					
-					UIVertex vert1 = verts[idx1];
-					UIVertex vert2 = verts[idx2];
-					UIVertex vert3 = verts[idx3];
-					UIVertex vert4 = verts[idx4];
+					Vector3 vert1 = verts[idx1];
+                    Vector3 vert2 = verts[idx2];
+                    Vector3 vert3 = verts[idx3];
+                    Vector3 vert4 = verts[idx4];
 					
 					pos = Vector3.right * (letterOffset * charIdx - lineOffset);
 					
-					vert1.position += pos;
-					vert2.position += pos;
-					vert3.position += pos;
-					vert4.position += pos;
+					vert1 += pos;
+					vert2 += pos;
+					vert3 += pos;
+					vert4 += pos;
 					
 					verts[idx1] = vert1;
 					verts[idx2] = vert2;
@@ -148,6 +150,7 @@ namespace UnityEngine.UI.Extensions
 				// Offset for carriage return character that still generates verts
 				glyphIdx++;
 			}
-		}
+            mesh.vertices = verts;
+        }
 	}
 }

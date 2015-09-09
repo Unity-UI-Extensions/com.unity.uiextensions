@@ -6,7 +6,7 @@ namespace UnityEngine.UI.Extensions
 {
 	//An outline that looks a bit nicer than the default one. It has less "holes" in the outline by drawing more copies of the effect
 	[AddComponentMenu("UI/Effects/Extensions/Nicer Outline")]
-	public class NicerOutline : BaseVertexEffect
+	public class NicerOutline : BaseMeshEffect
 	{
 		[SerializeField]
 		private Color m_EffectColor = new Color (0f, 0f, 0f, 0.5f);
@@ -86,48 +86,55 @@ namespace UnityEngine.UI.Extensions
 				}
 			}
 		}
-		
 
-		//
-		// Methods
-		//
-		protected void ApplyShadow (List<UIVertex> verts, Color32 color, int start, int end, float x, float y)
-		{
-			//Debug.Log("verts count: "+verts.Count);
-			int num = verts.Count * 2;
-			if (verts.Capacity < num)
-			{
-				verts.Capacity = num;
-			}
-			for (int i = start; i < end; i++)
-			{
-				UIVertex uIVertex = verts [i];
-				verts.Add (uIVertex);
+        protected void ApplyShadowZeroAlloc(List<UIVertex> verts, Color32 color, int start, int end, float x, float y)
+        {
+            UIVertex vt;
 
-				Vector3 position = uIVertex.position;
-				//Debug.Log("vertex pos: "+position);
-				position.x += x;
-				position.y += y;
-				uIVertex.position = position;
-				Color32 color2 = color;
-				if (this.m_UseGraphicAlpha)
-				{
-					color2.a = (byte)(color2.a * verts [i].color.a / 255);
-				}
-				uIVertex.color = color2;
-				//uIVertex.color = (Color32)Color.blue;
-				verts [i] = uIVertex;
-			}
-		}
-		
-		public override void ModifyVertices (List<UIVertex> verts)
+            var neededCpacity = verts.Count * 2;
+            if (verts.Capacity < neededCpacity)
+                verts.Capacity = neededCpacity;
+
+            for (int i = start; i < end; ++i)
+            {
+                vt = verts[i];
+                verts.Add(vt);
+
+                Vector3 v = vt.position;
+                v.x += x;
+                v.y += y;
+                vt.position = v;
+                var newColor = color;
+                if (m_UseGraphicAlpha)
+                    newColor.a = (byte)((newColor.a * verts[i].color.a) / 255);
+                vt.color = newColor;
+                verts[i] = vt;
+            }
+        }
+
+        protected void ApplyShadow(List<UIVertex> verts, Color32 color, int start, int end, float x, float y)
+        {
+            var neededCpacity = verts.Count * 2;
+            if (verts.Capacity < neededCpacity)
+                verts.Capacity = neededCpacity;
+
+            ApplyShadowZeroAlloc(verts, color, start, end, x, y);
+        }
+
+
+        public override void ModifyMesh (Mesh mesh)
 		{
 			if (!this.IsActive ())
 			{
 				return;
 			}
+            List < UIVertex > verts = new List<UIVertex>();
+            using (var helper = new VertexHelper(mesh))
+            {
+                helper.GetUIVertexStream(verts);
+            }
 
-			Text foundtext = GetComponent<Text>();
+            Text foundtext = GetComponent<Text>();
 			
 			float best_fit_adjustment = 1f;
 			
@@ -166,7 +173,13 @@ namespace UnityEngine.UI.Extensions
 			start = count;
 			count = verts.Count;
 			this.ApplyShadow (verts, this.effectColor, start, verts.Count, 0, -distanceY);
-		}
+
+            using (var helper = new VertexHelper())
+            {
+                helper.AddUIVertexTriangleStream(verts);
+                helper.FillMesh(mesh);
+            }
+        }
 
 #if UNITY_EDITOR
 		protected override void OnValidate ()

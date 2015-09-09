@@ -17,14 +17,20 @@ namespace UnityEngine.UI.Extensions
 		//
 		// Methods
 		//
-		public override void ModifyVertices (List<UIVertex> verts)
+		public override void ModifyMesh (Mesh mesh)
 		{
 			if (!this.IsActive ())
 			{
 				return;
 			}
 
-			Text foundtext = GetComponent<Text>();
+            List<UIVertex> verts = new List<UIVertex>();
+            using (var helper = new VertexHelper(mesh))
+            {
+                helper.GetUIVertexStream(verts);
+            }
+
+            Text foundtext = GetComponent<Text>();
 
 			float best_fit_adjustment = 1f;
 
@@ -35,16 +41,22 @@ namespace UnityEngine.UI.Extensions
 			
 			int start = 0;
 			int count = verts.Count;
-			base.ApplyShadow (verts, base.effectColor, start, verts.Count, base.effectDistance.x*best_fit_adjustment, base.effectDistance.y*best_fit_adjustment);
+			base.ApplyShadowZeroAlloc(verts, base.effectColor, start, verts.Count, base.effectDistance.x*best_fit_adjustment, base.effectDistance.y*best_fit_adjustment);
 			start = count;
 			count = verts.Count;
-			base.ApplyShadow (verts, base.effectColor, start, verts.Count, base.effectDistance.x*best_fit_adjustment, -base.effectDistance.y*best_fit_adjustment);
+			base.ApplyShadowZeroAlloc(verts, base.effectColor, start, verts.Count, base.effectDistance.x*best_fit_adjustment, -base.effectDistance.y*best_fit_adjustment);
 			start = count;
 			count = verts.Count;
-			base.ApplyShadow (verts, base.effectColor, start, verts.Count, -base.effectDistance.x*best_fit_adjustment, base.effectDistance.y*best_fit_adjustment);
+			base.ApplyShadowZeroAlloc(verts, base.effectColor, start, verts.Count, -base.effectDistance.x*best_fit_adjustment, base.effectDistance.y*best_fit_adjustment);
 			start = count;
 			count = verts.Count;
-			base.ApplyShadow (verts, base.effectColor, start, verts.Count, -base.effectDistance.x*best_fit_adjustment, -base.effectDistance.y*best_fit_adjustment);
-		}
+			base.ApplyShadowZeroAlloc(verts, base.effectColor, start, verts.Count, -base.effectDistance.x*best_fit_adjustment, -base.effectDistance.y*best_fit_adjustment);
+
+            using (var helper = new VertexHelper())
+            {
+                helper.AddUIVertexTriangleStream(verts);
+                helper.FillMesh(mesh);
+            }
+        }
 	}
 }

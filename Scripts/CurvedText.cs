@@ -5,7 +5,7 @@ namespace UnityEngine.UI.Extensions
 {
     [RequireComponent(typeof(Text), typeof(RectTransform))]
     [AddComponentMenu("UI/Effects/Extensions/Curved Text")]
-    public class CurvedText : BaseVertexEffect
+    public class CurvedText : BaseMeshEffect
     {
         public AnimationCurve curveForText = AnimationCurve.Linear(0, 0, 1, 10);
         public float curveMultiplier = 1;
@@ -40,18 +40,19 @@ namespace UnityEngine.UI.Extensions
             rectTrans = GetComponent<RectTransform>();
             OnRectTransformDimensionsChange();
         }
-        public override void ModifyVertices(System.Collections.Generic.List<UIVertex> verts)
+        public override void ModifyMesh(Mesh mesh)
         {
             if (!IsActive())
                 return;
-
-            for (int index = 0; index < verts.Count; index++)
+            Vector3[] verts = mesh.vertices;
+            for (int index = 0; index < verts.Length; index++)
             {
                 var uiVertex = verts[index];
                 //Debug.Log ();
-                uiVertex.position.y += curveForText.Evaluate(rectTrans.rect.width * rectTrans.pivot.x + uiVertex.position.x) * curveMultiplier;
+                uiVertex.y += curveForText.Evaluate(rectTrans.rect.width * rectTrans.pivot.x + uiVertex.x) * curveMultiplier;
                 verts[index] = uiVertex;
             }
+            mesh.vertices = verts;
         }
         protected override void OnRectTransformDimensionsChange()
         {

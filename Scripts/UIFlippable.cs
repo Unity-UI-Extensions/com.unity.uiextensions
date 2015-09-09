@@ -7,7 +7,7 @@ namespace UnityEngine.UI.Extensions
 {
     [RequireComponent(typeof(RectTransform), typeof(Graphic)), DisallowMultipleComponent]
     [AddComponentMenu("UI/Effects/Extensions/Flippable")]
-    public class UIFlippable : MonoBehaviour, IVertexModifier
+    public class UIFlippable : MonoBehaviour, IMeshModifier
     {     
         [SerializeField] private bool m_Horizontal = false;
         [SerializeField] private bool m_Veritical = false;
@@ -37,24 +37,27 @@ namespace UnityEngine.UI.Extensions
             this.GetComponent<Graphic>().SetVerticesDirty();
         }
      
-        public void ModifyVertices(List<UIVertex> verts)
+        public void ModifyMesh(Mesh mesh)
         {
+            Vector3[] verts = mesh.vertices;
             RectTransform rt = this.transform as RectTransform;
          
-            for (int i = 0; i < verts.Count; ++i)
+            for (int i = 0; i < verts.Length; ++i)
             {
-                UIVertex v = verts[i];
+                Vector3 v = verts[i];
              
                 // Modify positions
-                v.position = new Vector3(
-                    (this.m_Horizontal ? (v.position.x + (rt.rect.center.x - v.position.x) * 2) : v.position.x),
-                    (this.m_Veritical ?  (v.position.y + (rt.rect.center.y - v.position.y) * 2) : v.position.y),
-                    v.position.z
+                v = new Vector3(
+                    (this.m_Horizontal ? (v.x + (rt.rect.center.x - v.x) * 2) : v.x),
+                    (this.m_Veritical ?  (v.y + (rt.rect.center.y - v.y) * 2) : v.y),
+                    v.z
                 );
              
                 // Apply
                 verts[i] = v;
             }
+
+            mesh.vertices = verts;
         }
     }
 }
