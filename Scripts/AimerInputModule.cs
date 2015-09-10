@@ -1,10 +1,6 @@
 /// Credit Chris Trueman
 /// Sourced from - http://forum.unity3d.com/threads/use-reticle-like-mouse-for-worldspace-uis.295271/
 
-using UnityEngine;
-using UnityEngine.EventSystems;
-using System.Collections.Generic;
-
 namespace UnityEngine.EventSystems.Extensions
 {
     [RequireComponent(typeof(EventSystem))]
