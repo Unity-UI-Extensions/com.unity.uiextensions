@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
 {
  	[AddComponentMenu("UI/Extensions/UILineTextureRenderer")]
-    public class UILineTextureRenderer : Graphic
+    public class UILineTextureRenderer : MaskableGraphic
     {
         [SerializeField]
         Texture m_Texture;

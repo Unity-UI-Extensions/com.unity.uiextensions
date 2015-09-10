@@ -362,7 +362,8 @@ namespace UnityEditor.UI
             image.type = Image.Type.Sliced;
             image.color = s_DefaultSelectableColor;
 
-            UIButton bt = uiButtonRoot.AddComponent<UIButton>();
+            Button bt = uiButtonRoot.AddComponent<Button>();
+            uiButtonRoot.AddComponent<UISelectableExtension>();
             SetDefaultColorTransitionValues(bt);
 
             Text text = childText.AddComponent<Text>();
