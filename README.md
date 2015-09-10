@@ -3,7 +3,7 @@
 This is an extension project for the new Unity UI system which can be found at:
 [Unity UI Source](https://bitbucket.org/Unity-Technologies/ui)
 
-#*Note The extensions aren't compatible with 5.2 just yet, will get a 5.2 package out soon.  Just a few class/function renames and so on. #
+#Updated for 5.2 - new asset package#
 
 ##Intro##
 For more info, here's a little introduction video for the project:
@@ -17,6 +17,7 @@ In this repository is a collection of extension scripts to enhance your Unity UI
 You can either download / fork the project to access the scripts, or you can download this precompiled Unity Asset, chock full of goodness
 ### [Unity UI Extensions Unity 4.x Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-4.x.unitypackage)###
 ### [Unity UI Extensions Unity 5.1 Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.1.unitypackage)###
+### [Unity UI Extensions Unity 5.2 Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.2.unitypackage)###
 
 ##Getting Started##
 To get started with the project, here's a little guide:
@@ -31,13 +32,13 @@ To get started with the project, here's a little guide:
 
 Control | Description | Menu Command | Component Command | Notes | Credits
 --------- | -------------- | ---------------------- | ---------------------------- | ------- | ----------
-**Accordion** | An Acordian style control with animated segments. Sourced from [here](http://forum.unity3d.com/threads/accordion-type-layout.271818/). For more details, [see this video demonstration](https://www.youtube.com/watch?v=YSOSVTU5klw) | N/A | Component / UI / Extensions / AccordionGroup | | ChoMPHi
- | | | Component / UI / Extensions / AccordionItem |  | ChoMPHi
-**HSVPicker** | A colour picker UI | N/A | UI / Extensions / HSVPicker | Project folder includes prefab | judah4
+**Accordion** | An Acordian style control with animated segments. Sourced from [here]. | N/A | Component / UI / Extensions / AccordionGroup |[demo video](http://forum.unity3d.com/threads/accordion-type-layout.271818/)| ChoMPHi
+ | | | Component / UI / Extensions / AccordionItem |[demo video](http://forum.unity3d.com/threads/accordion-type-layout.271818/)| ChoMPHi
+**HSVPicker** | A colour picker UI | N/A | UI / Extensions / HSVPicker | Project folder includes prefab and sample scene | judah4
 **SelectionBox** | An RTS style selection box control | UI / Extensions / Selection Box | UI / Extensions / Selection Box |[tutorial video](https://www.youtube.com/watch?v=UtM3HejKL5s)| Korindian, BenZed
 **HorizontalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Horizontal Scroll Snap | UI / Extensions / Horizontal Scroll Snap |[tutorial video](https://www.youtube.com/watch?v=KJlIlWHlfMo)| BinaryX
 **VerticalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Vertical Scroll Snap | UI / Extensions / Vertical Scroll Snap |[tutorial video](https://www.youtube.com/watch?v=KJlIlWHlfMo)| BinaryX, Simon Darkside Jackson
-**UIButton** | Improved Button control with additional events | UI / Extensions / UI Button | UI / Extensions / UI Button |[tutorial video](https://www.youtube.com/watch?v=Htt2RNa2qy0)| AriathTheWise
+**UIButton** | Improved Button control with additional events (PointerDown, PointerUp, PointerClick and PointerHeld) | UI / Extensions / UI Button | UI / Extensions / UI Button |[tutorial video](https://www.youtube.com/watch?v=Htt2RNa2qy0)| AriathTheWise
 **UIFlippable** | Improved Image control with image flipping options | UI / Extensions / UI Flippable | UI / Extensions / Flippable |[tutorial video](https://www.youtube.com/watch?v=Htt2RNa2qy0)| ChoMPHi
 **UIWindowBase** | A draggable Window implementation | UI / Extensions / UI Window Base | UI / Extensions / UI Window Base |[tutorial video](https://www.youtube.com/watch?v=Htt2RNa2qy0)| GXMark, alexzzzz, CaoMengde777, TroyDavis 
 **ComboBox** | A fixed combobox implementation for text | UI / Extensions / ComboBox | UI / Extensions / ComboBox |[tutorial video](https://www.youtube.com/watch?v=JrEfs47FoOE)| Perchik
