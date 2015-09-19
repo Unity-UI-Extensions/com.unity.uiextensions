@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
- 	[AddComponentMenu("UI/Extensions/UILineRenderer")]
+ 	[AddComponentMenu("UI/Extensions/Primatives/UILineRenderer")]
    public class UILineRenderer : MaskableGraphic
     {
         [SerializeField]

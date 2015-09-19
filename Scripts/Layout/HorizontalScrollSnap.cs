@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 namespace UnityEngine.UI.Extensions
 {
     [RequireComponent(typeof(ScrollRect))]
-    [AddComponentMenu("UI/Extensions/Horizontal Scroll Snap")]
+    [AddComponentMenu("Layout/Extensions/Horizontal Scroll Snap")]
     public class HorizontalScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         private Transform _screensContainer;

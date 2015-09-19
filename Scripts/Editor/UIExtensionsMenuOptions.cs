@@ -866,7 +866,7 @@ namespace UnityEditor.UI
             SetDefaultColorTransitionValues(slider);
         }
 
-        [MenuItem("GameObject/UI/Extensions/UI Line Renderer", false)]
+        [MenuItem("GameObject/UI/Extensions/Primatives/UI Line Renderer", false)]
         static public void AddUILineRenderer(MenuCommand menuCommand)
         {
             GameObject go = CreateUIElementRoot("UI LineRenderer", menuCommand, s_ImageGUIElementSize);
@@ -874,11 +874,19 @@ namespace UnityEditor.UI
             Selection.activeGameObject = go;
         }
 
-        [MenuItem("GameObject/UI/Extensions/UI Line Texture Renderer", false)]
+        [MenuItem("GameObject/UI/Extensions/Primatives/UI Line Texture Renderer", false)]
         static public void AddUILineTextureRenderer(MenuCommand menuCommand)
         {
             GameObject go = CreateUIElementRoot("UI LineTextureRenderer", menuCommand, s_ImageGUIElementSize);
             go.AddComponent<UILineTextureRenderer>();
+            Selection.activeGameObject = go;
+        }
+        
+        [MenuItem("GameObject/UI/Extensions/Primatives/UI Circle", false)]
+        static public void AddUICircle(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("UI Circle", menuCommand, s_ImageGUIElementSize);
+            go.AddComponent<UICircle>();
             Selection.activeGameObject = go;
         }
 
