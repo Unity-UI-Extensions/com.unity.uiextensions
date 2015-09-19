@@ -158,7 +158,7 @@ namespace UnityEngine.UI.Extensions
 
 			if (!layoutInput) {
 				var h = CalculateRowVerticalOffset(groupHeight, yOffset, currentRowHeight);
-
+				currentRowWidth -= Spacing;
 				// Layout the final row
 				LayoutRow(_rowList, currentRowWidth, currentRowHeight, workingWidth, padding.left, h, axis);
 			}
