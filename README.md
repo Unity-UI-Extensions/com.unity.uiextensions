@@ -36,8 +36,6 @@ Control | Description | Menu Command | Component Command | Notes | Credits
  | | | Component / UI / Extensions / AccordionItem |[demo video](http://forum.unity3d.com/threads/accordion-type-layout.271818/)| ChoMPHi
 **HSVPicker** | A colour picker UI | N/A | UI / Extensions / HSVPicker | Project folder includes prefab and sample scene | judah4
 **SelectionBox** | An RTS style selection box control | UI / Extensions / Selection Box | UI / Extensions / Selection Box |[tutorial video](https://www.youtube.com/watch?v=UtM3HejKL5s)| Korindian, BenZed
-**HorizontalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Horizontal Scroll Snap | UI / Extensions / Horizontal Scroll Snap |[tutorial video](https://www.youtube.com/watch?v=KJlIlWHlfMo)| BinaryX
-**VerticalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Vertical Scroll Snap | UI / Extensions / Vertical Scroll Snap |[tutorial video](https://www.youtube.com/watch?v=KJlIlWHlfMo)| BinaryX, Simon Darkside Jackson
 **UIButton** | Improved Button control with additional events (PointerDown, PointerUp, PointerClick and PointerHeld) | UI / Extensions / UI Button | UI / Extensions / UI Button |Will update video, this has now been updated to a more reusable Selectable extension| AriathTheWise
 **UIFlippable** | Improved Image control with image flipping options | UI / Extensions / UI Flippable | UI / Extensions / Flippable |[tutorial video](https://www.youtube.com/watch?v=Htt2RNa2qy0)| ChoMPHi
 **UIWindowBase** | A draggable Window implementation | UI / Extensions / UI Window Base | UI / Extensions / UI Window Base |[tutorial video](https://www.youtube.com/watch?v=Htt2RNa2qy0)| GXMark, alexzzzz, CaoMengde777, TroyDavis 
@@ -46,8 +44,32 @@ Control | Description | Menu Command | Component Command | Notes | Credits
 **DropDownList** | A basic drop down list with text and image support | UI / Extensions / Dropdown List | UI / Extensions / Dropdown List |[tutorial video](https://www.youtube.com/watch?v=JrEfs47FoOE)| Perchik
 **BoundToolTip** | An alternate Tooltip implementation with central listener | UI / Extensions / Bound Tooltip / Tooltip | UI / Extensions / Bound Tooltip / Tooltip Item | Offset and tooltip placement needs work | Martin Sharkbomb
  | | | UI / Extensions / Bound Tooltip / Tooltip Trigger |  | Martin Sharkbomb
-**LineRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / UI Line Renderer | UI / Extensions / UI Line Renderer |[tutorial video](https://www.youtube.com/watch?v=OElcWAZGHi0)| jack.sydorenko
-**UILineTextureRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / UI Line Texture Renderer | UI / Extensions / UI Line Texture Renderer |[tutorial video](https://www.youtube.com/watch?v=OElcWAZGHi0)| jack.sydorenko, jonbro5556
+
+
+## Primatives ##
+================
+
+Control | Description | Menu Command | Component Command | Notes | Credits
+--------- | -------------- | ---------------------- | ---------------------------- | ------- | ----------
+**LineRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / Primatives / UI Line Renderer | UI / Extensions / Primatives / UI Line Renderer |[tutorial video](https://www.youtube.com/watch?v=OElcWAZGHi0)| jack.sydorenko
+**UILineTextureRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / Primatives / UI Line Texture Renderer | UI / Extensions / Primatives / UI Line Texture Renderer |[tutorial video](https://www.youtube.com/watch?v=OElcWAZGHi0)| jack.sydorenko, jonbro5556
+**UICircle** | Graphic control for drawing circles in the UI System | UI / Extensions / Primatives / UI Circle | UI / Extensions / Primatives / UI Circle || zge
+**DiamondGraph** | Graphic control for drawing a diamond in the UI System | UI / Extensions / Primatives / DiamondGraph | UI / Extensions / Primatives / DiamondGraph |5.2+ only| koohddang
+
+
+
+## Layouts ##
+================
+
+Layout | Description | Menu Command | Component Command | Notes | Credits
+--------- | -------------- | ---------------------- | ---------------------------- | ------- | ----------
+**HorizontalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | Layout / Extensions / Horizontal Scroll Snap | Layout / Extensions / Horizontal Scroll Snap |[tutorial video](https://www.youtube.com/watch?v=KJlIlWHlfMo)| BinaryX
+**VerticalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | Layout / Extensions / Vertical Scroll Snap | Layout / Extensions / Vertical Scroll Snap |[tutorial video](https://www.youtube.com/watch?v=KJlIlWHlfMo)| BinaryX, Simon Darkside Jackson
+**FlowLayoutGroup** | A more rugged grid style layout group  || Layout / Extensions / Flow Layout Group | [Example Video](https://www.youtube.com/watch?v=tMe_3tJTZvc) | Simie
+**RadialLayout** | A radial layout system || Layout / Extensions / Radial Layout || Danny Goodayle
+**TileSizeFitter** | A fitter layout that will shink / expand content by tiles || Layout / Extensions / TileSizeFitter || Ges
+
+
 
 ## Effect components ##
 =====================
@@ -62,6 +84,14 @@ Effect   | Description | Component Command | Notes  | Credits
 **RaycastMask** | An example of an enhanced mask component able to work with the image data. Enables picking on image parts and not just the Rect Transform | UI / Effects / Extensions / Raycast Mask | | senritsu
 **UIFlippable** | Image component effect to flip the graphic | UI / Effects / Extensions / UI Flippable | | ChoMPHi
 
+## VR Components##
+=======================
+
+Component | Description | Component Command | Notes | Credits
+--------- | -------------- | ---------------------------- | ------- | ------
+**VRCursor** | Cursor script for VR use (requires VRInputModule) | UI / Extensions / VR Cursoe | | Ralph Barbagallo
+**VRInputModule** | Input module to support the VR Cursor | Event / Vr Input Module | | Ralph Barbagallo
+
 
 ## Additional Components##
 =======================
@@ -71,7 +101,6 @@ Component | Description | Component Command | Notes | Credits
 **ReturnKeyTrigger** | Does something?? | UI / Extensions / ReturnKey Trigger | | Melang, ddreaper
 **TabNavigation**  | An example Tab navigation script, updated to add manual navigation | UI / Extensions / Tab Navigation | | Melang, omatase
 **uGUITools** | | Menu / uGUI | | Senshi
-**FlowLayoutGroup** | A more rugged grid style layout group  | Layout / Extensions / Flow Layout Group | [Example Video](https://www.youtube.com/watch?v=tMe_3tJTZvc) | Simie
 **ScrollRectTweener** | Tweening solution for ScrollRects, add smoothing automatically  | UI / Extensions / ScrollRectTweener |  | Martin Sharkbomb
 **ScrollRectLinker** | ScrollRect Linker script, enable multiple ScrollRects to move together  | UI / Extensions / ScrollRectLinker |  | Martin Sharkbomb
 **ScrollRectEx** | Improved ScrollRect control, enables support for Nested ScrollRects  | UI / Extensions / ScrollRectEx |  | CaptainSchnittchen, GamesRUs
@@ -79,11 +108,13 @@ Component | Description | Component Command | Notes | Credits
 **ImageExtended** | Improved Image control with rotation support and use of filled type without an Image (useful for masks)  | UI / Extensions / Image Extended |  | Ges
 **UIScrollToSelection** | Enables a ScrollRect to scroll based on the selected child automatically  | UI / Extensions / UIScrollToSelection |  | zero3growlithe
 **AimerInputModule** | Replacement Input module to allow for a reciclue to interace with WorldSpace canvas UI  | UI / Extensions / Aimer Input Module |  | Chris Trueman
-**UISeclectableExtension** | Refactor of original UI Button control, can now add Press/Release and Hold events to any Selectable control  | UI / Extensions / UI Selectable Extension | | AriathTheWise / Simon Jackson
+**UISelectableExtension** | Refactor of original UI Button control, can now add Press/Release and Hold events to any Selectable control  | UI / Extensions / UI Selectable Extension | | AriathTheWise / Simon Jackson
+**switchToRectTransform** | RectTransform extension method to move one Rect to another  | N/A | | Izitmee
 
 
 *More to come*
 
+=======================
 ### How do I get set up? ###
 
 Either clone / download this repository to your machine and then copy the scripts in, or use the pre-packaged .UnityPackage for your version of Unity and import it as a custom package in to your project.

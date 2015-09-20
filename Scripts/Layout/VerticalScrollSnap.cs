@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 namespace UnityEngine.UI.Extensions
 {
     [RequireComponent(typeof(ScrollRect))]
-    [AddComponentMenu("UI/Extensions/Vertical Scroll Snap")]
+    [AddComponentMenu("Layout/Extensions/Vertical Scroll Snap")]
     public class VerticalScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         private Transform _screensContainer;

@@ -1,12 +1,13 @@
-﻿/// Credit jack.sydorenko 
+﻿/// Credit jonbro5556 
+/// Based on original LineRender script by jack.sydorenko 
 /// Sourced from - http://forum.unity3d.com/threads/new-ui-and-line-drawing.253772/
 
 using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
- 	[AddComponentMenu("UI/Extensions/UILineRenderer")]
-   public class UILineRenderer : MaskableGraphic
+ 	[AddComponentMenu("UI/Extensions/Primitives/UILineTextureRenderer")]
+    public class UILineTextureRenderer : MaskableGraphic
     {
         [SerializeField]
         Texture m_Texture;
@@ -167,14 +168,14 @@ namespace UnityEngine.UI.Extensions
         protected UIVertex[] SetVbo(Vector2[] vertices, Vector2[] uvs)
         {
             UIVertex[] vbo = new UIVertex[4];
-                for (int i = 0; i < vertices.Length; i++)
-                {
-                    var vert = UIVertex.simpleVert;
-                    vert.color = color;
-                    vert.position = vertices[i];
-                    vert.uv0 = uvs[i];
-                    vbo[i] = vert;
-                }
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                var vert = UIVertex.simpleVert;
+                vert.color = color;
+                vert.position = vertices[i];
+                vert.uv0 = uvs[i];
+                vbo[i] = vert;
+            }
             return vbo;
         }
 

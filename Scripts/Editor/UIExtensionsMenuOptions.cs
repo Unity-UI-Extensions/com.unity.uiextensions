@@ -207,7 +207,7 @@ namespace UnityEditor.UI
 
         #region UI Extensions "Create" Menu items
 
-        [MenuItem("GameObject/UI/Extensions/Horizontal Scroll Snap", false)]
+        [MenuItem("GameObject/Layout/Extensions/Horizontal Scroll Snap", false)]
         static public void AddHorizontalScrollSnap(MenuCommand menuCommand)
         {
             GameObject horizontalScrollSnapRoot = CreateUIElementRoot("Horizontal Scroll Snap", menuCommand, s_ThickGUIElementSize);
@@ -278,7 +278,7 @@ namespace UnityEditor.UI
             Selection.activeGameObject = horizontalScrollSnapRoot;
         }
 
-        [MenuItem("GameObject/UI/Extensions/Vertical Scroll Snap", false)]
+        [MenuItem("GameObject/Layout/Extensions/Vertical Scroll Snap", false)]
         static public void AddVerticallScrollSnap(MenuCommand menuCommand)
         {
             GameObject verticalScrollSnapRoot = CreateUIElementRoot("Vertical Scroll Snap", menuCommand, s_ThickGUIElementSize);
@@ -866,7 +866,7 @@ namespace UnityEditor.UI
             SetDefaultColorTransitionValues(slider);
         }
 
-        [MenuItem("GameObject/UI/Extensions/UI Line Renderer", false)]
+        [MenuItem("GameObject/UI/Extensions/Primitives/UI Line Renderer", false)]
         static public void AddUILineRenderer(MenuCommand menuCommand)
         {
             GameObject go = CreateUIElementRoot("UI LineRenderer", menuCommand, s_ImageGUIElementSize);
@@ -874,11 +874,27 @@ namespace UnityEditor.UI
             Selection.activeGameObject = go;
         }
 
-        [MenuItem("GameObject/UI/Extensions/UI Line Texture Renderer", false)]
+        [MenuItem("GameObject/UI/Extensions/Primitives/UI Line Texture Renderer", false)]
         static public void AddUILineTextureRenderer(MenuCommand menuCommand)
         {
             GameObject go = CreateUIElementRoot("UI LineTextureRenderer", menuCommand, s_ImageGUIElementSize);
             go.AddComponent<UILineTextureRenderer>();
+            Selection.activeGameObject = go;
+        }
+        
+        [MenuItem("GameObject/UI/Extensions/Primitives/UI Circle", false)]
+        static public void AddUICircle(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("UI Circle", menuCommand, s_ImageGUIElementSize);
+            go.AddComponent<UICircle>();
+            Selection.activeGameObject = go;
+        }
+
+        [MenuItem("GameObject/UI/Extensions/Primitives/Diamond Graph", false)]
+        static public void AddDiamondGraph(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("Diamond Graph", menuCommand, s_ImageGUIElementSize);
+            go.AddComponent<DiamondGraph>();
             Selection.activeGameObject = go;
         }
 
