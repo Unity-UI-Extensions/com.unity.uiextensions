@@ -46,14 +46,14 @@ Control | Description | Menu Command | Component Command | Notes | Credits
  | | | UI / Extensions / Bound Tooltip / Tooltip Trigger |  | Martin Sharkbomb
 
 
-## Primatives ##
+## Primitives ##
 ================
 
 Control | Description | Menu Command | Component Command | Notes | Credits
 --------- | -------------- | ---------------------- | ---------------------------- | ------- | ----------
-**LineRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / Primatives / UI Line Renderer | UI / Extensions / Primatives / UI Line Renderer |[tutorial video](https://www.youtube.com/watch?v=OElcWAZGHi0)| jack.sydorenko
-**UILineTextureRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / Primatives / UI Line Texture Renderer | UI / Extensions / Primatives / UI Line Texture Renderer |[tutorial video](https://www.youtube.com/watch?v=OElcWAZGHi0)| jack.sydorenko, jonbro5556
-**UICircle** | Graphic control for drawing circles in the UI System | UI / Extensions / Primatives / UI Circle | UI / Extensions / Primatives / UI Circle || zge
+**LineRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / Primitives / UI Line Renderer | UI / Extensions / Primitives / UI Line Renderer |[tutorial video](https://www.youtube.com/watch?v=OElcWAZGHi0)| jack.sydorenko
+**UILineTextureRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / Primitives / UI Line Texture Renderer | UI / Extensions / Primitives / UI Line Texture Renderer |[tutorial video](https://www.youtube.com/watch?v=OElcWAZGHi0)| jack.sydorenko, jonbro5556
+**UICircle** | Graphic control for drawing circles in the UI System | UI / Extensions / Primitives / UI Circle | UI / Extensions / Primitives / UI Circle || zge
 
 
 
@@ -62,8 +62,8 @@ Control | Description | Menu Command | Component Command | Notes | Credits
 
 Layout | Description | Menu Command | Component Command | Notes | Credits
 --------- | -------------- | ---------------------- | ---------------------------- | ------- | ----------
-**HorizontalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | Layout / Extensions / Horizontal Scroll Snap | Layout / Extensions / Horizontal Scroll Snap |[tutorial video](https://www.youtube.com/watch?v=KJlIlWHlfMo)| BinaryX
-**VerticalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | Layout / Extensions / Vertical Scroll Snap | Layout / Extensions / Vertical Scroll Snap |[tutorial video](https://www.youtube.com/watch?v=KJlIlWHlfMo)| BinaryX, Simon Darkside Jackson
+**HorizontalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Horizontal Scroll Snap | Layout / Extensions / Horizontal Scroll Snap |[tutorial video](https://www.youtube.com/watch?v=KJlIlWHlfMo)| BinaryX
+**VerticalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Vertical Scroll Snap | Layout / Extensions / Vertical Scroll Snap |[tutorial video](https://www.youtube.com/watch?v=KJlIlWHlfMo)| BinaryX, Simon Darkside Jackson
 **FlowLayoutGroup** | A more rugged grid style layout group  || Layout / Extensions / Flow Layout Group | [Example Video](https://www.youtube.com/watch?v=tMe_3tJTZvc) | Simie
 **RadialLayout** | A radial layout system || Layout / Extensions / Radial Layout || Danny Goodayle
 **TileSizeFitter** | A fitter layout that will shink / expand content by tiles || Layout / Extensions / TileSizeFitter || Ges

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
-    [AddComponentMenu("UI/Extensions/Primatives/UI Circle")]
+    [AddComponentMenu("UI/Extensions/Primitives/UI Circle")]
     public class UICircle : Graphic
     {
         [SerializeField]
