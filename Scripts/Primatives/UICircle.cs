@@ -13,7 +13,7 @@ namespace UnityEngine.UI.Extensions
         [Range(0, 100)]
         public int fillPercent = 100;
         public bool fill = true;
-        public int thickness = 5;
+        public float thickness = 5;
         [Range(0, 360)]
         public int segments = 360;
      
@@ -49,7 +49,7 @@ namespace UnityEngine.UI.Extensions
      
         void Update()
         {
-            this.thickness = (int)Mathf.Clamp(this.thickness, 0, rectTransform.rect.width / 2);
+            this.thickness = (float)Mathf.Clamp(this.thickness, 0, rectTransform.rect.width / 2);
         }
      
         protected UIVertex[] SetVbo(Vector2[] vertices, Vector2[] uvs)
