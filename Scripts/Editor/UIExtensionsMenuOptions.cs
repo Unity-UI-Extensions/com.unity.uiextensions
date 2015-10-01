@@ -1024,5 +1024,268 @@ namespace UnityEditor.UI
         }
 
         #endregion
+		
+				#region New ScrollSnapCode
+				static public void FixedScrollSnapBase(MenuCommand menuCommand, string name, ScrollSnap.ScrollDirection direction, int itemVisible, int itemCount, Vector2 itemSize)
+
+		{
+
+			GameObject scrollSnapRoot = CreateUIElementRoot(name, menuCommand, s_ThickGUIElementSize);
+
+			
+
+			GameObject itemList = CreateUIObject("List", scrollSnapRoot);
+
+			
+
+			// Set RectTransform to stretch
+
+			RectTransform rectTransformScrollSnapRoot = scrollSnapRoot.GetComponent<RectTransform>();
+
+			rectTransformScrollSnapRoot.anchorMin = new Vector2(0.5f, 0.5f);
+
+			rectTransformScrollSnapRoot.anchorMax = new Vector2(0.5f, 0.5f);
+
+			rectTransformScrollSnapRoot.anchoredPosition = Vector2.zero;
+
+			
+
+			if (direction == ScrollSnap.ScrollDirection.Horizontal)
+
+			{
+
+				rectTransformScrollSnapRoot.sizeDelta = new Vector2(itemVisible * itemSize.x, itemSize.y);
+
+			}
+
+			else
+
+			{
+
+				rectTransformScrollSnapRoot.sizeDelta = new Vector2(itemSize.x, itemVisible * itemSize.y);
+
+			}
+
+			
+
+			Image image = scrollSnapRoot.AddComponent<Image>();
+
+			image.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath);
+
+			image.type = Image.Type.Sliced;
+
+			image.color = new Color(1f, 1f, 1f, 1f);
+
+			
+
+			Mask listMask = scrollSnapRoot.AddComponent<Mask>();
+
+			listMask.showMaskGraphic = false;
+
+			
+
+			ScrollRect scrollRect = scrollSnapRoot.AddComponent<ScrollRect>();
+
+			scrollRect.vertical = direction == ScrollSnap.ScrollDirection.Vertical;
+
+			scrollRect.horizontal = direction == ScrollSnap.ScrollDirection.Horizontal;
+
+			
+
+			ScrollSnap scrollSnap = scrollSnapRoot.AddComponent<ScrollSnap>();
+
+			scrollSnap.direction = direction;
+
+			scrollSnap.itemsVisibleAtOnce = itemVisible;
+
+			
+
+			//Setup Content container
+
+			RectTransform rectTransformContent = itemList.GetComponent<RectTransform>();
+
+			rectTransformContent.anchorMin = Vector2.zero;
+
+			rectTransformContent.anchorMax = new Vector2(1f, 1f);
+
+			//rectTransformContent.anchoredPosition = Vector2.zero;
+
+			rectTransformContent.sizeDelta = Vector2.zero;
+
+			scrollRect.content = rectTransformContent;
+
+			
+
+			//Setup Item list container
+
+			if (direction == ScrollSnap.ScrollDirection.Horizontal)
+
+			{
+
+				itemList.AddComponent<HorizontalLayoutGroup> ();
+
+				ContentSizeFitter sizeFitter = itemList.AddComponent<ContentSizeFitter>();
+
+				sizeFitter.horizontalFit = ContentSizeFitter.FitMode.MinSize;
+
+			}
+
+			else
+
+			{
+
+				itemList.AddComponent<VerticalLayoutGroup> ();
+
+				ContentSizeFitter sizeFitter = itemList.AddComponent<ContentSizeFitter>();
+
+				sizeFitter.verticalFit = ContentSizeFitter.FitMode.MinSize;
+
+			}
+
+			
+
+			//Setup children
+
+			
+
+			for (var i = 0; i < itemCount; i ++)
+
+			{
+
+				GameObject item = CreateUIObject (string.Format("Item_{0:00}", i), itemList);
+
+				
+
+				GameObject childText = CreateUIObject ("Text", item);
+
+				
+
+				Image pageImage = item.AddComponent<Image> ();
+
+				pageImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite> (kStandardSpritePath);
+
+				pageImage.type = Image.Type.Sliced;
+
+				pageImage.color = s_DefaultSelectableColor;
+
+				
+
+				LayoutElement elementLayout = item.AddComponent<LayoutElement> ();
+
+				if (direction == ScrollSnap.ScrollDirection.Horizontal)
+
+				{
+
+					elementLayout.minWidth = itemSize.x;
+
+				}
+
+				else
+
+				{
+
+					elementLayout.minHeight = itemSize.y;
+
+				}
+
+				
+
+				RectTransform rectTransformPage01 = item.GetComponent<RectTransform> ();
+
+				rectTransformPage01.anchorMin = new Vector2 (0f, 0.5f);
+
+				rectTransformPage01.anchorMax = new Vector2 (0f, 0.5f);
+
+				//rectTransformPage01.anchoredPosition = Vector2.zero;
+
+				//rectTransformPage01.sizeDelta = Vector2.zero;
+
+				rectTransformPage01.pivot = new Vector2 (0f, 0.5f); 
+
+				
+
+				//Setup Text on Page01
+
+				Text text = childText.AddComponent<Text> ();
+
+				text.text = item.name;
+
+				text.alignment = TextAnchor.MiddleCenter;
+
+				text.color = new Color (0.196f, 0.196f, 0.196f);
+
+				
+
+				//Setup Text 1st Child
+
+				RectTransform rectTransformPage01Text = childText.GetComponent<RectTransform> ();
+
+				rectTransformPage01Text.anchorMin = new Vector2 (0.5f, 0.5f);
+
+				rectTransformPage01Text.anchorMax = new Vector2 (0.5f, 0.5f);
+
+				//rectTransformPage01Text.anchoredPosition = Vector2.zero;
+
+				//rectTransformPage01Text.sizeDelta = Vector2.zero;
+
+				rectTransformPage01Text.pivot = new Vector2 (0.5f, 0.5f);
+
+			}
+
+			
+
+			Selection.activeGameObject = scrollSnapRoot;
+
+		}
+
+		
+
+		[MenuItem("GameObject/UI/Extensions/Fixed Item Scroll/Snap Horizontal Single Item", false)]
+
+		static public void AddFixedItemScrollSnapHorizontalSingle(MenuCommand menuCommand)
+
+		{
+
+			FixedScrollSnapBase (menuCommand, "Scroll Snap Horizontal Single", ScrollSnap.ScrollDirection.Horizontal, 1, 3, new Vector2(100, 100));
+
+		}
+
+		
+
+		[MenuItem("GameObject/UI/Extensions/Fixed Item Scroll/Snap Horizontal Multiple Items", false)]
+
+		static public void AddFixedItemScrollSnapHorizontalMultiple(MenuCommand menuCommand)
+
+		{
+
+			FixedScrollSnapBase (menuCommand, "Scroll Snap Horizontal Multiple", ScrollSnap.ScrollDirection.Horizontal, 3, 15, new Vector2(100, 100));
+
+		}
+
+		
+
+		[MenuItem("GameObject/UI/Extensions/Fixed Item Scroll/Snap Vertical Single Item", false)]
+
+		static public void AddFixedItemScrollSnapVerticalSingle(MenuCommand menuCommand)
+
+		{
+
+			FixedScrollSnapBase (menuCommand, "Scroll Snap Vertical Multiple", ScrollSnap.ScrollDirection.Vertical, 1, 3, new Vector2(100, 100));
+
+		}
+
+		
+
+		[MenuItem("GameObject/UI/Extensions/Fixed Item Scroll/Snap Vertical Multiple Items", false)]
+
+		static public void AddFixedItemScrollSnapVerticalMultiple(MenuCommand menuCommand)
+
+		{
+
+			FixedScrollSnapBase (menuCommand, "Scroll Snap Vertical Multiple", ScrollSnap.ScrollDirection.Vertical, 3, 15, new Vector2(100, 100));
+
+		}
+
+		#endregion
     }
 }

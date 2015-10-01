@@ -211,7 +211,7 @@ namespace UnityEngine.UI.Extensions
                 RectTransform child = _screensContainer.transform.GetChild(i).gameObject.GetComponent<RectTransform>();
                 currentXPosition = _offset + i * _step;
                 child.anchoredPosition = new Vector2(currentXPosition, 0f);
-                child.sizeDelta = new Vector2(gameObject.GetComponent<RectTransform>().sizeDelta.x, gameObject.GetComponent<RectTransform>().sizeDelta.y);
+                child.sizeDelta = new Vector2(gameObject.GetComponent<RectTransform>().rect.width, gameObject.GetComponent<RectTransform>().rect.height);
             }
 
             _dimension = currentXPosition + _offset * -1;
