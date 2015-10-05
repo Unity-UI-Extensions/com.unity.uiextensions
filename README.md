@@ -2,6 +2,7 @@
 
 This is an extension project for the new Unity UI system which can be found at:
 [Unity UI Source](https://bitbucket.org/Unity-Technologies/ui)
+##Had some reports of issues with the 5.2.1 patch releases. I'll be looking in to it as soon as I can, for now, keep with the base releases##
 
 #Updated for 5.2 - new asset package#
 
