@@ -69,6 +69,10 @@ Layout | Description | Menu Command | Component Command | Notes | Credits
 **FlowLayoutGroup** | A more rugged grid style layout group  || Layout / Extensions / Flow Layout Group | [Example Video](https://www.youtube.com/watch?v=tMe_3tJTZvc) | Simie
 **RadialLayout** | A radial layout system || Layout / Extensions / Radial Layout |[tutorial video](https://www.youtube.com/watch?v=iUlk0d2RDMs)| Danny Goodayle
 **TileSizeFitter** | A fitter layout that will shink / expand content by tiles || Layout / Extensions / TileSizeFitter |[tutorial video](https://www.youtube.com/watch?v=AkQNWl8mnxg)| Ges
+**ScrollSnap** | An alternate scroll snap control supporting both Horizontal and Vertial layous in one control | UI / Extensions / Fixed Item Scroll / Snap Horizontal Single Item||| xesenix
+|| UI / Extensions / Fixed Item Scroll / Snap Horizontal Multiple Item||| xesenix
+|| UI / Extensions / Fixed Item Scroll / Snap Vertical Single Item||| xesenix
+|| UI / Extensions / Fixed Item Scroll / Snap Vertical Multiple Item||| xesenix
 
 
 ## Effect components ##
@@ -84,6 +88,7 @@ Effect   | Description | Component Command | Notes  | Credits
 **RaycastMask** | An example of an enhanced mask component able to work with the image data. Enables picking on image parts and not just the Rect Transform | UI / Effects / Extensions / Raycast Mask | | senritsu
 **UIFlippable** | Image component effect to flip the graphic | UI / Effects / Extensions / UI Flippable | | ChoMPHi
 
+
 ## VR Components##
 =======================
 
@@ -92,6 +97,14 @@ Component | Description | Component Command | Notes | Credits
 **VRCursor** | Cursor script for VR use (requires VRInputModule) | UI / Extensions / VR Cursoe | | Ralph Barbagallo
 **VRInputModule** | Input module to support the VR Cursor | Event / Vr Input Module | | Ralph Barbagallo
 
+
+## Input Modules ##
+=======================
+
+Component | Description | Component Command | Notes | Credits
+--------- | -------------- | ---------------------------- | ------- | ------
+**AimerInputModule** | Replacement Input module to allow for a reciclue to interace with WorldSpace canvas UI  | Event / Extensions / Aimer Input Module |  | Chris Trueman
+**GamePadInputModule** | Stripped down SIM Input module for just gamepad/keybord input   | Event / Extensions / GamePad Input Module |  | Simon (darkside) Jackson
 
 ## Additional Components##
 =======================
@@ -107,7 +120,6 @@ Component | Description | Component Command | Notes | Credits
 **InputFocus** | Enhanced InputField control for forms, enables Enter to submit and other features  | UI / Extensions / InputFocus |  | Zelek
 **ImageExtended** | Improved Image control with rotation support and use of filled type without an Image (useful for masks)  | UI / Extensions / Image Extended |  | Ges
 **UIScrollToSelection** | Enables a ScrollRect to scroll based on the selected child automatically  | UI / Extensions / UIScrollToSelection |  | zero3growlithe
-**AimerInputModule** | Replacement Input module to allow for a reciclue to interace with WorldSpace canvas UI  | UI / Extensions / Aimer Input Module |  | Chris Trueman
 **UISelectableExtension** | Refactor of original UI Button control, can now add Press/Release and Hold events to any Selectable control  | UI / Extensions / UI Selectable Extension | | AriathTheWise / Simon Jackson
 **switchToRectTransform** | RectTransform extension method to move one Rect to another  | N/A | | Izitmee
 

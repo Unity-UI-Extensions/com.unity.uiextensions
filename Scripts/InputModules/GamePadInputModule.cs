@@ -1,9 +1,9 @@
-using System;
-using UnityEngine.Serialization;
+/// Credit Simon (darkside) Jackson
+/// Sourced from - UI SIM source and My Brain
 
 namespace UnityEngine.EventSystems
 {
-    [AddComponentMenu("Event/GamePad Input Module")]
+    [AddComponentMenu("Event/Extensions/GamePad Input Module")]
     public class GamePadInputModule : BaseInputModule
     {
         private float m_PrevActionTime;
@@ -203,7 +203,6 @@ namespace UnityEngine.EventSystems
             if (!allow)
                 return false;
 
-            // Debug.Log(m_ProcessingEvent.rawType + " axis:" + m_AllowAxisEvents + " value:" + "(" + x + "," + y + ")");
             var axisEventData = GetAxisEventData(movement.x, movement.y, 0.6f);
             ExecuteEvents.Execute(eventSystem.currentSelectedGameObject, axisEventData, ExecuteEvents.moveHandler);
             if (!similarDir)
