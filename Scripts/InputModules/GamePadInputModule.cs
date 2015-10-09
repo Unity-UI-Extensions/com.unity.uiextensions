@@ -38,7 +38,7 @@ namespace UnityEngine.EventSystems
         private float m_InputActionsPerSecond = 10;
 
         [SerializeField]
-        private float m_RepeatDelay = 0.5f;
+        private float m_RepeatDelay = 0.1f;
 
         public float inputActionsPerSecond
         {
