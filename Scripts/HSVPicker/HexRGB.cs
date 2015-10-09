@@ -7,7 +7,8 @@ namespace UnityEngine.UI.Extensions
 {
     public class HexRGB : MonoBehaviour
     {
-        public Text textColor;
+        // Unity 5.1/2 needs an InputFiled vs grabbing the text component
+	public InputField hexInput;
 
         public HSVPicker hsvpicker;
 
@@ -15,7 +16,7 @@ namespace UnityEngine.UI.Extensions
         {
             Color color = hsvpicker.currentColor;
             string hex = ColorToHex(color);
-            textColor.text = hex;
+	     hexInput.text = hex;
         }
 
         public static string ColorToHex(Color color)
@@ -28,8 +29,7 @@ namespace UnityEngine.UI.Extensions
 
         public void ManipulateViaHex2RGB()
         {
-            string hex = textColor.text;
-
+	     string hex = hexInput.text;
             Vector3 rgb = Hex2RGB(hex);
             Color color = NormalizeVector4(rgb, 255f, 1f); print(rgb);
 

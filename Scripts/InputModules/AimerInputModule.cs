@@ -4,7 +4,7 @@
 namespace UnityEngine.EventSystems.Extensions
 {
     [RequireComponent(typeof(EventSystem))]
-    [AddComponentMenu("UI/Extensions/Aimer Input Module")]
+    [AddComponentMenu("Event/Extensions/Aimer Input Module")]
     public class AimerInputModule : PointerInputModule
     {
         /// <summary>

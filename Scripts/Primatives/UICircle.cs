@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/Primitives/UI Circle")]
-    public class UICircle : Graphic
+    public class UICircle : MaskableGraphic
     {
         [SerializeField]
         Texture m_Texture;
