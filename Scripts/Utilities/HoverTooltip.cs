@@ -154,7 +154,16 @@ namespace UnityEngine.UI.Extensions
             {
                 float distFromRight = upperRight.x - val;
 
-                xOffSet = distFromRight;
+                if (distFromRight > (defaultXOffset * 0.75))
+                {
+                    //shorten the temporary offset up to a certain distance from the tooltip
+                    xOffSet = distFromRight;
+                }
+                else
+                {
+                    //if the distance becomes too short flip the tooltip to below the pointer (by offset+twice the height of the tooltip)
+                    xOffSet = ((defaultXOffset) - (tooltipRealWidth) * 2f);
+                }
 
                 //assign the new modified coordinates to the tooltip and convert to screen coordinates
                 Vector3 newTooltipPos = new Vector3(GUICamera.ViewportToScreenPoint(newPos).x + xOffSet, 0f, 0f);
@@ -171,7 +180,16 @@ namespace UnityEngine.UI.Extensions
             {
                 float distFromLeft = lowerLeft.x - val;
 
-                xOffSet = -distFromLeft;
+                if (distFromLeft < (defaultXOffset * 0.75 - tooltipRealWidth))
+                {
+                    //shorten the temporary offset up to a certain distance from the tooltip
+                    xOffSet = -distFromLeft;
+                }
+                else
+                {
+                    //if the distance becomes too short flip the tooltip to above the pointer (by twice the height of the tooltip)
+                    xOffSet = ((tooltipRealWidth) * 2f);
+                }
 
                 //assign the new modified coordinates to the tooltip and convert to screen coordinates
                 Vector3 newTooltipPos = new Vector3(GUICamera.ViewportToScreenPoint(newPos).x - xOffSet, 0f, 0f);
