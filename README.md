@@ -2,9 +2,8 @@
 
 This is an extension project for the new Unity UI system which can be found at:
 [Unity UI Source](https://bitbucket.org/Unity-Technologies/ui)
-##Had some reports of issues with the 5.2.1 patch releases. I'll be looking in to it as soon as I can, for now, keep with the base releases##
 
-#Updated for 5.2 - new asset package#
+#Updated for 5.2.1P+/5.3 - new asset package#
 
 ##Intro##
 For more info, here's a little introduction video for the project:
@@ -19,6 +18,8 @@ You can either download / fork the project to access the scripts, or you can dow
 ### [Unity UI Extensions Unity 4.x Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-4.x.unitypackage)###
 ### [Unity UI Extensions Unity 5.1 Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.1.unitypackage)###
 ### [Unity UI Extensions Unity 5.2 Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.2.unitypackage)###
+### [Unity UI Extensions Unity 5.3 (5.2.1P+) Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.3.unitypackage) <- use this for 5.2.1P+ releases###
+
 
 ##Getting Started##
 To get started with the project, here's a little guide:
@@ -26,8 +27,11 @@ To get started with the project, here's a little guide:
 [![View Getting Started Video](http://img.youtube.com/vi/sVLeYmsNQAI/0.jpg)](http://www.youtube.com/watch?v=sVLeYmsNQAI "Unity UI getting started video")
 ---
 ## Updates: ##
-Update 1.0.0.4
+Update 1.0.4
 [![View Getting Started Video](http://img.youtube.com/vi/oF48Qpaq3ls/0.jpg)](http://www.youtube.com/watch?v=oF48Qpaq3ls "Update 1.0.0.4 for the Unity UI Extensions Project")
+
+Update 1.0.5
+Few minor fixes and a couple of additional scripts.  Predominatly created the new 5.3 branch to maintain the UI API changes from the 5.2.1 Patch releases.  5.3 package is 100% compatible with 5.2.1 Patch releases.
 ---
 ## Controls and extensions listed in this project are: ##
 
