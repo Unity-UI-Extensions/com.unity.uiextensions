@@ -40,79 +40,82 @@ namespace UnityEngine.UI.Extensions {
         public bool useColorDown;
 //        [HideUnless("useColorDown")]
         public Color32 colorDown = Color.green;
- 
-        protected override void OnPopulateMesh(Mesh m) {
+
+        protected override void OnPopulateMesh(VertexHelper vh)
+        {
             var rect = rectTransform.rect;
             var rectNew = rect;
- 
+
             Color32 color32 = color;
-            using (var vh = new VertexHelper()) {
-                bool up = cutUL | cutUR;
-                bool down = cutLL | cutLR;
-                bool left = cutLL | cutUL;
-                bool right = cutLR | cutUR;
-                bool any = up | down;
- 
-                if (any && cornerSize.sqrMagnitude > 0) {
-                    //nibble off the sides
- 
+            bool up = cutUL | cutUR;
+            bool down = cutLL | cutLR;
+            bool left = cutLL | cutUL;
+            bool right = cutLR | cutUR;
+            bool any = up | down;
+
+            if (any && cornerSize.sqrMagnitude > 0)
+            {
+
+                //nibble off the sides
+                vh.Clear();
+                if (left)
+                    rectNew.xMin += cornerSize.x;
+                if (down)
+                    rectNew.yMin += cornerSize.y;
+                if (up)
+                    rectNew.yMax -= cornerSize.y;
+                if (right)
+                    rectNew.xMax -= cornerSize.x;
+
+                //add two squares to the main square
+                Vector2 ul, ur, ll, lr;
+
+                if (makeColumns)
+                {
+                    ul = new Vector2(rect.xMin, cutUL ? rectNew.yMax : rect.yMax);
+                    ur = new Vector2(rect.xMax, cutUR ? rectNew.yMax : rect.yMax);
+                    ll = new Vector2(rect.xMin, cutLL ? rectNew.yMin : rect.yMin);
+                    lr = new Vector2(rect.xMax, cutLR ? rectNew.yMin : rect.yMin);
+
                     if (left)
-                        rectNew.xMin += cornerSize.x;
-                    if (down)
-                        rectNew.yMin += cornerSize.y;
-                    if (up)
-                        rectNew.yMax -= cornerSize.y;
+                        AddSquare(
+                            ll, ul,
+                            new Vector2(rectNew.xMin, rect.yMax),
+                            new Vector2(rectNew.xMin, rect.yMin),
+                            rect, useColorUp ? colorUp : color32, vh);
                     if (right)
-                        rectNew.xMax -= cornerSize.x;
- 
-                    //add two squares to the main square
-                    Vector2 ul, ur, ll, lr;
- 
-                    if (makeColumns) {
-                        ul = new Vector2(rect.xMin, cutUL ? rectNew.yMax : rect.yMax);
-                        ur = new Vector2(rect.xMax, cutUR ? rectNew.yMax : rect.yMax);
-                        ll = new Vector2(rect.xMin, cutLL ? rectNew.yMin : rect.yMin);
-                        lr = new Vector2(rect.xMax, cutLR ? rectNew.yMin : rect.yMin);
- 
-                        if (left)
-                            AddSquare(
-                                ll, ul,
-                                new Vector2(rectNew.xMin, rect.yMax),
-                                new Vector2(rectNew.xMin, rect.yMin),
-                                rect, useColorUp ? colorUp : color32, vh);
-                        if (right)
-                            AddSquare(
-                                ur, lr,
-                                new Vector2(rectNew.xMax, rect.yMin),
-                                new Vector2(rectNew.xMax, rect.yMax),
-                                rect, useColorDown ? colorDown : color32, vh);
-                    } else {
-                        ul = new Vector2(cutUL ? rectNew.xMin : rect.xMin, rect.yMax);
-                        ur = new Vector2(cutUR ? rectNew.xMax : rect.xMax, rect.yMax);
-                        ll = new Vector2(cutLL ? rectNew.xMin : rect.xMin, rect.yMin);
-                        lr = new Vector2(cutLR ? rectNew.xMax : rect.xMax, rect.yMin);
-                        if (down)
-                            AddSquare(
-                                lr, ll,
-                                new Vector2(rect.xMin, rectNew.yMin),
-                                new Vector2(rect.xMax, rectNew.yMin),
-                                rect, useColorDown ? colorDown : color32, vh);
-                        if (up)
-                            AddSquare(
-                                ul, ur,
-                                new Vector2(rect.xMax, rectNew.yMax),
-                                new Vector2(rect.xMin, rectNew.yMax),
-                                rect, useColorUp ? colorUp : color32, vh);
-                    }
+                        AddSquare(
+                            ur, lr,
+                            new Vector2(rectNew.xMax, rect.yMin),
+                            new Vector2(rectNew.xMax, rect.yMax),
+                            rect, useColorDown ? colorDown : color32, vh);
                 }
- 
+                else
+                {
+                    ul = new Vector2(cutUL ? rectNew.xMin : rect.xMin, rect.yMax);
+                    ur = new Vector2(cutUR ? rectNew.xMax : rect.xMax, rect.yMax);
+                    ll = new Vector2(cutLL ? rectNew.xMin : rect.xMin, rect.yMin);
+                    lr = new Vector2(cutLR ? rectNew.xMax : rect.xMax, rect.yMin);
+                    if (down)
+                        AddSquare(
+                            lr, ll,
+                            new Vector2(rect.xMin, rectNew.yMin),
+                            new Vector2(rect.xMax, rectNew.yMin),
+                            rect, useColorDown ? colorDown : color32, vh);
+                    if (up)
+                        AddSquare(
+                            ul, ur,
+                            new Vector2(rect.xMax, rectNew.yMax),
+                            new Vector2(rect.xMin, rectNew.yMax),
+                            rect, useColorUp ? colorUp : color32, vh);
+                }
+
                 //center
                 if (makeColumns)
                     AddSquare(new Rect(rectNew.xMin, rect.yMin, rectNew.width, rect.height), rect, color32, vh);
                 else
                     AddSquare(new Rect(rect.xMin, rectNew.yMin, rect.width, rectNew.height), rect, color32, vh);
- 
-                vh.FillMesh(m);
+
             }
         }
  

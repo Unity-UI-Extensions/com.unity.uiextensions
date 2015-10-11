@@ -15,8 +15,9 @@ namespace UnityEngine.UI.Extensions
         public float c = 1;
         public float d = 1;
 
-        protected override void OnPopulateMesh(Mesh m)
+        protected override void OnPopulateMesh(VertexHelper vh)
         {
+            vh.Clear();
             float wHalf = rectTransform.rect.width / 2;
             //float hHalf = rectTransform.rect.height / 2;
             a = Math.Min(1, Math.Max(0, a));
@@ -25,17 +26,13 @@ namespace UnityEngine.UI.Extensions
             d = Math.Min(1, Math.Max(0, d));
 
             Color32 color32 = color;
-            using (var vh = new VertexHelper())
-            {
-                vh.AddVert(new Vector3(-wHalf * a, 0), color32, new Vector2(0f, 0f));
-                vh.AddVert(new Vector3(0, wHalf * b), color32, new Vector2(0f, 1f));
-                vh.AddVert(new Vector3(wHalf * c, 0), color32, new Vector2(1f, 1f));
-                vh.AddVert(new Vector3(0, -wHalf * d), color32, new Vector2(1f, 0f));
+            vh.AddVert(new Vector3(-wHalf * a, 0), color32, new Vector2(0f, 0f));
+            vh.AddVert(new Vector3(0, wHalf * b), color32, new Vector2(0f, 1f));
+            vh.AddVert(new Vector3(wHalf * c, 0), color32, new Vector2(1f, 1f));
+            vh.AddVert(new Vector3(0, -wHalf * d), color32, new Vector2(1f, 0f));
 
-                vh.AddTriangle(0, 1, 2);
-                vh.AddTriangle(2, 3, 0);
-                vh.FillMesh(m);
-            }
+            vh.AddTriangle(0, 1, 2);
+            vh.AddTriangle(2, 3, 0);
         }
     }
 }

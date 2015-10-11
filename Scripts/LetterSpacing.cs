@@ -46,7 +46,9 @@ using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
 {
 	[AddComponentMenu("UI/Effects/Extensions/Letter Spacing")]
-	public class LetterSpacing : BaseMeshEffect
+    ///Summary
+    /// Note, LetterSpacing is now non-functional in 5.2.1p+ / 5.3, seems the vertex order has changed?
+    public class LetterSpacing : BaseMeshEffect
 	{
 		[SerializeField]
 		private float m_spacing = 0f;

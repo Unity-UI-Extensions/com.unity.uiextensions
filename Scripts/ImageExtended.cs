@@ -9,6 +9,7 @@ namespace UnityEngine.UI.Extensions
 {
     /// <summary>
     /// Image is a textured element in the UI hierarchy.
+    /// Non-Functional as of 5.2.1p+ / 5.3, need to see updated Image Base script updates to fix properly.
     /// </summary>
 
     [AddComponentMenu("UI/Extensions/Image Extended")]
@@ -196,7 +197,6 @@ namespace UnityEngine.UI.Extensions
             var size = overrideSprite == null ? Vector2.zero : new Vector2(overrideSprite.rect.width, overrideSprite.rect.height);
 
             Rect r = GetPixelAdjustedRect();
-            // Debug.Log(string.Format("r:{2}, size:{0}, padding:{1}", size, padding, r));
 
             int spriteW = Mathf.RoundToInt(size.x);
             int spriteH = Mathf.RoundToInt(size.y);
@@ -253,13 +253,10 @@ namespace UnityEngine.UI.Extensions
         /// Update the UI renderer mesh.
         /// </summary>
 
-        protected override void OnPopulateMesh(Mesh toFill)
+        protected override void OnPopulateMesh(VertexHelper vh)
         {
             List<UIVertex> vbo = new List<UIVertex>();
-            using (var helper = new VertexHelper(toFill))
-            {
-                helper.GetUIVertexStream(vbo);
-            }
+            vh.GetUIVertexStream(vbo);
 
             switch (type)
             {
@@ -276,12 +273,8 @@ namespace UnityEngine.UI.Extensions
                     GenerateFilledSprite(vbo, m_PreserveAspect);
                     break;
             }
-
-            using (var helper = new VertexHelper())
-            {
-                helper.AddUIVertexTriangleStream(vbo);
-                helper.FillMesh(toFill);
-            }
+            vh.Clear();
+            vh.AddUIVertexTriangleStream(vbo);
         }
 
         #region Various fill functions

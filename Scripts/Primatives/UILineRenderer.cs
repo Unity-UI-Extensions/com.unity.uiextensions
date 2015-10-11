@@ -65,7 +65,7 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        protected override void OnPopulateMesh(Mesh toFill)
+        protected override void OnPopulateMesh(VertexHelper vh)
         {
             // requires sets of quads
             if (Points == null || Points.Length < 2)
@@ -107,8 +107,7 @@ namespace UnityEngine.UI.Extensions
                 offsetY += Margin.y / 2f;
             }
 
-            toFill.Clear();
-            var vbo = new VertexHelper(toFill);
+            vh.Clear();
 
             Vector2 prevV1 = Vector2.zero;
             Vector2 prevV2 = Vector2.zero;
@@ -144,23 +143,18 @@ namespace UnityEngine.UI.Extensions
                 Vector2[] uvs = new[] { uvTopCenter, uvBottomCenter, uvBottomCenter, uvTopCenter };
 
                 if (i > 1)
-                    vbo.AddUIVertexQuad(SetVbo(new[] { prevV1, prevV2, v1, v2 }, uvs));
+                    vh.AddUIVertexQuad(SetVbo(new[] { prevV1, prevV2, v1, v2 }, uvs));
 
                 if (i == 1)
                     uvs = new[] { uvTopLeft, uvBottomLeft, uvBottomCenter, uvTopCenter };
                 else if (i == TempPoints.Length - 1)
                     uvs = new[] { uvTopCenter, uvBottomCenter, uvBottomRight, uvTopRight };
 
-                vbo.AddUIVertexQuad(SetVbo(new[] { v1, v2, v3, v4 }, uvs));
+                vh.AddUIVertexQuad(SetVbo(new[] { v1, v2, v3, v4 }, uvs));
 
 
                 prevV1 = v3;
                 prevV2 = v4;
-            }
-
-            if (vbo.currentVertCount > 3)
-            {
-                vbo.FillMesh(toFill);
             }
         }
 
