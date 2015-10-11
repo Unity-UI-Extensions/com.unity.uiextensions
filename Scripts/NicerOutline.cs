@@ -122,17 +122,14 @@ namespace UnityEngine.UI.Extensions
         }
 
 
-        public override void ModifyMesh (Mesh mesh)
-		{
-			if (!this.IsActive ())
+        public override void ModifyMesh(VertexHelper vh)
+        {
+            if (!this.IsActive ())
 			{
 				return;
 			}
             List < UIVertex > verts = new List<UIVertex>();
-            using (var helper = new VertexHelper(mesh))
-            {
-                helper.GetUIVertexStream(verts);
-            }
+            vh.GetUIVertexStream(verts);
 
             Text foundtext = GetComponent<Text>();
 			
@@ -174,11 +171,8 @@ namespace UnityEngine.UI.Extensions
 			count = verts.Count;
 			this.ApplyShadow (verts, this.effectColor, start, verts.Count, 0, -distanceY);
 
-            using (var helper = new VertexHelper())
-            {
-                helper.AddUIVertexTriangleStream(verts);
-                helper.FillMesh(mesh);
-            }
+            vh.Clear();
+            vh.AddUIVertexTriangleStream(verts);
         }
 
 #if UNITY_EDITOR

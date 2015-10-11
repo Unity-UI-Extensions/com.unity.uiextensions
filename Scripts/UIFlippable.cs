@@ -1,6 +1,7 @@
+
+using System;
 /// Credit ChoMPHi
 /// Sourced from - http://forum.unity3d.com/threads/script-flippable-for-ui-graphics.291711/
-
 using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
@@ -37,27 +38,30 @@ namespace UnityEngine.UI.Extensions
             this.GetComponent<Graphic>().SetVerticesDirty();
         }
      
-        public void ModifyMesh(Mesh mesh)
+        public void ModifyMesh(VertexHelper verts)
         {
-            Vector3[] verts = mesh.vertices;
             RectTransform rt = this.transform as RectTransform;
          
-            for (int i = 0; i < verts.Length; ++i)
+            for (int i = 0; i < verts.currentVertCount; ++i)
             {
-                Vector3 v = verts[i];
-             
-                // Modify positions
-                v = new Vector3(
-                    (this.m_Horizontal ? (v.x + (rt.rect.center.x - v.x) * 2) : v.x),
-                    (this.m_Veritical ?  (v.y + (rt.rect.center.y - v.y) * 2) : v.y),
-                    v.z
-                );
-             
-                // Apply
-                verts[i] = v;
-            }
+                UIVertex uiVertex = new UIVertex();
+                verts.PopulateUIVertex(ref uiVertex,i);
 
-            mesh.vertices = verts;
+                // Modify positions
+                uiVertex.position = new Vector3(
+                    (this.m_Horizontal ? (uiVertex.position.x + (rt.rect.center.x - uiVertex.position.x) * 2) : uiVertex.position.x),
+                    (this.m_Veritical ?  (uiVertex.position.y + (rt.rect.center.y - uiVertex.position.y) * 2) : uiVertex.position.y),
+                    uiVertex.position.z
+                );
+
+                // Apply
+                verts.SetUIVertex(uiVertex, i);
+            }
+        }
+
+        public void ModifyMesh(Mesh mesh)
+        {
+            //Obsolete member implementation
         }
     }
 }

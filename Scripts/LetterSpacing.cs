@@ -71,12 +71,13 @@ namespace UnityEngine.UI.Extensions
 				if (graphic != null) graphic.SetVerticesDirty();
 			}
 		}
-		
-		public override void ModifyMesh(Mesh mesh)
-		{
-			if (! IsActive()) return;
 
-            Vector3[] verts = mesh.vertices;
+        public override void ModifyMesh(VertexHelper vh)
+        {
+            if (! IsActive()) return;
+
+            List<UIVertex> verts = new List<UIVertex>();
+            vh.GetUIVertexStream(verts);
 
             Text text = GetComponent<Text>();
 			if (text == null)
@@ -125,21 +126,21 @@ namespace UnityEngine.UI.Extensions
 					int idx4 = glyphIdx * 4 + 3;
 					
 					// Check for truncated text (doesn't generate verts for all characters)
-					if (idx4 > verts.Length - 1) return;
-					
-					Vector3 vert1 = verts[idx1];
-                    Vector3 vert2 = verts[idx2];
-                    Vector3 vert3 = verts[idx3];
-                    Vector3 vert4 = verts[idx4];
-					
-					pos = Vector3.right * (letterOffset * charIdx - lineOffset);
-					
-					vert1 += pos;
-					vert2 += pos;
-					vert3 += pos;
-					vert4 += pos;
-					
-					verts[idx1] = vert1;
+					if (idx4 > verts.Count - 1) return;
+
+                    UIVertex vert1 = verts[idx1];
+                    UIVertex vert2 = verts[idx2];
+                    UIVertex vert3 = verts[idx3];
+                    UIVertex vert4 = verts[idx4];
+
+                    pos = Vector3.right * (letterOffset * charIdx - lineOffset);
+
+                    vert1.position += pos;
+                    vert2.position += pos;
+                    vert3.position += pos;
+                    vert4.position += pos;
+
+                    verts[idx1] = vert1;
 					verts[idx2] = vert2;
 					verts[idx3] = vert3;
 					verts[idx4] = vert4;
@@ -150,7 +151,8 @@ namespace UnityEngine.UI.Extensions
 				// Offset for carriage return character that still generates verts
 				glyphIdx++;
 			}
-            mesh.vertices = verts;
+            vh.Clear();
+            vh.AddUIVertexTriangleStream(verts);
         }
 	}
 }

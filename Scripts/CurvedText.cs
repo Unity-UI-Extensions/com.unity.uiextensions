@@ -40,19 +40,20 @@ namespace UnityEngine.UI.Extensions
             rectTrans = GetComponent<RectTransform>();
             OnRectTransformDimensionsChange();
         }
-        public override void ModifyMesh(Mesh mesh)
+        public override void ModifyMesh(VertexHelper vh)
         {
-            if (!IsActive())
-                return;
-            Vector3[] verts = mesh.vertices;
-            for (int index = 0; index < verts.Length; index++)
+            int count = vh.currentVertCount;
+            if (!IsActive() || count == 0)
             {
-                var uiVertex = verts[index];
-                //Debug.Log ();
-                uiVertex.y += curveForText.Evaluate(rectTrans.rect.width * rectTrans.pivot.x + uiVertex.x) * curveMultiplier;
-                verts[index] = uiVertex;
+                return;
             }
-            mesh.vertices = verts;
+            for (int index = 0; index < vh.currentVertCount; index++)
+            {
+                UIVertex uiVertex = new UIVertex();
+                vh.PopulateUIVertex(ref uiVertex, index);
+                uiVertex.position.y += curveForText.Evaluate(rectTrans.rect.width * rectTrans.pivot.x + uiVertex.position.x) * curveMultiplier;
+                vh.SetUIVertex(uiVertex, index);
+            }
         }
         protected override void OnRectTransformDimensionsChange()
         {

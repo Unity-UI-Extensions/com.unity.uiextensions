@@ -20,18 +20,16 @@ namespace UnityEngine.UI.Extensions
             targetGraphic = GetComponent<Graphic>();
         }
 
-        public override void ModifyMesh(Mesh mesh)
+        public override void ModifyMesh(VertexHelper vh)
         {
-            if (!IsActive() || mesh.vertexCount == 0)
+            int count = vh.currentVertCount;
+            if (!IsActive() || count == 0)
             {
                 return;
             }
-
-            Vector3[] vertexList = mesh.vertices;
-            Color[] vertexListColors = mesh.colors;
-            int count = mesh.vertexCount;
-            Vector3 uiVertex = vertexList[0];
-            Color uiVertexColor = vertexListColors[0];
+            var vertexList = new List<UIVertex>();
+            vh.GetUIVertexStream(vertexList);
+            UIVertex uiVertex = new UIVertex();
             if (gradientMode == GradientMode.Global)
             {
                 if (gradientDir == GradientDir.DiagonalLeftToRight || gradientDir == GradientDir.DiagonalRightToLeft)
@@ -41,49 +39,46 @@ namespace UnityEngine.UI.Extensions
 #endif
                     gradientDir = GradientDir.Vertical;
                 }
-                float bottomY = gradientDir == GradientDir.Vertical ? vertexList[vertexList.Length - 1].y : vertexList[vertexList.Length - 1].x;
-                float topY = gradientDir == GradientDir.Vertical ? vertexList[0].y : vertexList[0].x;
+                float bottomY = gradientDir == GradientDir.Vertical ? vertexList[vertexList.Count - 1].position.y : vertexList[vertexList.Count - 1].position.x;
+                float topY = gradientDir == GradientDir.Vertical ? vertexList[0].position.y : vertexList[0].position.x;
 
                 float uiElementHeight = topY - bottomY;
 
                 for (int i = 0; i < count; i++)
                 {
-                    uiVertex = vertexList[i];
-                    uiVertexColor = vertexListColors[i];
-                    if (!overwriteAllColor && uiVertexColor != targetGraphic.color)
+                    vh.PopulateUIVertex(ref uiVertex, i);
+                    if (!overwriteAllColor && uiVertex.color != targetGraphic.color)
                         continue;
-                    uiVertexColor *= Color.Lerp(vertex2, vertex1, ((gradientDir == GradientDir.Vertical ? uiVertex.y : uiVertex.x) - bottomY) / uiElementHeight);
-                    vertexListColors[i] = uiVertexColor;
+                    uiVertex.color *= Color.Lerp(vertex2, vertex1, ((gradientDir == GradientDir.Vertical ? uiVertex.position.y : uiVertex.position.x) - bottomY) / uiElementHeight);
+                    vh.SetUIVertex(uiVertex, i);
                 }
             }
             else
             {
                 for (int i = 0; i < count; i++)
                 {
-                    uiVertex = vertexList[i];
-                    uiVertexColor = vertexListColors[i];
-                    if (!overwriteAllColor && !CompareCarefully(uiVertexColor, targetGraphic.color))
+                    vh.PopulateUIVertex(ref uiVertex, i);
+                    if (!overwriteAllColor && !CompareCarefully(uiVertex.color, targetGraphic.color))
                         continue;
                     switch (gradientDir)
                     {
                         case GradientDir.Vertical:
-                            uiVertexColor *= (i % 4 == 0 || (i - 1) % 4 == 0) ? vertex1 : vertex2;
+                            uiVertex.color *= (i % 4 == 0 || (i - 1) % 4 == 0) ? vertex1 : vertex2;
                             break;
                         case GradientDir.Horizontal:
-                            uiVertexColor *= (i % 4 == 0 || (i - 3) % 4 == 0) ? vertex1 : vertex2;
+                            uiVertex.color *= (i % 4 == 0 || (i - 3) % 4 == 0) ? vertex1 : vertex2;
                             break;
                         case GradientDir.DiagonalLeftToRight:
-                            uiVertexColor *= (i % 4 == 0) ? vertex1 : ((i - 2) % 4 == 0 ? vertex2 : Color.Lerp(vertex2, vertex1, 0.5f));
+                            uiVertex.color *= (i % 4 == 0) ? vertex1 : ((i - 2) % 4 == 0 ? vertex2 : Color.Lerp(vertex2, vertex1, 0.5f));
                             break;
                         case GradientDir.DiagonalRightToLeft:
-                            uiVertexColor *= ((i - 1) % 4 == 0) ? vertex1 : ((i - 3) % 4 == 0 ? vertex2 : Color.Lerp(vertex2, vertex1, 0.5f));
+                            uiVertex.color *= ((i - 1) % 4 == 0) ? vertex1 : ((i - 3) % 4 == 0 ? vertex2 : Color.Lerp(vertex2, vertex1, 0.5f));
                             break;
 
                     }
-                    vertexListColors[i] = uiVertexColor;
+                    vh.SetUIVertex(uiVertex, i);
                 }
             }
-            mesh.colors = vertexListColors;
         }
         private bool CompareCarefully(Color col1, Color col2)
         {
