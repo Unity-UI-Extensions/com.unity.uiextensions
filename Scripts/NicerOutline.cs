@@ -8,6 +8,9 @@ namespace UnityEngine.UI.Extensions
 	[AddComponentMenu("UI/Effects/Extensions/Nicer Outline")]
 	public class NicerOutline : BaseMeshEffect
 	{
+	    // A constant factor used when allocating the vertex list.
+		private const int GROWTH_FACTOR = 24;
+		
 		[SerializeField]
 		private Color m_EffectColor = new Color (0f, 0f, 0f, 0.5f);
 		
@@ -128,7 +131,7 @@ namespace UnityEngine.UI.Extensions
 			{
 				return;
 			}
-            List < UIVertex > verts = new List<UIVertex>();
+            List < UIVertex > verts = new List<UIVertex>(GROWTH_FACTOR * mesh.vertices.Length);
             using (var helper = new VertexHelper(mesh))
             {
                 helper.GetUIVertexStream(verts);
