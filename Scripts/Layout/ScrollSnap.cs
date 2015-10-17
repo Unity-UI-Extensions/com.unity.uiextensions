@@ -117,7 +117,7 @@ namespace UnityEngine.UI.Extensions
 			UpdateListItemsSize();
 			UpdateListItemPositions();
 
-			ChangePage(CurrentPage());
+			PageChanged(CurrentPage());
 
 			if (nextButton)
 			{
@@ -280,7 +280,7 @@ namespace UnityEngine.UI.Extensions
 
 				if (itemsCount != activeCount)
 				{
-					ChangePage(CurrentPage());
+					PageChanged(CurrentPage());
 				}
 
 				itemsCount = activeCount;
@@ -363,7 +363,7 @@ namespace UnityEngine.UI.Extensions
 				//change the info bullets at the bottom of the screen. Just for visual effect
 				if (Vector3.Distance(listContainerTransform.localPosition, lerpTarget) < 10f)
 				{
-					ChangePage(CurrentPage());
+					PageChanged(CurrentPage());
 				}
 			}
 
@@ -388,7 +388,7 @@ namespace UnityEngine.UI.Extensions
 				lerp = true;
 				lerpTarget = pageAnchorPositions[CurrentPage() + 1];
 
-				ChangePage(CurrentPage() + 1);
+				PageChanged(CurrentPage() + 1);
 			}
 		}
 
@@ -402,7 +402,7 @@ namespace UnityEngine.UI.Extensions
 				lerp = true;
 				lerpTarget = pageAnchorPositions[CurrentPage() - 1];
 
-				ChangePage(CurrentPage() - 1);
+				PageChanged(CurrentPage() - 1);
 			}
 		}
 
@@ -416,7 +416,7 @@ namespace UnityEngine.UI.Extensions
 
 				lerpTarget = pageAnchorPositions[targetPage];
 
-				ChangePage(targetPage);
+				PageChanged(targetPage);
 			}
 		}
 
@@ -430,7 +430,7 @@ namespace UnityEngine.UI.Extensions
 
 				lerpTarget = pageAnchorPositions[targetPage];
 
-				ChangePage(targetPage);
+				PageChanged(targetPage);
 			}
 		}
 
@@ -458,8 +458,20 @@ namespace UnityEngine.UI.Extensions
 			return Mathf.Clamp(Mathf.RoundToInt(page), 0, pages);
 		}
 
+		public void ChangePage(int page)
+		{
+			if (0 <= page && page < pages)
+			{
+				lerp = true;
+				
+				lerpTarget = pageAnchorPositions[page];
+				
+				PageChanged(page);
+			}
+		}
+
 		//changes the bullets on the bottom of the page - pagination
-		private void ChangePage(int currentPage)
+		private void PageChanged(int currentPage)
 		{
 			startingPage = currentPage;
 
