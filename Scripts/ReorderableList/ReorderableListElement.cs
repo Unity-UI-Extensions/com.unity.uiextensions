@@ -9,12 +9,16 @@ public class ReorderableListElement : MonoBehaviour, IDragHandler, IBeginDragHan
     private readonly List<RaycastResult> _raycastResults = new List<RaycastResult>();
     private ReorderableList _currentReorderableListRaycasted;
     private RectTransform _draggingObject;
-    private ReorderableList _reorderableList;
+    private LayoutElement _draggingObjectLE;
+    private Vector2 _draggingObjectOriginalSize;
     private RectTransform _fakeElement;
+    private LayoutElement _fakeElementLE;
     private int _fromIndex;
     private bool _isDragging;
     private RectTransform _rect;
+    private ReorderableList _reorderableList;
 
+    #region IBeginDragHandler Members
 
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -39,20 +43,28 @@ public class ReorderableListElement : MonoBehaviour, IDragHandler, IBeginDragHan
         {
             GameObject clone = Instantiate(gameObject);
             _draggingObject = clone.GetComponent<RectTransform>();
-            _draggingObject.sizeDelta = gameObject.GetComponent<RectTransform>().sizeDelta;
         }
 
         //Put _dragging object into the draggin area
+        _draggingObjectOriginalSize = gameObject.GetComponent<RectTransform>().rect.size;
+        _draggingObjectLE = _draggingObject.GetComponent<LayoutElement>();
         _draggingObject.SetParent(_reorderableList.DraggableArea, false);
         _draggingObject.SetAsLastSibling();
 
         //Create a fake element for previewing placement
         _fakeElement = new GameObject("Fake").AddComponent<RectTransform>();
-        _fakeElement.gameObject.AddComponent<LayoutElement>().preferredHeight = _rect.rect.height;
+        _fakeElementLE = _fakeElement.gameObject.AddComponent<LayoutElement>();
+
+
+        RefreshSizes();
 
 
         _isDragging = true;
     }
+
+    #endregion
+
+    #region IDragHandler Members
 
     public void OnDrag(PointerEventData eventData)
     {
@@ -77,7 +89,9 @@ public class ReorderableListElement : MonoBehaviour, IDragHandler, IBeginDragHan
         //If nothing found or the list is not dropable, put the fake element outsite
         if (_currentReorderableListRaycasted == null || _currentReorderableListRaycasted.IsDropable == false)
         {
+            RefreshSizes();
             _fakeElement.transform.SetParent(_reorderableList.DraggableArea, false);
+            
         }
             //Else find the best position on the list and put fake element on the right index  
         else
@@ -87,10 +101,17 @@ public class ReorderableListElement : MonoBehaviour, IDragHandler, IBeginDragHan
 
             float minDistance = float.PositiveInfinity;
             int targetIndex = 0;
+            float dist = 0;
             for (int j = 0; j < _currentReorderableListRaycasted.Content.childCount; j++)
             {
                 var c = _currentReorderableListRaycasted.Content.GetChild(j).GetComponent<RectTransform>();
-                float dist = Mathf.Abs(c.position.y - eventData.position.y);
+
+                if (_currentReorderableListRaycasted.ContentLayout is VerticalLayoutGroup)
+                    dist = Mathf.Abs(c.position.y - eventData.position.y);
+                else if (_currentReorderableListRaycasted.ContentLayout is HorizontalLayoutGroup)
+                    dist = Mathf.Abs(c.position.x - eventData.position.x);
+                else if (_currentReorderableListRaycasted.ContentLayout is GridLayoutGroup)
+                    dist = (Mathf.Abs(c.position.x - eventData.position.x) + Mathf.Abs(c.position.y - eventData.position.y));
 
                 if (dist < minDistance)
                 {
@@ -99,10 +120,16 @@ public class ReorderableListElement : MonoBehaviour, IDragHandler, IBeginDragHan
                 }
             }
 
+            RefreshSizes();
             _fakeElement.SetSiblingIndex(targetIndex);
             _fakeElement.gameObject.SetActive(true);
+            
         }
     }
+
+    #endregion
+
+    #region IEndDragHandler Members
 
     public void OnEndDrag(PointerEventData eventData)
     {
@@ -114,8 +141,10 @@ public class ReorderableListElement : MonoBehaviour, IDragHandler, IBeginDragHan
             //Put the dragged object into the content and at the right index
             if (_currentReorderableListRaycasted != null && _currentReorderableListRaycasted.IsDropable)
             {
+                RefreshSizes();
                 _draggingObject.SetParent(_currentReorderableListRaycasted.Content, false);
                 _draggingObject.SetSiblingIndex(_fakeElement.GetSiblingIndex());
+               
 
                 //Send OnelementDropped Event
                 _reorderableList.OnElementDropped.Invoke(new ReorderableList.ReorderableListEventStruct
@@ -129,7 +158,7 @@ public class ReorderableListElement : MonoBehaviour, IDragHandler, IBeginDragHan
                     ToIndex = _fakeElement.GetSiblingIndex() - 1
                 });
             }
-            //We don't have an ReorderableList
+                //We don't have an ReorderableList
             else
             {
                 //If it's a clone, delete it
@@ -137,9 +166,10 @@ public class ReorderableListElement : MonoBehaviour, IDragHandler, IBeginDragHan
                 {
                     Destroy(_draggingObject.gameObject);
                 }
-                //Else replace the draggedObject to his first place
+                    //Else replace the draggedObject to his first place
                 else
                 {
+                    RefreshSizes();
                     _draggingObject.SetParent(_reorderableList.Content, false);
                     _draggingObject.SetSiblingIndex(_fromIndex);
                 }
@@ -149,6 +179,26 @@ public class ReorderableListElement : MonoBehaviour, IDragHandler, IBeginDragHan
         //Delete fake element
         if (_fakeElement != null)
             Destroy(_fakeElement.gameObject);
+    }
+
+    #endregion
+
+    private void RefreshSizes()
+    {
+        Vector2 size = _draggingObjectOriginalSize;
+
+        if (_currentReorderableListRaycasted != null && _currentReorderableListRaycasted.IsDropable)
+        {
+            var firstChild = _currentReorderableListRaycasted.Content.GetChild(0);
+            if (firstChild != null)
+            {
+                size = firstChild.GetComponent<RectTransform>().rect.size;
+            }
+        }
+        
+        _draggingObject.sizeDelta = size;
+        _fakeElementLE.preferredHeight = _draggingObjectLE.preferredHeight = size.y;
+        _fakeElementLE.preferredWidth = _draggingObjectLE.preferredWidth = size.x;
     }
 
     public void Init(ReorderableList reorderableList)
