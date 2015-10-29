@@ -44,7 +44,6 @@ namespace UnityEngine.UI.Extensions
                 //Send OnElementRemoved Event
                 if (_reorderableList.OnElementRemoved != null)
                 {
-                    Debug.Log("removed");
                     _reorderableList.OnElementRemoved.Invoke(new ReorderableList.ReorderableListEventStruct
                     {
                         DroppedObject = _draggingObject.gameObject,
@@ -58,7 +57,7 @@ namespace UnityEngine.UI.Extensions
             //Else Duplicate
             else
             {
-                GameObject clone = Instantiate(gameObject);
+                GameObject clone = (GameObject)Instantiate(gameObject);
                 _draggingObject = clone.GetComponent<RectTransform>();
             }
 
@@ -78,7 +77,6 @@ namespace UnityEngine.UI.Extensions
             //Send OnElementGrabbed Event
             if (_reorderableList.OnElementGrabbed != null)
             {
-                Debug.Log("Grabbed");
                 _reorderableList.OnElementGrabbed.Invoke(new ReorderableList.ReorderableListEventStruct
                 {
                     DroppedObject = _draggingObject.gameObject,
@@ -178,7 +176,6 @@ namespace UnityEngine.UI.Extensions
                     //Send OnelementDropped Event
                     if (_reorderableList.OnElementDropped != null)
                     {
-                        Debug.Log("Dropped");
                         _reorderableList.OnElementDropped.Invoke(new ReorderableList.ReorderableListEventStruct
                         {
                             DroppedObject = _draggingObject.gameObject,
