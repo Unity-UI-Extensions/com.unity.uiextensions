@@ -29,10 +29,16 @@ To get started with the project, here's a little guide:
 ---
 ## Updates: ##
 Update 1.0.4
+
 [![View Getting Started Video](http://img.youtube.com/vi/oF48Qpaq3ls/0.jpg)](http://www.youtube.com/watch?v=oF48Qpaq3ls "Update 1.0.0.4 for the Unity UI Extensions Project")
 
 Update 1.0.5
 Few minor fixes and a couple of additional scripts.  Predominatly created the new 5.3 branch to maintain the UI API changes from the 5.2.1 Patch releases.  5.3 package is 100% compatible with 5.2.1 Patch releases.
+
+Update 1.0.6
+Added the awesome ReOrderable List control, plus some other minor bugfixes / changes.
+Added a new version of the Scroll Snap control as an alternative to the fixed versions.
+
 ---
 ## Controls and extensions listed in this project are: ##
 
@@ -81,6 +87,12 @@ Layout | Description | Menu Command | Component Command | Notes | Credits
 || UI / Extensions / Fixed Item Scroll / Snap Horizontal Multiple Item||| xesenix
 || UI / Extensions / Fixed Item Scroll / Snap Vertical Single Item||| xesenix
 || UI / Extensions / Fixed Item Scroll / Snap Vertical Multiple Item||| xesenix
+**ReorderableList** | A dynamic control allowing drag and drop of child elements with reordering support | UI/Extensions/Re-orderable Lists/Re-orderable Vertical Scroll Rect|UI/Extensions/Re-orderable list|[Example](http://i.giphy.com/3o85xri0ARKKSfDHIQ.gif)| Ziboo
+|| UI/Extensions/Re-orderable Lists/Re-orderable Horizontal Scroll Rect||| Ziboo
+|| UI/Extensions/Re-orderable Lists/Re-orderable Grid Scroll Rect||| Ziboo
+|| UI/Extensions/Re-orderable Lists/Re-orderable Vertical List||| Ziboo
+|| UI/Extensions/Re-orderable Lists/Re-orderable Hirizontal List||| Ziboo
+|| UI/Extensions/Re-orderable Lists/Re-orderable Grid||| Ziboo
 
 
 ## Effect components ##
