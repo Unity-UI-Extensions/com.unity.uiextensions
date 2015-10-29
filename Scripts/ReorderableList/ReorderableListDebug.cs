@@ -18,7 +18,7 @@ namespace UnityEngine.UI.Extensions
         private void ElementDropped(ReorderableList.ReorderableListEventStruct droppedStruct)
         {
             DebugLabel.text = "";
-            DebugLabel.text += "Dropped Object: " + droppedStruct.DropedObject.name + "\n";
+            DebugLabel.text += "Dropped Object: " + droppedStruct.DroppedObject.name + "\n";
             DebugLabel.text += "Is Clone ?: " + droppedStruct.IsAClone + "\n";
             if (droppedStruct.IsAClone)
                 DebugLabel.text += "Source Object: " + droppedStruct.SourceObject.name + "\n";
