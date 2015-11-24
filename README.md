@@ -4,7 +4,8 @@ This is an extension project for the new Unity UI system which can be found at:
 [Unity UI Source](https://bitbucket.org/Unity-Technologies/ui)
 
 #Updated for 5.2.1P+/5.3 - new asset package#
-#For Unity 5.2.2 - Use the new 5.3 package!#
+#For Unity 5.2.2+ - Use the new 5.3 package!#
+#Issue with 5.3 package in 5.2.3 resolved, update asset from site#
 
 ##Intro##
 For more info, here's a little introduction video for the project:
