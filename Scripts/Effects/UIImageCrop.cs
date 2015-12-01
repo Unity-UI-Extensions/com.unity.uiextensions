@@ -4,7 +4,7 @@
 
 namespace UnityEngine.UI.Extensions
 {
-    [AddComponentMenu("UI/Extensions/UIImageCrop")]
+    [AddComponentMenu("UI/Effects/Extensions/UIImageCrop")]
     [ExecuteInEditMode]
     [RequireComponent(typeof(RectTransform))]
     public class UIImageCrop : MonoBehaviour
@@ -19,9 +19,9 @@ namespace UnityEngine.UI.Extensions
         // Use this for initialization
         void Start()
         {
-
             SetMaterial();
         }
+
         public void SetMaterial()
         {
             mGraphic = this.GetComponent<MaskableGraphic>();
@@ -29,10 +29,17 @@ namespace UnityEngine.UI.Extensions
             YCropProperty = Shader.PropertyToID("_YCrop");
             if (mGraphic != null)
             {
+                if (mGraphic.material == null || mGraphic.material.name == "Default UI Material")
+                {
+                    //Applying default material with UI Image Crop shader
+                    mGraphic.material = new Material(Shader.Find("UI Extensions/UI Image Crop"));
+                }
                 mat = mGraphic.material;
-
             }
-            else Debug.LogError("Please attach a UI component");
+            else
+            {
+                Debug.LogError("Please attach component to a Graphical UI component");
+            }
         }
         public void OnValidate()
         {
