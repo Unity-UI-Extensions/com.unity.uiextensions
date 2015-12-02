@@ -157,7 +157,6 @@ namespace UnityEditor.UI
                 GameObjectUtility.SetParentAndAlign(eventSystem, parent);
                 esys = eventSystem.AddComponent<EventSystem>();
                 eventSystem.AddComponent<StandaloneInputModule>();
-                eventSystem.AddComponent<TouchInputModule>();
 
                 Undo.RegisterCreatedObjectUndo(eventSystem, "Create " + eventSystem.name);
             }
@@ -208,7 +207,7 @@ namespace UnityEditor.UI
         #region UI Extensions "Create" Menu items
 
         #region Scroll Snap controls
-        [MenuItem("GameObject/UI/Extensions/Horizontal Scroll Snap", false)]
+        [MenuItem("GameObject/UI/Extensions/Horizontal Scroll Snap", false)]
         static public void AddHorizontalScrollSnap(MenuCommand menuCommand)
         {
             GameObject horizontalScrollSnapRoot = CreateUIElementRoot("Horizontal Scroll Snap", menuCommand, s_ThickGUIElementSize);
@@ -273,7 +272,7 @@ namespace UnityEditor.UI
             Selection.activeGameObject = horizontalScrollSnapRoot;
         }
 
-        [MenuItem("GameObject/UI/Extensions/Vertical Scroll Snap", false)]
+        [MenuItem("GameObject/UI/Extensions/Vertical Scroll Snap", false)]
         static public void AddVerticallScrollSnap(MenuCommand menuCommand)
         {
             GameObject verticalScrollSnapRoot = CreateUIElementRoot("Vertical Scroll Snap", menuCommand, s_ThickGUIElementSize);
@@ -538,7 +537,7 @@ namespace UnityEditor.UI
             Selection.activeGameObject = go;
 
         }
-#endregion
+        #endregion
 
         #region Drop Down controls
         [MenuItem("GameObject/UI/Extensions/AutoComplete ComboBox", false)]
@@ -864,7 +863,7 @@ namespace UnityEditor.UI
             arrowTextCanvasGroup.blocksRaycasts = false;
             Selection.activeGameObject = dropDownListRoot;
         }
-#endregion
+        #endregion
 
         #region RTS Selection box
         [MenuItem("GameObject/UI/Extensions/Selection Box", false)]
@@ -898,7 +897,7 @@ namespace UnityEditor.UI
 
             Selection.activeGameObject = go;
         }
-#endregion
+        #endregion
 
         #region Bound Tooltip
         [MenuItem("GameObject/UI/Extensions/Bound Tooltip/Tooltip", false)]
@@ -948,7 +947,7 @@ namespace UnityEditor.UI
             }
         }
 
-#endregion
+        #endregion
 
         #region Progress bar
         [MenuItem("GameObject/UI/Extensions/Progress Bar", false)]
@@ -995,7 +994,7 @@ namespace UnityEditor.UI
             slider.direction = Slider.Direction.LeftToRight;
             SetDefaultColorTransitionValues(slider);
         }
-#endregion
+        #endregion
 
         #region Primitives
 
@@ -1038,7 +1037,7 @@ namespace UnityEditor.UI
             go.AddComponent<UICornerCut>();
             Selection.activeGameObject = go;
         }
-#endregion
+        #endregion
 
         #region Re-Orderable Lists
 
