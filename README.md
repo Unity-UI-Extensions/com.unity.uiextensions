@@ -3,8 +3,6 @@
 This is an extension project for the new Unity UI system which can be found at:
 [Unity UI Source](https://bitbucket.org/Unity-Technologies/ui)
 
-#Updated for 5.2 - new asset package#
-
 ##Intro##
 For more info, here's a little introduction video for the project:
 
@@ -17,7 +15,6 @@ In this repository is a collection of extension scripts to enhance your Unity UI
 You can either download / fork the project to access the scripts, or you can download this precompiled Unity Asset, chock full of goodness
 ### [Unity UI Extensions Unity 4.x Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-4.x.unitypackage)###
 ### [Unity UI Extensions Unity 5.1 Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.1.unitypackage)###
-### [Unity UI Extensions Unity 5.2 Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.2.unitypackage)###
 
 ##Getting Started##
 To get started with the project, here's a little guide:
@@ -27,6 +24,9 @@ To get started with the project, here's a little guide:
 ## Updates: ##
 Update 1.0.0.4
 [![View Getting Started Video](http://img.youtube.com/vi/oF48Qpaq3ls/0.jpg)](http://www.youtube.com/watch?v=oF48Qpaq3ls "Update 1.0.0.4 for the Unity UI Extensions Project")
+
+Update 1.0.0.6
+New set of controls including some shader ennhanced solutions
 ---
 ## Controls and extensions listed in this project are: ##
 
@@ -87,6 +87,8 @@ Effect   | Description | Component Command | Notes  | Credits
 **NicerOutline** | Another outline control | UI / Effects / Extensions / Nicer Outline | | Melang
 **RaycastMask** | An example of an enhanced mask component able to work with the image data. Enables picking on image parts and not just the Rect Transform | UI / Effects / Extensions / Raycast Mask | | senritsu
 **UIFlippable** | Image component effect to flip the graphic | UI / Effects / Extensions / UI Flippable | | ChoMPHi
+**UIImageCrop** | Shader based mask system which clips to specific ranges X&Y | UI / Effects / Extensions / UI Image Crop | | 00christian00
+**SoftAlphaMask** | Shader based mask able to clip images using an alpha mask | UI / Effects / Extensions / Soft Mask Script | | NemoKrad
 
 
 ## VR Components##
