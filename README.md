@@ -33,15 +33,16 @@ To get started with the project, here's a little guide:
 [![View Getting Started Video](http://img.youtube.com/vi/oF48Qpaq3ls/0.jpg)](http://www.youtube.com/watch?v=oF48Qpaq3ls "Update 1.0.0.4 for the Unity UI Extensions Project")
 ---
 ###Update 1.0.5###
-Few minor fixes and a couple of additional scripts.  Predominatly created the new 5.3 branch to maintain the UI API changes from the 5.2.1 Patch releases.  5.3 package is 100% compatible with 5.2.1 Patch releases.
+Few minor fixes and a couple of additional scripts.  Predominately created the new 5.3 branch to maintain the UI API changes from the 5.2.1 Patch releases.  5.3 package is 100% compatible with 5.2.1 Patch releases.
 
 ###Update 1.0.6###
+[![View Getting Started Video](http://img.youtube.com/vi/jpyFiRvSmbg/0.jpg)](http://www.youtube.com/watch?v=jpyFiRvSmbg "Update 1.0.6 for the Unity UI Extensions Project")
+
 * Added the awesome ReOrderable List control, plus some other minor bugfixes / changes.
 * Added a new version of the Scroll Snap control as an alternative to the fixed versions.
-* New set of controls including some shader ennhanced solutions
+* New set of controls including some shader enhanced solutions
 * I've added a donate column to the lists.  If you are getting great use out of a control, help out the dev who created it. Optional of course.  Will update with links as I get them.
 
-Note to self, record video on this soon!! :S
 
 ---
 ## Controls and extensions listed in this project are: ##
