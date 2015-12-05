@@ -33,15 +33,16 @@ To get started with the project, here's a little guide:
 [![View Getting Started Video](http://img.youtube.com/vi/oF48Qpaq3ls/0.jpg)](http://www.youtube.com/watch?v=oF48Qpaq3ls "Update 1.0.0.4 for the Unity UI Extensions Project")
 ---
 ###Update 1.0.5###
-Few minor fixes and a couple of additional scripts.  Predominatly created the new 5.3 branch to maintain the UI API changes from the 5.2.1 Patch releases.  5.3 package is 100% compatible with 5.2.1 Patch releases.
+Few minor fixes and a couple of additional scripts.  Predominately created the new 5.3 branch to maintain the UI API changes from the 5.2.1 Patch releases.  5.3 package is 100% compatible with 5.2.1 Patch releases.
 
 ###Update 1.0.6###
+[![View Getting Started Video](http://img.youtube.com/vi/jpyFiRvSmbg/0.jpg)](http://www.youtube.com/watch?v=jpyFiRvSmbg "Update 1.0.6 for the Unity UI Extensions Project")
+
 * Added the awesome ReOrderable List control, plus some other minor bugfixes / changes.
 * Added a new version of the Scroll Snap control as an alternative to the fixed versions.
-* New set of controls including some shader ennhanced solutions
+* New set of controls including some shader enhanced solutions
 * I've added a donate column to the lists.  If you are getting great use out of a control, help out the dev who created it. Optional of course.  Will update with links as I get them.
 
-Note to self, record video on this soon!! :S
 
 ---
 ## Controls and extensions listed in this project are: ##
@@ -50,7 +51,7 @@ Note to self, record video on this soon!! :S
 ================
 
 Control | Description | Menu Command | Component Command | Notes | Donate | Credits
---------- | -------------- | ---------------------- | ---------------------------- | ------- | ----------
+--------- | -------------- | ---------------------- | ---------------------------- | ------- | ---------- | ----------
 **Accordion** | An Acordian style control with animated segments. Sourced from [here]. | N/A | Component / UI / Extensions / AccordionGroup |[demo video](http://forum.unity3d.com/threads/accordion-type-layout.271818/)|| ChoMPHi
  | | | Component / UI / Extensions / AccordionItem |[demo video](http://forum.unity3d.com/threads/accordion-type-layout.271818/)|| ChoMPHi
 **HSVPicker** | A colour picker UI | N/A | UI / Extensions / HSVPicker | Project folder includes prefab and sample scene || judah4
@@ -69,7 +70,7 @@ Control | Description | Menu Command | Component Command | Notes | Donate | Cred
 ================
 
 Control | Description | Menu Command | Component Command | Notes | Donate | Credits
---------- | -------------- | ---------------------- | ---------------------------- | ------- | ----------
+--------- | -------------- | ---------------------- | ---------------------------- | ------- | ---------- | ----------
 **LineRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / Primitives / UI Line Renderer | UI / Extensions / Primitives / UI Line Renderer |[tutorial video](https://www.youtube.com/watch?v=OElcWAZGHi0)|| jack.sydorenko
 **UILineTextureRenderer** | Graphic control for drawing lines in the UI System | UI / Extensions / Primitives / UI Line Texture Renderer | UI / Extensions / Primitives / UI Line Texture Renderer |[tutorial video](https://www.youtube.com/watch?v=OElcWAZGHi0)|| jack.sydorenko, jonbro5556
 **UICircle** | Graphic control for drawing circles in the UI System | UI / Extensions / Primitives / UI Circle | UI / Extensions / Primitives / UI Circle |[tutorial video](https://www.youtube.com/watch?v=2KOnEKAVua0)|| zge
@@ -81,7 +82,7 @@ Control | Description | Menu Command | Component Command | Notes | Donate | Cred
 ================
 
 Layout | Description | Menu Command | Component Command | Notes | Donate | Credits
---------- | -------------- | ---------------------- | ---------------------------- | ------- | ----------
+--------- | -------------- | ---------------------- | ---------------------------- | ------- | ---------- | ----------
 **HorizontalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Horizontal Scroll Snap | Layout / Extensions / Horizontal Scroll Snap |[tutorial video](https://www.youtube.com/watch?v=KJlIlWHlfMo)|| BinaryX
 **VerticalScrollSnap** | A pages scroll rect that can work in steps / pages, includes button support | UI / Extensions / Vertical Scroll Snap | Layout / Extensions / Vertical Scroll Snap |[tutorial video](https://www.youtube.com/watch?v=KJlIlWHlfMo)|| BinaryX, Simon Darkside Jackson
 **FlowLayoutGroup** | A more rugged grid style layout group  || Layout / Extensions / Flow Layout Group | [Example Video](https://www.youtube.com/watch?v=tMe_3tJTZvc) || Simie
@@ -103,7 +104,7 @@ Layout | Description | Menu Command | Component Command | Notes | Donate | Credi
 =====================
 
 Effect   | Description | Component Command | Notes | Donate | Credits
---------- | -------------- | ---------------------------- | ------- | -----------
+--------- | -------------- | ---------------------------- | ------- | ----------- | ----------
 **BestFitOutline** | An improved outline effect | UI / Effects / Extensions / Best Fit Outline ||| Melang
 **CurvedText** | A Text vertex manipulator for those users NOT using TextMeshPro (why ever not?) | UI / Effects / Extensons / Curved Text ||| Breyer
 **Gradient**  | Apply vertex colours in a gradient on any UI object | UI / Effects / Extensions / Gradient ||| Breyer
@@ -119,7 +120,7 @@ Effect   | Description | Component Command | Notes | Donate | Credits
 =======================
 
 Component | Description | Component Command | Notes | Donate | Credits
---------- | -------------- | ---------------------------- | ------- | ------
+--------- | -------------- | ---------------------------- | ------- | ------ | ----------
 **VRCursor** | Cursor script for VR use (requires VRInputModule) | UI / Extensions / VR Cursoe ||| Ralph Barbagallo
 **VRInputModule** | Input module to support the VR Cursor | Event / Vr Input Module ||| Ralph Barbagallo
 
@@ -128,7 +129,7 @@ Component | Description | Component Command | Notes | Donate | Credits
 =======================
 
 Component | Description | Component Command | Notes | Donate | Credits
---------- | -------------- | ---------------------------- | ------- | ------
+--------- | -------------- | ---------------------------- | ------- | ------ | ----------
 **AimerInputModule** | Replacement Input module to allow for a reciclue to interace with WorldSpace canvas UI  | Event / Extensions / Aimer Input Module ||| Chris Trueman
 **GamePadInputModule** | Stripped down SIM Input module for just gamepad/keybord input   | Event / Extensions / GamePad Input Module ||| Simon (darkside) Jackson
 
@@ -136,7 +137,7 @@ Component | Description | Component Command | Notes | Donate | Credits
 =======================
 
 Component | Description | Component Command | Notes | Donate | Credits
---------- | -------------- | ---------------------------- | ------- | ------
+--------- | -------------- | ---------------------------- | ------- | ------ | ----------
 **ReturnKeyTrigger** | Does something?? | UI / Extensions / ReturnKey Trigger ||| Melang, ddreaper
 **TabNavigation**  | An example Tab navigation script, updated to add manual navigation | UI / Extensions / Tab Navigation ||| Melang, omatase
 **uGUITools** | | Menu / uGUI ||| Senshi
