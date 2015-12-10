@@ -15,6 +15,8 @@ In this repository is a collection of extension scripts to enhance your Unity UI
 You can either download / fork the project to access the scripts, or you can download this precompiled Unity Asset, chock full of goodness
 ### [Unity UI Extensions Unity 4.x Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-4.x.unitypackage)###
 ### [Unity UI Extensions Unity 5.1 Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.1.unitypackage)###
+### [Unity UI Extensions Unity 5.2 Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.2.unitypackage)### <- 5.2.0 - 5.2.1 base releases ONLY
+### [Unity UI Extensions Unity 5.3 (5.2.1P+) Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.3.unitypackage) <- use this for 5.2.1P+ releases###
 
 ##Getting Started##
 To get started with the project, here's a little guide:
@@ -23,10 +25,20 @@ To get started with the project, here's a little guide:
 ---
 ## Updates: ##
 Update 1.0.0.4
+
 [![View Getting Started Video](http://img.youtube.com/vi/oF48Qpaq3ls/0.jpg)](http://www.youtube.com/watch?v=oF48Qpaq3ls "Update 1.0.0.4 for the Unity UI Extensions Project")
 
 Update 1.0.0.6
-New set of controls including some shader ennhanced solutions
+
+[![View Getting Started Video](http://img.youtube.com/vi/jpyFiRvSmbg/0.jpg)](http://www.youtube.com/watch?v=jpyFiRvSmbg "Update 1.0.6 for the Unity UI Extensions Project")
+
+* Added the awesome ReOrderable List control, plus some other minor bugfixes / changes.
+* Added a new version of the Scroll Snap control as an alternative to the fixed versions.
+* New set of controls including some shader enhanced solutions
+* I've added a donate column to the lists.  If you are getting great use out of a control, help out the dev who created it. Optional of course.  Will update with links as I get them.
+
+**1.0.6.1 - Minor update to enhance soft alpha mask and add cylinder text plus a fix to letter spacing** 
+
 ---
 ## Controls and extensions listed in this project are: ##
 
@@ -89,6 +101,7 @@ Effect   | Description | Component Command | Notes  | Credits
 **UIFlippable** | Image component effect to flip the graphic | UI / Effects / Extensions / UI Flippable | | ChoMPHi
 **UIImageCrop** | Shader based mask system which clips to specific ranges X&Y | UI / Effects / Extensions / UI Image Crop | | 00christian00
 **SoftAlphaMask** | Shader based mask able to clip images using an alpha mask | UI / Effects / Extensions / Soft Mask Script | | NemoKrad
+**CylinderText** | Allows finers control of text spacing |  UI / Effects / Extensions / Cylinder Text | | Breyer
 
 
 ## VR Components##
