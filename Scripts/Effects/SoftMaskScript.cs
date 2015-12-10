@@ -14,6 +14,9 @@ namespace UnityEngine.UI.Extensions
         public RectTransform MaskArea;
         RectTransform myRect;
 
+        [Tooltip("A Rect Transform that can be used to scale and move the mask - Does not apply to Text UI Components being masked")]
+        public RectTransform maskScalingRect;
+
         [Tooltip("Texture to be used to do the soft alpha")]
         public Texture AlphaMask;
 
@@ -23,6 +26,9 @@ namespace UnityEngine.UI.Extensions
 
         [Tooltip("Implement a hard blend based on the Cutoff")]
         public bool HardBlend = false;
+
+        [Tooltip("Flip the masks alpha value")]
+        public bool FlipAlphaMask = false;
 
         Vector3[] worldCorners;
 
@@ -108,6 +114,7 @@ namespace UnityEngine.UI.Extensions
 
             if (isText) // Need to do our calculations in world for Text
             {
+                maskScalingRect = null;
                 if (canvas.renderMode == RenderMode.ScreenSpaceOverlay && Application.isPlaying)
                 {
                     p = canvas.transform.InverseTransformPoint(MaskArea.transform.position);
@@ -126,8 +133,18 @@ namespace UnityEngine.UI.Extensions
             }
             else // Need to do our calculations in tex space for Image.
             {
+                if (maskScalingRect != null)
+                {
+                    maskRect = maskScalingRect.rect;
+                }
+
                 // Get the centre offset
                 centre = myRect.transform.InverseTransformPoint(MaskArea.transform.position);
+
+                if (maskScalingRect != null)
+                {
+                    centre = myRect.transform.InverseTransformPoint(maskScalingRect.transform.position);
+                }
 
                 // Set the scale for mapping texcoords mask
                 AlphaUV = new Vector2(maskRect.width / contentRect.width, maskRect.height / contentRect.height);
@@ -154,6 +171,7 @@ namespace UnityEngine.UI.Extensions
             mat.SetVector("_Max", max);
 
             mat.SetTexture("_AlphaMask", AlphaMask);
+            mat.SetInt("_FlipAlphaMask", FlipAlphaMask ? 1 : 0);
 
             if (!isText) // No mod needed for Text
                 mat.SetVector("_AlphaUV", AlphaUV);

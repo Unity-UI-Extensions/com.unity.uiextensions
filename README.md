@@ -21,13 +21,13 @@ You can either download / fork the project to access the scripts, or you can dow
 ### [Unity UI Extensions Unity 5.2 Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.2.unitypackage)### <- 5.2.0 - 5.2.1 base releases ONLY
 ### [Unity UI Extensions Unity 5.3 (5.2.1P+) Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.3.unitypackage) <- use this for 5.2.1P+ releases###
 
-
 ##Getting Started##
 To get started with the project, here's a little guide:
 
 [![View Getting Started Video](http://img.youtube.com/vi/sVLeYmsNQAI/0.jpg)](http://www.youtube.com/watch?v=sVLeYmsNQAI "Unity UI getting started video")
 ---
 ## Updates: ##
+
 ###Update 1.0.4###
 
 [![View Getting Started Video](http://img.youtube.com/vi/oF48Qpaq3ls/0.jpg)](http://www.youtube.com/watch?v=oF48Qpaq3ls "Update 1.0.0.4 for the Unity UI Extensions Project")
@@ -36,6 +36,7 @@ To get started with the project, here's a little guide:
 Few minor fixes and a couple of additional scripts.  Predominately created the new 5.3 branch to maintain the UI API changes from the 5.2.1 Patch releases.  5.3 package is 100% compatible with 5.2.1 Patch releases.
 
 ###Update 1.0.6###
+
 [![View Getting Started Video](http://img.youtube.com/vi/jpyFiRvSmbg/0.jpg)](http://www.youtube.com/watch?v=jpyFiRvSmbg "Update 1.0.6 for the Unity UI Extensions Project")
 
 * Added the awesome ReOrderable List control, plus some other minor bugfixes / changes.
@@ -43,6 +44,7 @@ Few minor fixes and a couple of additional scripts.  Predominately created the n
 * New set of controls including some shader enhanced solutions
 * I've added a donate column to the lists.  If you are getting great use out of a control, help out the dev who created it. Optional of course.  Will update with links as I get them.
 
+**1.0.6.1 - Minor update to enhance soft alpha mask and add cylinder text plus a fix to letter spacing** 
 
 ---
 ## Controls and extensions listed in this project are: ##
@@ -114,6 +116,7 @@ Effect   | Description | Component Command | Notes | Donate | Credits
 **UIFlippable** | Image component effect to flip the graphic | UI / Effects / Extensions / UI Flippable ||| ChoMPHi
 **UIImageCrop** | Shader based mask system which clips to specific ranges X&Y | UI / Effects / Extensions / UI Image Crop ||| 00christian00
 **SoftAlphaMask** | Shader based mask able to clip images using an alpha mask | UI / Effects / Extensions / Soft Mask Script ||| NemoKrad
+**CylinderText** | Allows finers control of text spacing |  UI / Effects / Extensions / Cylinder Text ||| Breyer
 
 
 ## VR Components##
