@@ -1,4 +1,5 @@
-﻿/// Credit Breyer
+﻿/// adaption for cylindrical bending by herbst
+/// Credit Breyer
 /// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1777407
 
 namespace UnityEngine.UI.Extensions
@@ -33,8 +34,6 @@ namespace UnityEngine.UI.Extensions
         }
         public override void ModifyMesh(VertexHelper vh)
         {
-            Vector3 center = transform.position;
-
             int count = vh.currentVertCount;
             if (!IsActive() || count == 0)
             {
