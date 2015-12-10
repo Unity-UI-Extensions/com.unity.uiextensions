@@ -47,12 +47,12 @@ namespace UnityEngine.UI.Extensions
 {
 	[AddComponentMenu("UI/Effects/Extensions/Letter Spacing")]
     ///Summary
-    /// Note, LetterSpacing is now non-functional in 5.2.1p+ / 5.3, seems the vertex order has changed?
+    /// Note, Vertex Count has changed in 5.2.1+, is now 6 (two tris) instead of 4 (tri strip).
     public class LetterSpacing : BaseMeshEffect
 	{
 		[SerializeField]
 		private float m_spacing = 0f;
-		
+
 		protected LetterSpacing() { }
 		
 		#if UNITY_EDITOR
@@ -119,21 +119,25 @@ namespace UnityEngine.UI.Extensions
 			{
 				string line = lines[lineIdx];
 				float lineOffset = (line.Length -1) * letterOffset * alignmentFactor;
-				
+
 				for (int charIdx = 0; charIdx < line.Length; charIdx++)
 				{
-					int idx1 = glyphIdx * 4 + 0;
-					int idx2 = glyphIdx * 4 + 1;
-					int idx3 = glyphIdx * 4 + 2;
-					int idx4 = glyphIdx * 4 + 3;
-					
-					// Check for truncated text (doesn't generate verts for all characters)
-					if (idx4 > verts.Count - 1) return;
+					int idx1 = glyphIdx * 6 + 0;
+					int idx2 = glyphIdx * 6 + 1;
+					int idx3 = glyphIdx * 6 + 2;
+					int idx4 = glyphIdx * 6 + 3;
+                    int idx5 = glyphIdx * 6 + 4;
+                    int idx6 = glyphIdx * 6 + 5;
+
+                    // Check for truncated text (doesn't generate verts for all characters)
+                    if (idx6 > verts.Count - 1) return;
 
                     UIVertex vert1 = verts[idx1];
                     UIVertex vert2 = verts[idx2];
                     UIVertex vert3 = verts[idx3];
                     UIVertex vert4 = verts[idx4];
+                    UIVertex vert5 = verts[idx5];
+                    UIVertex vert6 = verts[idx6];
 
                     pos = Vector3.right * (letterOffset * charIdx - lineOffset);
 
@@ -141,13 +145,17 @@ namespace UnityEngine.UI.Extensions
                     vert2.position += pos;
                     vert3.position += pos;
                     vert4.position += pos;
+                    vert5.position += pos;
+                    vert6.position += pos;
 
                     verts[idx1] = vert1;
 					verts[idx2] = vert2;
 					verts[idx3] = vert3;
 					verts[idx4] = vert4;
-					
-					glyphIdx++;
+                    verts[idx5] = vert5;
+                    verts[idx6] = vert6;
+
+                    glyphIdx++;
 				}
 				
 				// Offset for carriage return character that still generates verts
