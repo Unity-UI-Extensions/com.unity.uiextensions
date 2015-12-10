@@ -34,6 +34,8 @@ namespace UnityEngine.UI.Extensions
         }
         public override void ModifyMesh(VertexHelper vh)
         {
+            if (! IsActive()) return;
+
             int count = vh.currentVertCount;
             if (!IsActive() || count == 0)
             {

@@ -19,6 +19,7 @@
 		_CutOff("CutOff",Float) = 0
 		[MaterialToggle]
 		_HardBlend("HardBlend",Float) = 0
+		_FlipAlphaMask("Flip Alpha Mask",int) = 0
 	}
 
 	SubShader
@@ -92,6 +93,8 @@
 
 			bool _HardBlend = false;
 
+			int _FlipAlphaMask = 0;
+
 			v2f vert(appdata_t IN)
 			{
 				v2f OUT;
@@ -138,6 +141,9 @@
 						if (_HardBlend)
 							a = 1;
 					}
+
+					if (_FlipAlphaMask == 1)
+						a = 1 - a;
 
 					color.a = a * color.a;
 				}

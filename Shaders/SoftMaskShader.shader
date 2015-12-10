@@ -20,6 +20,7 @@
 		_CutOff("CutOff",Float) = 0
 		[MaterialToggle]
 		_HardBlend("HardBlend",Float) = 0
+		_FlipAlphaMask("Flip Alpha Mask",int) = 0
 	}
 
 	SubShader
@@ -90,6 +91,8 @@
 			float _Value;
 			int _LeftToRight;
 
+			int _FlipAlphaMask = 0;
+
 			v2f vert(appdata_t IN)
 			{
 				v2f OUT;
@@ -122,7 +125,6 @@
 			{
 				half4 color = (tex2D(_MainTex, IN.texcoord) + _TextureSampleAdd) * IN.color;
 
-
 				// Do we want to clip the image to the Mask Rectangle?
 				if (IN.texcoord.x < _Min.x || IN.texcoord.x > _Max.x || IN.texcoord.y < _Min.y || IN.texcoord.y > _Max.y) // Yes we do
 					color.a = 0;
@@ -137,6 +139,9 @@
 						if(_HardBlend)
 							a = 1;
 					}
+
+					if (_FlipAlphaMask == 1)
+						a = 1 - a;
 
 					color.a = a;
 				}
