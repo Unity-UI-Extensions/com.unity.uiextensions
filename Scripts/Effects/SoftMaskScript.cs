@@ -30,6 +30,9 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Flip the masks alpha value")]
         public bool FlipAlphaMask = false;
 
+        [Tooltip("If Mask Scals Rect is given, and this value is true, the area around the mask will not be clipped")]
+        public bool DontClipMaskScalingRect = false;
+
         Vector3[] worldCorners;
 
         Vector2 AlphaUV;
@@ -172,6 +175,8 @@ namespace UnityEngine.UI.Extensions
 
             mat.SetTexture("_AlphaMask", AlphaMask);
             mat.SetInt("_FlipAlphaMask", FlipAlphaMask ? 1 : 0);
+
+            mat.SetInt("_NoOuterClip", DontClipMaskScalingRect && maskScalingRect != null ? 1 : 0);
 
             if (!isText) // No mod needed for Text
                 mat.SetVector("_AlphaUV", AlphaUV);
