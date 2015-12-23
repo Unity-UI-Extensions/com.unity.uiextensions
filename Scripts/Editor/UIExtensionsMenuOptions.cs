@@ -470,6 +470,87 @@ namespace UnityEditor.UI
 
         #endregion
 
+        #region UIVertical Scroller
+        [MenuItem("GameObject/UI/Extensions/UI Vertical Scroller", false)]
+        static public void AddUIVerticallScroller(MenuCommand menuCommand)
+        {
+            GameObject uiVerticalScrollerRoot = CreateUIElementRoot("UI Vertical Scroller", menuCommand, s_ThickGUIElementSize);
+
+            GameObject uiScrollerCenter = CreateUIObject("Center", uiVerticalScrollerRoot);
+
+            GameObject childContent = CreateUIObject("Content", uiVerticalScrollerRoot);
+
+            // Set RectTransform to stretch
+            RectTransform rectTransformScrollSnapRoot = uiVerticalScrollerRoot.GetComponent<RectTransform>();
+            rectTransformScrollSnapRoot.anchorMin = new Vector2(0.5f, 0.5f);
+            rectTransformScrollSnapRoot.anchorMax = new Vector2(0.5f, 0.5f);
+            rectTransformScrollSnapRoot.anchoredPosition = Vector2.zero;
+            rectTransformScrollSnapRoot.sizeDelta = new Vector2(500f, 150f);
+
+            // Add required ScrollRect
+            ScrollRect sr = uiVerticalScrollerRoot.AddComponent<ScrollRect>();
+            sr.vertical = true;
+            sr.horizontal = false;
+            sr.movementType = ScrollRect.MovementType.Unrestricted;
+            var uiscr = uiVerticalScrollerRoot.AddComponent<UIVerticalScroller>();
+
+            //Setup container center point
+            RectTransform rectTransformCenter = uiScrollerCenter.GetComponent<RectTransform>();
+            rectTransformCenter.anchorMin = new Vector2(0f, 0.3f);
+            rectTransformCenter.anchorMax = new Vector2(1f, 0.6f);
+            rectTransformCenter.sizeDelta = Vector2.zero;
+
+            uiscr._center = uiScrollerCenter.GetComponent<RectTransform>();
+
+            //Setup Content container
+            RectTransform rectTransformContent = childContent.GetComponent<RectTransform>();
+            rectTransformContent.anchorMin = Vector2.zero;
+            rectTransformContent.anchorMax = new Vector2(1f, 1f);
+            rectTransformContent.sizeDelta = Vector2.zero;
+
+            sr.content = rectTransformContent;
+
+            // Add sample children
+            for (int i = 0; i < 10; i++)
+            {
+                GameObject childPage = CreateUIObject("Page_" + i, childContent);
+
+                GameObject childText = CreateUIObject("Text", childPage);
+
+                //Setup 1st Child
+                Image pageImage = childPage.AddComponent<Image>();
+                pageImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+                pageImage.type = Image.Type.Sliced;
+                pageImage.color = s_DefaultSelectableColor;
+
+                RectTransform rectTransformPage = childPage.GetComponent<RectTransform>();
+                rectTransformPage.anchorMin = new Vector2(0f, 0.5f);
+                rectTransformPage.anchorMax = new Vector2(1f, 0.5f);
+                rectTransformPage.sizeDelta = new Vector2(0f, 80f);
+                rectTransformPage.pivot = new Vector2(0.5f, 0.5f);
+                rectTransformPage.localPosition = new Vector3(0, 80 * i, 0);
+                childPage.AddComponent<Button>();
+
+                var childCG = childPage.AddComponent<CanvasGroup>();
+                childCG.interactable = false;
+
+                //Setup Text on Item
+                Text text = childText.AddComponent<Text>();
+                text.text = "Item_" + i;
+                text.alignment = TextAnchor.MiddleCenter;
+                text.color = new Color(0.196f, 0.196f, 0.196f);
+
+                //Setup Text on Item
+                RectTransform rectTransformPageText = childText.GetComponent<RectTransform>();
+                rectTransformPageText.anchorMin = new Vector2(0.5f, 0.5f);
+                rectTransformPageText.anchorMax = new Vector2(0.5f, 0.5f);
+                rectTransformPageText.pivot = new Vector2(0.5f, 0.5f);
+            }
+
+            Selection.activeGameObject = uiVerticalScrollerRoot;
+        }
+        #endregion
+
         [MenuItem("GameObject/UI/Extensions/UI Button", false)]
         static public void AddUIButton(MenuCommand menuCommand)
         {
