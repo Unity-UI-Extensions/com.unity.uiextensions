@@ -253,14 +253,8 @@ namespace UnityEngine.UI.Extensions
         /// Update the UI renderer mesh.
         /// </summary>
 
-        protected override void OnPopulateMesh(Mesh toFill)
+        protected override void OnFillVBO(List<UIVertex> vbo)
         {
-            List<UIVertex> vbo = new List<UIVertex>();
-            using (var helper = new VertexHelper(toFill))
-            {
-                helper.GetUIVertexStream(vbo);
-            }
-
             switch (type)
             {
                 case Type.Simple:
@@ -275,12 +269,6 @@ namespace UnityEngine.UI.Extensions
                 case Type.Filled:
                     GenerateFilledSprite(vbo, m_PreserveAspect);
                     break;
-            }
-
-            using (var helper = new VertexHelper())
-            {
-                helper.AddUIVertexTriangleStream(vbo);
-                helper.FillMesh(toFill);
             }
         }
 
