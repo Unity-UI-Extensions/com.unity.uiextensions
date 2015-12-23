@@ -91,7 +91,7 @@
 			float _Value;
 			int _LeftToRight;
 
-			bool _HardBlend = false;
+			int _HardBlend = false;
 
 			int _FlipAlphaMask = 0;
 
@@ -122,6 +122,7 @@
 			float2 _Mul;
 
 			float _CutOff;
+			int _NoOuterClip;
 
 			fixed4 frag(v2f IN) : SV_Target
 			{
@@ -134,6 +135,7 @@
 				else // It's in the mask rectangle, so apply the alpha of the mask provided.
 				{
 					float a = tex2D(_AlphaMask, (IN.worldPosition2.xy - _Max) / (_Max-_Min)).a;
+
 					if (a <= _CutOff)
 						a = 0;
 					else
@@ -145,7 +147,8 @@
 					if (_FlipAlphaMask == 1)
 						a = 1 - a;
 
-					color.a = a * color.a;
+					if(!(IN.worldPosition2.x <= _Min.x || IN.worldPosition2.x >= _Max.x || IN.worldPosition2.y <= _Min.y || IN.worldPosition2.y >= _Max.y))
+						color *= a;					
 				}
 
 				if (_UseClipRect)
