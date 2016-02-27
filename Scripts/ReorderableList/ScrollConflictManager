@@ -6,9 +6,12 @@ using System;
 
 
 //this is the most efficient way to handle scroll conflicts when there are multiple scroll rects
-//this is useful when there is a vertical scrollrect in a horizontal scrollrect or vice versa
-//gathered and modified from unity answers(delta snipper)
+//this is useful when there is a vertical scrollrect in/on a horizontal scrollrect or vice versa
 
+//attach the script to the  rect scroll and assign other rectscroll in the inspecter (one is verticle and other is horizontal)
+//gathered and modified from unity answers(delta snipper)
+namespace UnityEngine.UI.Extensions
+{
 
 [RequireComponent(typeof(ScrollRect))]
 public class ScrollConflictManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
@@ -81,4 +84,5 @@ public class ScrollConflictManager : MonoBehaviour, IBeginDragHandler, IEndDragH
             OtherScrollRect.OnDrag(eventData);
         }
     }
+}
 }
