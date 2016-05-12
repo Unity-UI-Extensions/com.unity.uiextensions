@@ -70,7 +70,7 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 
-		public void Awake()
+		public void Start()
 		{
 			Initialize();
 		}
@@ -277,6 +277,8 @@ namespace UnityEngine.UI.Extensions
 		/// <param name="directClick"> whether an item was directly clicked on</param>
 		public void ToggleDropdownPanel(bool directClick)
 		{
+			_overlayRT.transform.localScale = new Vector3(1, 1, 1);
+			_scrollBarRT.transform.localScale = new Vector3(1, 1, 1);
 			_isPanelActive = !_isPanelActive;
 			_overlayRT.gameObject.SetActive(_isPanelActive);
 			if (_isPanelActive)

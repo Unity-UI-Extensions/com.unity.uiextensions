@@ -59,7 +59,7 @@ namespace UnityEngine.UI.Extensions
         }
 
         //    private int scrollOffset; //offset of the selected item
-        private int _selectedIndex = 0;
+        //    private int _selectedIndex = 0;
 
         [SerializeField]
         private int _itemsToDisplay;
@@ -120,7 +120,7 @@ namespace UnityEngine.UI.Extensions
             _panelItems = AvailableOptions.ToList();
 
             RebuildPanel();
-            RedrawPanel();
+            //RedrawPanel();  - causes an initialisation failure in U5
             return success;
         }
 
