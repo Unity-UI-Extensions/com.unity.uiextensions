@@ -1,4 +1,4 @@
-﻿/// Credit jack.sydorenko 
+/// Credit jack.sydorenko
 /// Sourced from - http://forum.unity3d.com/threads/new-ui-and-line-drawing.253772/
 
 using System.Collections.Generic;
@@ -70,7 +70,6 @@ namespace UnityEngine.UI.Extensions
             // requires sets of quads
             if (Points == null || Points.Length < 2)
                 Points = new[] { new Vector2(0, 0), new Vector2(1, 1) };
-            var capSize = 24;
             var sizeX = rectTransform.rect.width;
             var sizeY = rectTransform.rect.height;
             var offsetX = -rectTransform.pivot.x * rectTransform.rect.width;
@@ -82,23 +81,6 @@ namespace UnityEngine.UI.Extensions
                 sizeX = 1;
                 sizeY = 1;
             }
-            // build a new set of points taking into account the cap sizes. 
-            // would be cool to support corners too, but that might be a bit tough :)
-            var pointList = new List<Vector2>();
-            pointList.Add(Points[0]);
-            var capPoint = Points[0] + (Points[1] - Points[0]).normalized * capSize;
-            pointList.Add(capPoint);
-
-            // should bail before the last point to add another cap point
-            for (int i = 1; i < Points.Length - 1; i++)
-            {
-                pointList.Add(Points[i]);
-            }
-            capPoint = Points[Points.Length - 1] - (Points[Points.Length - 1] - Points[Points.Length - 2]).normalized * capSize;
-            pointList.Add(capPoint);
-            pointList.Add(Points[Points.Length - 1]);
-
-            var TempPoints = pointList.ToArray();
             if (UseMargins)
             {
                 sizeX -= Margin.x;
@@ -112,10 +94,10 @@ namespace UnityEngine.UI.Extensions
             Vector2 prevV1 = Vector2.zero;
             Vector2 prevV2 = Vector2.zero;
 
-            for (int i = 1; i < TempPoints.Length; i++)
+            for (int i = 1; i < Points.Length; i++)
             {
-                var prev = TempPoints[i - 1];
-                var cur = TempPoints[i];
+                var prev = Points[i - 1];
+                var cur = Points[i];
                 prev = new Vector2(prev.x * sizeX + offsetX, prev.y * sizeY + offsetY);
                 cur = new Vector2(cur.x * sizeX + offsetX, cur.y * sizeY + offsetY);
 
@@ -131,32 +113,39 @@ namespace UnityEngine.UI.Extensions
                 v3 = RotatePointAroundPivot(v3, cur, new Vector3(0, 0, angle));
                 v4 = RotatePointAroundPivot(v4, cur, new Vector3(0, 0, angle));
 
-                Vector2 uvTopLeft = Vector2.zero;
-                Vector2 uvBottomLeft = new Vector2(0, 1);
 
-                Vector2 uvTopCenter = new Vector2(0.5f, 0);
-                Vector2 uvBottomCenter = new Vector2(0.5f, 1);
-
-                Vector2 uvTopRight = new Vector2(1, 0);
-                Vector2 uvBottomRight = new Vector2(1, 1);
-
-                Vector2[] uvs = new[] { uvTopCenter, uvBottomCenter, uvBottomCenter, uvTopCenter };
+                Vector2[] myUvs = uvs3;
 
                 if (i > 1)
-                    vh.AddUIVertexQuad(SetVbo(new[] { prevV1, prevV2, v1, v2 }, uvs));
+                    vh.AddUIVertexQuad(SetVbo(new[] { prevV1, prevV2, v1, v2 }, myUvs));
 
                 if (i == 1)
-                    uvs = new[] { uvTopLeft, uvBottomLeft, uvBottomCenter, uvTopCenter };
-                else if (i == TempPoints.Length - 1)
-                    uvs = new[] { uvTopCenter, uvBottomCenter, uvBottomRight, uvTopRight };
+                    myUvs = uvs;
+                else if (i == Points.Length - 1)
+                    myUvs = uvs2;
 
-                vh.AddUIVertexQuad(SetVbo(new[] { v1, v2, v3, v4 }, uvs));
+                vh.AddUIVertexQuad(SetVbo(new[] { v1, v2, v3, v4 }, myUvs));
 
 
                 prevV1 = v3;
                 prevV2 = v4;
             }
         }
+        static Vector2 uvTopLeft = Vector2.zero;
+        static Vector2 uvBottomLeft = new Vector2(0, 1);
+
+        static Vector2 uvTopCenter = new Vector2(0.5f, 0);
+        static Vector2 uvBottomCenter = new Vector2(0.5f, 1);
+
+        static Vector2 uvTopRight = new Vector2(1, 0);
+        static Vector2 uvBottomRight = new Vector2(1, 1);
+
+        static Vector2[] uvs = new[] { uvTopLeft, uvBottomLeft, uvBottomCenter, uvTopCenter };
+
+        static Vector2[] uvs2 = new[] { uvTopCenter, uvBottomCenter, uvBottomRight, uvTopRight };
+
+        static Vector2[] uvs3 = new[] { uvTopCenter, uvBottomCenter, uvBottomCenter, uvTopCenter };
+
 
         protected UIVertex[] SetVbo(Vector2[] vertices, Vector2[] uvs)
         {
