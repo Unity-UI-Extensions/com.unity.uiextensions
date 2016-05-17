@@ -26,8 +26,6 @@ namespace UnityEngine.UI.Extensions
         private Vector3 _lerp_target;
         private bool _lerp;
 
-        private int _containerSize;
-
         [Tooltip("The gameobject that contains toggles which suggest pagination. (optional)")]
         public GameObject Pagination;
 
@@ -45,7 +43,9 @@ namespace UnityEngine.UI.Extensions
         private Vector3 _startPosition = new Vector3();
         private int _currentScreen;
 
+        [Tooltip("The screen / page to start the control on")]
         public int StartingScreen = 1;
+        [Tooltip("The distance between two pages, by default 3 times the height of the control")]
         public int PageStep = 0;
 
 
@@ -77,8 +77,6 @@ namespace UnityEngine.UI.Extensions
             }
 
             _scroll_rect.horizontalNormalizedPosition = (float)(StartingScreen - 1) / (_screens - 1);
-
-            _containerSize = (int)_screensContainer.gameObject.GetComponent<RectTransform>().offsetMax.x;
 
             ChangeBulletsInfo(_currentScreen);
 
