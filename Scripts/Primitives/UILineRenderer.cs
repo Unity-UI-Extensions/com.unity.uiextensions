@@ -1,5 +1,6 @@
-/// Credit jack.sydorenko
+/// Credit jack.sydorenko, firagon
 /// Sourced from - http://forum.unity3d.com/threads/new-ui-and-line-drawing.253772/
+/// Updated/Refactored from - http://forum.unity3d.com/threads/new-ui-and-line-drawing.253772/#post-2528050
 
 using System.Collections.Generic;
 
@@ -8,16 +9,54 @@ namespace UnityEngine.UI.Extensions
  	[AddComponentMenu("UI/Extensions/Primitives/UILineRenderer")]
    public class UILineRenderer : MaskableGraphic
     {
+        private enum SegmentType
+        {
+            Start,
+            Middle,
+            End,
+        }
+
+        public enum JoinType
+        {
+            Bevel,
+            Miter
+        }
+
+        private const float MIN_MITER_JOIN = 15 * Mathf.Deg2Rad;
+
+        // A bevel 'nice' join displaces the vertices of the line segment instead of simply rendering a
+        // quad to connect the endpoints. This improves the look of textured and transparent lines, since
+        // there is no overlapping.
+        private const float MIN_BEVEL_NICE_JOIN = 30 * Mathf.Deg2Rad;
+
+        private static readonly Vector2 UV_TOP_LEFT = Vector2.zero;
+        private static readonly Vector2 UV_BOTTOM_LEFT = new Vector2(0, 1);
+        private static readonly Vector2 UV_TOP_CENTER = new Vector2(0.5f, 0);
+        private static readonly Vector2 UV_BOTTOM_CENTER = new Vector2(0.5f, 1);
+        private static readonly Vector2 UV_TOP_RIGHT = new Vector2(1, 0);
+        private static readonly Vector2 UV_BOTTOM_RIGHT = new Vector2(1, 1);
+
+        private static readonly Vector2[] startUvs = new[] { UV_TOP_LEFT, UV_BOTTOM_LEFT, UV_BOTTOM_CENTER, UV_TOP_CENTER };
+        private static readonly Vector2[] middleUvs = new[] { UV_TOP_CENTER, UV_BOTTOM_CENTER, UV_BOTTOM_CENTER, UV_TOP_CENTER };
+        private static readonly Vector2[] endUvs = new[] { UV_TOP_CENTER, UV_BOTTOM_CENTER, UV_BOTTOM_RIGHT, UV_TOP_RIGHT };
+
+
         [SerializeField]
-        Texture m_Texture;
+        private Texture m_Texture;
         [SerializeField]
-        Rect m_UVRect = new Rect(0f, 0f, 1f, 1f);
+        private Rect m_UVRect = new Rect(0f, 0f, 1f, 1f);
+        [SerializeField]
+        private Vector2[] m_points;
+
 
         public float LineThickness = 2;
         public bool UseMargins;
         public Vector2 Margin;
-        public Vector2[] Points;
         public bool relativeSize;
+
+        public bool LineList = false;
+        public bool LineCaps = false;
+        public JoinType LineJoins = JoinType.Bevel;
 
         public override Texture mainTexture
         {
@@ -65,11 +104,29 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        /// <summary>
+        /// Points to be drawn in the line.
+        /// </summary>
+        public Vector2[] Points
+        {
+            get
+            {
+                return m_points;
+            }
+            set
+            {
+                if (m_points == value)
+                    return;
+                m_points = value;
+                SetAllDirty();
+            }
+        }
+
         protected override void OnPopulateMesh(VertexHelper vh)
         {
-            // requires sets of quads
-            if (Points == null || Points.Length < 2)
-                Points = new[] { new Vector2(0, 0), new Vector2(1, 1) };
+            if (m_points == null)
+                return;
+
             var sizeX = rectTransform.rect.width;
             var sizeY = rectTransform.rect.height;
             var offsetX = -rectTransform.pivot.x * rectTransform.rect.width;
@@ -81,6 +138,7 @@ namespace UnityEngine.UI.Extensions
                 sizeX = 1;
                 sizeY = 1;
             }
+
             if (UseMargins)
             {
                 sizeX -= Margin.x;
@@ -91,82 +149,156 @@ namespace UnityEngine.UI.Extensions
 
             vh.Clear();
 
-            Vector2 prevV1 = Vector2.zero;
-            Vector2 prevV2 = Vector2.zero;
-
-            for (int i = 1; i < Points.Length; i++)
+            // Generate the quads that make up the wide line
+            var segments = new List<UIVertex[]>();
+            if (LineList)
             {
-                var prev = Points[i - 1];
-                var cur = Points[i];
-                prev = new Vector2(prev.x * sizeX + offsetX, prev.y * sizeY + offsetY);
-                cur = new Vector2(cur.x * sizeX + offsetX, cur.y * sizeY + offsetY);
+                for (var i = 1; i < m_points.Length; i += 2)
+                {
+                    var start = m_points[i - 1];
+                    var end = m_points[i];
+                    start = new Vector2(start.x * sizeX + offsetX, start.y * sizeY + offsetY);
+                    end = new Vector2(end.x * sizeX + offsetX, end.y * sizeY + offsetY);
 
-                float angle = Mathf.Atan2(cur.y - prev.y, cur.x - prev.x) * 180f / Mathf.PI;
+                    if (LineCaps)
+                    {
+                        segments.Add(CreateLineCap(start, end, SegmentType.Start));
+                    }
 
-                var v1 = prev + new Vector2(0, -LineThickness / 2);
-                var v2 = prev + new Vector2(0, +LineThickness / 2);
-                var v3 = cur + new Vector2(0, +LineThickness / 2);
-                var v4 = cur + new Vector2(0, -LineThickness / 2);
+                    segments.Add(CreateLineSegment(start, end, SegmentType.Middle));
 
-                v1 = RotatePointAroundPivot(v1, prev, new Vector3(0, 0, angle));
-                v2 = RotatePointAroundPivot(v2, prev, new Vector3(0, 0, angle));
-                v3 = RotatePointAroundPivot(v3, cur, new Vector3(0, 0, angle));
-                v4 = RotatePointAroundPivot(v4, cur, new Vector3(0, 0, angle));
+                    if (LineCaps)
+                    {
+                        segments.Add(CreateLineCap(start, end, SegmentType.End));
+                    }
+                }
+            }
+            else
+            {
+                for (var i = 1; i < m_points.Length; i++)
+                {
+                    var start = m_points[i - 1];
+                    var end = m_points[i];
+                    start = new Vector2(start.x * sizeX + offsetX, start.y * sizeY + offsetY);
+                    end = new Vector2(end.x * sizeX + offsetX, end.y * sizeY + offsetY);
 
+                    if (LineCaps && i == 1)
+                    {
+                        segments.Add(CreateLineCap(start, end, SegmentType.Start));
+                    }
 
-                Vector2[] myUvs = uvs3;
+                    segments.Add(CreateLineSegment(start, end, SegmentType.Middle));
 
-                if (i > 1)
-                    vh.AddUIVertexQuad(SetVbo(new[] { prevV1, prevV2, v1, v2 }, myUvs));
+                    if (LineCaps && i == m_points.Length - 1)
+                    {
+                        segments.Add(CreateLineCap(start, end, SegmentType.End));
+                    }
+                }
+            }
 
-                if (i == 1)
-                    myUvs = uvs;
-                else if (i == Points.Length - 1)
-                    myUvs = uvs2;
+            // Add the line segments to the vertex helper, creating any joins as needed
+            for (var i = 0; i < segments.Count; i++)
+            {
+                if (!LineList && i < segments.Count - 1)
+                {
+                    var vec1 = segments[i][1].position - segments[i][2].position;
+                    var vec2 = segments[i + 1][2].position - segments[i + 1][1].position;
+                    var angle = Vector2.Angle(vec1, vec2) * Mathf.Deg2Rad;
 
-                vh.AddUIVertexQuad(SetVbo(new[] { v1, v2, v3, v4 }, myUvs));
+                    // Positive sign means the line is turning in a 'clockwise' direction
+                    var sign = Mathf.Sign(Vector3.Cross(vec1.normalized, vec2.normalized).z);
 
+                    // Calculate the miter point
+                    var miterDistance = LineThickness / (2 * Mathf.Tan(angle / 2));
+                    var miterPointA = segments[i][2].position - vec1.normalized * miterDistance * sign;
+                    var miterPointB = segments[i][3].position + vec1.normalized * miterDistance * sign;
 
-                prevV1 = v3;
-                prevV2 = v4;
+                    var joinType = LineJoins;
+                    if (joinType == JoinType.Miter)
+                    {
+                        // Make sure we can make a miter join without too many artifacts.
+                        if (miterDistance < vec1.magnitude / 2 && miterDistance < vec2.magnitude / 2 && angle > MIN_MITER_JOIN)
+                        {
+                            segments[i][2].position = miterPointA;
+                            segments[i][3].position = miterPointB;
+                            segments[i + 1][0].position = miterPointB;
+                            segments[i + 1][1].position = miterPointA;
+                        }
+                        else
+                        {
+                            joinType = JoinType.Bevel;
+                        }
+                    }
+
+                    if (joinType == JoinType.Bevel)
+                    {
+                        if (miterDistance < vec1.magnitude / 2 && miterDistance < vec2.magnitude / 2 && angle > MIN_BEVEL_NICE_JOIN)
+                        {
+                            if (sign < 0)
+                            {
+                                segments[i][2].position = miterPointA;
+                                segments[i + 1][1].position = miterPointA;
+                            }
+                            else
+                            {
+                                segments[i][3].position = miterPointB;
+                                segments[i + 1][0].position = miterPointB;
+                            }
+                        }
+
+                        var join = new UIVertex[] { segments[i][2], segments[i][3], segments[i + 1][0], segments[i + 1][1] };
+                        vh.AddUIVertexQuad(join);
+                    }
+                }
+                vh.AddUIVertexQuad(segments[i]);
             }
         }
-        static Vector2 uvTopLeft = Vector2.zero;
-        static Vector2 uvBottomLeft = new Vector2(0, 1);
 
-        static Vector2 uvTopCenter = new Vector2(0.5f, 0);
-        static Vector2 uvBottomCenter = new Vector2(0.5f, 1);
+        private UIVertex[] CreateLineCap(Vector2 start, Vector2 end, SegmentType type)
+        {
+            if (type == SegmentType.Start)
+            {
+                var capStart = start - ((end - start).normalized * LineThickness / 2);
+                return CreateLineSegment(capStart, start, SegmentType.Start);
+            }
+            else if (type == SegmentType.End)
+            {
+                var capEnd = end + ((end - start).normalized * LineThickness / 2);
+                return CreateLineSegment(end, capEnd, SegmentType.End);
+            }
 
-        static Vector2 uvTopRight = new Vector2(1, 0);
-        static Vector2 uvBottomRight = new Vector2(1, 1);
+            Debug.LogError("Bad SegmentType passed in to CreateLineCap. Must be SegmentType.Start or SegmentType.End");
+            return null;
+        }
 
-        static Vector2[] uvs = new[] { uvTopLeft, uvBottomLeft, uvBottomCenter, uvTopCenter };
+        private UIVertex[] CreateLineSegment(Vector2 start, Vector2 end, SegmentType type)
+        {
+            var uvs = middleUvs;
+            if (type == SegmentType.Start)
+                uvs = startUvs;
+            else if (type == SegmentType.End)
+                uvs = endUvs;
 
-        static Vector2[] uvs2 = new[] { uvTopCenter, uvBottomCenter, uvBottomRight, uvTopRight };
-
-        static Vector2[] uvs3 = new[] { uvTopCenter, uvBottomCenter, uvBottomCenter, uvTopCenter };
-
+            Vector2 offset = new Vector2(start.y - end.y, end.x - start.x).normalized * LineThickness / 2;
+            var v1 = start - offset;
+            var v2 = start + offset;
+            var v3 = end + offset;
+            var v4 = end - offset;
+            return SetVbo(new[] { v1, v2, v3, v4 }, uvs);
+        }
 
         protected UIVertex[] SetVbo(Vector2[] vertices, Vector2[] uvs)
         {
             UIVertex[] vbo = new UIVertex[4];
-                for (int i = 0; i < vertices.Length; i++)
-                {
-                    var vert = UIVertex.simpleVert;
-                    vert.color = color;
-                    vert.position = vertices[i];
-                    vert.uv0 = uvs[i];
-                    vbo[i] = vert;
-                }
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                var vert = UIVertex.simpleVert;
+                vert.color = color;
+                vert.position = vertices[i];
+                vert.uv0 = uvs[i];
+                vbo[i] = vert;
+            }
             return vbo;
-        }
-
-        public Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Vector3 angles)
-        {
-            Vector3 dir = point - pivot; // get point direction relative to pivot
-            dir = Quaternion.Euler(angles) * dir; // rotate it
-            point = dir + pivot; // calculate rotated point
-            return point; // return it
         }
     }
 }

@@ -14,7 +14,7 @@ namespace UnityEngine.UI.Extensions
         private Transform _screensContainer;
 
         private int _screens = 1;
-        private int _startingScreen = 1;
+        private int _startingScreen = 2;
 
         private bool _fastSwipeTimer = false;
         private int _fastSwipeCounter = 0;
@@ -28,6 +28,31 @@ namespace UnityEngine.UI.Extensions
 
         private int _containerSize;
 
+        public int StartingScreen
+        {
+            get
+            {
+                return _startingScreen;
+            }
+            set
+            {
+                if (_startingScreen == value)
+                    return;
+                if (value < _screens)
+                {
+                    _startingScreen = 1;
+                }
+                else if (value > _screens)
+                {
+                    _startingScreen = transform.childCount;
+                }
+                else
+                {
+                    _startingScreen = value;
+                }
+            }
+        }
+
         [Tooltip("The gameobject that contains toggles which suggest pagination. (optional)")]
         public GameObject Pagination;
 
@@ -35,6 +60,8 @@ namespace UnityEngine.UI.Extensions
         public GameObject NextButton;
         [Tooltip("Button to go to the previous page. (optional)")]
         public GameObject PrevButton;
+        [Tooltip("Transition speed between pages. (optional)")]
+        public float transitionSpeed = 7.5f;
 
         public Boolean UseFastSwipe = true;
         public int FastSwipeThreshold = 100;
@@ -65,7 +92,7 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
-            _scroll_rect.horizontalNormalizedPosition = (float)(_startingScreen - 1) / (float)(_screens - 1);
+            _scroll_rect.horizontalNormalizedPosition = (float)(_startingScreen - 1) / (_screens - 1);
 
             _containerSize = (int)_screensContainer.gameObject.GetComponent<RectTransform>().offsetMax.x;
 
@@ -82,7 +109,7 @@ namespace UnityEngine.UI.Extensions
         {
             if (_lerp)
             {
-                _screensContainer.localPosition = Vector3.Lerp(_screensContainer.localPosition, _lerp_target, 7.5f * Time.deltaTime);
+                _screensContainer.localPosition = Vector3.Lerp(_screensContainer.localPosition, _lerp_target, transitionSpeed * Time.deltaTime);
                 if (Vector3.Distance(_screensContainer.localPosition, _lerp_target) < 0.005f)
                 {
                     _lerp = false;
@@ -202,6 +229,9 @@ namespace UnityEngine.UI.Extensions
         {
             int _offset = 0;
             int _step = Screen.width;
+            //Options to fix - stepping causes issues with overlap
+            //float _step = GameObject.FindObjectOfType<Canvas> ().GetComponent<RectTransform>().rect.width;
+            //int _step = (int)(transform.root.GetComponent<RectTransform>().sizeDelta.x);
             int _dimension = 0;
 
             int currentXPosition = 0;
@@ -209,6 +239,7 @@ namespace UnityEngine.UI.Extensions
             for (int i = 0; i < _screensContainer.transform.childCount; i++)
             {
                 RectTransform child = _screensContainer.transform.GetChild(i).gameObject.GetComponent<RectTransform>();
+                _step = (int)child.rect.width * 3;
                 currentXPosition = _offset + i * _step;
                 child.anchoredPosition = new Vector2(currentXPosition, 0f);
                 child.sizeDelta = new Vector2(gameObject.GetComponent<RectTransform>().rect.width, gameObject.GetComponent<RectTransform>().rect.height);

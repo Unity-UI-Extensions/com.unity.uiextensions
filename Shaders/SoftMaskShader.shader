@@ -76,17 +76,8 @@
 				float4 worldPosition : TEXCOORD1;
 			};
 
-			inline float UnityGet2DClipping (in float2 position, in float4 clipRect)
-			{
-				float2 inside = step(clipRect.xy, position.xy) * step(position.xy, clipRect.zw);
-				return inside.x * inside.y;
-			}
-
 			fixed4 _Color;
 			fixed4 _TextureSampleAdd;
-
-			bool _UseClipRect;
-			float4 _ClipRect;
 
 			bool _UseAlphaClip;
 
@@ -150,9 +141,6 @@
 					if(!(IN.texcoord.x < _Min.x || IN.texcoord.x > _Max.x || IN.texcoord.y < _Min.y || IN.texcoord.y > _Max.y))
 						color.a *= a;
 				}
-
-				if (_UseClipRect)
-					color *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);
 
 				if (_UseAlphaClip)
 					clip(color.a - 0.001);

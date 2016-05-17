@@ -30,9 +30,11 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Flip the masks alpha value")]
         public bool FlipAlphaMask = false;
 
-        [Tooltip("If Mask Scals Rect is given, and this value is true, the area around the mask will not be clipped")]
+        [Tooltip("If Mask Scaling Rect is given and this value is true, the area around the mask will not be clipped")]
         public bool DontClipMaskScalingRect = false;
 
+        [Tooltip("If set to true, this mask is applied to all child Text and Graphic objects belonging to this object.")]
+        public bool CascadeToALLChildren;
         Vector3[] worldCorners;
 
         Vector2 AlphaUV;
@@ -41,7 +43,10 @@ namespace UnityEngine.UI.Extensions
         Vector2 max = Vector2.one;
         Vector2 p;
         Vector2 siz;
+        Vector2 tp = new Vector2(.5f, .5f);
 
+
+        bool MaterialNotSupported; // UI items like toggles, we can stil lcascade down to them though :)
         Rect maskRect;
         Rect contentRect;
 
@@ -75,11 +80,39 @@ namespace UnityEngine.UI.Extensions
 
                 // For some reason, having the mask control on the parent and disabled stops the mouse interacting
                 // with the texture layer that is not visible.. Not needed for the Image.
-                if (transform.parent.GetComponent<Mask>() == null)
+                if (transform.parent.GetComponent<Button>() == null && transform.parent.GetComponent<Mask>() == null)
                     transform.parent.gameObject.AddComponent<Mask>();
 
-                transform.parent.GetComponent<Mask>().enabled = false;
+                if (transform.parent.GetComponent<Mask>() != null)
+                    transform.parent.GetComponent<Mask>().enabled = false;
             }
+            if (CascadeToALLChildren)
+            {
+                for (int c = 0; c < transform.childCount; c++)
+                {
+                    SetSAM(transform.GetChild(c));
+                }
+            }
+
+            MaterialNotSupported = mat == null;
+        }
+        
+        void SetSAM(Transform t)
+        {
+            SoftMaskScript thisSam = t.gameObject.GetComponent<SoftMaskScript>();
+            if (thisSam == null)
+            {
+                thisSam = t.gameObject.AddComponent<SoftMaskScript>();
+
+            }
+            thisSam.MaskArea = MaskArea;
+            thisSam.AlphaMask = AlphaMask;
+            thisSam.CutOff = CutOff;
+            thisSam.HardBlend = HardBlend;
+            thisSam.FlipAlphaMask = FlipAlphaMask;
+            thisSam.maskScalingRect = maskScalingRect;
+            thisSam.DontClipMaskScalingRect = DontClipMaskScalingRect;
+            thisSam.CascadeToALLChildren = CascadeToALLChildren;
         }
 
         void GetCanvas()
@@ -93,15 +126,12 @@ namespace UnityEngine.UI.Extensions
             {
                 canvas = t.gameObject.GetComponent<Canvas>();
                 if (canvas == null)
-                    t = GetParentTranform(t);
+                {
+                    t = t.parent;
+                }
 
                 lvl++;
             }
-        }
-
-        Transform GetParentTranform(Transform t)
-        {
-            return t.parent;
         }
 
         void Update()
@@ -111,6 +141,11 @@ namespace UnityEngine.UI.Extensions
 
         void SetMask()
         {
+            if (MaterialNotSupported)
+            {
+                return;
+            }
+
             // Get the two rectangle areas
             maskRect = MaskArea.rect;
             contentRect = myRect.rect;
@@ -142,12 +177,15 @@ namespace UnityEngine.UI.Extensions
                 }
 
                 // Get the centre offset
-                centre = myRect.transform.InverseTransformPoint(MaskArea.transform.position);
-
                 if (maskScalingRect != null)
                 {
-                    centre = myRect.transform.InverseTransformPoint(maskScalingRect.transform.position);
+                     centre = myRect.transform.InverseTransformPoint(maskScalingRect.transform.TransformPoint(maskScalingRect.rect.center));
                 }
+                else
+                {
+                    centre = myRect.transform.InverseTransformPoint(MaskArea.transform.TransformPoint(MaskArea.rect.center));
+                }
+                centre += (Vector2)myRect.transform.InverseTransformPoint(myRect.transform.position) - myRect.rect.center;
 
                 // Set the scale for mapping texcoords mask
                 AlphaUV = new Vector2(maskRect.width / contentRect.width, maskRect.height / contentRect.height);
@@ -162,9 +200,8 @@ namespace UnityEngine.UI.Extensions
                 max += siz;
 
                 // Now move these into texture space. 0 - 1
-                min = new Vector2(min.x / contentRect.width, min.y / contentRect.height) + new Vector2(.5f, .5f);
-                max = new Vector2(max.x / contentRect.width, max.y / contentRect.height) + new Vector2(.5f, .5f);
-
+                min = new Vector2(min.x / contentRect.width, min.y / contentRect.height) + tp;
+                max = new Vector2(max.x / contentRect.width, max.y / contentRect.height) + tp;
             }
 
             mat.SetFloat("_HardBlend", HardBlend ? 1 : 0);
@@ -173,13 +210,15 @@ namespace UnityEngine.UI.Extensions
             mat.SetVector("_Min", min);
             mat.SetVector("_Max", max);
 
-            mat.SetTexture("_AlphaMask", AlphaMask);
             mat.SetInt("_FlipAlphaMask", FlipAlphaMask ? 1 : 0);
+            mat.SetTexture("_AlphaMask", AlphaMask);
 
             mat.SetInt("_NoOuterClip", DontClipMaskScalingRect && maskScalingRect != null ? 1 : 0);
 
             if (!isText) // No mod needed for Text
+            {
                 mat.SetVector("_AlphaUV", AlphaUV);
+            }
 
             mat.SetFloat("_CutOff", CutOff);
         }

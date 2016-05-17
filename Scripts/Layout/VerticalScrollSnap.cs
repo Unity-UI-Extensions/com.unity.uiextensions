@@ -35,6 +35,8 @@ namespace UnityEngine.UI.Extensions
         public GameObject NextButton;
         [Tooltip("Button to go to the previous page. (optional)")]
         public GameObject PrevButton;
+        [Tooltip("Transition speed between pages. (optional)")]
+        public float transitionSpeed = 7.5f;
 
         public Boolean UseFastSwipe = true;
         public int FastSwipeThreshold = 100;
@@ -82,7 +84,7 @@ namespace UnityEngine.UI.Extensions
         {
             if (_lerp)
             {
-                _screensContainer.localPosition = Vector3.Lerp(_screensContainer.localPosition, _lerp_target, 7.5f * Time.deltaTime);
+                _screensContainer.localPosition = Vector3.Lerp(_screensContainer.localPosition, _lerp_target, transitionSpeed * Time.deltaTime);
                 if (Vector3.Distance(_screensContainer.localPosition, _lerp_target) < 0.005f)
                 {
                     _lerp = false;
@@ -202,6 +204,9 @@ namespace UnityEngine.UI.Extensions
         {
             float _offset = 0;
             float _step = Screen.height;
+            //Options to fix - stepping causes issues with overlap
+            //float _step = GameObject.FindObjectOfType<Canvas> ().GetComponent<RectTransform>().rect.height;
+            //int _step = (int)(transform.root.GetComponent<RectTransform>().sizeDelta.y);
             float _dimension = 0;
 
             Vector2 panelDimensions = gameObject.GetComponent<RectTransform>().sizeDelta;

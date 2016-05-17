@@ -58,7 +58,7 @@ namespace UnityEngine.UI.Extensions
             m_Tracker.Clear();
             if (transform.childCount == 0)
                 return;
-            float fOffsetAngle = ((MaxAngle - MinAngle)) / (transform.childCount - 1);
+            float fOffsetAngle = ((MaxAngle - MinAngle)) / (transform.childCount);
 
             float fAngle = StartAngle;
             for (int i = 0; i < transform.childCount; i++)
