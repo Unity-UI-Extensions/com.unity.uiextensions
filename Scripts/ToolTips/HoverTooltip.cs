@@ -30,7 +30,7 @@ namespace UnityEngine.UI.Extensions
         // public float height;
 
         //detect canvas mode so to apply different behaviors to different canvas modes, currently only RenderMode.ScreenSpaceCamera implemented
-        int canvasMode;
+        //int canvasMode;
         RenderMode GUIMode;
 
         //the scene GUI camera

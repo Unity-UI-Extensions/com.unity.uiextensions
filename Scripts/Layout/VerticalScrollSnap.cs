@@ -14,7 +14,6 @@ namespace UnityEngine.UI.Extensions
         private Transform _screensContainer;
 
         private int _screens = 1;
-        private int _startingScreen = 1;
 
         private bool _fastSwipeTimer = false;
         private int _fastSwipeCounter = 0;
@@ -45,11 +44,18 @@ namespace UnityEngine.UI.Extensions
         private Vector3 _startPosition = new Vector3();
         private int _currentScreen;
 
+        public int StartingScreen = 1;
+        public int PageStep = 0;
+
         // Use this for initialization
         void Start()
         {
             _scroll_rect = gameObject.GetComponent<ScrollRect>();
             _screensContainer = _scroll_rect.content;
+            if (PageStep == 0)
+            {
+                PageStep = (int)_scroll_rect.GetComponent<RectTransform>().rect.height * 3;
+            }
             DistributePages();
 
             _screens = _screensContainer.childCount;
@@ -67,11 +73,11 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
-            _scroll_rect.verticalNormalizedPosition = (float)(_startingScreen - 1) / (float)(_screens - 1);
+            _scroll_rect.verticalNormalizedPosition = (float)(StartingScreen - 1) / (float)(_screens - 1);
 
             _containerSize = (int)_screensContainer.gameObject.GetComponent<RectTransform>().offsetMax.y;
 
-            ChangeBulletsInfo(CurrentScreen());
+            ChangeBulletsInfo(_currentScreen);
 
             if (NextButton)
                 NextButton.GetComponent<Button>().onClick.AddListener(() => { NextScreen(); });
@@ -110,24 +116,26 @@ namespace UnityEngine.UI.Extensions
         //Function for switching screens with buttons
         public void NextScreen()
         {
-            if (CurrentScreen() < _screens - 1)
+            if (_currentScreen < _screens - 1)
             {
+                _currentScreen++;
                 _lerp = true;
-                _lerp_target = _positions[CurrentScreen() + 1];
+                _lerp_target = _positions[_currentScreen];
 
-                ChangeBulletsInfo(CurrentScreen() + 1);
+                ChangeBulletsInfo(_currentScreen);
             }
         }
 
         //Function for switching screens with buttons
         public void PreviousScreen()
         {
-            if (CurrentScreen() > 0)
+            if (_currentScreen > 0)
             {
+                _currentScreen--;
                 _lerp = true;
-                _lerp_target = _positions[CurrentScreen() - 1];
+                _lerp_target = _positions[_currentScreen];
 
-                ChangeBulletsInfo(CurrentScreen() - 1);
+                ChangeBulletsInfo(_currentScreen);
             }
         }
 
@@ -178,13 +186,8 @@ namespace UnityEngine.UI.Extensions
         //returns the current screen that the is seeing
         public int CurrentScreen()
         {
-            float absPoz = Math.Abs(_screensContainer.gameObject.GetComponent<RectTransform>().offsetMin.y);
-
-            absPoz = Mathf.Clamp(absPoz, 1, _containerSize - 1);
-
-            float calc = (absPoz / _containerSize) * _screens;
-
-            return (int)calc;
+            var pos = FindClosestFrom(_screensContainer.localPosition, _positions);
+            return _currentScreen = GetPageforPosition(pos);
         }
 
         //changes the bullets on the bottom of the page - pagination
@@ -203,20 +206,14 @@ namespace UnityEngine.UI.Extensions
         private void DistributePages()
         {
             float _offset = 0;
-            float _step = Screen.height;
-            //Options to fix - stepping causes issues with overlap
-            //float _step = GameObject.FindObjectOfType<Canvas> ().GetComponent<RectTransform>().rect.height;
-            //int _step = (int)(transform.root.GetComponent<RectTransform>().sizeDelta.y);
             float _dimension = 0;
-
             Vector2 panelDimensions = gameObject.GetComponent<RectTransform>().sizeDelta;
-
             float currentYPosition = 0;
 
             for (int i = 0; i < _screensContainer.transform.childCount; i++)
             {
                 RectTransform child = _screensContainer.transform.GetChild(i).gameObject.GetComponent<RectTransform>();
-                currentYPosition = _offset + i * _step;
+                currentYPosition = _offset + i * PageStep;
                 child.sizeDelta = new Vector2(panelDimensions.x, panelDimensions.y);
                 child.anchoredPosition = new Vector2(0f - panelDimensions.x / 2, currentYPosition + panelDimensions.y / 2);
             }
@@ -224,6 +221,30 @@ namespace UnityEngine.UI.Extensions
             _dimension = currentYPosition + _offset * -1;
 
             _screensContainer.GetComponent<RectTransform>().offsetMax = new Vector2(0f,_dimension);
+        }
+
+        int GetPageforPosition(Vector3 pos)
+        {
+            for (int i = 0; i < _positions.Count; i++)
+            {
+                if (_positions[i] == pos)
+                {
+                    return i;
+                }
+            }
+            return 0;
+        }
+        void OnValidate()
+        {
+            var childCount = gameObject.GetComponent<ScrollRect>().content.childCount;
+            if (StartingScreen > childCount)
+            {
+                StartingScreen = childCount;
+            }
+            if (StartingScreen < 1)
+            {
+                StartingScreen = 1;
+            }
         }
 
         #region Interfaces
@@ -266,12 +287,14 @@ namespace UnityEngine.UI.Extensions
                     {
                         _lerp = true;
                         _lerp_target = FindClosestFrom(_screensContainer.localPosition, _positions);
+                        _currentScreen = GetPageforPosition(_lerp_target);
                     }
                 }
                 else
                 {
                     _lerp = true;
                     _lerp_target = FindClosestFrom(_screensContainer.localPosition, _positions);
+                        _currentScreen = GetPageforPosition(_lerp_target);
                 }
             }
         }

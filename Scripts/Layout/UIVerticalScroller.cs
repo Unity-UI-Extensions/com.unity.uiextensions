@@ -31,7 +31,7 @@ namespace UnityEngine.UI.Extensions
         //private int elementsDistance;
         private int minElementsNum;
         private int elementLength;
-        private int elementHalfLength;
+        //private int elementHalfLength;
         private float deltaY;
         private string result;
 

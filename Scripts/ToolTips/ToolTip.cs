@@ -34,7 +34,7 @@ namespace UnityEngine.UI.Extensions
 
         // private bool _xShifted, _yShifted = false;
 
-        private float width, height, canvasWidth, canvasHeight;
+        private float width, height;//, canvasWidth, canvasHeight;
 
         // private int screenWidth, screenHeight;
 
