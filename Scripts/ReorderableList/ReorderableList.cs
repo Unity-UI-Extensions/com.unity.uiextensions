@@ -44,6 +44,28 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        Canvas GetCanvas()
+        {
+            Transform t = transform;
+            Canvas canvas = null;
+        
+
+            int lvlLimit = 100;
+            int lvl = 0;
+
+            while (canvas == null && lvl < lvlLimit)
+            {
+                canvas = t.gameObject.GetComponent<Canvas>();
+                if (canvas == null)
+                {
+                    t = t.parent;
+                }
+
+                lvl++;
+            }
+            return canvas;
+        }
+
         private void Awake()
         {
 
@@ -60,7 +82,12 @@ namespace UnityEngine.UI.Extensions
             {
                 Debug.LogError("You need to have a Graphic control (such as an Image) for the list [" + name + "] to be droppable", gameObject);
                 return;
-            } 
+            }
+            if (GetCanvas().renderMode != RenderMode.ScreenSpaceOverlay)
+            {
+                Debug.LogError("The ReOrderable List is only supported on a Screenspace-Overlay Canvas at the moment");
+            }
+
             _listContent = ContentLayout.gameObject.AddComponent<ReorderableListContent>();
             _listContent.Init(this);
         }
