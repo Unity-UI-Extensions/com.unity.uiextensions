@@ -137,6 +137,18 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        //Function for switching to a specific screen
+        public void GoToScreen(int screenIndex)
+        {
+            if (screenIndex <= _screens && screenIndex >= 0)
+            {
+                _lerp = true;
+                _lerp_target = _positions[screenIndex];
+
+                ChangeBulletsInfo(screenIndex);
+            }
+        }
+
         //Because the CurrentScreen function is not so reliable, these are the functions used for swipes
         private void NextScreenCommand()
         {
