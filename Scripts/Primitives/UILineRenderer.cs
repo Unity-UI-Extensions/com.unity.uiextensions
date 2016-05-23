@@ -21,6 +21,13 @@ namespace UnityEngine.UI.Extensions
             Bevel,
             Miter
         }
+        public enum BezierType
+        {
+            None,
+            Quick,
+            Basic,
+            Improved,
+        }
 
         private const float MIN_MITER_JOIN = 15 * Mathf.Deg2Rad;
 
@@ -57,6 +64,9 @@ namespace UnityEngine.UI.Extensions
         public bool LineList = false;
         public bool LineCaps = false;
         public JoinType LineJoins = JoinType.Bevel;
+
+        public BezierType BezierMode = BezierType.None;
+        public int BezierSegmentsPerCurve = 10;
 
         public override Texture mainTexture
         {
@@ -126,6 +136,29 @@ namespace UnityEngine.UI.Extensions
         {
             if (m_points == null)
                 return;
+            Vector2[] pointsToDraw = m_points;
+            //If Bezier is desired, pick the implementation
+            if (BezierMode != BezierType.None && m_points.Length > 3)
+            {
+                BezierPath bezierPath = new BezierPath();
+
+                bezierPath.SetControlPoints(pointsToDraw);
+                bezierPath.SegmentsPerCurve = BezierSegmentsPerCurve;
+                List<Vector2> drawingPoints;
+                switch (BezierMode)
+                {
+                    case BezierType.Basic:
+                        drawingPoints = bezierPath.GetDrawingPoints0();
+                        break;
+                    case BezierType.Improved:
+                        drawingPoints = bezierPath.GetDrawingPoints1();
+                        break;
+                    default:
+                        drawingPoints = bezierPath.GetDrawingPoints2();
+                        break;
+                }
+                pointsToDraw = drawingPoints.ToArray();
+            }
 
             var sizeX = rectTransform.rect.width;
             var sizeY = rectTransform.rect.height;
@@ -153,10 +186,10 @@ namespace UnityEngine.UI.Extensions
             var segments = new List<UIVertex[]>();
             if (LineList)
             {
-                for (var i = 1; i < m_points.Length; i += 2)
+                for (var i = 1; i < pointsToDraw.Length; i += 2)
                 {
-                    var start = m_points[i - 1];
-                    var end = m_points[i];
+                    var start = pointsToDraw[i - 1];
+                    var end = pointsToDraw[i];
                     start = new Vector2(start.x * sizeX + offsetX, start.y * sizeY + offsetY);
                     end = new Vector2(end.x * sizeX + offsetX, end.y * sizeY + offsetY);
 
@@ -175,10 +208,10 @@ namespace UnityEngine.UI.Extensions
             }
             else
             {
-                for (var i = 1; i < m_points.Length; i++)
+                for (var i = 1; i < pointsToDraw.Length; i++)
                 {
-                    var start = m_points[i - 1];
-                    var end = m_points[i];
+                    var start = pointsToDraw[i - 1];
+                    var end = pointsToDraw[i];
                     start = new Vector2(start.x * sizeX + offsetX, start.y * sizeY + offsetY);
                     end = new Vector2(end.x * sizeX + offsetX, end.y * sizeY + offsetY);
 
@@ -189,7 +222,7 @@ namespace UnityEngine.UI.Extensions
 
                     segments.Add(CreateLineSegment(start, end, SegmentType.Middle));
 
-                    if (LineCaps && i == m_points.Length - 1)
+                    if (LineCaps && i == pointsToDraw.Length - 1)
                     {
                         segments.Add(CreateLineCap(start, end, SegmentType.End));
                     }

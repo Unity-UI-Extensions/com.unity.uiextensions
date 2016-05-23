@@ -40,13 +40,25 @@ namespace UnityEngine.UI.Extensions
 
         private bool _startDrag = true;
         private Vector3 _startPosition = new Vector3();
+
+        [Tooltip("The currently active page")]
+        [SerializeField]
         private int _currentScreen;
 
         [Tooltip("The screen / page to start the control on")]
         public int StartingScreen = 1;
+
         [Tooltip("The distance between two pages, by default 3 times the width of the control")]
         public int PageStep = 0;
 
+        public int CurrentPage
+        {
+            get
+            {
+                return _currentScreen;
+            }
+        }
+        
         // Use this for initialization
         void Start()
         {
@@ -58,22 +70,10 @@ namespace UnityEngine.UI.Extensions
             }
             DistributePages();
 
-            _screens = _screensContainer.childCount;
-
             _lerp = false;
+            _currentScreen = StartingScreen;
 
-            _positions = new System.Collections.Generic.List<Vector3>();
-
-            if (_screens > 0)
-            {
-                for (int i = 0; i < _screens; ++i)
-                {
-                    _scroll_rect.verticalNormalizedPosition = (float)i / (float)(_screens - 1);
-                    _positions.Add(_screensContainer.localPosition);
-                }
-            }
-
-            _scroll_rect.verticalNormalizedPosition = (float)(StartingScreen - 1) / (float)(_screens - 1);
+            _scroll_rect.verticalNormalizedPosition = (float)(_currentScreen - 1) / (float)(_screens - 1);
 
             ChangeBulletsInfo(_currentScreen);
 
@@ -219,6 +219,19 @@ namespace UnityEngine.UI.Extensions
             _dimension = currentYPosition + _offset * -1;
 
             _screensContainer.GetComponent<RectTransform>().offsetMax = new Vector2(0f,_dimension);
+
+            _screens = _screensContainer.childCount;
+
+            _positions = new System.Collections.Generic.List<Vector3>();
+
+            if (_screens > 0)
+            {
+                for (int i = 0; i < _screens; ++i)
+                {
+                    _scroll_rect.verticalNormalizedPosition = (float)i / (float)(_screens - 1);
+                    _positions.Add(_screensContainer.localPosition);
+                }
+            }
         }
 
         int GetPageforPosition(Vector3 pos)
@@ -243,6 +256,54 @@ namespace UnityEngine.UI.Extensions
             {
                 StartingScreen = 1;
             }
+        }
+
+        /// <summary>
+        /// Add a new child to this Scroll Snap and recalculate it's children
+        /// </summary>
+        /// <param name="GO">GameObject to add to the ScrollSnap</param>
+        public void AddChild(GameObject GO)
+        {
+            _scroll_rect.verticalNormalizedPosition = 0;
+            GO.transform.SetParent(_screensContainer);
+            DistributePages();
+
+            _scroll_rect.verticalNormalizedPosition = (float)(_currentScreen) / (_screens - 1);
+        }
+
+        /// <summary>
+        /// Remove a new child to this Scroll Snap and recalculate it's children 
+        /// *Note, this is an index address (0-x)
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="ChildRemoved"></param>
+        public void RemoveChild(int index, out GameObject ChildRemoved)
+        {
+            ChildRemoved = null;
+            if (index < 0 || index > _screensContainer.childCount)
+            {
+                return;
+            }
+            _scroll_rect.verticalNormalizedPosition = 0;
+            var children = _screensContainer.transform;
+            int i = 0;
+            foreach (Transform child in children)
+            {
+                if (i == index)
+                {
+                    child.SetParent(null);
+                    ChildRemoved = child.gameObject;
+                    break;
+                }
+                i++;
+            }
+            DistributePages();
+            if (_currentScreen > _screens - 1)
+            {
+                _currentScreen = _screens - 1;
+            }
+
+            _scroll_rect.verticalNormalizedPosition = (float)(_currentScreen) / (_screens - 1);
         }
 
         #region Interfaces

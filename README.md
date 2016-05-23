@@ -4,7 +4,7 @@ This is an extension project for the new Unity UI system which can be found at:
 [Unity UI Source](https://bitbucket.org/Unity-Technologies/ui)
 
 #For Unity 5.2.2+ - Use the new 5.3 package!#
-
+#*Note, due to limited demand, this is the last release we will update the 4.x/5.1 asset package, we'll be focusing on 5.3/5.4 from now on.
 
 ##Intro##
 For more info, here's a little introduction video for the project:
@@ -15,7 +15,7 @@ For more info, here's a little introduction video for the project:
 
 In this repository is a collection of extension scripts to enhance your Unity UI experience. These scripts have been gathered from many sources and combined and improved over time.
 (The majority of the scripts came from the Scripts thread on the [Unity UI forum here](http://bit.ly/UnityUIScriptsForumPost))
-You can either download / fork the project to access the scripts, or you can download this precompiled Unity Asset, chock full of goodness
+You can either download / fork the project to access the scripts, or you can also download this precompiled Unity Asset, chock full of goodness
 ### [Unity UI Extensions Unity 4.x Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-4.x.unitypackage)###
 ### [Unity UI Extensions Unity 5.1 Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.1.unitypackage)###
 ### [Unity UI Extensions Unity 5.2 Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.2.unitypackage)### <- 5.2.0 - 5.2.1 base releases ONLY
@@ -28,23 +28,13 @@ To get started with the project, here's a little guide:
 ---
 ## Updates: ##
 
-###Update 1.0.4###
+###Update 1.1.0###
+Coming soon
 
-[![View Getting Started Video](http://img.youtube.com/vi/oF48Qpaq3ls/0.jpg)](http://www.youtube.com/watch?v=oF48Qpaq3ls "Update 1.0.0.4 for the Unity UI Extensions Project")
----
-###Update 1.0.5###
-Few minor fixes and a couple of additional scripts.  Predominately created the new 5.3 branch to maintain the UI API changes from the 5.2.1 Patch releases.  5.3 package is 100% compatible with 5.2.1 Patch releases.
+###Release History###
 
-###Update 1.0.6###
-
-[![View Getting Started Video](http://img.youtube.com/vi/jpyFiRvSmbg/0.jpg)](http://www.youtube.com/watch?v=jpyFiRvSmbg "Update 1.0.6 for the Unity UI Extensions Project")
-
-* Added the awesome ReOrderable List control, plus some other minor bugfixes / changes.
-* Added a new version of the Scroll Snap control as an alternative to the fixed versions.
-* New set of controls including some shader enhanced solutions
-* I've added a donate column to the lists.  If you are getting great use out of a control, help out the dev who created it. Optional of course.  Will update with links as I get them.
-
-**1.0.6.1 - Minor update to enhance soft alpha mask and add cylinder text plus a fix to letter spacing** 
+For the full release history, follow the below link to the full release notes page.
+### [Release Notes](https://bitbucket.org/ddreaper/unity-ui-extensions/src/c9354eadf4b9287790eb636c21e4107760cd7b87/RELEASENOTES.md?at=develop_5.3)###
 
 ---
 ## Controls and extensions listed in this project are: ##
