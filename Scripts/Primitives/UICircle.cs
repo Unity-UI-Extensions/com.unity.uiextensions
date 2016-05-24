@@ -5,10 +5,8 @@
 namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/Primitives/UI Circle")]
-    public class UICircle : MaskableGraphic
+    public class UICircle : UIPrimativeBase
     {
-        [SerializeField]
-        Texture m_Texture;
         [Tooltip("The circular fill percentage of the primitive, affected by FixedToSegments")]
         [Range(0, 100)]
         public int fillPercent = 100;
@@ -21,52 +19,10 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("The number of segments to draw the primitive, more segments = smoother primitive")]
         [Range(0, 360)]
         public int segments = 360;
-     
-        public override Texture mainTexture
-        {
-            get
-            {
-                return m_Texture == null ? s_WhiteTexture : m_Texture;
-            }
-        }
-     
-        /// <summary>
-        /// Texture to be used.
-        /// </summary>
-        public Texture texture
-        {
-            get
-            {
-                return m_Texture;
-            }
-            set
-            {
-                if (m_Texture == value)
-                    return;
-     
-                m_Texture = value;
-                SetVerticesDirty();
-                SetMaterialDirty();
-            }
-        }
-     
+
         void Update()
         {
             this.thickness = (float)Mathf.Clamp(this.thickness, 0, rectTransform.rect.width / 2);
-        }
-     
-        protected UIVertex[] SetVbo(Vector2[] vertices, Vector2[] uvs)
-        {
-            UIVertex[] vbo = new UIVertex[4];
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                var vert = UIVertex.simpleVert;
-                vert.color = color;
-                vert.position = vertices[i];
-                vert.uv0 = uvs[i];
-                vbo[i] = vert;
-            }
-            return vbo;
         }
      
         protected override void OnPopulateMesh(VertexHelper vh)
@@ -156,5 +112,6 @@ namespace UnityEngine.UI.Extensions
             prevX = pos1;
             prevY = pos2;
         }
+
     }
 }

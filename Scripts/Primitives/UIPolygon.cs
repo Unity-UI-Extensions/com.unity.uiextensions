@@ -1,15 +1,11 @@
 /// Credit CiaccoDavide
 /// Sourced from - http://ciaccodavi.de/unity/UIPolygon
 
-using System.Collections.Generic;
-
 namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/Primitives/UI Polygon")]
-    public class UIPolygon : MaskableGraphic
+    public class UIPolygon : UIPrimativeBase
     {
-        [SerializeField]
-        Texture m_Texture;
         public bool fill = true;
         public float thickness = 5;
         [Range(3, 360)]
@@ -20,27 +16,6 @@ namespace UnityEngine.UI.Extensions
         public float[] VerticesDistances = new float[3];
         private float size = 0;
 
-        public override Texture mainTexture
-        {
-            get
-            {
-                return m_Texture == null ? s_WhiteTexture : m_Texture;
-            }
-        }
-        public Texture texture
-        {
-            get
-            {
-                return m_Texture;
-            }
-            set
-            {
-                if (m_Texture == value) return;
-                m_Texture = value;
-                SetVerticesDirty();
-                SetMaterialDirty();
-            }
-        }
         public void DrawPolygon(int _sides)
         {
             sides = _sides;
@@ -68,19 +43,6 @@ namespace UnityEngine.UI.Extensions
             else
                 size = rectTransform.rect.width;
             thickness = (float)Mathf.Clamp(thickness, 0, size / 2);
-        }
-        protected UIVertex[] SetVbo(Vector2[] vertices, Vector2[] uvs)
-        {
-            UIVertex[] vbo = new UIVertex[4];
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                var vert = UIVertex.simpleVert;
-                vert.color = color;
-                vert.position = vertices[i];
-                vert.uv0 = uvs[i];
-                vbo[i] = vert;
-            }
-            return vbo;
         }
 
         protected override void OnPopulateMesh(VertexHelper vh)

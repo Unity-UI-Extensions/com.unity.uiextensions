@@ -15,14 +15,13 @@
 /// http://rumorgames.com/hide-in-inspector/
 ///
 /// </summary>
- 
+
 namespace UnityEngine.UI.Extensions {
-    [ExecuteInEditMode]
     [AddComponentMenu("UI/Extensions/Primitives/Cut Corners")]
-    public class UICornerCut : MaskableGraphic {
- 
-        public Vector2 cornerSize = new Vector2(16, 16);
- 
+    public class UICornerCut : UIPrimativeBase
+    {
+         public Vector2 cornerSize = new Vector2(16, 16);
+
         [Header("Corners to cut")]
         public bool cutUL = true;
         public bool cutUR;

@@ -1,14 +1,12 @@
 /// Credit koohddang
 /// Sourced from - http://forum.unity3d.com/threads/onfillvbo-to-onpopulatemesh-help.353977/#post-2299311
 
-using System.Collections.Generic;
 using System;
 
 namespace UnityEngine.UI.Extensions
 {
-    [ExecuteInEditMode]
     [AddComponentMenu("UI/Extensions/Primitives/Diamond Graph")]
-    public class DiamondGraph : Graphic
+    public class DiamondGraph : UIPrimativeBase
     {
         public float a = 1;
         public float b = 1;

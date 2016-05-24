@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
 {
  	[AddComponentMenu("UI/Extensions/Primitives/UILineRenderer")]
-   public class UILineRenderer : MaskableGraphic
+   public class UILineRenderer : UIPrimativeBase
     {
         private enum SegmentType
         {
@@ -47,9 +47,6 @@ namespace UnityEngine.UI.Extensions
         private static readonly Vector2[] middleUvs = new[] { UV_TOP_CENTER, UV_BOTTOM_CENTER, UV_BOTTOM_CENTER, UV_TOP_CENTER };
         private static readonly Vector2[] endUvs = new[] { UV_TOP_CENTER, UV_BOTTOM_CENTER, UV_BOTTOM_RIGHT, UV_TOP_RIGHT };
 
-
-        [SerializeField]
-        private Texture m_Texture;
         [SerializeField]
         private Rect m_UVRect = new Rect(0f, 0f, 1f, 1f);
         [SerializeField]
@@ -67,34 +64,6 @@ namespace UnityEngine.UI.Extensions
 
         public BezierType BezierMode = BezierType.None;
         public int BezierSegmentsPerCurve = 10;
-
-        public override Texture mainTexture
-        {
-            get
-            {
-                return m_Texture == null ? s_WhiteTexture : m_Texture;
-            }
-        }
-
-        /// <summary>
-        /// Texture to be used.
-        /// </summary>
-        public Texture texture
-        {
-            get
-            {
-                return m_Texture;
-            }
-            set
-            {
-                if (m_Texture == value)
-                    return;
-
-                m_Texture = value;
-                SetVerticesDirty();
-                SetMaterialDirty();
-            }
-        }
 
         /// <summary>
         /// UV rectangle used by the texture.
@@ -320,18 +289,5 @@ namespace UnityEngine.UI.Extensions
             return SetVbo(new[] { v1, v2, v3, v4 }, uvs);
         }
 
-        protected UIVertex[] SetVbo(Vector2[] vertices, Vector2[] uvs)
-        {
-            UIVertex[] vbo = new UIVertex[4];
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                var vert = UIVertex.simpleVert;
-                vert.color = color;
-                vert.position = vertices[i];
-                vert.uv0 = uvs[i];
-                vbo[i] = vert;
-            }
-            return vbo;
-        }
     }
 }

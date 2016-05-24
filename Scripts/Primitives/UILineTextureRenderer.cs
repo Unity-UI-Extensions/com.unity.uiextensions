@@ -7,10 +7,8 @@ using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
 {
  	[AddComponentMenu("UI/Extensions/Primitives/UILineTextureRenderer")]
-    public class UILineTextureRenderer : MaskableGraphic
+    public class UILineTextureRenderer : UIPrimativeBase
     {
-        [SerializeField]
-        Texture m_Texture;
         [SerializeField]
         Rect m_UVRect = new Rect(0f, 0f, 1f, 1f);
         [SerializeField]
@@ -20,34 +18,6 @@ namespace UnityEngine.UI.Extensions
         public bool UseMargins;
         public Vector2 Margin;
         public bool relativeSize;
-
-        public override Texture mainTexture
-        {
-            get
-            {
-                return m_Texture == null ? s_WhiteTexture : m_Texture;
-            }
-        }
-
-        /// <summary>
-        /// Texture to be used.
-        /// </summary>
-        public Texture texture
-        {
-            get
-            {
-                return m_Texture;
-            }
-            set
-            {
-                if (m_Texture == value)
-                    return;
-
-                m_Texture = value;
-                SetVerticesDirty();
-                SetMaterialDirty();
-            }
-        }
 
         /// <summary>
         /// UV rectangle used by the texture.
@@ -176,20 +146,6 @@ namespace UnityEngine.UI.Extensions
                 prevV1 = v3;
                 prevV2 = v4;
             }
-        }
-
-        protected UIVertex[] SetVbo(Vector2[] vertices, Vector2[] uvs)
-        {
-            UIVertex[] vbo = new UIVertex[4];
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                var vert = UIVertex.simpleVert;
-                vert.color = color;
-                vert.position = vertices[i];
-                vert.uv0 = uvs[i];
-                vbo[i] = vert;
-            }
-            return vbo;
         }
 
         public Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Vector3 angles)
