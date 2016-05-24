@@ -4,7 +4,7 @@
 namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/Primitives/UI Polygon")]
-    public class UIPolygon : UIPrimativeBase
+    public class UIPolygon : UIPrimitiveBase
     {
         public bool fill = true;
         public float thickness = 5;

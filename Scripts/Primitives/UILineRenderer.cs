@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
 {
  	[AddComponentMenu("UI/Extensions/Primitives/UILineRenderer")]
-   public class UILineRenderer : UIPrimativeBase
+   public class UILineRenderer : UIPrimitiveBase
     {
         private enum SegmentType
         {

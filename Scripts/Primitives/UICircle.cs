@@ -5,7 +5,7 @@
 namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/Primitives/UI Circle")]
-    public class UICircle : UIPrimativeBase
+    public class UICircle : UIPrimitiveBase
     {
         [Tooltip("The circular fill percentage of the primitive, affected by FixedToSegments")]
         [Range(0, 100)]

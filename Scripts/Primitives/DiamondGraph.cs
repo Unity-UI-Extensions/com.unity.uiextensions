@@ -6,7 +6,7 @@ using System;
 namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/Primitives/Diamond Graph")]
-    public class DiamondGraph : UIPrimativeBase
+    public class DiamondGraph : UIPrimitiveBase
     {
         public float a = 1;
         public float b = 1;

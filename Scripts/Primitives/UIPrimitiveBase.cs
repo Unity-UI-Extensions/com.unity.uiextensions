@@ -2,7 +2,7 @@
 
 namespace UnityEngine.UI.Extensions
 {
-    public class UIPrimativeBase : MaskableGraphic, ILayoutElement, ICanvasRaycastFilter
+    public class UIPrimitiveBase : MaskableGraphic, ILayoutElement, ICanvasRaycastFilter
     {
 
         [SerializeField]

@@ -18,7 +18,7 @@
 
 namespace UnityEngine.UI.Extensions {
     [AddComponentMenu("UI/Extensions/Primitives/Cut Corners")]
-    public class UICornerCut : UIPrimativeBase
+    public class UICornerCut : UIPrimitiveBase
     {
          public Vector2 cornerSize = new Vector2(16, 16);
 
