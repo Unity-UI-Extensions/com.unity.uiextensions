@@ -66,6 +66,12 @@ namespace UnityEngine.UI.Extensions
         void Start()
         {
             _scroll_rect = gameObject.GetComponent<ScrollRect>();
+
+            if (_scroll_rect.horizontalScrollbar || _scroll_rect.verticalScrollbar)
+            {
+                Debug.LogWarning("Warning, using scrollbors with the Scroll Snap controls is not advised as it causes unpredictable results");
+            }
+
             _screensContainer = _scroll_rect.content;
             if (PageStep == 0)
             {

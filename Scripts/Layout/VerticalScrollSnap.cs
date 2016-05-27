@@ -63,6 +63,12 @@ namespace UnityEngine.UI.Extensions
         void Start()
         {
             _scroll_rect = gameObject.GetComponent<ScrollRect>();
+
+            if (_scroll_rect.horizontalScrollbar || _scroll_rect.verticalScrollbar)
+            {
+                Debug.LogWarning("Warning, using scrollbors with the Scroll Snap controls is not advised as it causes unpredictable results");
+            }
+
             _screensContainer = _scroll_rect.content;
             if (PageStep == 0)
             {
@@ -213,7 +219,7 @@ namespace UnityEngine.UI.Extensions
         }
 
         //used for changing between screen resolutions
-        private void DistributePages()
+        public void DistributePages()
         {
             float _offset = 0;
             float _dimension = 0;

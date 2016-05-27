@@ -1,5 +1,6 @@
-﻿/// Credit Ziboo
+﻿/// Credit Ziboo, Andrew Quesenberry 
 /// Sourced from - http://forum.unity3d.com/threads/free-reorderable-list.364600/
+/// Last Child Fix - https://bitbucket.org/ddreaper/unity-ui-extensions/issues/70/all-re-orderable-lists-cause-a-transform
 
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
@@ -217,7 +218,7 @@ namespace UnityEngine.UI.Extensions
         {
             Vector2 size = _draggingObjectOriginalSize;
 
-            if (_currentReorderableListRaycasted != null && _currentReorderableListRaycasted.IsDropable)
+            if (_currentReorderableListRaycasted != null && _currentReorderableListRaycasted.IsDropable && _currentReorderableListRaycasted.Content.childCount > 0)
             {
                 var firstChild = _currentReorderableListRaycasted.Content.GetChild(0);
                 if (firstChild != null)

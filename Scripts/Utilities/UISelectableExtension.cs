@@ -1,5 +1,6 @@
-/// Credit AriathTheWise
+/// Credit AriathTheWise, Sfyne 
 /// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/page-2#post-1796783
+/// Additional disabled - https://bitbucket.org/ddreaper/unity-ui-extensions/issues/47/uiselectableextension-_pressed-bug
 /// Extended to include a HELD state that continually fires while the button is held down.
 /// Refactored so it can be added to any button and expose the events in the editor.
 
@@ -108,5 +109,11 @@ namespace UnityEngine.UI.Extensions
 				Debug.Log("Control Held");
 			#endif
 		}
+
+        //Fixed UISelectableExtension inactive bug (if gameObject becomes inactive while button is held down it never goes back to _pressed = false)
+        void OnDisable()
+        {
+            _pressed = false;
+        }
     }
 }
