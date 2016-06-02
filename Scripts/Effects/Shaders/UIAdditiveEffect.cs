@@ -10,7 +10,6 @@ namespace UnityEngine.UI.Extensions
     public class UIAdditiveEffect : MonoBehaviour
     {
         MaskableGraphic mGraphic;
-        Material mat;
 
         // Use this for initialization
         void Start()
@@ -28,7 +27,6 @@ namespace UnityEngine.UI.Extensions
                     //Applying default material with UI Image Crop shader
                     mGraphic.material = new Material(Shader.Find("UI Extensions/UIAdditive"));
                 }
-                mat = mGraphic.material;
             }
             else
             {
