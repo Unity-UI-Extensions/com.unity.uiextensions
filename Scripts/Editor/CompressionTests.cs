@@ -146,7 +146,6 @@ public class CompressionTests  {
     {
         public Vector3 myPosition;
         public Vector3[] myPositionHistory;
-        public Transform mytransform;
         public string[] myChatHistory;
     }
 
