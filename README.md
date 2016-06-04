@@ -37,7 +37,8 @@ You can either download / fork this project to access the scripts, or you can al
 To get started with the project, here's a little guide:
 
 [![View Getting Started Video](http://img.youtube.com/vi/sVLeYmsNQAI/0.jpg)](http://www.youtube.com/watch?v=sVLeYmsNQAI "Unity UI getting started video")
----
+
+-----
 #Updates:#
 
 ##Update 1.1##
