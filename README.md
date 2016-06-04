@@ -1,7 +1,7 @@
 # README #
 
 This is an extension project for the new Unity UI system which can be found at: [Unity UI Source](https://bitbucket.org/Unity-Technologies/ui)
-##Update 1.1 released, go check it out.  Will also publish to the asset store soon##
+##Update 1.1 released for 5.3 (4.x/5.1 to follow shortly), go check it out.  Will also publish to the asset store soon##
 ###For Unity 5.2.2+ - Use the new 5.3 package!###
 ###*Note, due to limited demand, this is the last release we will update the 4.x/5.1 asset package, we'll be focusing on 5.3/5.4 from now on.###
 
