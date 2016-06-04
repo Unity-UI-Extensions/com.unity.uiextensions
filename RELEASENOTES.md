@@ -1,8 +1,40 @@
 # Unity UI Extensions release notes #
+This file contains the up to date release notes for each release of the UI Extensions project including release videos where required.
 
-**1.0.6.1 - Minor update to enhance soft alpha mask and add cylinder text plus a fix to letter spacing** 
+----------------
+##Update 1.1##
 
-###Update 1.0.6###
+[![View 1.1 update Video](http://img.youtube.com/vi/JuE0ja5DmV4/0.jpg)](https://www.youtube.com/watch?v=JuE0ja5DmV4 "Update 1.1 for the Unity UI Extensions Project")
+
+###New / updated features###
+* New Polygon primitive
+* New UI Vertical Scroller control
+* New Curved layout component
+* New Shining effect
+* New UI Particle system
+* New Scroll Conflict Manager
+* Soft Alpha Mask updated in line with SAUI 1.3 release
+* Line Renderer has had a complete overhaul, including full programmatic support, Line list and Bezier line rendering
+* Horizontal and Vertical Scroll Snaps updated to include a Starting page, current page and transition speed parameters. Plus a new GoToPage, Add and Remove page functions
+* Added some script helper functions for LZF compression and Serialization
+* Two utilities to help manage drag thresholds on high PPI systems
+
+###Fixes###
+* Line Render almost completely re-written with tons of fixes
+* Radial layout updated to avoid 360 overlap (first and last)
+* Scroll Snaps updates to better handle children.
+* Scroll Snaps distribute function updated so it can be called onDirty more efficiently.
+
+
+
+----------------
+##Update 1.0.6.1##
+
+- Minor update to enhance soft alpha mask and add cylinder text plus a fix to letter spacing 
+
+----------------
+##Update 1.0.6##
+
 [![View 1.0.6 update Video](http://img.youtube.com/vi/jpyFiRvSmbg/0.jpg)](http://www.youtube.com/watch?v=jpyFiRvSmbg "Update 1.0.6 for the Unity UI Extensions Project")
 
 * Added the awesome ReOrderable List control, plus some other minor bugfixes / changes.
@@ -10,16 +42,20 @@
 * New set of controls including some shader enhanced solutions
 * I've added a donate column to the lists.  If you are getting great use out of a control, help out the dev who created it. Optional of course.  Will update with links as I get them.
 
-###Update 1.0.5###
+----------------
+##Update 1.0.5##
+
 Few minor fixes and a couple of additional scripts.  Predominately created the new 5.3 branch to maintain the UI API changes from the 5.2.1 Patch releases.  5.3 package is 100% compatible with 5.2.1 Patch releases.
 
-###Update 1.0.4###
+----------------
+##Update 1.0.4##
 
 [![View Getting Started Video](http://img.youtube.com/vi/oF48Qpaq3ls/0.jpg)](http://www.youtube.com/watch?v=oF48Qpaq3ls "Update 1.0.0.4 for the Unity UI Extensions Project")
 ---
 
 
 
+=======================
 #Additional Info#
 =======================
 ### How do I get set up? ###
