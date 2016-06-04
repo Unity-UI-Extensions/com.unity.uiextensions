@@ -67,7 +67,7 @@ To get started with the project, here's a little guide:
 ##Release History##
 
 For the full release history, follow the below link to the full release notes page.
-### [Release Notes](https://bitbucket.org/ddreaper/unity-ui-extensions/src/c9354eadf4b9287790eb636c21e4107760cd7b87/RELEASENOTES.md?at=develop_5.3)###
+### [Release Notes](https://bitbucket.org/ddreaper/unity-ui-extensions/src/d735140cb69a54cc3b974cb813975e8ab734e961/RELEASENOTES.md?fileviewer=file-view-default)###
 
 ---
 #Controls and extensions listed in this project:#
