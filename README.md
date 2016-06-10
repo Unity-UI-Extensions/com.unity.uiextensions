@@ -25,6 +25,14 @@ You can either download / fork this project to access the scripts, or you can al
 ##Update 1.1##
 * [Unity UI Extensions Unity 5.3 (5.2.1P+) Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.3.unitypackage) <- use this for 5.2.1P+ releases
 
+> **Note** To retain 5.2 compatibility in the 5.3 package, you will see two warnings related to:
+
+> ```
+> `UnityEngine.UI.InputField.onValueChange' is obsolete.  
+> ```
+
+> This has no effect on the package working in 5.4 plus and is only there to maintain backwards compatibility.  We will look to update/remove this in a future release, likely after 5.4.  If you have any concerns, feel free to update your code in your project to add the missing "d".  Unity have ensured it still works as they have mapped the API change for now.
+
 ##Update 1.0.6##
 * [Unity UI Extensions Unity 4.x Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-4.x.unitypackage)
 
