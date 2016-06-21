@@ -5,13 +5,15 @@ This file contains the up to date release notes for each release of the UI Exten
 ##Update 1.1##
 
 [![View 1.1 update Video](http://img.youtube.com/vi/JuE0ja5DmV4/0.jpg)](https://www.youtube.com/watch?v=JuE0ja5DmV4 "Update 1.1 for the Unity UI Extensions Project")
+> **Note** for 4.6 / 5.1, some features will not be available due to their incompatibility.
+> Also the Line Renderer remains unchanged in these releases as the updates do not work with the older system
 
 ###New / updated features###
 * New Polygon primitive
 * New UI Vertical Scroller control
 * New Curved layout component
 * New Shining effect
-* New UI Particle system
+* New UI Particle system **<-5.3+ only**
 * New Scroll Conflict Manager
 * Soft Alpha Mask updated in line with SAUI 1.3 release
 * Line Renderer has had a complete overhaul, including full programmatic support, Line list and Bezier line rendering
@@ -25,7 +27,10 @@ This file contains the up to date release notes for each release of the UI Exten
 * Scroll Snaps updates to better handle children.
 * Scroll Snaps distribute function updated so it can be called onDirty more efficiently.
 
-
+##Upgrade Notes##
+Two scripts were moved and need their originals need deleting post upgrade.  Please remove the following files:
+* Scripts\ImageExtended
+* Scripts\UIImageCrop
 
 ----------------
 ##Update 1.0.6.1##
