@@ -2,6 +2,19 @@
 This file contains the up to date release notes for each release of the UI Extensions project including release videos where required.
 
 ----------------
+##Update 1.1.1##
+
+Incremental release with a few new features and fixes
+
+###New / updated features###
+* New UI ScrollRect Occlusion utility
+* New UI Tween Scale utility
+* New UI Infinite ScrollRect
+
+###Fixes###
+* UI Particles effect updated with minor fixes
+
+----------------
 ##Update 1.1##
 
 [![View 1.1 update Video](http://img.youtube.com/vi/JuE0ja5DmV4/0.jpg)](https://www.youtube.com/watch?v=JuE0ja5DmV4 "Update 1.1 for the Unity UI Extensions Project")
