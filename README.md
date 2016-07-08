@@ -5,6 +5,14 @@ This is an extension project for the new Unity UI system which can be found at: 
 ###*Note, due to limited demand, this is the last release we will update the 4.x/5.1/5.2 asset package, we'll be focusing on 5.3/5.4 from now on.###
 
 -----
+#[Supporting the UI Extensions project](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=89L8T9N6BR7LJ)#
+If you wish to support the Unity UI Extensions project itself, then you can using the PayPal link below. 
+
+(paypal account not required and you can remain anonymous if you wish)
+
+##[>> Donate <<](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=89L8T9N6BR7LJ)##
+
+-----
 #Intro#
 For more info, here's a little introduction video for the project:
 
