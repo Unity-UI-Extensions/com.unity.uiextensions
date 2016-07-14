@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
 {
 	/// <summary>
-	///  Extenension to the UI class which creates a dropdown list 
+	///  Extension to the UI class which creates a dropdown list 
 	/// </summary>
 	[RequireComponent(typeof(RectTransform))]
 	[AddComponentMenu("UI/Extensions/Dropdown List")]
@@ -18,6 +18,7 @@ namespace UnityEngine.UI.Extensions
 
 		public List<DropDownListItem> Items;
 		public System.Action<int> OnSelectionChanged; // fires when selection is changed;
+        public bool OverrideHighlighted = true;
 
 		//private bool isInitialized = false;
 		private bool _isPanelActive = false;
@@ -109,7 +110,7 @@ namespace UnityEngine.UI.Extensions
 			catch (System.NullReferenceException ex)
 			{
 				Debug.LogException(ex);
-				Debug.LogError("Something is setup incorrectly with the dropdownlist component causing a Null Refernece Exception");
+				Debug.LogError("Something is setup incorrectly with the dropdownlist component causing a Null Reference Exception");
 				success = false;
 			}
 
@@ -223,15 +224,19 @@ namespace UnityEngine.UI.Extensions
 
 			_mainButton.txt.text = SelectedItem.Caption;
 
-			//update selected index color
-			for (int i = 0; i < _itemsPanelRT.childCount; i++)
-			{
-				_panelItems[i].btnImg.color = (_selectedIndex == i) ? _mainButton.btn.colors.highlightedColor : new Color(0, 0, 0, 0);
-			}
-		}
+            //update selected index color
+            if (OverrideHighlighted)
+            {
+
+                for (int i = 0; i < _itemsPanelRT.childCount; i++)
+                {
+                    _panelItems[i].btnImg.color = (_selectedIndex == i) ? _mainButton.btn.colors.highlightedColor : new Color(0, 0, 0, 0);
+                }
+            }
+        }
 
 
-		private void RedrawPanel()
+        private void RedrawPanel()
 		{
 			float scrollbarWidth = Items.Count > ItemsToDisplay ? _scrollBarWidth : 0f;//hide the scrollbar if there's not enough items
 
