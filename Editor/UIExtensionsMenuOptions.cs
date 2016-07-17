@@ -1645,6 +1645,14 @@ namespace UnityEditor.UI
             go.AddComponent<UI_Knob>();
             Selection.activeGameObject = go;
         }
+		
+		[MenuItem("GameObject/UI/Extensions/TextPic", false)]
+        static public void AddTextPic(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("TextPic", menuCommand, s_ImageGUIElementSize);
+            go.AddComponent<TextPic>();
+            Selection.activeGameObject = go;
+        }
 
         #endregion
 

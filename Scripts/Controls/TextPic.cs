@@ -12,6 +12,7 @@ namespace UnityEngine.UI.Extensions
 {
     // Image according to the label inside the name attribute to load, read from the Resources directory. The size of the image is controlled by the size property.
     // Use: <quad name=NAME size=25 width=1 />
+    [AddComponentMenu("UI/Extensions/TextPic")]
     public class TextPic : Text, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler, ISelectHandler
     {
         /// <summary>

@@ -24,6 +24,7 @@ using UnityEngine.EventSystems;
 namespace UnityEngine.UI.Extensions
 {
     [RequireComponent(typeof(Image))]
+    [AddComponentMenu("UI/Extensions/UI_Knob")]
     public class UI_Knob : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler
     {
         public enum Direction { CW, CCW };

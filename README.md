@@ -100,6 +100,7 @@ There are almost 70 extension controls / effect and other utilities in the proje
 ------|------|------|------|
 Accordion|HSVPicker|SelectionBox|UIButton|UIFlippable
 ComboBox|AutoCompleteComboBox|DropDownList|BoundToolTip|UIWindowBase
+UI_Knob|TextPic|||
 ||||
 
 [Primitives](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Controls#Primitives)|||||
