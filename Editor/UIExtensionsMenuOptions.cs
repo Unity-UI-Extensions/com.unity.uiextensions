@@ -1637,6 +1637,15 @@ namespace UnityEditor.UI
 
         #endregion
 
+        [MenuItem("GameObject/UI/Extensions/UI Knob", false)]
+        static public void AddUIKnob(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("UI Knob", menuCommand, s_ImageGUIElementSize);
+            go.AddComponent<Image>();
+            go.AddComponent<UI_Knob>();
+            Selection.activeGameObject = go;
+        }
+
         #endregion
 
         #region Helper Functions
