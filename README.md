@@ -100,7 +100,7 @@ There are almost 70 extension controls / effect and other utilities in the proje
 ------|------|------|------|
 Accordion|HSVPicker|SelectionBox|UIButton|UIFlippable
 ComboBox|AutoCompleteComboBox|DropDownList|BoundToolTip|UIWindowBase
-UI_Knob|TextPic|||
+UI_Knob|TextPic|InputFocus|ImageExtended|
 ||||
 
 [Primitives](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Controls#Primitives)|||||
@@ -135,9 +135,9 @@ AimerInputModule|GamePadInputModule|||
 [Additional Components](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Controls#Additional_Components)|||||
 ------|------|------|------|
 ReturnKeyTrigger|TabNavigation|uGUITools|ScrollRectTweener|ScrollRectLinker
-ScrollRectEx|InputFocus|ImageExtended|UIScrollToSelection|UISelectableExtension
+ScrollRectEx|UI_InfiniteScroll|UI_ScrollRectOcclusion|UIScrollToSelection|UISelectableExtension
 switchToRectTransform|ScrollConflictManager|CLFZ2 (Encryption)|Serialization|DragCorrector
-PPIViewer|UI_TweenScale|UI_ScrollRectOcclusion|UI_InfiniteScroll|
+PPIViewer|UI_TweenScale|||
 ||||
 
 *More to come*

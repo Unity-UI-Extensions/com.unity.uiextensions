@@ -1,13 +1,13 @@
 /// Credit BinaryX 
 /// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/page-2#post-1945602
 /// Updated by ddreaper - removed dependency on a custom ScrollRect script. Now implements drag interfaces and standard Scroll Rect.
-/// Update by xesenix - rewrited almost entire code 
-/// - configuration for direction move instead of 2 concurrent class (easiear to change direction in editor)
-/// - supports list layouted with horizontal or vertical layout need to match direction with type of layout used
-/// - dynamicly checks if scrolled list size changes and recalculates anchor positions 
+/// Update by xesenix - rewrote almost the entire code 
+/// - configuration for direction move instead of 2 concurrent class (easier to change direction in editor)
+/// - supports list layout with horizontal or vertical layout need to match direction with type of layout used
+/// - dynamic checks if scrolled list size changes and recalculates anchor positions 
 ///   and item size based on itemsVisibleAtOnce and size of root container
-///   if you dont wish to use this auto resize turn of autoLayoutItems
-/// - fixed current page made it independant from pivot
+///   if you don't wish to use this auto resize turn of autoLayoutItems
+/// - fixed current page made it independent from pivot
 /// - replaced pagination with delegate function
 using System;
 using UnityEngine.EventSystems;
@@ -19,7 +19,7 @@ namespace UnityEngine.UI.Extensions
     [AddComponentMenu("UI/Extensions/Scroll Snap")]
     public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
-        // needed becouse of reversed behavior of axis Y compared to X
+        // needed because of reversed behaviour of axis Y compared to X
         // (positions of children lower in children list in horizontal directions grows when in vertical it gets smaller)
         public enum ScrollDirection
         {

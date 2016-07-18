@@ -3,6 +3,7 @@
 
 namespace UnityEngine.UI.Extensions
 {
+    [AddComponentMenu("UI/Extensions/HoverTooltip")]
     public class HoverTooltip : MonoBehaviour
     {
         //manually selectable padding for the background image
