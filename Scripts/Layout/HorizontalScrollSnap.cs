@@ -43,13 +43,14 @@ namespace UnityEngine.UI.Extensions
         private Vector3 _startPosition = new Vector3();
 
         [Tooltip("The currently active page")]
-        [SerializeField]
         private int _currentScreen;
 
         [Tooltip("The screen / page to start the control on")]
+        [SerializeField]
         public int StartingScreen = 1;
 
         [Tooltip("The distance between two pages, by default 3 times the height of the control")]
+        [SerializeField]
         public int PageStep = 0;
 
         public int CurrentPage
@@ -268,13 +269,13 @@ namespace UnityEngine.UI.Extensions
         void OnValidate()
         {
             var childCount = gameObject.GetComponent<ScrollRect>().content.childCount;
-            if (StartingScreen > childCount)
+            if (StartingScreen > childCount - 1)
             {
-                StartingScreen = childCount;
+                StartingScreen = childCount - 1;
             }
-            if (StartingScreen < 1)
+            if (StartingScreen < 0)
             {
-                StartingScreen = 1;
+                StartingScreen = 0;
             }
         }
 
