@@ -39,6 +39,14 @@ namespace UnityEngine.UI.Extensions
             UpdateQuadImage();
         }
 
+#if UNITY_EDITOR
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            UpdateQuadImage();
+        }
+#endif
+
         /// <summary>
         /// After parsing the final text
         /// </summary>
@@ -81,7 +89,7 @@ namespace UnityEngine.UI.Extensions
             {
                 foreach (IconName icon in inspectorIconList)
                 {
-                    Debug.Log(icon.sprite.name);
+                    // Debug.Log(icon.sprite.name);
                     iconList.Add(icon.name, icon.sprite);
                 }
             }
@@ -229,6 +237,7 @@ namespace UnityEngine.UI.Extensions
                 }
                 hrefInfo.boxes.Add(new Rect(bounds.min, bounds.size));
             }
+            UpdateQuadImage();
         }
 
         /// <summary>
