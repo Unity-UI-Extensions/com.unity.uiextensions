@@ -13,12 +13,16 @@ namespace UnityEngine.UI.Extensions
     // Image according to the label inside the name attribute to load, read from the Resources directory. The size of the image is controlled by the size property.
     // Use: <quad name=NAME size=25 width=1 />
     [AddComponentMenu("UI/Extensions/TextPic")]
+       
+    [ExecuteInEditMode] // Needed for culling images that are not used //
     public class TextPic : Text, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler, ISelectHandler
     {
         /// <summary>
         /// Image Pool
         /// </summary>
         private readonly List<Image> m_ImagesPool = new List<Image>();
+        private readonly List<GameObject> culled_ImagesPool = new List<GameObject>();
+        private bool clearImages = false;
 
         /// <summary>
         /// Vertex Index
@@ -162,8 +166,16 @@ namespace UnityEngine.UI.Extensions
             {
                 if (m_ImagesPool[i])
                 {
-                    m_ImagesPool[i].enabled = false;
+                    /* TEMPORARY FIX REMOVE IMAGES FROM POOL DELETE LATER SINCE CANNOT DESTROY */
+                    // m_ImagesPool[i].enabled = false;
+                    m_ImagesPool[i].gameObject.SetActive(false);
+                    m_ImagesPool[i].gameObject.hideFlags = HideFlags.HideAndDontSave;
+                    culled_ImagesPool.Add(m_ImagesPool[i].gameObject);
+                    m_ImagesPool.Remove(m_ImagesPool[i]);
                 }
+            }
+            if (culled_ImagesPool.Count > 1) {
+                clearImages = true;
             }
         }
 
@@ -402,6 +414,17 @@ namespace UnityEngine.UI.Extensions
             public string name;
 
             public readonly List<Rect> boxes = new List<Rect>();
+        }
+    
+        /* TEMPORARY FIX REMOVE IMAGES FROM POOL DELETE LATER SINCE CANNOT DESTROY */
+        void Update() {
+            if (clearImages) {
+                for (int i = 0; i < culled_ImagesPool.Count; i++){
+                    DestroyImmediate(culled_ImagesPool[i]);
+                }
+                culled_ImagesPool.Clear();
+                clearImages = false;
+            }
         }
     }
 }
