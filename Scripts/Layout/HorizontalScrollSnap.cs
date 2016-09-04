@@ -49,9 +49,10 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         public int StartingScreen = 1;
 
-        [Tooltip("The distance between two pages, by default 3 times the height of the control")]
+        [Tooltip("The distance between two pages, by default 3 times the width of the control")]
         [SerializeField]
-        public int PageStep = 0;
+        [Range(0, 8)]
+        public float PageStep = 3;
 
         public int CurrentPage
         {
@@ -74,10 +75,7 @@ namespace UnityEngine.UI.Extensions
             }
 
             _screensContainer = _scroll_rect.content;
-            if (PageStep == 0)
-            {
-                PageStep = (int)_scroll_rect.GetComponent<RectTransform>().rect.width * 3;
-            }
+            PageStep = (int)_scroll_rect.GetComponent<RectTransform>().rect.width * PageStep;
             DistributePages();
 
             _lerp = false;
@@ -226,15 +224,18 @@ namespace UnityEngine.UI.Extensions
         {
             int _offset = 0;
             int _dimension = 0;
-            Vector2 panelDimensions = gameObject.GetComponent<RectTransform>().sizeDelta;
+            Rect panelDimensions = gameObject.GetComponent<RectTransform>().rect;
             int currentXPosition = 0;
 
             for (int i = 0; i < _screensContainer.transform.childCount; i++)
             {
                 RectTransform child = _screensContainer.transform.GetChild(i).gameObject.GetComponent<RectTransform>();
-                currentXPosition = _offset + i * PageStep;
-                child.sizeDelta = new Vector2(panelDimensions.x, panelDimensions.y);
+                currentXPosition = _offset + (int)(i * PageStep);
+                child.sizeDelta = new Vector2(panelDimensions.width, panelDimensions.height);
                 child.anchoredPosition = new Vector2(currentXPosition, 0f);
+                child.anchorMin = new Vector2(0f, child.anchorMin.y);
+                child.anchorMax = new Vector2(0f, child.anchorMax.y);
+                child.pivot = new Vector2(0f, child.pivot.y);
             }
 
             _dimension = currentXPosition + _offset * -1;
