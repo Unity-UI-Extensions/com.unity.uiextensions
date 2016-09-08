@@ -1,4 +1,6 @@
-﻿Shader "UI Extensions/SoftMaskShaderText"
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+Shader "UI Extensions/SoftMaskShaderText"
 {
 	Properties
 	{
@@ -102,7 +104,7 @@
 				v2f OUT;
 				OUT.worldPosition = IN.vertex;
 				OUT.vertex = mul(UNITY_MATRIX_MVP, OUT.worldPosition);
-				OUT.worldPosition2 = mul(_Object2World, IN.vertex);
+				OUT.worldPosition2 = mul(unity_ObjectToWorld, IN.vertex);
 
 				OUT.texcoord = IN.texcoord;
 
