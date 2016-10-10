@@ -81,6 +81,12 @@ namespace UnityEngine.UI.Extensions
         //private bool selected = false;
 
         private List<Vector2> positions = new List<Vector2>();
+        
+        /**
+        * Little heck to support multiple hrefs with same name
+        */
+        private string previousText = "";
+        public bool isCreating_m_HrefInfos = true;
 
         /**
         * Unity Inspector cant display Dictionary vars,
@@ -97,6 +103,7 @@ namespace UnityEngine.UI.Extensions
                     iconList.Add(icon.name, icon.sprite);
                 }
             }
+            Reset_m_HrefInfos ();
         }
 
         protected void UpdateQuadImage()
@@ -290,7 +297,7 @@ namespace UnityEngine.UI.Extensions
         protected string GetOutputText()
         {
             s_TextBuilder.Length = 0;
-            m_HrefInfos.Clear();
+            
             var indexText = 0;
             fixedString = this.text;
             if (inspectorIconList != null && inspectorIconList.Length > 0)
@@ -303,24 +310,37 @@ namespace UnityEngine.UI.Extensions
                     }
                 }
             }
+            int count = 0;
             foreach (Match match in s_HrefRegex.Matches(fixedString))
             {
                 s_TextBuilder.Append(fixedString.Substring(indexText, match.Index - indexText));
                 s_TextBuilder.Append("<color=" + hyperlinkColor + ">");  // Hyperlink color
 
                 var group = match.Groups[1];
-                var hrefInfo = new HrefInfo
-                {
-                    startIndex = s_TextBuilder.Length * 4, // Hyperlinks in text starting vertex indices
-                    endIndex = (s_TextBuilder.Length + match.Groups[2].Length - 1) * 4 + 3,
-                    name = group.Value
-                };
-                m_HrefInfos.Add(hrefInfo);
+                if(isCreating_m_HrefInfos) {
+                    var hrefInfo = new HrefInfo
+                    {
+                        startIndex = s_TextBuilder.Length * 4, // Hyperlinks in text starting vertex indices
+                        endIndex = (s_TextBuilder.Length + match.Groups[2].Length - 1) * 4 + 3,
+                        name = group.Value
+                    };
+                    m_HrefInfos.Add(hrefInfo);
+                } else {
+                    if(m_HrefInfos.Count > 0) {
+                        m_HrefInfos[count].startIndex = s_TextBuilder.Length * 4; // Hyperlinks in text starting vertex indices;
+                        m_HrefInfos[count].endIndex = (s_TextBuilder.Length + match.Groups[2].Length - 1) * 4 + 3;
+                        count++;
+                    }
+                }
 
                 s_TextBuilder.Append(match.Groups[2].Value);
                 s_TextBuilder.Append("</color>");
                 indexText = match.Index + match.Length;
             }
+            // we should create array only once or if there is any change in the text
+            if(isCreating_m_HrefInfos)
+                isCreating_m_HrefInfos = false;
+                
             s_TextBuilder.Append(fixedString.Substring(indexText, fixedString.Length - indexText));
 
             return s_TextBuilder.ToString();
@@ -425,6 +445,15 @@ namespace UnityEngine.UI.Extensions
                 culled_ImagesPool.Clear();
                 clearImages = false;
             }
+            if( previousText != text)
+                Reset_m_HrefInfos ();
+        }
+        
+        // Reseting m_HrefInfos array if there is any change in text
+        void Reset_m_HrefInfos () {
+            previousText = text;
+            m_HrefInfos.Clear();
+            isCreating_m_HrefInfos = true;
         }
     }
 }
