@@ -3,6 +3,7 @@
 /// Updated by ddreaper - removed dependency on a custom ScrollRect script. Now implements drag interfaces and standard Scroll Rect.
 
 using System;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
@@ -24,6 +25,11 @@ namespace UnityEngine.UI.Extensions
         private ScrollRect _scroll_rect;
         private Vector3 _lerp_target;
         private bool _lerp;
+
+        [Serializable]
+        public class SelectionChangeStartEvent : UnityEvent { }
+        [Serializable]
+        public class SelectionChangeEndEvent : UnityEvent { }
 
         [Tooltip("The gameobject that contains toggles which suggest pagination. (optional)")]
         public GameObject Pagination;
@@ -60,7 +66,15 @@ namespace UnityEngine.UI.Extensions
                 return _currentScreen;
             }
         }
-        
+
+        [SerializeField]
+        private SelectionChangeStartEvent m_OnSelectionChangeStartEvent = new SelectionChangeStartEvent();
+        public SelectionChangeStartEvent OnSelectionChangeStartEvent { get { return m_OnSelectionChangeStartEvent; } set { m_OnSelectionChangeStartEvent = value; } }
+
+        [SerializeField]
+        private SelectionChangeEndEvent m_OnSelectionChangeEndEvent = new SelectionChangeEndEvent();
+        public SelectionChangeEndEvent OnSelectionChangeEndEvent { get { return m_OnSelectionChangeEndEvent; } set { m_OnSelectionChangeEndEvent = value; } }
+
         // Use this for initialization
         void Start()
         {
@@ -94,9 +108,10 @@ namespace UnityEngine.UI.Extensions
             if (_lerp)
             {
                 _screensContainer.localPosition = Vector3.Lerp(_screensContainer.localPosition, _lerp_target, transitionSpeed * Time.deltaTime);
-                if (Vector3.Distance(_screensContainer.localPosition, _lerp_target) < 0.005f)
+                if (Vector3.Distance(_screensContainer.localPosition, _lerp_target) < 1f)
                 {
                     _lerp = false;
+                    EndScreenChange();
                 }
 
                 //change the info bullets at the bottom of the screen. Just for visual effect
@@ -121,8 +136,10 @@ namespace UnityEngine.UI.Extensions
         {
             if (_currentScreen < _screens - 1)
             {
-                _currentScreen++;
+                StartScreenChange();
+
                 _lerp = true;
+                _currentScreen++;
                 _lerp_target = _positions[_currentScreen];
 
                 ChangeBulletsInfo(_currentScreen);
@@ -134,8 +151,10 @@ namespace UnityEngine.UI.Extensions
         {
             if (_currentScreen > 0)
             {
-                _currentScreen--;
+                StartScreenChange();
+
                 _lerp = true;
+                _currentScreen--;
                 _lerp_target = _positions[_currentScreen];
 
                 ChangeBulletsInfo(_currentScreen);
@@ -151,10 +170,13 @@ namespace UnityEngine.UI.Extensions
         {
             if (screenIndex <= _screens - 1 && screenIndex >= 0)
             {
-                _lerp = true;
-                _lerp_target = _positions[screenIndex];
+                StartScreenChange();
 
-                ChangeBulletsInfo(screenIndex);
+                _lerp = true;
+                _currentScreen = screenIndex;
+                _lerp_target = _positions[_currentScreen];
+
+                ChangeBulletsInfo(_currentScreen);
             }
         }
 
@@ -164,9 +186,10 @@ namespace UnityEngine.UI.Extensions
             if (_currentScreen < _screens - 1)
             {
                 _lerp = true;
-                _lerp_target = _positions[_currentScreen + 1];
+                _currentScreen++;
+                _lerp_target = _positions[_currentScreen];
 
-                ChangeBulletsInfo(_currentScreen + 1);
+                ChangeBulletsInfo(_currentScreen);
             }
         }
 
@@ -176,9 +199,10 @@ namespace UnityEngine.UI.Extensions
             if (_currentScreen > 0)
             {
                 _lerp = true;
-                _lerp_target = _positions[_currentScreen - 1];
+                _currentScreen--;
+                _lerp_target = _positions[_currentScreen];
 
-                ChangeBulletsInfo(_currentScreen - 1);
+                ChangeBulletsInfo(_currentScreen);
             }
         }
 
@@ -243,7 +267,7 @@ namespace UnityEngine.UI.Extensions
 
             _dimension = currentYPosition + _offset * -1;
 
-            _screensContainer.GetComponent<RectTransform>().offsetMax = new Vector2(0f,_dimension);
+            _screensContainer.GetComponent<RectTransform>().offsetMax = new Vector2(0f, _dimension);
 
             _screens = _screensContainer.childCount;
 
@@ -331,9 +355,20 @@ namespace UnityEngine.UI.Extensions
             _scroll_rect.verticalNormalizedPosition = (float)(_currentScreen) / (_screens - 1);
         }
 
+        private void StartScreenChange()
+        {
+            OnSelectionChangeStartEvent.Invoke();
+        }
+
+        private void EndScreenChange()
+        {
+            OnSelectionChangeEndEvent.Invoke();
+        }
+
         #region Interfaces
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (!_fastSwipeTimer) StartScreenChange();
             _startPosition = _screensContainer.localPosition;
             _fastSwipeCounter = 0;
             _fastSwipeTimer = true;
@@ -378,7 +413,7 @@ namespace UnityEngine.UI.Extensions
                 {
                     _lerp = true;
                     _lerp_target = FindClosestFrom(_screensContainer.localPosition, _positions);
-                        _currentScreen = GetPageforPosition(_lerp_target);
+                    _currentScreen = GetPageforPosition(_lerp_target);
                 }
             }
         }
