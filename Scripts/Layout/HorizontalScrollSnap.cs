@@ -51,8 +51,7 @@ namespace UnityEngine.UI.Extensions
 
         [Tooltip("The distance between two pages, by default 3 times the width of the control")]
         [SerializeField]
-        [Range(0, 8)]
-        public float PageStep = 3;
+        public int PageStep = 0;
 
         public int CurrentPage
         {
@@ -75,13 +74,16 @@ namespace UnityEngine.UI.Extensions
             }
 
             _screensContainer = _scroll_rect.content;
-            PageStep = (int)_scroll_rect.GetComponent<RectTransform>().rect.width * PageStep;
+            if (PageStep == 0)
+            {
+                PageStep = (int)_scroll_rect.GetComponent<RectTransform>().rect.width * PageStep;
+            }
             DistributePages();
 
             _lerp = false;
-            _currentScreen = StartingScreen;
+            _currentScreen = StartingScreen - 1;
 
-            _scroll_rect.horizontalNormalizedPosition = (float)(_currentScreen - 1) / (_screens - 1);
+            _scroll_rect.horizontalNormalizedPosition = (float)(_currentScreen) / (_screens - 1);
 
             ChangeBulletsInfo(_currentScreen);
 
@@ -144,10 +146,14 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        //Function for switching to a specific screen
+        /// <summary>
+        /// Function for switching to a specific screen
+        /// *Note, this is based on a 0 starting index - 0 to x
+        /// </summary>
+        /// <param name="screenIndex">0 starting index of page to jump to</param>
         public void GoToScreen(int screenIndex)
         {
-            if (screenIndex <= _screens && screenIndex >= 0)
+            if (screenIndex <= _screens - 1 && screenIndex >= 0)
             {
                 _lerp = true;
                 _lerp_target = _positions[screenIndex];

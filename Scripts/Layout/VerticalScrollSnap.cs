@@ -78,9 +78,9 @@ namespace UnityEngine.UI.Extensions
             DistributePages();
 
             _lerp = false;
-            _currentScreen = StartingScreen;
+            _currentScreen = StartingScreen - 1;
 
-            _scroll_rect.verticalNormalizedPosition = (float)(_currentScreen - 1) / (float)(_screens - 1);
+            _scroll_rect.verticalNormalizedPosition = (float)(_currentScreen) / (float)(_screens - 1);
 
             ChangeBulletsInfo(_currentScreen);
 
@@ -144,10 +144,14 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        //Function for switching to a specific screen
+        /// <summary>
+        /// Function for switching to a specific screen
+        /// *Note, this is based on a 0 starting index - 0 to x
+        /// </summary>
+        /// <param name="screenIndex">0 starting index of page to jump to</param>
         public void GoToScreen(int screenIndex)
         {
-            if (screenIndex <= _screens && screenIndex >= 0)
+            if (screenIndex <= _screens - 1 && screenIndex >= 0)
             {
                 _lerp = true;
                 _lerp_target = _positions[screenIndex];
