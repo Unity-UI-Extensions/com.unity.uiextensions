@@ -48,9 +48,10 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         public int StartingScreen = 1;
 
-        [Tooltip("The distance between two pages, by default 3 times the width of the control")]
+        [Tooltip("The distance between two pages based on page height, by default 3 times the width of the control")]
         [SerializeField]
-        public int PageStep = 0;
+        [Range(0, 8)]
+        public float PageStep = 0;
 
         public int CurrentPage
         {
@@ -71,10 +72,7 @@ namespace UnityEngine.UI.Extensions
             }
 
             _screensContainer = _scroll_rect.content;
-            if (PageStep == 0)
-            {
-                PageStep = (int)_scroll_rect.GetComponent<RectTransform>().rect.height * 3;
-            }
+
             DistributePages();
 
             _lerp = false;
@@ -228,15 +226,19 @@ namespace UnityEngine.UI.Extensions
         {
             float _offset = 0;
             float _dimension = 0;
-            Vector2 panelDimensions = gameObject.GetComponent<RectTransform>().sizeDelta;
+            Rect panelDimensions = gameObject.GetComponent<RectTransform>().rect;
             float currentYPosition = 0;
+            var pageStepValue = (int)panelDimensions.height * ((PageStep == 0) ? 3 : PageStep);
 
             for (int i = 0; i < _screensContainer.transform.childCount; i++)
             {
                 RectTransform child = _screensContainer.transform.GetChild(i).gameObject.GetComponent<RectTransform>();
-                currentYPosition = _offset + i * PageStep;
-                child.sizeDelta = new Vector2(panelDimensions.x, panelDimensions.y);
-                child.anchoredPosition = new Vector2(0f - panelDimensions.x / 2, currentYPosition + panelDimensions.y / 2);
+                currentYPosition = _offset + i * pageStepValue;
+                child.sizeDelta = new Vector2(panelDimensions.width, panelDimensions.height);
+                child.anchoredPosition = new Vector2(0f, currentYPosition);
+                child.anchorMin = new Vector2(child.anchorMin.x, 0f);
+                child.anchorMax = new Vector2(child.anchorMax.x, 0f);
+                child.pivot = new Vector2(child.pivot.x, 0f);
             }
 
             _dimension = currentYPosition + _offset * -1;
