@@ -55,10 +55,10 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         public int StartingScreen = 1;
 
-        [Tooltip("The distance between two pages based on page height, by default 3 times the width of the control")]
+        [Tooltip("The distance between two pages based on page height, by default pages are next to each other")]
         [SerializeField]
-        [Range(0, 8)]
-        public float PageStep = 0;
+        [Range(1, 8)]
+        public float PageStep = 1;
 
         public int CurrentPage
         {
@@ -77,25 +77,18 @@ namespace UnityEngine.UI.Extensions
         public SelectionChangeEndEvent OnSelectionChangeEndEvent { get { return m_OnSelectionChangeEndEvent; } set { m_OnSelectionChangeEndEvent = value; } }
 
         // Use this for initialization
-        void Start()
+        void Awake()
         {
             _scroll_rect = gameObject.GetComponent<ScrollRect>();
 
             if (_scroll_rect.horizontalScrollbar || _scroll_rect.verticalScrollbar)
             {
-                Debug.LogWarning("Warning, using scrollbors with the Scroll Snap controls is not advised as it causes unpredictable results");
+                Debug.LogWarning("Warning, using scrollbars with the Scroll Snap controls is not advised as it causes unpredictable results");
             }
 
             _screensContainer = _scroll_rect.content;
 
             DistributePages();
-
-            _lerp = false;
-            _currentScreen = StartingScreen - 1;
-
-            _scroll_rect.horizontalNormalizedPosition = (float)(_currentScreen) / (_screens - 1);
-
-            ChangeBulletsInfo(_currentScreen);
 
             if (NextButton)
                 NextButton.GetComponent<Button>().onClick.AddListener(() => { NextScreen(); });
@@ -104,12 +97,23 @@ namespace UnityEngine.UI.Extensions
                 PrevButton.GetComponent<Button>().onClick.AddListener(() => { PreviousScreen(); });
         }
 
+        void Start()
+        {
+            UpdateChildPositions();
+            _lerp = false;
+            _currentScreen = StartingScreen - 1;
+
+            _scroll_rect.horizontalNormalizedPosition = (float)(_currentScreen) / (_screens - 1);
+
+            ChangeBulletsInfo(_currentScreen);
+        }
+
         void Update()
         {
             if (_lerp)
             {
                 _screensContainer.localPosition = Vector3.Lerp(_screensContainer.localPosition, _lerp_target, transitionSpeed * Time.deltaTime);
-                if (Vector3.Distance(_screensContainer.localPosition, _lerp_target) < 1f)
+                if (Vector3.Distance(_screensContainer.localPosition, _lerp_target) < 0.1f)
                 {
                     _lerp = false;
 
@@ -270,7 +274,10 @@ namespace UnityEngine.UI.Extensions
             _dimension = currentXPosition + _offset * -1;
 
             _screensContainer.GetComponent<RectTransform>().offsetMax = new Vector2(_dimension, 0f);
+        }
 
+        void UpdateChildPositions()
+        {
             _screens = _screensContainer.childCount;
 
             _positions = new System.Collections.Generic.List<Vector3>();
