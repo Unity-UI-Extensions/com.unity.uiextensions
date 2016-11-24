@@ -13,7 +13,7 @@ namespace UnityEngine.UI.Extensions
     // Image according to the label inside the name attribute to load, read from the Resources directory. The size of the image is controlled by the size property.
     // Use: <quad name=NAME size=25 width=1 />
     [AddComponentMenu("UI/Extensions/TextPic")]
-
+       
     [ExecuteInEditMode] // Needed for culling images that are not used //
     public class TextPic : Text, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler, ISelectHandler
     {
@@ -23,6 +23,7 @@ namespace UnityEngine.UI.Extensions
         private readonly List<Image> m_ImagesPool = new List<Image>();
         private readonly List<GameObject> culled_ImagesPool = new List<GameObject>();
         private bool clearImages = false;
+		private Object thisLock = new Object();
 
         /// <summary>
         /// Vertex Index
@@ -81,7 +82,7 @@ namespace UnityEngine.UI.Extensions
         //private bool selected = false;
 
         private List<Vector2> positions = new List<Vector2>();
-
+        
         /**
         * Little heck to support multiple hrefs with same name
         */
@@ -103,7 +104,7 @@ namespace UnityEngine.UI.Extensions
                     iconList.Add(icon.name, icon.sprite);
                 }
             }
-            Reset_m_HrefInfos();
+            Reset_m_HrefInfos ();
         }
 
         protected void UpdateQuadImage()
@@ -133,12 +134,8 @@ namespace UnityEngine.UI.Extensions
                     var go = DefaultControls.CreateImage(resources);
                     go.layer = gameObject.layer;
                     var rt = go.transform as RectTransform;
-
                     if (rt)
                     {
-                        rt.anchorMin = new Vector2(0, 1);
-                        rt.anchorMax = new Vector2(0, 1);
-                        rt.pivot = new Vector2(0.5f, 0.5f);
                         rt.SetParent(rectTransform);
                         rt.localPosition = Vector3.zero;
                         rt.localRotation = Quaternion.identity;
@@ -150,7 +147,6 @@ namespace UnityEngine.UI.Extensions
                 var spriteName = match.Groups[1].Value;
                 //var size = float.Parse(match.Groups[2].Value);
                 var img = m_ImagesPool[m_ImagesVertexIndex.Count - 1];
-
                 if (img.sprite == null || img.sprite.name != spriteName)
                 {
                     // img.sprite = Resources.Load<Sprite>(spriteName);
@@ -186,8 +182,7 @@ namespace UnityEngine.UI.Extensions
                     m_ImagesPool.Remove(m_ImagesPool[i]);
                 }
             }
-            if (culled_ImagesPool.Count > 1)
-            {
+            if (culled_ImagesPool.Count > 1) {
                 clearImages = true;
             }
         }
@@ -201,13 +196,11 @@ namespace UnityEngine.UI.Extensions
             positions.Clear();
 
             UIVertex vert = new UIVertex();
-
             for (var i = 0; i < m_ImagesVertexIndex.Count; i++)
             {
                 var endIndex = m_ImagesVertexIndex[i];
                 var rt = m_ImagesPool[i].rectTransform;
                 var size = rt.sizeDelta;
-
                 if (endIndex < toFill.currentVertCount)
                 {
                     toFill.PopulateUIVertex(ref vert, endIndex);
@@ -215,9 +208,7 @@ namespace UnityEngine.UI.Extensions
 
                     // Erase the lower left corner of the black specks
                     toFill.PopulateUIVertex(ref vert, endIndex - 3);
-
                     var pos = vert.position;
-
                     for (int j = endIndex, m = endIndex - 3; j > m; j--)
                     {
                         toFill.PopulateUIVertex(ref vert, endIndex);
@@ -243,10 +234,8 @@ namespace UnityEngine.UI.Extensions
 
                 // Hyperlink inside the text is added to surround the vertex index coordinate frame
                 toFill.PopulateUIVertex(ref vert, hrefInfo.startIndex);
-
                 var pos = vert.position;
                 var bounds = new Bounds(pos, Vector3.zero);
-
                 for (int i = hrefInfo.startIndex, m = hrefInfo.endIndex; i < m; i++)
                 {
                     if (i >= toFill.currentVertCount)
@@ -309,7 +298,7 @@ namespace UnityEngine.UI.Extensions
         protected string GetOutputText()
         {
             s_TextBuilder.Length = 0;
-
+            
             var indexText = 0;
             fixedString = this.text;
             if (inspectorIconList != null && inspectorIconList.Length > 0)
@@ -323,16 +312,13 @@ namespace UnityEngine.UI.Extensions
                 }
             }
             int count = 0;
-
             foreach (Match match in s_HrefRegex.Matches(fixedString))
             {
                 s_TextBuilder.Append(fixedString.Substring(indexText, match.Index - indexText));
                 s_TextBuilder.Append("<color=" + hyperlinkColor + ">");  // Hyperlink color
 
                 var group = match.Groups[1];
-
-                if (isCreating_m_HrefInfos)
-                {
+                if(isCreating_m_HrefInfos) {
                     var hrefInfo = new HrefInfo
                     {
                         startIndex = s_TextBuilder.Length * 4, // Hyperlinks in text starting vertex indices
@@ -340,10 +326,8 @@ namespace UnityEngine.UI.Extensions
                         name = group.Value
                     };
                     m_HrefInfos.Add(hrefInfo);
-                }
-                else {
-                    if (m_HrefInfos.Count > 0)
-                    {
+                } else {
+                    if(m_HrefInfos.Count > 0) {
                         m_HrefInfos[count].startIndex = s_TextBuilder.Length * 4; // Hyperlinks in text starting vertex indices;
                         m_HrefInfos[count].endIndex = (s_TextBuilder.Length + match.Groups[2].Length - 1) * 4 + 3;
                         count++;
@@ -355,9 +339,9 @@ namespace UnityEngine.UI.Extensions
                 indexText = match.Index + match.Length;
             }
             // we should create array only once or if there is any change in the text
-            if (isCreating_m_HrefInfos)
+            if(isCreating_m_HrefInfos)
                 isCreating_m_HrefInfos = false;
-
+                
             s_TextBuilder.Append(fixedString.Substring(indexText, fixedString.Length - indexText));
 
             return s_TextBuilder.ToString();
@@ -376,7 +360,6 @@ namespace UnityEngine.UI.Extensions
             foreach (var hrefInfo in m_HrefInfos)
             {
                 var boxes = hrefInfo.boxes;
-
                 for (var i = 0; i < boxes.Count; ++i)
                 {
                     if (boxes[i].Contains(lp))
@@ -406,6 +389,7 @@ namespace UnityEngine.UI.Extensions
 
         public void OnPointerExit(PointerEventData eventData)
         {
+
             //do your stuff when highlighted
             //selected = false;
             if (m_ImagesPool.Count >= 1)
@@ -423,7 +407,6 @@ namespace UnityEngine.UI.Extensions
                 }
             }
         }
-
         public void OnSelect(BaseEventData eventData)
         {
             //do your stuff when selected
@@ -453,26 +436,24 @@ namespace UnityEngine.UI.Extensions
 
             public readonly List<Rect> boxes = new List<Rect>();
         }
-
+    
         /* TEMPORARY FIX REMOVE IMAGES FROM POOL DELETE LATER SINCE CANNOT DESTROY */
-        void Update()
-        {
-            if (clearImages)
-            {
-                for (int i = 0; i < culled_ImagesPool.Count; i++)
-                {
-                    DestroyImmediate(culled_ImagesPool[i]);
-                }
-                culled_ImagesPool.Clear();
-                clearImages = false;
-            }
-            if (previousText != text)
-                Reset_m_HrefInfos();
+        void Update() {
+			lock (thisLock) {
+				if (clearImages) {
+					for (int i = 0; i < culled_ImagesPool.Count; i++){
+						DestroyImmediate(culled_ImagesPool[i]);
+					}
+					culled_ImagesPool.Clear();
+					clearImages = false;
+				}
+			}
+            if( previousText != text)
+                Reset_m_HrefInfos ();
         }
-
+        
         // Reseting m_HrefInfos array if there is any change in text
-        void Reset_m_HrefInfos()
-        {
+        void Reset_m_HrefInfos () {
             previousText = text;
             m_HrefInfos.Clear();
             isCreating_m_HrefInfos = true;
