@@ -1,6 +1,7 @@
-/// Credit BinaryX 
+/// Credit BinaryX, SimonDarksideJ 
 /// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/page-2#post-1945602
-/// Updated by ddreaper - removed dependency on a custom ScrollRect script. Now implements drag interfaces and standard Scroll Rect.
+/// Updated by SimonDarksideJ - removed dependency on a custom ScrollRect script. Now implements drag interfaces and standard Scroll Rect.
+/// Updated by SimonDarksideJ - major refactoring on updating current position and scroll management
 
 using System;
 using UnityEngine.Events;
@@ -10,21 +11,18 @@ namespace UnityEngine.UI.Extensions
 {
     [RequireComponent(typeof(ScrollRect))]
     [AddComponentMenu("Layout/Extensions/Vertical Scroll Snap")]
-    public class VerticalScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
+    public class VerticalScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerDownHandler, IPointerUpHandler
     {
         private Transform _screensContainer;
 
         private int _screens = 1;
 
-        private bool _fastSwipeTimer = false;
-        private int _fastSwipeCounter = 0;
-        private int _fastSwipeTarget = 30;
-
-
-        private System.Collections.Generic.List<Vector3> _positions;
+        private Vector3[] _positions;
+        private Vector3[] _visiblePositions;
         private ScrollRect _scroll_rect;
         private Vector3 _lerp_target;
         private bool _lerp;
+        private bool _pointerDown = false;
 
         [Serializable]
         public class SelectionChangeStartEvent : UnityEvent { }
@@ -41,14 +39,18 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Transition speed between pages. (optional)")]
         public float transitionSpeed = 7.5f;
 
-        public Boolean UseFastSwipe = true;
+        [Tooltip("Fast Swipe makes swiping page next / previous (optional)")]
+        public Boolean UseFastSwipe = false;
+        [Tooltip("How far swipe has to travel to initiate a page change (optional)")]
         public int FastSwipeThreshold = 100;
+        [Tooltip("How fast can a user swipe to be a swipe (optional)")]
+        public int SwipeVelocityThreshold = 200;
 
-        private bool _startDrag = true;
         private Vector3 _startPosition = new Vector3();
 
         [Tooltip("The currently active page")]
         private int _currentScreen;
+        private int _previousScreen;
 
         [Tooltip("The screen / page to start the control on")]
         [SerializeField]
@@ -109,7 +111,18 @@ namespace UnityEngine.UI.Extensions
 
         void Update()
         {
-            if (_lerp)
+            //Three Use cases:
+            //1: Swipe Next - FastSwipeNextPrev
+            //2: Swipe next while in motion - FastSwipeNextPrev
+            //3: Swipe to end - default
+
+            //If lerping, NOT swiping and (!fastswipenextprev & velocity < 200)
+            //Aim is to settle on target "page"
+            if (!_lerp && _scroll_rect.velocity == Vector2.zero)
+            {
+                return;
+            }
+            else if (_lerp)
             {
                 _screensContainer.localPosition = Vector3.Lerp(_screensContainer.localPosition, _lerp_target, transitionSpeed * Time.deltaTime);
                 if (Vector3.Distance(_screensContainer.localPosition, _lerp_target) < 0.1f)
@@ -117,30 +130,30 @@ namespace UnityEngine.UI.Extensions
                     _lerp = false;
                     EndScreenChange();
                 }
-
-                //change the info bullets at the bottom of the screen. Just for visual effect
-                if (Vector3.Distance(_screensContainer.localPosition, _lerp_target) < 10f)
+            }
+            //If the container is moving faster than the threshold, then just update the pages as they pass
+            else if ((_scroll_rect.velocity.y > 0 && _scroll_rect.velocity.y > SwipeVelocityThreshold) ||
+                _scroll_rect.velocity.y < 0 && _scroll_rect.velocity.y < -SwipeVelocityThreshold)
+            {
+                _currentScreen = GetPageforPosition(FindClosestFrom(_screensContainer.localPosition, _visiblePositions));
+                if (_currentScreen != _previousScreen)
                 {
-                    ChangeBulletsInfo(CurrentScreen());
+                    _previousScreen = _currentScreen;
+                    ChangeBulletsInfo(_currentScreen);
                 }
             }
-
-            if (_fastSwipeTimer)
+            else if(!_pointerDown)
             {
-                _fastSwipeCounter++;
+                ScrollToClosestElement();
             }
-
         }
-
-        private bool fastSwipe = false; //to determine if a fast swipe was performed
-
 
         //Function for switching screens with buttons
         public void NextScreen()
         {
             if (_currentScreen < _screens - 1)
             {
-                StartScreenChange();
+                if (!_lerp) StartScreenChange();
 
                 _lerp = true;
                 _currentScreen++;
@@ -155,7 +168,7 @@ namespace UnityEngine.UI.Extensions
         {
             if (_currentScreen > 0)
             {
-                StartScreenChange();
+                if(!_lerp) StartScreenChange();
 
                 _lerp = true;
                 _currentScreen--;
@@ -174,7 +187,7 @@ namespace UnityEngine.UI.Extensions
         {
             if (screenIndex <= _screens - 1 && screenIndex >= 0)
             {
-                StartScreenChange();
+                if (!_lerp) StartScreenChange();
 
                 _lerp = true;
                 _currentScreen = screenIndex;
@@ -184,57 +197,24 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        //Because the CurrentScreen function is not so reliable, these are the functions used for swipes
-        private void NextScreenCommand()
-        {
-            if (_currentScreen < _screens - 1)
-            {
-                _lerp = true;
-                _currentScreen++;
-                _lerp_target = _positions[_currentScreen];
-
-                ChangeBulletsInfo(_currentScreen);
-            }
-        }
-
-        //Because the CurrentScreen function is not so reliable, these are the functions used for swipes
-        private void PrevScreenCommand()
-        {
-            if (_currentScreen > 0)
-            {
-                _lerp = true;
-                _currentScreen--;
-                _lerp_target = _positions[_currentScreen];
-
-                ChangeBulletsInfo(_currentScreen);
-            }
-        }
-
-
         //find the closest registered point to the releasing point
-        private Vector3 FindClosestFrom(Vector3 start, System.Collections.Generic.List<Vector3> positions)
+        private Vector3 FindClosestFrom(Vector3 start, Vector3[] positions)
         {
-            Vector3 closest = Vector3.zero;
-            float distance = Mathf.Infinity;
+            Vector3 closestPosition = Vector3.zero;
+            float closest = Mathf.Infinity;
+            float distanceToTarget = 0;
 
-            foreach (Vector3 position in _positions)
+            for (int i = 0; i < _screens; i++)
             {
-                if (Vector3.Distance(start, position) < distance)
+                distanceToTarget = Vector3.Distance(start, positions[i]);
+                if (distanceToTarget < closest)
                 {
-                    distance = Vector3.Distance(start, position);
-                    closest = position;
+                    closest = distanceToTarget;
+                    closestPosition = positions[i];
                 }
             }
 
-            return closest;
-        }
-
-
-        //returns the current screen that the is seeing
-        public int CurrentScreen()
-        {
-            var pos = FindClosestFrom(_screensContainer.localPosition, _positions);
-            return _currentScreen = GetPageforPosition(pos);
+            return closestPosition;
         }
 
         //changes the bullets on the bottom of the page - pagination
@@ -278,22 +258,24 @@ namespace UnityEngine.UI.Extensions
         {
             _screens = _screensContainer.childCount;
 
-            _positions = new System.Collections.Generic.List<Vector3>();
+            _positions = new Vector3[_screens];
 
             if (_screens > 0)
             {
                 for (int i = 0; i < _screens; ++i)
                 {
                     _scroll_rect.verticalNormalizedPosition = (float)i / (float)(_screens - 1);
-                    _positions.Add(_screensContainer.localPosition);
+                    _positions[i] = _screensContainer.localPosition;
                 }
             }
+
+            //debug visible
+            _visiblePositions = _positions;
         }
-
-
+        
         int GetPageforPosition(Vector3 pos)
         {
-            for (int i = 0; i < _positions.Count; i++)
+            for (int i = 0; i < _positions.Length; i++)
             {
                 if (_positions[i] == pos)
                 {
@@ -302,6 +284,7 @@ namespace UnityEngine.UI.Extensions
             }
             return 0;
         }
+
         void OnValidate()
         {
             var childCount = gameObject.GetComponent<ScrollRect>().content.childCount;
@@ -374,68 +357,74 @@ namespace UnityEngine.UI.Extensions
         }
 
         #region Interfaces
+        /// <summary>
+        /// Touch screen to start swiping
+        /// </summary>
+        /// <param name="eventData"></param>
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (!_fastSwipeTimer) StartScreenChange();
+            StartScreenChange();
             _startPosition = _screensContainer.localPosition;
-            _fastSwipeCounter = 0;
-            _fastSwipeTimer = true;
-            _currentScreen = CurrentScreen();
         }
 
+        /// <summary>
+        /// Release screen to swipe
+        /// </summary>
+        /// <param name="eventData"></param>
         public void OnEndDrag(PointerEventData eventData)
         {
-            //transform.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
-            _startDrag = true;
             if (_scroll_rect.vertical)
             {
                 if (UseFastSwipe)
                 {
-                    fastSwipe = false;
-                    _fastSwipeTimer = false;
-                    if (_fastSwipeCounter <= _fastSwipeTarget)
+                    //If using fastswipe - then a swipe does page next / previous
+                    if (_scroll_rect.velocity.y > SwipeVelocityThreshold)
                     {
-                        if (Math.Abs(_startPosition.y - _screensContainer.localPosition.y) > FastSwipeThreshold)
-                        {
-                            fastSwipe = true;
-                        }
-                    }
-                    if (fastSwipe)
-                    {
+                        _scroll_rect.velocity = Vector3.zero;
                         if (_startPosition.y - _screensContainer.localPosition.y > 0)
                         {
-                            NextScreenCommand();
+                            NextScreen();
                         }
                         else
                         {
-                            PrevScreenCommand();
+                            PreviousScreen();
                         }
                     }
                     else
                     {
-                        _lerp = true;
-                        _lerp_target = FindClosestFrom(_screensContainer.localPosition, _positions);
-                        _currentScreen = GetPageforPosition(_lerp_target);
+                        ScrollToClosestElement();
                     }
-                }
-                else
-                {
-                    _lerp = true;
-                    _lerp_target = FindClosestFrom(_screensContainer.localPosition, _positions);
-                    _currentScreen = GetPageforPosition(_lerp_target);
                 }
             }
         }
 
+        private void ScrollToClosestElement()
+        {
+            _lerp = true;
+            _lerp_target = FindClosestFrom(_screensContainer.localPosition, _visiblePositions);
+            _currentScreen = GetPageforPosition(_lerp_target);
+            ChangeBulletsInfo(_currentScreen);
+        }
+
+        /// <summary>
+        /// While dragging do
+        /// </summary>
+        /// <param name="eventData"></param>
         public void OnDrag(PointerEventData eventData)
         {
             _lerp = false;
-            if (_startDrag)
-            {
-                OnBeginDrag(eventData);
-                _startDrag = false;
-            }
         }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            _pointerDown = true;
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            _pointerDown = false;
+        }
+
         #endregion
     }
 }
