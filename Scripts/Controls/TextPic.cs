@@ -190,7 +190,7 @@ namespace UnityEngine.UI.Extensions
         protected override void OnPopulateMesh(VertexHelper toFill)
         {
             var orignText = m_Text;
-            m_Text = m_OutputText;
+            m_Text = GetOutputText();
             base.OnPopulateMesh(toFill);
             m_Text = orignText;
             positions.Clear();
