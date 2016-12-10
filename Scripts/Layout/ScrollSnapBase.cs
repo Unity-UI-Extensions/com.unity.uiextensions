@@ -8,12 +8,22 @@ namespace UnityEngine.UI.Extensions
 {
     public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler, IPointerDownHandler, IPointerUpHandler
     {
-        internal Transform _screensContainer;
+        internal struct VisibleItem
+        {
+            public Vector3 Position;
+            public int OriginalPosition;
+        }
+
+        internal RectTransform _screensContainer;
+        internal bool isVertical;
 
         internal int _screens = 1;
 
-        internal Vector3[] _positions;
-        internal Vector3[] _visiblePositions;
+        internal float _scrollStartPosition;
+        internal float _childSize;
+        private float _childPos;
+        //internal Vector3[] _positions;
+        //internal VisibleItem[] _visiblePositions;
         internal ScrollRect _scroll_rect;
         internal Vector3 _lerp_target;
         internal bool _lerp;
@@ -23,6 +33,11 @@ namespace UnityEngine.UI.Extensions
         public class SelectionChangeStartEvent : UnityEvent { }
         [Serializable]
         public class SelectionChangeEndEvent : UnityEvent { }
+
+        [Tooltip("The visible bounds area, controls which items are visible/enabled. *Note Should use a RectMask. (optional)")]
+        public RectTransform MaskArea;
+        [Tooltip("Pixel size to buffer arround Mask Area. (optional)")]
+        public float MaskBuffer;
 
         [Tooltip("The gameobject that contains toggles which suggest pagination. (optional)")]
         public GameObject Pagination;
@@ -81,7 +96,8 @@ namespace UnityEngine.UI.Extensions
 
                 _lerp = true;
                 _currentScreen++;
-                _lerp_target = _positions[_currentScreen];
+                GetPositionforPage(_currentScreen, ref _lerp_target);
+ //               _lerp_target = _positions[_currentScreen];
 
                 ChangeBulletsInfo(_currentScreen);
             }
@@ -96,7 +112,8 @@ namespace UnityEngine.UI.Extensions
 
                 _lerp = true;
                 _currentScreen--;
-                _lerp_target = _positions[_currentScreen];
+                GetPositionforPage(_currentScreen, ref _lerp_target);
+//                _lerp_target = _positions[_currentScreen];
 
                 ChangeBulletsInfo(_currentScreen);
             }
@@ -115,37 +132,60 @@ namespace UnityEngine.UI.Extensions
 
                 _lerp = true;
                 _currentScreen = screenIndex;
-                _lerp_target = _positions[_currentScreen];
+                GetPositionforPage(_currentScreen, ref _lerp_target);
+ //               _lerp_target = _positions[_currentScreen];
 
                 ChangeBulletsInfo(_currentScreen);
             }
         }
 
         //find the closest registered point to the releasing point
-        internal Vector3 FindClosestFrom(Vector3 start, Vector3[] positions)
+        internal Vector3 FindClosestFrom(Vector3 start, VisibleItem[] positions)
         {
+
             Vector3 closestPosition = Vector3.zero;
             float closest = Mathf.Infinity;
             float distanceToTarget = 0;
 
-            for (int i = 0; i < _screens; i++)
+            for (int i = 0; i < positions.Length; i++)
             {
-                distanceToTarget = Vector3.Distance(start, positions[i]);
+                distanceToTarget = Vector3.Distance(start, positions[i].Position);
                 if (distanceToTarget < closest)
                 {
                     closest = distanceToTarget;
-                    closestPosition = positions[i];
+                    closestPosition = positions[i].Position;
                 }
             }
-
+            float close = -(int)Math.Round((start.y - _scrollStartPosition) / _childSize);
             return closestPosition;
         }
-        
+
+        internal int GetPageforPosition(Vector3 pos)
+        {
+            return isVertical ? 
+                -(int)Math.Round((pos.y - _scrollStartPosition) / _childSize) :
+                -(int)Math.Round((pos.x - _scrollStartPosition) / _childSize);
+        }
+
+        internal void GetPositionforPage(int page, ref Vector3 target)
+        {
+            _childPos = -_childSize * page;
+            if (isVertical)
+            {
+                target.y = _childPos + _scrollStartPosition;
+            }
+            else
+            {
+                target.x = _childPos + _scrollStartPosition;
+            }
+        }
+
         internal void ScrollToClosestElement()
         {
             _lerp = true;
-            _lerp_target = FindClosestFrom(_screensContainer.localPosition, _visiblePositions);
-            _currentScreen = GetPageforPosition(_lerp_target);
+            //_lerp_target = FindClosestFrom(_screensContainer.localPosition, _visiblePositions);
+            _currentScreen = GetPageforPosition(_screensContainer.localPosition);
+            GetPositionforPage(_currentScreen, ref _lerp_target);
             ChangeBulletsInfo(_currentScreen);
         }
 
@@ -159,18 +199,6 @@ namespace UnityEngine.UI.Extensions
                         ? true
                         : false;
                 }
-        }
-
-        internal int GetPageforPosition(Vector3 pos)
-        {
-            for (int i = 0; i < _positions.Length; i++)
-            {
-                if (_positions[i] == pos)
-                {
-                    return i;
-                }
-            }
-            return 0;
         }
 
         void OnValidate()

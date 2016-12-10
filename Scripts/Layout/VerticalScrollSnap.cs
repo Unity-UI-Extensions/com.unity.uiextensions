@@ -23,6 +23,9 @@ namespace UnityEngine.UI.Extensions
                 Debug.LogWarning("Warning, using scrollbars with the Scroll Snap controls is not advised as it causes unpredictable results");
             }
 
+            //Should this derrive from ScrolRect?
+            isVertical = true;
+
             _screensContainer = _scroll_rect.content;
 
             DistributePages();
@@ -36,10 +39,9 @@ namespace UnityEngine.UI.Extensions
 
         void Start()
         {
-            UpdateChildPositions();
             _lerp = false;
             _currentScreen = StartingScreen - 1;
-
+            _scrollStartPosition = _screensContainer.localPosition.y;
             _scroll_rect.verticalNormalizedPosition = (float)(_currentScreen) / (float)(_screens - 1);
 
             ChangeBulletsInfo(_currentScreen);
@@ -71,7 +73,7 @@ namespace UnityEngine.UI.Extensions
             else if ((_scroll_rect.velocity.y > 0 && _scroll_rect.velocity.y > SwipeVelocityThreshold) ||
                 _scroll_rect.velocity.y < 0 && _scroll_rect.velocity.y < -SwipeVelocityThreshold)
             {
-                _currentScreen = GetPageforPosition(FindClosestFrom(_screensContainer.localPosition, _visiblePositions));
+                _currentScreen = GetPageforPosition(_screensContainer.localPosition);
                 if (_currentScreen != _previousScreen)
                 {
                     _previousScreen = _currentScreen;
@@ -87,11 +89,13 @@ namespace UnityEngine.UI.Extensions
         //used for changing between screen resolutions
         public void DistributePages()
         {
+            _screens = _screensContainer.childCount;
+
             float _offset = 0;
             float _dimension = 0;
             Rect panelDimensions = gameObject.GetComponent<RectTransform>().rect;
             float currentYPosition = 0;
-            var pageStepValue = (int)panelDimensions.height * ((PageStep == 0) ? 3 : PageStep);
+            var pageStepValue = _childSize = (int)panelDimensions.height * ((PageStep == 0) ? 3 : PageStep);
 
             for (int i = 0; i < _screensContainer.transform.childCount; i++)
             {
@@ -109,25 +113,6 @@ namespace UnityEngine.UI.Extensions
             _screensContainer.GetComponent<RectTransform>().offsetMax = new Vector2(0f, _dimension);
         }
 
-        void UpdateChildPositions()
-        {
-            _screens = _screensContainer.childCount;
-
-            _positions = new Vector3[_screens];
-
-            if (_screens > 0)
-            {
-                for (int i = 0; i < _screens; ++i)
-                {
-                    _scroll_rect.verticalNormalizedPosition = (float)i / (float)(_screens - 1);
-                    _positions[i] = _screensContainer.localPosition;
-                }
-            }
-
-            //debug visible
-            _visiblePositions = _positions;
-        }
-        
         /// <summary>
         /// Add a new child to this Scroll Snap and recalculate it's children
         /// </summary>
@@ -137,7 +122,6 @@ namespace UnityEngine.UI.Extensions
             _scroll_rect.verticalNormalizedPosition = 0;
             GO.transform.SetParent(_screensContainer);
             DistributePages();
-            UpdateChildPositions();
 
             _scroll_rect.verticalNormalizedPosition = (float)(_currentScreen) / (_screens - 1);
         }
@@ -169,7 +153,6 @@ namespace UnityEngine.UI.Extensions
                 i++;
             }
             DistributePages();
-            UpdateChildPositions();
 
             if (_currentScreen > _screens - 1)
             {
