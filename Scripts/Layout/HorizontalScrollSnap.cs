@@ -13,39 +13,14 @@ namespace UnityEngine.UI.Extensions
     [AddComponentMenu("Layout/Extensions/Horizontal Scroll Snap")]
     public class HorizontalScrollSnap : ScrollSnapBase, IEndDragHandler
     {
-
-        // Use this for initialization
-        void Awake()
-        {
-            _scroll_rect = gameObject.GetComponent<ScrollRect>();
-
-            if (_scroll_rect.horizontalScrollbar || _scroll_rect.verticalScrollbar)
-            {
-                Debug.LogWarning("Warning, using scrollbars with the Scroll Snap controls is not advised as it causes unpredictable results");
-            }
-
-            //Should this derrive from ScrolRect?
-            isVertical = false;
-
-            _screensContainer = _scroll_rect.content;
-
-            DistributePages();
-
-            if (NextButton)
-                NextButton.GetComponent<Button>().onClick.AddListener(() => { NextScreen(); });
-
-            if (PrevButton)
-                PrevButton.GetComponent<Button>().onClick.AddListener(() => { PreviousScreen(); });
-        }
-
         void Start()
         {
+            isVertical = false;
+            DistributePages();
             _lerp = false;
             _currentScreen = StartingScreen - 1;
             _scrollStartPosition = _screensContainer.localPosition.x;
             _scroll_rect.horizontalNormalizedPosition = (float)(_currentScreen) / (_screens - 1);
-
-            ChangeBulletsInfo(_currentScreen);
         }
 
         void Update()
@@ -74,12 +49,7 @@ namespace UnityEngine.UI.Extensions
             else if ((_scroll_rect.velocity.x > 0 && _scroll_rect.velocity.x > SwipeVelocityThreshold) ||
                 _scroll_rect.velocity.x < 0 && _scroll_rect.velocity.x < -SwipeVelocityThreshold)
             {
-                _currentScreen = GetPageforPosition(_screensContainer.localPosition);
-                if (_currentScreen != _previousScreen)
-                {
-                    _previousScreen = _currentScreen;
-                    ChangeBulletsInfo(_currentScreen);
-                }
+                CurrentPage = GetPageforPosition(_screensContainer.localPosition);
             }
             else if (!_pointerDown)
             {
@@ -159,7 +129,7 @@ namespace UnityEngine.UI.Extensions
 
             if (_currentScreen > _screens - 1)
             {
-                _currentScreen = _screens - 1;
+                CurrentPage = _screens - 1;
             }
 
             _scroll_rect.horizontalNormalizedPosition = (float)(_currentScreen) / (_screens - 1);

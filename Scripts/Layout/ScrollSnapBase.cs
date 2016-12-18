@@ -8,13 +8,7 @@ namespace UnityEngine.UI.Extensions
 {
     public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler, IPointerDownHandler, IPointerUpHandler
     {
-        internal struct VisibleItem
-        {
-            public Vector3 Position;
-            public int OriginalPosition;
-        }
-
-        internal RectTransform _screensContainer;
+        public RectTransform _screensContainer;
         internal bool isVertical;
 
         internal int _screens = 1;
@@ -22,8 +16,6 @@ namespace UnityEngine.UI.Extensions
         internal float _scrollStartPosition;
         internal float _childSize;
         private float _childPos;
-        //internal Vector3[] _positions;
-        //internal VisibleItem[] _visiblePositions;
         internal ScrollRect _scroll_rect;
         internal Vector3 _lerp_target;
         internal bool _lerp;
@@ -32,12 +24,15 @@ namespace UnityEngine.UI.Extensions
         [Serializable]
         public class SelectionChangeStartEvent : UnityEvent { }
         [Serializable]
+        public class SelectionPageChangedEvent : UnityEvent<int> { }
+        [Serializable]
         public class SelectionChangeEndEvent : UnityEvent { }
 
         [Tooltip("The visible bounds area, controls which items are visible/enabled. *Note Should use a RectMask. (optional)")]
         public RectTransform MaskArea;
         [Tooltip("Pixel size to buffer arround Mask Area. (optional)")]
-        public float MaskBuffer;
+        public float MaskBuffer = 1;
+        public int HalfNoVisibleItems;
 
         [Tooltip("The gameobject that contains toggles which suggest pagination. (optional)")]
         public GameObject Pagination;
@@ -77,6 +72,16 @@ namespace UnityEngine.UI.Extensions
             {
                 return _currentScreen;
             }
+            internal set
+            {
+                if (value != _currentScreen)
+                {
+                    _previousScreen = _currentScreen;
+                    _currentScreen = value;
+                    ChangeBulletsInfo(_currentScreen);
+                    UpdateVisible();
+                }
+            }
         }
 
         [SerializeField]
@@ -84,8 +89,102 @@ namespace UnityEngine.UI.Extensions
         public SelectionChangeStartEvent OnSelectionChangeStartEvent { get { return m_OnSelectionChangeStartEvent; } set { m_OnSelectionChangeStartEvent = value; } }
 
         [SerializeField]
+        private SelectionPageChangedEvent m_OnSelectionPageChangedEvent = new SelectionPageChangedEvent();
+        public SelectionPageChangedEvent OnSelectionPageChangedEvent { get { return m_OnSelectionPageChangedEvent; } set { m_OnSelectionPageChangedEvent = value; } }
+
+        [SerializeField]
         private SelectionChangeEndEvent m_OnSelectionChangeEndEvent = new SelectionChangeEndEvent();
         public SelectionChangeEndEvent OnSelectionChangeEndEvent { get { return m_OnSelectionChangeEndEvent; } set { m_OnSelectionChangeEndEvent = value; } }
+
+        public GameObject[] ChildObjects;
+
+        // Use this for initialization
+        void Awake()
+        {
+            _scroll_rect = gameObject.GetComponent<ScrollRect>();
+
+            if (_scroll_rect.horizontalScrollbar || _scroll_rect.verticalScrollbar)
+            {
+                Debug.LogWarning("Warning, using scrollbars with the Scroll Snap controls is not advised as it causes unpredictable results");
+            }
+
+            _screensContainer = _scroll_rect.content;
+            int childCount;
+            if (ChildObjects != null && ChildObjects.Length > 0)
+            {
+                if (_screensContainer.transform.childCount > 0)
+                {
+                    Debug.LogError("ScrollRect Content has children, this is not supported when using managed Child Objects\n Either remove the ScrollRect Content children or clear the ChildObjects array");
+                    return;
+                }
+                childCount = ChildObjects.Length;
+                for (int i = 0; i < childCount; i++)
+                {
+                    ChildObjects[i] = GameObject.Instantiate(ChildObjects[i]);
+                    ChildObjects[i].transform.SetParent(_screensContainer.transform);
+                    if (MaskArea && ChildObjects[i].activeSelf)
+                    {
+                        ChildObjects[i].SetActive(false);
+                    }
+                }
+            }
+            else
+            {
+                childCount = ChildObjects.Length;
+                ChildObjects = new GameObject[childCount];
+                for (int i = 0; i < childCount; i++)
+                {
+                    ChildObjects[i] = _screensContainer.transform.GetChild(i).gameObject;
+                    if (MaskArea && ChildObjects[i].activeSelf)
+                    {
+                        ChildObjects[i].SetActive(false);
+                    }
+                }
+            }
+
+            if (NextButton)
+                NextButton.GetComponent<Button>().onClick.AddListener(() => { NextScreen(); });
+
+            if (PrevButton)
+                PrevButton.GetComponent<Button>().onClick.AddListener(() => { PreviousScreen(); });
+        }
+
+        internal void CalculateVisible()
+        {
+            float MaskSize = isVertical ? MaskArea.rect.height : MaskArea.rect.width;
+            HalfNoVisibleItems = (int)Math.Round(MaskSize / (_childSize * MaskBuffer), MidpointRounding.AwayFromZero) / 2 + 2;
+            int StartingItemsBefore = StartingScreen - HalfNoVisibleItems < 0 ? 0 : HalfNoVisibleItems;
+            int StartingItemsAfter = _screensContainer.childCount - StartingScreen < HalfNoVisibleItems ? _screensContainer.childCount - StartingScreen : HalfNoVisibleItems;
+            for (int i = StartingScreen - StartingItemsBefore; i < StartingScreen + StartingItemsAfter - 1; i++)
+            {
+                ChildObjects[i].SetActive(true);
+            }
+        }
+
+        void UpdateVisible()
+        {
+            int BottomItem = _currentScreen - HalfNoVisibleItems < 0 ? 0 : HalfNoVisibleItems;
+            int TopItem = _screensContainer.childCount - _currentScreen < HalfNoVisibleItems ? _screensContainer.childCount - _currentScreen : HalfNoVisibleItems;
+            for (int i = CurrentPage - BottomItem; i < CurrentPage + TopItem; i++)
+            {
+                ChildObjects[i].SetActive(true);
+            }
+            if(_screensContainer.childCount - _currentScreen > HalfNoVisibleItems) ChildObjects[CurrentPage + TopItem + 1].SetActive(false);
+            if(_currentScreen - HalfNoVisibleItems > 0) ChildObjects[CurrentPage - BottomItem - 1].SetActive(false);
+            //if (_previousScreen < _currentScreen)
+            //{
+            //    ChildObjects[TopItem].SetActive(true);
+            //    if(TopItem < _screensContainer.childCount - HalfNoVisibleItems) ChildObjects[TopItem + 1].SetActive(true);
+            //    ChildObjects[BottomItem].SetActive(false);
+            //}
+            //else
+            //{
+            //    ChildObjects[TopItem].SetActive(false);
+            //    ChildObjects[BottomItem].SetActive(true);
+            //    if(BottomItem > 0) ChildObjects[BottomItem - 1].SetActive(true);
+            //}
+        }
+
 
         //Function for switching screens with buttons
         public void NextScreen()
@@ -95,11 +194,8 @@ namespace UnityEngine.UI.Extensions
                 if (!_lerp) StartScreenChange();
 
                 _lerp = true;
-                _currentScreen++;
+                CurrentPage = _currentScreen + 1;
                 GetPositionforPage(_currentScreen, ref _lerp_target);
- //               _lerp_target = _positions[_currentScreen];
-
-                ChangeBulletsInfo(_currentScreen);
             }
         }
 
@@ -111,11 +207,8 @@ namespace UnityEngine.UI.Extensions
                 if (!_lerp) StartScreenChange();
 
                 _lerp = true;
-                _currentScreen--;
+                CurrentPage = _currentScreen - 1;
                 GetPositionforPage(_currentScreen, ref _lerp_target);
-//                _lerp_target = _positions[_currentScreen];
-
-                ChangeBulletsInfo(_currentScreen);
             }
         }
 
@@ -131,33 +224,10 @@ namespace UnityEngine.UI.Extensions
                 if (!_lerp) StartScreenChange();
 
                 _lerp = true;
-                _currentScreen = screenIndex;
+                CurrentPage = screenIndex;
                 GetPositionforPage(_currentScreen, ref _lerp_target);
- //               _lerp_target = _positions[_currentScreen];
 
-                ChangeBulletsInfo(_currentScreen);
             }
-        }
-
-        //find the closest registered point to the releasing point
-        internal Vector3 FindClosestFrom(Vector3 start, VisibleItem[] positions)
-        {
-
-            Vector3 closestPosition = Vector3.zero;
-            float closest = Mathf.Infinity;
-            float distanceToTarget = 0;
-
-            for (int i = 0; i < positions.Length; i++)
-            {
-                distanceToTarget = Vector3.Distance(start, positions[i].Position);
-                if (distanceToTarget < closest)
-                {
-                    closest = distanceToTarget;
-                    closestPosition = positions[i].Position;
-                }
-            }
-            float close = -(int)Math.Round((start.y - _scrollStartPosition) / _childSize);
-            return closestPosition;
         }
 
         internal int GetPageforPosition(Vector3 pos)
@@ -183,27 +253,26 @@ namespace UnityEngine.UI.Extensions
         internal void ScrollToClosestElement()
         {
             _lerp = true;
-            //_lerp_target = FindClosestFrom(_screensContainer.localPosition, _visiblePositions);
-            _currentScreen = GetPageforPosition(_screensContainer.localPosition);
+            CurrentPage = GetPageforPosition(_screensContainer.localPosition);
             GetPositionforPage(_currentScreen, ref _lerp_target);
             ChangeBulletsInfo(_currentScreen);
         }
 
         //changes the bullets on the bottom of the page - pagination
-        internal void ChangeBulletsInfo(int currentScreen)
+        internal void ChangeBulletsInfo(int targetScreen)
         {
             if (Pagination)
                 for (int i = 0; i < Pagination.transform.childCount; i++)
                 {
-                    Pagination.transform.GetChild(i).GetComponent<Toggle>().isOn = (currentScreen == i)
+                    Pagination.transform.GetChild(i).GetComponent<Toggle>().isOn = (targetScreen == i)
                         ? true
                         : false;
                 }
         }
 
-        void OnValidate()
+        private void OnValidate()
         {
-            var childCount = gameObject.GetComponent<ScrollRect>().content.childCount;
+            var childCount = ChildObjects == null ? _screensContainer.childCount : ChildObjects.Length;
             if (StartingScreen > childCount - 1)
             {
                 StartingScreen = childCount - 1;
@@ -217,6 +286,12 @@ namespace UnityEngine.UI.Extensions
         internal void StartScreenChange()
         {
             OnSelectionChangeStartEvent.Invoke();
+        }
+
+        internal void ScreenChange(int previousScreen)
+        {
+
+            OnSelectionPageChangedEvent.Invoke(_currentScreen);
         }
 
         internal void EndScreenChange()
@@ -254,7 +329,5 @@ namespace UnityEngine.UI.Extensions
             _pointerDown = false;
         }
         #endregion
-
-
     }
 }
