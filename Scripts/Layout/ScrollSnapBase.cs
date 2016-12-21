@@ -1,8 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.EventSystems;
-using System;
+﻿using System;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
@@ -24,9 +22,7 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("The currently active page")]
         internal int _currentPage;
         internal int _previousPage;
-
-
-
+        
         [Serializable]
         public class SelectionChangeStartEvent : UnityEvent { }
         [Serializable]
