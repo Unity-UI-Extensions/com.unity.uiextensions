@@ -8,7 +8,7 @@ namespace UnityEngine.UI.Extensions
 {
     public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler, IPointerDownHandler, IPointerUpHandler
     {
-        public RectTransform _screensContainer;
+        internal RectTransform _screensContainer;
         internal bool isVertical;
 
         internal int _screens = 1;
@@ -20,6 +20,12 @@ namespace UnityEngine.UI.Extensions
         internal Vector3 _lerp_target;
         internal bool _lerp;
         internal bool _pointerDown = false;
+        internal Vector3 _startPosition = new Vector3();
+        [Tooltip("The currently active page")]
+        internal int _currentPage;
+        internal int _previousPage;
+
+
 
         [Serializable]
         public class SelectionChangeStartEvent : UnityEvent { }
@@ -48,14 +54,8 @@ namespace UnityEngine.UI.Extensions
         public Boolean UseFastSwipe = false;
         [Tooltip("How far swipe has to travel to initiate a page change (optional)")]
         public int FastSwipeThreshold = 100;
-        [Tooltip("How fast can a user swipe to be a swipe (optional)")]
+        [Tooltip("Speed at which the ScrollRect will keep scrolling before slowing down and stopping (optional)")]
         public int SwipeVelocityThreshold = 200;
-
-        internal Vector3 _startPosition = new Vector3();
-
-        [Tooltip("The currently active page")]
-        internal int _currentScreen;
-        internal int _previousScreen;
 
         [Tooltip("The screen / page to start the control on")]
         [SerializeField]
@@ -70,16 +70,16 @@ namespace UnityEngine.UI.Extensions
         {
             get
             {
-                return _currentScreen;
+                return _currentPage;
             }
             internal set
             {
-                if (value != _currentScreen)
+                if (value != _currentPage)
                 {
-                    _previousScreen = _currentScreen;
-                    _currentScreen = value;
-                    ChangeBulletsInfo(_currentScreen);
-                    UpdateVisible();
+                    _previousPage = _currentPage;
+                    _currentPage = value;
+                    ChangeBulletsInfo(_currentPage);
+                    if(MaskArea) UpdateVisible();
                 }
             }
         }
@@ -163,52 +163,42 @@ namespace UnityEngine.UI.Extensions
 
         void UpdateVisible()
         {
-            int BottomItem = _currentScreen - HalfNoVisibleItems < 0 ? 0 : HalfNoVisibleItems;
-            int TopItem = _screensContainer.childCount - _currentScreen < HalfNoVisibleItems ? _screensContainer.childCount - _currentScreen : HalfNoVisibleItems;
+            int BottomItem = _currentPage - HalfNoVisibleItems < 0 ? 0 : HalfNoVisibleItems;
+            int TopItem = _screensContainer.childCount - _currentPage < HalfNoVisibleItems ? _screensContainer.childCount - _currentPage : HalfNoVisibleItems;
+
             for (int i = CurrentPage - BottomItem; i < CurrentPage + TopItem; i++)
             {
                 ChildObjects[i].SetActive(true);
             }
-            if(_screensContainer.childCount - _currentScreen > HalfNoVisibleItems) ChildObjects[CurrentPage + TopItem + 1].SetActive(false);
-            if(_currentScreen - HalfNoVisibleItems > 0) ChildObjects[CurrentPage - BottomItem - 1].SetActive(false);
-            //if (_previousScreen < _currentScreen)
-            //{
-            //    ChildObjects[TopItem].SetActive(true);
-            //    if(TopItem < _screensContainer.childCount - HalfNoVisibleItems) ChildObjects[TopItem + 1].SetActive(true);
-            //    ChildObjects[BottomItem].SetActive(false);
-            //}
-            //else
-            //{
-            //    ChildObjects[TopItem].SetActive(false);
-            //    ChildObjects[BottomItem].SetActive(true);
-            //    if(BottomItem > 0) ChildObjects[BottomItem - 1].SetActive(true);
-            //}
+
+            if (_screensContainer.childCount - _currentPage > HalfNoVisibleItems + 1) ChildObjects[CurrentPage + TopItem + 1].SetActive(false);
+            if(_currentPage - HalfNoVisibleItems > 0) ChildObjects[CurrentPage - BottomItem - 1].SetActive(false);
         }
 
 
         //Function for switching screens with buttons
         public void NextScreen()
         {
-            if (_currentScreen < _screens - 1)
+            if (_currentPage < _screens - 1)
             {
                 if (!_lerp) StartScreenChange();
 
                 _lerp = true;
-                CurrentPage = _currentScreen + 1;
-                GetPositionforPage(_currentScreen, ref _lerp_target);
+                CurrentPage = _currentPage + 1;
+                GetPositionforPage(_currentPage, ref _lerp_target);
             }
         }
 
         //Function for switching screens with buttons
         public void PreviousScreen()
         {
-            if (_currentScreen > 0)
+            if (_currentPage > 0)
             {
                 if (!_lerp) StartScreenChange();
 
                 _lerp = true;
-                CurrentPage = _currentScreen - 1;
-                GetPositionforPage(_currentScreen, ref _lerp_target);
+                CurrentPage = _currentPage - 1;
+                GetPositionforPage(_currentPage, ref _lerp_target);
             }
         }
 
@@ -225,7 +215,7 @@ namespace UnityEngine.UI.Extensions
 
                 _lerp = true;
                 CurrentPage = screenIndex;
-                GetPositionforPage(_currentScreen, ref _lerp_target);
+                GetPositionforPage(_currentPage, ref _lerp_target);
 
             }
         }
@@ -254,8 +244,8 @@ namespace UnityEngine.UI.Extensions
         {
             _lerp = true;
             CurrentPage = GetPageforPosition(_screensContainer.localPosition);
-            GetPositionforPage(_currentScreen, ref _lerp_target);
-            ChangeBulletsInfo(_currentScreen);
+            GetPositionforPage(_currentPage, ref _lerp_target);
+            ChangeBulletsInfo(_currentPage);
         }
 
         //changes the bullets on the bottom of the page - pagination
@@ -291,7 +281,7 @@ namespace UnityEngine.UI.Extensions
         internal void ScreenChange(int previousScreen)
         {
 
-            OnSelectionPageChangedEvent.Invoke(_currentScreen);
+            OnSelectionPageChangedEvent.Invoke(_currentPage);
         }
 
         internal void EndScreenChange()

@@ -3,8 +3,6 @@
 /// Updated by SimonDarksideJ - removed dependency on a custom ScrollRect script. Now implements drag interfaces and standard Scroll Rect.
 /// Updated by SimonDarksideJ - major refactoring on updating current position and scroll management
 
-using System;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
@@ -17,22 +15,15 @@ namespace UnityEngine.UI.Extensions
         {
             isVertical = true;
             DistributePages();
-            CalculateVisible();
+            if(MaskArea) CalculateVisible();
             _lerp = false;
-            _currentScreen = StartingScreen - 1;
+            _currentPage = StartingScreen - 1;
             _scrollStartPosition = _screensContainer.localPosition.y;
-            _scroll_rect.verticalNormalizedPosition = (float)(_currentScreen) / (float)(_screens - 1);
+            _scroll_rect.verticalNormalizedPosition = (float)(_currentPage) / (float)(_screens - 1);
         }
 
         void Update()
         {
-            //Three Use cases:
-            //1: Swipe Next - FastSwipeNextPrev
-            //2: Swipe next while in motion - FastSwipeNextPrev
-            //3: Swipe to end - default
-
-            //If lerping, NOT swiping and (!fastswipenextprev & velocity < 200)
-            //Aim is to settle on target "page"
             if (!_lerp && _scroll_rect.velocity == Vector2.zero)
             {
                 return;
@@ -46,16 +37,20 @@ namespace UnityEngine.UI.Extensions
                     EndScreenChange();
                 }
             }
-            //If the container is moving faster than the threshold, then just update the pages as they pass
-            //else if ((_scroll_rect.velocity.y > 0 && _scroll_rect.velocity.y > SwipeVelocityThreshold) ||
-            //    _scroll_rect.velocity.y < 0 && _scroll_rect.velocity.y < -SwipeVelocityThreshold)
-            //{
-                CurrentPage = GetPageforPosition(_screensContainer.localPosition);
-            //}
-            if(!_pointerDown)
+
+            CurrentPage = GetPageforPosition(_screensContainer.localPosition);
+
+            //If the container is moving check if it needs to settle on a page
+            if (!_pointerDown && (_scroll_rect.velocity.y > 0.01 || _scroll_rect.velocity.y < -0.01))
             {
-                ScrollToClosestElement();
+                // if the pointer is released and is moving slower than the threshold, then just land on a page
+                if ((_scroll_rect.velocity.y > 0 && _scroll_rect.velocity.y < SwipeVelocityThreshold) ||
+                    (_scroll_rect.velocity.y < 0 && _scroll_rect.velocity.y > -SwipeVelocityThreshold))
+                {
+                    ScrollToClosestElement();
+                }
             }
+
         }
 
         //used for changing between screen resolutions
@@ -95,7 +90,7 @@ namespace UnityEngine.UI.Extensions
             GO.transform.SetParent(_screensContainer);
             DistributePages();
 
-            _scroll_rect.verticalNormalizedPosition = (float)(_currentScreen) / (_screens - 1);
+            _scroll_rect.verticalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
         }
 
         /// <summary>
@@ -126,12 +121,12 @@ namespace UnityEngine.UI.Extensions
             }
             DistributePages();
 
-            if (_currentScreen > _screens - 1)
+            if (_currentPage > _screens - 1)
             {
                 CurrentPage = _screens - 1;
             }
 
-            _scroll_rect.verticalNormalizedPosition = (float)(_currentScreen) / (_screens - 1);
+            _scroll_rect.verticalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
         }
 
 
@@ -147,7 +142,8 @@ namespace UnityEngine.UI.Extensions
                 if (UseFastSwipe)
                 {
                     //If using fastswipe - then a swipe does page next / previous
-                    if (_scroll_rect.velocity.y > SwipeVelocityThreshold)
+                    if ((_scroll_rect.velocity.y > 0 && _scroll_rect.velocity.y > FastSwipeThreshold) ||
+                        _scroll_rect.velocity.y < 0 && _scroll_rect.velocity.y < -FastSwipeThreshold)
                     {
                         _scroll_rect.velocity = Vector3.zero;
                         if (_startPosition.y - _screensContainer.localPosition.y > 0)
@@ -166,7 +162,6 @@ namespace UnityEngine.UI.Extensions
                 }
             }
         }
-
         #endregion
     }
 }
