@@ -109,7 +109,6 @@ namespace UnityEngine.UI.Extensions
             }
 
             _screensContainer = _scroll_rect.content;
-            int childCount;
             if (ChildObjects != null && ChildObjects.Length > 0)
             {
                 if (_screensContainer.transform.childCount > 0)
@@ -117,29 +116,11 @@ namespace UnityEngine.UI.Extensions
                     Debug.LogError("ScrollRect Content has children, this is not supported when using managed Child Objects\n Either remove the ScrollRect Content children or clear the ChildObjects array");
                     return;
                 }
-                childCount = ChildObjects.Length;
-                for (int i = 0; i < childCount; i++)
-                {
-                    ChildObjects[i] = GameObject.Instantiate(ChildObjects[i]);
-                    ChildObjects[i].transform.SetParent(_screensContainer.transform);
-                    if (MaskArea && ChildObjects[i].activeSelf)
-                    {
-                        ChildObjects[i].SetActive(false);
-                    }
-                }
+                InitialiseChildObjectsFromArray();
             }
             else
             {
-                childCount = ChildObjects.Length;
-                ChildObjects = new GameObject[childCount];
-                for (int i = 0; i < childCount; i++)
-                {
-                    ChildObjects[i] = _screensContainer.transform.GetChild(i).gameObject;
-                    if (MaskArea && ChildObjects[i].activeSelf)
-                    {
-                        ChildObjects[i].SetActive(false);
-                    }
-                }
+                InitialiseChildObjectsFromScene();
             }
 
             if (NextButton)
@@ -147,6 +128,34 @@ namespace UnityEngine.UI.Extensions
 
             if (PrevButton)
                 PrevButton.GetComponent<Button>().onClick.AddListener(() => { PreviousScreen(); });
+        }
+
+        internal void InitialiseChildObjectsFromScene()
+        {
+            int childCount = _screensContainer.childCount;
+            ChildObjects = new GameObject[childCount];
+            for (int i = 0; i < childCount; i++)
+            {
+                ChildObjects[i] = _screensContainer.transform.GetChild(i).gameObject;
+                if (MaskArea && ChildObjects[i].activeSelf)
+                {
+                    ChildObjects[i].SetActive(false);
+                }
+            }
+        }
+
+        internal void InitialiseChildObjectsFromArray()
+        {
+            int childCount = ChildObjects.Length;
+            for (int i = 0; i < childCount; i++)
+            {
+                ChildObjects[i] = GameObject.Instantiate(ChildObjects[i]);
+                ChildObjects[i].transform.SetParent(_screensContainer.transform);
+                if (MaskArea && ChildObjects[i].activeSelf)
+                {
+                    ChildObjects[i].SetActive(false);
+                }
+            }
         }
 
         internal void CalculateVisible()
@@ -161,7 +170,7 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        void UpdateVisible()
+        internal void UpdateVisible()
         {
             int BottomItem = _currentPage - HalfNoVisibleItems < 0 ? 0 : HalfNoVisibleItems;
             int TopItem = _screensContainer.childCount - _currentPage < HalfNoVisibleItems ? _screensContainer.childCount - _currentPage : HalfNoVisibleItems;

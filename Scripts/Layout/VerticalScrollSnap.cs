@@ -18,8 +18,7 @@ namespace UnityEngine.UI.Extensions
             if(MaskArea) CalculateVisible();
             _lerp = false;
             _currentPage = StartingScreen - 1;
-            _scrollStartPosition = _screensContainer.localPosition.y;
-            _scroll_rect.verticalNormalizedPosition = (float)(_currentPage) / (float)(_screens - 1);
+            SetScrollContainerPosition();
         }
 
         void Update()
@@ -88,9 +87,11 @@ namespace UnityEngine.UI.Extensions
         {
             _scroll_rect.verticalNormalizedPosition = 0;
             GO.transform.SetParent(_screensContainer);
+            InitialiseChildObjectsFromScene();
             DistributePages();
+            if (MaskArea) UpdateVisible();
 
-            _scroll_rect.verticalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
+            SetScrollContainerPosition();
         }
 
         /// <summary>
@@ -107,28 +108,27 @@ namespace UnityEngine.UI.Extensions
                 return;
             }
             _scroll_rect.verticalNormalizedPosition = 0;
-            var children = _screensContainer.transform;
-            int i = 0;
-            foreach (Transform child in children)
-            {
-                if (i == index)
-                {
-                    child.SetParent(null);
-                    ChildRemoved = child.gameObject;
-                    break;
-                }
-                i++;
-            }
+
+            Transform child = _screensContainer.transform.GetChild(index);
+            child.SetParent(null);
+            ChildRemoved = child.gameObject;
+            InitialiseChildObjectsFromScene();
             DistributePages();
+            if (MaskArea) UpdateVisible();
 
             if (_currentPage > _screens - 1)
             {
                 CurrentPage = _screens - 1;
             }
 
-            _scroll_rect.verticalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
+            SetScrollContainerPosition();
         }
 
+        private void SetScrollContainerPosition()
+        {
+            _scrollStartPosition = _screensContainer.localPosition.y;
+            _scroll_rect.verticalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
+        }
 
         #region Interfaces
         /// <summary>

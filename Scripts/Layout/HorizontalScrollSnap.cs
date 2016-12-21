@@ -18,8 +18,7 @@ namespace UnityEngine.UI.Extensions
             if(MaskArea) CalculateVisible();
             _lerp = false;
             _currentPage = StartingScreen - 1;
-            _scrollStartPosition = _screensContainer.localPosition.x;
-            _scroll_rect.horizontalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
+            SetScrollContainerPosition();
         }
 
         void Update()
@@ -89,8 +88,9 @@ namespace UnityEngine.UI.Extensions
             _scroll_rect.horizontalNormalizedPosition = 0;
             GO.transform.SetParent(_screensContainer);
             DistributePages();
+            if (MaskArea) UpdateVisible();
 
-            _scroll_rect.horizontalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
+            SetScrollContainerPosition();
         }
 
         /// <summary>
@@ -107,26 +107,25 @@ namespace UnityEngine.UI.Extensions
                 return;
             }
             _scroll_rect.horizontalNormalizedPosition = 0;
-            var children = _screensContainer.transform;
-            int i = 0;
-            foreach (Transform child in children)
-            {
-                if (i == index)
-                {
-                    child.SetParent(null);
-                    ChildRemoved = child.gameObject;
-                    break;
-                }
-                i++;
-            }
+
+            Transform child = _screensContainer.transform.GetChild(index);
+            child.SetParent(null);
+            ChildRemoved = child.gameObject;
 
             DistributePages();
+            if (MaskArea) UpdateVisible();
 
             if (_currentPage > _screens - 1)
             {
                 CurrentPage = _screens - 1;
             }
 
+            SetScrollContainerPosition();
+        }
+
+        private void SetScrollContainerPosition()
+        {
+            _scrollStartPosition = _screensContainer.localPosition.x;
             _scroll_rect.horizontalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
         }
 
