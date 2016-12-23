@@ -90,8 +90,8 @@
 			v2f vert(appdata_t IN)
 			{
 				v2f OUT;
-				float4 wolrdPos = mul(_Object2World, IN.vertex);
-				OUT.maskTexcoord = TRANSFORM_TEX(wolrdPos.xy, _AlphaMask);				
+				float4 wolrdPos = IN.vertex;
+				OUT.maskTexcoord = TRANSFORM_TEX(wolrdPos.xy, _AlphaMask);
 				OUT.vertex = mul(UNITY_MATRIX_MVP, IN.vertex);
 				OUT.texcoord = IN.texcoord;
 
@@ -103,49 +103,44 @@
 				return OUT;
 			}
 
-
-
-
 			float _CutOff;
-
 			bool _HardBlend = false;
 			bool _NoOuterClip = false;
 
 			fixed4 frag(v2f IN) : SV_Target
 			{
 				half4 color = (tex2D(_MainTex, IN.texcoord) + _TextureSampleAdd) * IN.color;
-				 float4 inMask = float4( 
-				 	step(float2(0.0f, 0.0f), IN.maskTexcoord), 
-				 	step(IN.maskTexcoord, float2(1.0f, 1.0f)) );
+				float4 inMask = float4( 
+					step(float2(0.0f, 0.0f), IN.maskTexcoord), 
+					step(IN.maskTexcoord, float2(1.0f, 1.0f)) );
 
-				 // Do we want to clip the image to the Mask Rectangle?
-				 if (_NoOuterClip == false && all(inMask) == false )
-				 {
-				 	color.a = 0;
-				 }
-				 else // It's in the mask rectangle, so apply the alpha of the mask provided.
-				 {
+				// Do we want to clip the image to the Mask Rectangle?
+				if (_NoOuterClip == false && all(inMask) == false )
+				{
+					color.a = 0;
+				}
+				else // It's in the mask rectangle, so apply the alpha of the mask provided.
+				{
 
-				 	float a = tex2D(_AlphaMask, IN.maskTexcoord).a;
+					float a = tex2D(_AlphaMask, IN.maskTexcoord).a;
 
-				 	if (a <= _CutOff)
-				 		a = 0;
-				 	else
-				 	{
-				 		if(_HardBlend)
-				 			a = 1;
-				 	}
+					if (a <= _CutOff)
+						a = 0;
+					else
+					{
+						if(_HardBlend)
+							a = 1;
+					}
 
-				 	if (_FlipAlphaMask == 1)
-				 		a = 1 - a;
+					if (_FlipAlphaMask == 1)
+						a = 1 - a;
 
-				 	color.a *= a;
-				 }
+					color.a *= a;
+				}
 
-				 if (_UseAlphaClip)
-				 	clip(color.a - 0.001);
-
-				 return color;
+				if (_UseAlphaClip)
+					clip(color.a - 0.001);
+				return color;
 			}
 			ENDCG
 		}

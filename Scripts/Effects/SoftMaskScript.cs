@@ -46,19 +46,13 @@ namespace UnityEngine.UI.Extensions
                 MaskArea = myRect;
             }
 
-            if (GetComponent<Graphic>() != null)
-            {
-                mat = new Material(Shader.Find("UI Extensions/SoftMaskShader"));
-                GetComponent<Graphic>().material = mat;
-            }
-
-            if (GetComponent<Text>())
+            var text = GetComponent<Text>();
+            if (text != null)
             {
                 isText = true;
                 mat = new Material(Shader.Find("UI Extensions/SoftMaskShaderText"));
-                GetComponent<Text>().material = mat;
-
-                GetCanvas();
+                text.material = mat;
+                cachedCanvas = text.canvas;
 
                 // For some reason, having the mask control on the parent and disabled stops the mouse interacting
                 // with the texture layer that is not visible.. Not needed for the Image.
@@ -66,24 +60,17 @@ namespace UnityEngine.UI.Extensions
                     transform.parent.gameObject.AddComponent<Mask>();
 
                 transform.parent.GetComponent<Mask>().enabled = false;
+                return;
             }
-        }
 
-        void GetCanvas()
-        {
-            Transform t = transform;
-
-            int lvlLimit = 100;
-            int lvl = 0;
-
-            while (cachedCanvas == null && lvl < lvlLimit)
+            var graphic = GetComponent<Graphic>();
+            if (graphic != null)
             {
-                cachedCanvas = t.gameObject.GetComponent<Canvas>();
-                if (cachedCanvas == null)
-                    t = GetParentTranform(t);
-
-                lvl++;
+                mat = new Material(Shader.Find("UI Extensions/SoftMaskShader"));
+                graphic.material = mat;
+                cachedCanvas = graphic.canvas;
             }
+
         }
 
         Transform GetParentTranform(Transform t)
@@ -93,18 +80,20 @@ namespace UnityEngine.UI.Extensions
 
         void Update()
         {
-            SetMask();
+            if (cachedCanvas != null)
+            {
+                SetMask();
+            }
         }
 
         void SetMask()
         {
             var maskRectXform = MaskArea;
-            
-            MaskArea.GetWorldCorners(worldCorners);
-            
-            var size = (worldCorners[2] - worldCorners[0]);
+            var worldRect = RectTransformUtility.PixelAdjustRect(MaskArea, cachedCanvas);
+
+            var size = worldRect.size;
             maskScale.Set(1.0f / size.x, 1.0f / size.y);
-            maskOffset = -worldCorners[0];
+            maskOffset = -worldRect.min;
             maskOffset.Scale(maskScale);
 
             mat.SetTextureOffset("_AlphaMask", maskOffset);
