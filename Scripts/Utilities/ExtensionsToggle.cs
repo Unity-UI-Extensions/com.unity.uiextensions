@@ -13,10 +13,9 @@ namespace UnityEngine.UI
     public class ExtensionsToggle : Selectable, IPointerClickHandler, ISubmitHandler, ICanvasElement
     {
         /// <summary>
-        /// Variable to identify this script, can be int, string or whatever
+        /// Variable to identify this script, change the datatype if needed to fit your use case 
         /// </summary>
-        //public int UniqueID;
-        //public string UniqueID;
+        public string UniqueID;
 
         public enum ToggleTransition
         {
@@ -46,7 +45,7 @@ namespace UnityEngine.UI
         [SerializeField]
         private ExtensionsToggleGroup m_Group;
 
-        public ExtensionsToggleGroup group
+        public ExtensionsToggleGroup Group
         {
             get { return m_Group; }
             set
@@ -65,13 +64,15 @@ namespace UnityEngine.UI
         /// <summary>
         /// Allow for delegate-based subscriptions for faster events than 'eventReceiver', and allowing for multiple receivers.
         /// </summary>
+        [Tooltip("Use this event if you only need the bool state of the toggle that was changed")]
         public ToggleEvent onValueChanged = new ToggleEvent();
 
 
         /// <summary>
         /// Allow for delegate-based subscriptions for faster events than 'eventReceiver', and allowing for multiple receivers.
         /// </summary>
-        public ToggleEventObject onValueChangedOn = new ToggleEventObject();
+        [Tooltip("Use this event if you need access to the toggle that was changed")]
+        public ToggleEventObject onToggleChanged = new ToggleEventObject();
 
         // Whether the toggle is on
         [FormerlySerializedAs("m_IsActive")]
@@ -102,8 +103,7 @@ namespace UnityEngine.UI
             if (executing == CanvasUpdate.Prelayout)
             {
                 onValueChanged.Invoke(m_IsOn);
-                if(m_IsOn)
-                    onValueChangedOn.Invoke(this);
+                onToggleChanged.Invoke(this);
             }
 #endif
         }
@@ -164,14 +164,14 @@ namespace UnityEngine.UI
 
             // If we are in a new group, and this toggle is on, notify group.
             // Note: Don't refer to m_Group here as it's not guaranteed to have been set.
-            if (newGroup != null && newGroup != oldGroup && isOn && IsActive())
+            if (newGroup != null && newGroup != oldGroup && IsOn && IsActive())
                 m_Group.NotifyToggleOn(this);
         }
 
         /// <summary>
         /// Whether the toggle is currently active.
         /// </summary>
-        public bool isOn
+        public bool IsOn
         {
             get { return m_IsOn; }
             set
@@ -209,8 +209,7 @@ namespace UnityEngine.UI
             if (sendCallback)
             {
                 onValueChanged.Invoke(m_IsOn);
-                if(m_IsOn)
-                    onValueChangedOn.Invoke(this);
+                onToggleChanged.Invoke(this);
             }
         }
 
@@ -243,7 +242,7 @@ namespace UnityEngine.UI
             if (!IsActive() || !IsInteractable())
                 return;
 
-            isOn = !isOn;
+            IsOn = !IsOn;
         }
 
         /// <summary>
