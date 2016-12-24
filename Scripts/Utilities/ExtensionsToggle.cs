@@ -12,6 +12,12 @@ namespace UnityEngine.UI
     [RequireComponent(typeof(RectTransform))]
     public class ExtensionsToggle : Selectable, IPointerClickHandler, ISubmitHandler, ICanvasElement
     {
+        /// <summary>
+        /// Variable to identify this script, can be int, string or whatever
+        /// </summary>
+        //public int UniqueID;
+        //public string UniqueID;
+
         public enum ToggleTransition
         {
             None,
@@ -20,6 +26,10 @@ namespace UnityEngine.UI
 
         [Serializable]
         public class ToggleEvent : UnityEvent<bool>
+        { }
+
+        [Serializable]
+        public class ToggleEventObject : UnityEvent<ExtensionsToggle>
         { }
 
         /// <summary>
@@ -57,6 +67,12 @@ namespace UnityEngine.UI
         /// </summary>
         public ToggleEvent onValueChanged = new ToggleEvent();
 
+
+        /// <summary>
+        /// Allow for delegate-based subscriptions for faster events than 'eventReceiver', and allowing for multiple receivers.
+        /// </summary>
+        public ToggleEventObject onValueChangedOn = new ToggleEventObject();
+
         // Whether the toggle is on
         [FormerlySerializedAs("m_IsActive")]
         [Tooltip("Is the toggle currently on or off?")]
@@ -84,7 +100,11 @@ namespace UnityEngine.UI
         {
 #if UNITY_EDITOR
             if (executing == CanvasUpdate.Prelayout)
+            {
                 onValueChanged.Invoke(m_IsOn);
+                if(m_IsOn)
+                    onValueChangedOn.Invoke(this);
+            }
 #endif
         }
 
@@ -187,7 +207,11 @@ namespace UnityEngine.UI
             // It's up to the user to ignore a selection being set to the same value it already was, if desired.
             PlayEffect(toggleTransition == ToggleTransition.None);
             if (sendCallback)
+            {
                 onValueChanged.Invoke(m_IsOn);
+                if(m_IsOn)
+                    onValueChangedOn.Invoke(this);
+            }
         }
 
         /// <summary>
