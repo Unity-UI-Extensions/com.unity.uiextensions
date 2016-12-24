@@ -1,5 +1,6 @@
-﻿/// Credit NemoKrad (aka Charles Humphrey)
+﻿/// Credit NemoKrad (aka Charles Humphrey) / valtain
 /// Sourced from - http://www.randomchaos.co.uk/SoftAlphaUIMask.aspx
+/// Updated by valtain - https://bitbucket.org/ddreaper/unity-ui-extensions/pull-requests/33
 
 namespace UnityEngine.UI.Extensions
 {
@@ -9,9 +10,13 @@ namespace UnityEngine.UI.Extensions
     {
         Material mat;
 
+        Canvas cachedCanvas = null;
+        Transform cachedCanvasTransform = null;
+        readonly Vector3[] m_WorldCorners = new Vector3[4];
+        readonly Vector3[] m_CanvasCorners = new Vector3[4];
+
         [Tooltip("The area that is to be used as the container.")]
         public RectTransform MaskArea;
-        RectTransform myRect;
 
         [Tooltip("Texture to be used to do the soft alpha")]
         public Texture AlphaMask;
@@ -26,30 +31,24 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Flip the masks alpha value")]
         public bool FlipAlphaMask = false;
 
-        [Tooltip("If Mask Scals Rect is given, and this value is true, the area around the mask will not be clipped")]
+        [Tooltip("If a different Mask Scaling Rect is given, and this value is true, the area around the mask will not be clipped")]
         public bool DontClipMaskScalingRect = false;
 
-        Vector3[] worldCorners = new Vector3[4];
         Vector2 maskOffset = Vector2.zero;
         Vector2 maskScale = Vector2.one;
-
-        bool isText = false;
 
         // Use this for initialization
         void Start()
         {
-            myRect = GetComponent<RectTransform>();
-
             if (MaskArea == null)
             {
-                MaskArea = myRect;
+                MaskArea = GetComponent<RectTransform>();
             }
 
             var text = GetComponent<Text>();
             if (text != null)
             {
-                isText = true;
-                mat = new Material(Shader.Find("UI Extensions/SoftMaskShaderText"));
+                mat = new Material(Shader.Find("UI Extensions/SoftMaskShader"));
                 text.material = mat;
                 cachedCanvas = text.canvas;
                 cachedCanvasTransform = cachedCanvas.transform;
@@ -70,12 +69,6 @@ namespace UnityEngine.UI.Extensions
                 cachedCanvas = graphic.canvas;
                 cachedCanvasTransform = cachedCanvas.transform;
             }
-
-        }
-
-        Transform GetParentTranform(Transform t)
-        {
-            return t.parent;
         }
 
         void Update()
@@ -88,7 +81,6 @@ namespace UnityEngine.UI.Extensions
 
         void SetMask()
         {
-            var maskRectXform = MaskArea;
             var worldRect = GetCanvasRect();
             var size = worldRect.size;
             maskScale.Set(1.0f / size.x, 1.0f / size.y);
@@ -105,20 +97,14 @@ namespace UnityEngine.UI.Extensions
             mat.SetFloat("_CutOff", CutOff);
         }
 
-        Canvas cachedCanvas = null;
-        Transform cachedCanvasTransform = null;
-        readonly Vector3[] m_WorldCorners = new Vector3[4];
-        readonly Vector3[] m_CanvasCorners = new Vector3[4];
-
         public Rect GetCanvasRect()
         {
             if (cachedCanvas == null)
                 return new Rect();
 
             MaskArea.GetWorldCorners(m_WorldCorners);
-            var canvasTransform = cachedCanvasTransform;
             for (int i = 0; i < 4; ++i)
-                m_CanvasCorners[i] = canvasTransform.InverseTransformPoint(m_WorldCorners[i]);
+                m_CanvasCorners[i] = cachedCanvasTransform.InverseTransformPoint(m_WorldCorners[i]);
 
             return new Rect(m_CanvasCorners[0].x, m_CanvasCorners[0].y, m_CanvasCorners[2].x - m_CanvasCorners[0].x, m_CanvasCorners[2].y - m_CanvasCorners[0].y);
         }
