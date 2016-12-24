@@ -8,7 +8,6 @@ namespace UnityEngine.UI.Extensions
     public class SoftMaskScript : MonoBehaviour
     {
         Material mat;
-        Canvas cachedCanvas= null;
 
         [Tooltip("The area that is to be used as the container.")]
         public RectTransform MaskArea;
@@ -53,7 +52,7 @@ namespace UnityEngine.UI.Extensions
                 mat = new Material(Shader.Find("UI Extensions/SoftMaskShaderText"));
                 text.material = mat;
                 cachedCanvas = text.canvas;
-
+                cachedCanvasTransform = cachedCanvas.transform;
                 // For some reason, having the mask control on the parent and disabled stops the mouse interacting
                 // with the texture layer that is not visible.. Not needed for the Image.
                 if (transform.parent.GetComponent<Mask>() == null)
@@ -69,6 +68,7 @@ namespace UnityEngine.UI.Extensions
                 mat = new Material(Shader.Find("UI Extensions/SoftMaskShader"));
                 graphic.material = mat;
                 cachedCanvas = graphic.canvas;
+                cachedCanvasTransform = cachedCanvas.transform;
             }
 
         }
@@ -89,8 +89,7 @@ namespace UnityEngine.UI.Extensions
         void SetMask()
         {
             var maskRectXform = MaskArea;
-            var worldRect = RectTransformUtility.PixelAdjustRect(MaskArea, cachedCanvas);
-
+            var worldRect = GetCanvasRect();
             var size = worldRect.size;
             maskScale.Set(1.0f / size.x, 1.0f / size.y);
             maskOffset = -worldRect.min;
@@ -104,6 +103,24 @@ namespace UnityEngine.UI.Extensions
             mat.SetInt("_FlipAlphaMask", FlipAlphaMask ? 1 : 0);
             mat.SetInt("_NoOuterClip", DontClipMaskScalingRect ? 1 : 0);
             mat.SetFloat("_CutOff", CutOff);
+        }
+
+        Canvas cachedCanvas = null;
+        Transform cachedCanvasTransform = null;
+        readonly Vector3[] m_WorldCorners = new Vector3[4];
+        readonly Vector3[] m_CanvasCorners = new Vector3[4];
+
+        public Rect GetCanvasRect()
+        {
+            if (cachedCanvas == null)
+                return new Rect();
+
+            MaskArea.GetWorldCorners(m_WorldCorners);
+            var canvasTransform = cachedCanvasTransform;
+            for (int i = 0; i < 4; ++i)
+                m_CanvasCorners[i] = canvasTransform.InverseTransformPoint(m_WorldCorners[i]);
+
+            return new Rect(m_CanvasCorners[0].x, m_CanvasCorners[0].y, m_CanvasCorners[2].x - m_CanvasCorners[0].x, m_CanvasCorners[2].y - m_CanvasCorners[0].y);
         }
     }
 }
