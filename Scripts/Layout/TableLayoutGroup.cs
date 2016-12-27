@@ -86,6 +86,8 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        private float[] maxPreferredHeightInRows;
+
         public override void CalculateLayoutInputHorizontal()
         {
             base.CalculateLayoutInputHorizontal();
@@ -107,6 +109,8 @@ namespace UnityEngine.UI.Extensions
         public override void CalculateLayoutInputVertical()
         {
             int rowCount = Mathf.CeilToInt(rectChildren.Count / (float)columnWidths.Length);
+
+            maxPreferredHeightInRows = new float[rowCount];
 
             float totalMinHeight = padding.vertical;
             float totalPreferredHeight = padding.vertical;
@@ -139,10 +143,10 @@ namespace UnityEngine.UI.Extensions
                 totalMinHeight += maxMinimumHeightInRow;
 
                 maxPreferredHeightInRow = Mathf.Max(minimumRowHeight, maxPreferredHeightInRow);
+                maxPreferredHeightInRows[i] = maxPreferredHeightInRow;
                 totalPreferredHeight += maxPreferredHeightInRow;
             }
             
-
             totalPreferredHeight = Mathf.Max(totalMinHeight, totalPreferredHeight);
             SetLayoutInputForAxis(totalMinHeight, totalPreferredHeight, 1, 1);
         }
@@ -177,59 +181,39 @@ namespace UnityEngine.UI.Extensions
             int cornerY = (int)startCorner / 2;
 
             Vector2 startOffset = new Vector2();
-
-            float requiredWidthWithoutPadding = 0;
-            for (int i = 0; i < columnWidths.Length; i++)
+            Vector2 requiredSizeWithoutPadding = new Vector2();
+            
+            for (int i = 0; i < columnCount; i++)
             {
-                requiredWidthWithoutPadding += columnWidths[i];
-                requiredWidthWithoutPadding += cellSpacing;
+                requiredSizeWithoutPadding.x += columnWidths[i];
+                requiredSizeWithoutPadding.x += cellSpacing;
             }
-            requiredWidthWithoutPadding -= cellSpacing;
+            requiredSizeWithoutPadding.x -= cellSpacing;
 
-            startOffset.x = GetStartOffset(0, requiredWidthWithoutPadding);
-
-            float requiredHeightWithoutPadding = 0;
-
-            float[] maxPreferredHeightInRows = new float[rowCount];
-
+            startOffset.x = GetStartOffset(0, requiredSizeWithoutPadding.x);
+            
             for (int i = 0; i < rowCount; i++)
             {
-                float maxPreferredHeightInRow = 0;
-
-                for (int j = 0; j < columnCount; j++)
-                {
-                    int childIndex = (i * columnCount) + j;
-
-                    if (childIndex >= rectChildren.Count)
-                        break;
-
-                    maxPreferredHeightInRow = Mathf.Max(LayoutUtility.GetPreferredHeight(rectChildren[childIndex]), maxPreferredHeightInRow);
-                }
-
-                maxPreferredHeightInRow = Mathf.Max(minimumRowHeight, maxPreferredHeightInRow);
-                maxPreferredHeightInRows[i] = maxPreferredHeightInRow;
-                requiredHeightWithoutPadding += maxPreferredHeightInRow;
-                requiredHeightWithoutPadding += rowSpacing;
+                requiredSizeWithoutPadding.y += maxPreferredHeightInRows[i];
+                requiredSizeWithoutPadding.y += rowSpacing;
             }
 
-            requiredHeightWithoutPadding -= rowSpacing;
+            requiredSizeWithoutPadding.y -= rowSpacing;
 
-            startOffset.y = GetStartOffset(1, requiredHeightWithoutPadding);
+            startOffset.y = GetStartOffset(1, requiredSizeWithoutPadding.y);
 
             if (cornerX == 1)
-                startOffset.x += requiredWidthWithoutPadding;
+                startOffset.x += requiredSizeWithoutPadding.x;
 
             if (cornerY == 1)
-                startOffset.y += requiredHeightWithoutPadding;
+                startOffset.y += requiredSizeWithoutPadding.y;
 
             float positionY = startOffset.y;
 
             for (int i = 0; i < rowCount; i++)
             {
                 float positionX = startOffset.x;
-
-                float sizeYOfRect = maxPreferredHeightInRows[i] + rowSpacing;
-
+                
                 if (cornerY == 1)
                     positionY -= maxPreferredHeightInRows[i];
 
@@ -239,9 +223,7 @@ namespace UnityEngine.UI.Extensions
 
                     if (childIndex >= rectChildren.Count)
                         break;
-
-                    float sizeXOfRect = columnWidths[j] + cellSpacing;
-
+                    
                     if (cornerX == 1)
                         positionX -= columnWidths[j];
 
@@ -251,13 +233,13 @@ namespace UnityEngine.UI.Extensions
                     if (cornerX == 1)
                         positionX -= cellSpacing;
                     else
-                        positionX += sizeXOfRect;
+                        positionX += columnWidths[j] + cellSpacing;
                 }
 
                 if (cornerY == 1)
                     positionY -= rowSpacing;
                 else
-                    positionY += sizeYOfRect;
+                    positionY += maxPreferredHeightInRows[i] + rowSpacing;
             }
         }
     }
