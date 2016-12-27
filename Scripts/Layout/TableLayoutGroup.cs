@@ -73,16 +73,16 @@ namespace UnityEngine.UI.Extensions
         }
 
         [SerializeField]
-        protected float cellSpacing = 0f;
+        protected float columnSpacing = 0f;
         /// <summary>
         /// The horizontal spacing between each cell in the table
         /// </summary>
-        public float CellSpacing
+        public float ColumnSpacing
         {
-            get { return cellSpacing; }
+            get { return columnSpacing; }
             set
             {
-                SetProperty(ref cellSpacing, value);
+                SetProperty(ref columnSpacing, value);
             }
         }
 
@@ -109,7 +109,7 @@ namespace UnityEngine.UI.Extensions
             float horizontalSize = padding.horizontal;
 
             if (columnWidths.Length > 1)
-                horizontalSize += ((columnWidths.Length - 1) * cellSpacing);
+                horizontalSize += ((columnWidths.Length - 1) * columnSpacing);
 
             // We calculate the actual cell count for cases where the number of children is lesser than the number of columns
             int actualCellCount = Mathf.Min(rectChildren.Count, columnWidths.Length);
@@ -222,9 +222,9 @@ namespace UnityEngine.UI.Extensions
             for (int i = 0; i < columnCount; i++)
             {
                 requiredSizeWithoutPadding.x += columnWidths[i];
-                requiredSizeWithoutPadding.x += cellSpacing;
+                requiredSizeWithoutPadding.x += columnSpacing;
             }
-            requiredSizeWithoutPadding.x -= cellSpacing;
+            requiredSizeWithoutPadding.x -= columnSpacing;
 
             startOffset.x = GetStartOffset(0, requiredSizeWithoutPadding.x);
 
@@ -267,9 +267,9 @@ namespace UnityEngine.UI.Extensions
                     SetChildAlongAxis(rectChildren[childIndex], 1, positionY, maxPreferredHeightInRows[i]);
 
                     if (cornerX == 1)
-                        positionX -= cellSpacing;
+                        positionX -= columnSpacing;
                     else
-                        positionX += columnWidths[j] + cellSpacing;
+                        positionX += columnWidths[j] + columnSpacing;
                 }
 
                 if (cornerY == 1)
