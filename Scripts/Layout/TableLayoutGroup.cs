@@ -231,7 +231,7 @@ namespace UnityEngine.UI.Extensions
                 float sizeYOfRect = maxPreferredHeightInRows[i] + rowSpacing;
 
                 if (cornerY == 1)
-                    positionY -= sizeYOfRect;
+                    positionY -= maxPreferredHeightInRows[i];
 
                 for (int j = 0; j < columnCount; j++)
                 {
@@ -243,16 +243,20 @@ namespace UnityEngine.UI.Extensions
                     float sizeXOfRect = columnWidths[j] + cellSpacing;
 
                     if (cornerX == 1)
-                        positionX -= sizeXOfRect;
+                        positionX -= columnWidths[j];
 
                     SetChildAlongAxis(rectChildren[childIndex], 0, positionX, columnWidths[j]);
                     SetChildAlongAxis(rectChildren[childIndex], 1, positionY, maxPreferredHeightInRows[i]);
 
-                    if (cornerX != 1)
+                    if (cornerX == 1)
+                        positionX -= cellSpacing;
+                    else
                         positionX += sizeXOfRect;
                 }
-                
-                if (cornerY != 1)
+
+                if (cornerY == 1)
+                    positionY -= rowSpacing;
+                else
                     positionY += sizeYOfRect;
             }
         }
