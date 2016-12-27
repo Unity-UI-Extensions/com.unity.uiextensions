@@ -15,7 +15,7 @@ namespace UnityEngine.UI.Extensions
             LowerLeft = 2,
             LowerRight = 3
         }
-        
+
         [SerializeField]
         protected Corner startCorner = Corner.UpperLeft;
         /// <summary>
@@ -59,6 +59,20 @@ namespace UnityEngine.UI.Extensions
         }
 
         [SerializeField]
+        protected bool flexibleRowHeight = true;
+        /// <summary>
+        /// Expand rows to fit the cell with the highest preferred height?
+        /// </summary>
+        public bool FlexibleRowHeight
+        {
+            get { return flexibleRowHeight; }
+            set
+            {
+                SetProperty(ref flexibleRowHeight, value);
+            }
+        }
+
+        [SerializeField]
         protected float cellSpacing = 0f;
         /// <summary>
         /// The horizontal spacing between each cell in the table
@@ -71,7 +85,7 @@ namespace UnityEngine.UI.Extensions
                 SetProperty(ref cellSpacing, value);
             }
         }
-        
+
         [SerializeField]
         protected float rowSpacing = 0;
         /// <summary>
@@ -121,32 +135,45 @@ namespace UnityEngine.UI.Extensions
                 totalMinHeight += heightFromSpacing;
                 totalPreferredHeight += heightFromSpacing;
             }
-            
-            // Find the max value for minimum and preferred heights in each row
-            for (int i = 0; i < rowCount; i++)
+
+            if (flexibleRowHeight)
             {
-                float maxMinimumHeightInRow = 0;
-                float maxPreferredHeightInRow = 0;
-
-                for (int j = 0; j < columnWidths.Length; j++)
+                // Find the max value for minimum and preferred heights in each row
+                for (int i = 0; i < rowCount; i++)
                 {
-                    int childIndex = (i * columnWidths.Length) + j;
+                    float maxMinimumHeightInRow = 0;
+                    float maxPreferredHeightInRow = 0;
 
-                    if (childIndex >= rectChildren.Count)
-                        break;
+                    for (int j = 0; j < columnWidths.Length; j++)
+                    {
+                        int childIndex = (i * columnWidths.Length) + j;
 
-                    maxPreferredHeightInRow = Mathf.Max(LayoutUtility.GetPreferredHeight(rectChildren[childIndex]), maxPreferredHeightInRow);
-                    maxMinimumHeightInRow = Mathf.Max(LayoutUtility.GetMinHeight(rectChildren[childIndex]), maxMinimumHeightInRow);
+                        if (childIndex >= rectChildren.Count)
+                            break;
+
+                        maxPreferredHeightInRow = Mathf.Max(LayoutUtility.GetPreferredHeight(rectChildren[childIndex]), maxPreferredHeightInRow);
+                        maxMinimumHeightInRow = Mathf.Max(LayoutUtility.GetMinHeight(rectChildren[childIndex]), maxMinimumHeightInRow);
+                    }
+
+                    maxMinimumHeightInRow = Mathf.Max(minimumRowHeight, maxMinimumHeightInRow);
+                    totalMinHeight += maxMinimumHeightInRow;
+
+                    maxPreferredHeightInRow = Mathf.Max(minimumRowHeight, maxPreferredHeightInRow);
+                    maxPreferredHeightInRows[i] = maxPreferredHeightInRow;
+                    totalPreferredHeight += maxPreferredHeightInRow;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < rowCount; i++)
+                {
+                    maxPreferredHeightInRows[i] = minimumRowHeight;
                 }
 
-                maxMinimumHeightInRow = Mathf.Max(minimumRowHeight, maxMinimumHeightInRow);
-                totalMinHeight += maxMinimumHeightInRow;
-
-                maxPreferredHeightInRow = Mathf.Max(minimumRowHeight, maxPreferredHeightInRow);
-                maxPreferredHeightInRows[i] = maxPreferredHeightInRow;
-                totalPreferredHeight += maxPreferredHeightInRow;
+                totalMinHeight += rowCount * minimumRowHeight;
+                totalPreferredHeight = totalMinHeight;
             }
-            
+
             totalPreferredHeight = Mathf.Max(totalMinHeight, totalPreferredHeight);
             SetLayoutInputForAxis(totalMinHeight, totalPreferredHeight, 1, 1);
         }
@@ -182,7 +209,7 @@ namespace UnityEngine.UI.Extensions
 
             Vector2 startOffset = new Vector2();
             Vector2 requiredSizeWithoutPadding = new Vector2();
-            
+
             for (int i = 0; i < columnCount; i++)
             {
                 requiredSizeWithoutPadding.x += columnWidths[i];
@@ -191,7 +218,7 @@ namespace UnityEngine.UI.Extensions
             requiredSizeWithoutPadding.x -= cellSpacing;
 
             startOffset.x = GetStartOffset(0, requiredSizeWithoutPadding.x);
-            
+
             for (int i = 0; i < rowCount; i++)
             {
                 requiredSizeWithoutPadding.y += maxPreferredHeightInRows[i];
@@ -213,7 +240,7 @@ namespace UnityEngine.UI.Extensions
             for (int i = 0; i < rowCount; i++)
             {
                 float positionX = startOffset.x;
-                
+
                 if (cornerY == 1)
                     positionY -= maxPreferredHeightInRows[i];
 
@@ -223,7 +250,7 @@ namespace UnityEngine.UI.Extensions
 
                     if (childIndex >= rectChildren.Count)
                         break;
-                    
+
                     if (cornerX == 1)
                         positionX -= columnWidths[j];
 
