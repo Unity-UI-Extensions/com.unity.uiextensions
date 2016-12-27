@@ -6,7 +6,7 @@ namespace UnityEngine.UI.Extensions
     /// <summary>
     /// Arranges child objects into a non-uniform grid, with fixed column widths and flexible row heights
     /// </summary>
-    public class TableLayout : LayoutGroup
+    public class TableLayoutGroup : LayoutGroup
     {
         public enum Corner
         {
@@ -190,6 +190,8 @@ namespace UnityEngine.UI.Extensions
 
             float requiredHeightWithoutPadding = 0;
 
+            float[] maxPreferredHeightInRows = new float[rowCount];
+
             for (int i = 0; i < rowCount; i++)
             {
                 float maxPreferredHeightInRow = 0;
@@ -205,6 +207,7 @@ namespace UnityEngine.UI.Extensions
                 }
 
                 maxPreferredHeightInRow = Mathf.Max(minimumRowHeight, maxPreferredHeightInRow);
+                maxPreferredHeightInRows[i] = maxPreferredHeightInRow;
                 requiredHeightWithoutPadding += maxPreferredHeightInRow;
                 requiredHeightWithoutPadding += rowSpacing;
             }
@@ -225,7 +228,10 @@ namespace UnityEngine.UI.Extensions
             {
                 float positionX = startOffset.x;
 
-                float maxPreferredHeightInRow = 0;
+                float sizeYOfRect = maxPreferredHeightInRows[i] + rowSpacing;
+
+                if (cornerY == 1)
+                    positionY -= sizeYOfRect;
 
                 for (int j = 0; j < columnCount; j++)
                 {
@@ -240,29 +246,12 @@ namespace UnityEngine.UI.Extensions
                         positionX -= sizeXOfRect;
 
                     SetChildAlongAxis(rectChildren[childIndex], 0, positionX, columnWidths[j]);
+                    SetChildAlongAxis(rectChildren[childIndex], 1, positionY, maxPreferredHeightInRows[i]);
 
                     if (cornerX != 1)
                         positionX += sizeXOfRect;
-
-                    maxPreferredHeightInRow = Mathf.Max(LayoutUtility.GetPreferredHeight(rectChildren[childIndex]), maxPreferredHeightInRow);
                 }
-
-                maxPreferredHeightInRow = Mathf.Max(minimumRowHeight, maxPreferredHeightInRow);
-                float sizeYOfRect = maxPreferredHeightInRow + rowSpacing;
-
-                if (cornerY == 1)
-                    positionY -= sizeYOfRect;
-
-                for (int j = 0; j < columnCount; j++)
-                {
-                    int childIndex = (i * columnCount) + j;
-
-                    if (childIndex >= rectChildren.Count)
-                        break;
-
-                    SetChildAlongAxis(rectChildren[childIndex], 1, positionY, maxPreferredHeightInRow);
-                }
-
+                
                 if (cornerY != 1)
                     positionY += sizeYOfRect;
             }
