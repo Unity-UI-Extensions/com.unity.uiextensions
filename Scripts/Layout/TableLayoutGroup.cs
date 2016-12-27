@@ -31,7 +31,7 @@ namespace UnityEngine.UI.Extensions
         }
 
         [SerializeField]
-        protected float[] columnWidths = new float[0];
+        protected float[] columnWidths = new float[1] { 96f };
         /// <summary>
         /// The widths of all the columns in the table
         /// </summary>
@@ -122,6 +122,9 @@ namespace UnityEngine.UI.Extensions
 
         public override void CalculateLayoutInputVertical()
         {
+            if (columnWidths.Length == 0)
+                return;
+
             int rowCount = Mathf.CeilToInt(rectChildren.Count / (float)columnWidths.Length);
 
             maxPreferredHeightInRows = new float[rowCount];
@@ -182,6 +185,9 @@ namespace UnityEngine.UI.Extensions
         {
             int columnCount = columnWidths.Length;
 
+            if (columnCount == 0)
+                return;
+
             for (int i = 0; i < rectChildren.Count; i++)
             {
                 RectTransform child = rectChildren[i];
@@ -199,10 +205,13 @@ namespace UnityEngine.UI.Extensions
 
         public override void SetLayoutVertical()
         {
-            float tableLayoutHeight = rectTransform.rect.height;
-
             int columnCount = columnWidths.Length;
+            if (columnCount == 0)
+                return;
+
             int rowCount = Mathf.CeilToInt(rectChildren.Count / (float)columnCount);
+
+            float tableLayoutHeight = rectTransform.rect.height;
 
             int cornerX = (int)startCorner % 2;
             int cornerY = (int)startCorner / 2;
