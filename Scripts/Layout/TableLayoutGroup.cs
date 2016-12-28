@@ -100,31 +100,34 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        private float[] maxPreferredHeightInRows;
+        private float[] preferredRowHeights;
 
         public override void CalculateLayoutInputHorizontal()
         {
             base.CalculateLayoutInputHorizontal();
 
             float horizontalSize = padding.horizontal;
-
-            if (columnWidths.Length > 1)
-                horizontalSize += ((columnWidths.Length - 1) * columnSpacing);
-
+            
             // We calculate the actual cell count for cases where the number of children is lesser than the number of columns
             int actualCellCount = Mathf.Min(rectChildren.Count, columnWidths.Length);
 
             for (int i = 0; i < actualCellCount; i++)
+            {
                 horizontalSize += columnWidths[i];
+                horizontalSize += columnSpacing;
+            }
+
+            horizontalSize -= columnSpacing;
 
             SetLayoutInputForAxis(horizontalSize, horizontalSize, 0, 0);
         }
 
         public override void CalculateLayoutInputVertical()
         {
-            int rowCount = Mathf.CeilToInt(rectChildren.Count / (float)columnWidths.Length);
+            int columnCount = columnWidths.Length;
+            int rowCount = Mathf.CeilToInt(rectChildren.Count / (float)columnCount);
 
-            maxPreferredHeightInRows = new float[rowCount];
+            preferredRowHeights = new float[rowCount];
 
             float totalMinHeight = padding.vertical;
             float totalPreferredHeight = padding.vertical;
@@ -144,9 +147,9 @@ namespace UnityEngine.UI.Extensions
                     float maxMinimumHeightInRow = 0;
                     float maxPreferredHeightInRow = 0;
 
-                    for (int j = 0; j < columnWidths.Length; j++)
+                    for (int j = 0; j < columnCount; j++)
                     {
-                        int childIndex = (i * columnWidths.Length) + j;
+                        int childIndex = (i * columnCount) + j;
 
                         if (childIndex >= rectChildren.Count)
                             break;
@@ -159,7 +162,7 @@ namespace UnityEngine.UI.Extensions
                     totalMinHeight += maxMinimumHeightInRow;
 
                     maxPreferredHeightInRow = Mathf.Max(minimumRowHeight, maxPreferredHeightInRow);
-                    maxPreferredHeightInRows[i] = maxPreferredHeightInRow;
+                    preferredRowHeights[i] = maxPreferredHeightInRow;
                     totalPreferredHeight += maxPreferredHeightInRow;
                 }
             }
@@ -167,7 +170,7 @@ namespace UnityEngine.UI.Extensions
             {
                 for (int i = 0; i < rowCount; i++)
                 {
-                    maxPreferredHeightInRows[i] = minimumRowHeight;
+                    preferredRowHeights[i] = minimumRowHeight;
                 }
 
                 totalMinHeight += rowCount * minimumRowHeight;
@@ -184,93 +187,89 @@ namespace UnityEngine.UI.Extensions
                 columnWidths = new float[1] { 0f };
 
             int columnCount = columnWidths.Length;
+            int cornerX = (int)startCorner % 2;
+
+            float startOffset = 0;
+            float requiredSizeWithoutPadding = 0;
+            int actualCellCount = Mathf.Min(rectChildren.Count, columnWidths.Length);
+
+            for (int i = 0; i < actualCellCount; i++)
+            {
+                requiredSizeWithoutPadding += columnWidths[i];
+                requiredSizeWithoutPadding += columnSpacing;
+            }
+
+            requiredSizeWithoutPadding -= columnSpacing;
+
+            startOffset = GetStartOffset(0, requiredSizeWithoutPadding);
+
+            if (cornerX == 1)
+                startOffset += requiredSizeWithoutPadding;
+
+            float positionX = startOffset;
 
             for (int i = 0; i < rectChildren.Count; i++)
             {
-                RectTransform child = rectChildren[i];
-                m_Tracker.Add(this, child,
-                        DrivenTransformProperties.Anchors |
-                        DrivenTransformProperties.AnchoredPosition |
-                        DrivenTransformProperties.SizeDelta);
-                child.anchorMin = Vector2.up;
-                child.anchorMax = Vector2.up;
-                Vector2 childSizeDelta = child.sizeDelta;
-                childSizeDelta.x = columnWidths[i % columnCount];
-                child.sizeDelta = childSizeDelta;
+                int currentRowIndex = i / columnCount;
+                int currentColumnIndex = i % columnCount;
+
+                if (currentColumnIndex == 0)
+                    positionX = startOffset;
+
+                if (cornerX == 1)
+                    positionX -= columnWidths[currentColumnIndex];
+
+                SetChildAlongAxis(rectChildren[i], 0, positionX, columnWidths[currentColumnIndex]);
+
+                if (cornerX == 1)
+                    positionX -= columnSpacing;
+                else
+                    positionX += columnWidths[currentColumnIndex] + columnSpacing;
             }
         }
 
         public override void SetLayoutVertical()
         {
             int columnCount = columnWidths.Length;
-
-            int rowCount = Mathf.CeilToInt(rectChildren.Count / (float)columnCount);
-
-            float tableLayoutHeight = rectTransform.rect.height;
-
-            int cornerX = (int)startCorner % 2;
+            int rowCount = preferredRowHeights.Length;
+            
             int cornerY = (int)startCorner / 2;
 
-            Vector2 startOffset = new Vector2();
-            Vector2 requiredSizeWithoutPadding = new Vector2();
-
-            for (int i = 0; i < columnCount; i++)
-            {
-                requiredSizeWithoutPadding.x += columnWidths[i];
-                requiredSizeWithoutPadding.x += columnSpacing;
-            }
-            requiredSizeWithoutPadding.x -= columnSpacing;
-
-            startOffset.x = GetStartOffset(0, requiredSizeWithoutPadding.x);
-
+            float startOffset = 0;
+            float requiredSizeWithoutPadding = 0;
+            
             for (int i = 0; i < rowCount; i++)
             {
-                requiredSizeWithoutPadding.y += maxPreferredHeightInRows[i];
-                requiredSizeWithoutPadding.y += rowSpacing;
+                requiredSizeWithoutPadding += preferredRowHeights[i];
+                requiredSizeWithoutPadding += rowSpacing;
             }
 
-            requiredSizeWithoutPadding.y -= rowSpacing;
+            requiredSizeWithoutPadding -= rowSpacing;
 
-            startOffset.y = GetStartOffset(1, requiredSizeWithoutPadding.y);
-
-            if (cornerX == 1)
-                startOffset.x += requiredSizeWithoutPadding.x;
-
+            startOffset = GetStartOffset(1, requiredSizeWithoutPadding);
+            
             if (cornerY == 1)
-                startOffset.y += requiredSizeWithoutPadding.y;
+                startOffset += requiredSizeWithoutPadding;
 
-            float positionY = startOffset.y;
+            float positionY = startOffset;
 
-            for (int i = 0; i < rowCount; i++)
+            for (int i = 0; i < rectChildren.Count; i++)
             {
-                float positionX = startOffset.x;
+                int currentRowIndex = i / columnCount;
+                int currentColumnIndex = i % columnCount;
 
-                if (cornerY == 1)
-                    positionY -= maxPreferredHeightInRows[i];
-
-                for (int j = 0; j < columnCount; j++)
+                if (currentColumnIndex == 0 && cornerY == 1)
+                        positionY -= preferredRowHeights[currentRowIndex];
+                
+                SetChildAlongAxis(rectChildren[i], 1, positionY, preferredRowHeights[currentRowIndex]);
+                
+                if (currentColumnIndex == columnCount - 1)
                 {
-                    int childIndex = (i * columnCount) + j;
-
-                    if (childIndex >= rectChildren.Count)
-                        break;
-
-                    if (cornerX == 1)
-                        positionX -= columnWidths[j];
-
-                    SetChildAlongAxis(rectChildren[childIndex], 0, positionX, columnWidths[j]);
-                    SetChildAlongAxis(rectChildren[childIndex], 1, positionY, maxPreferredHeightInRows[i]);
-
-                    if (cornerX == 1)
-                        positionX -= columnSpacing;
+                    if (cornerY == 1)
+                        positionY -= rowSpacing;
                     else
-                        positionX += columnWidths[j] + columnSpacing;
+                        positionY += preferredRowHeights[currentRowIndex] + rowSpacing;
                 }
-
-                if (cornerY == 1)
-                    positionY -= rowSpacing;
-                else
-                    positionY += maxPreferredHeightInRows[i] + rowSpacing;
             }
         }
     }
