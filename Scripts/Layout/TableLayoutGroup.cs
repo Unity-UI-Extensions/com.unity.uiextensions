@@ -122,9 +122,6 @@ namespace UnityEngine.UI.Extensions
 
         public override void CalculateLayoutInputVertical()
         {
-            if (columnWidths.Length == 0)
-                return;
-
             int rowCount = Mathf.CeilToInt(rectChildren.Count / (float)columnWidths.Length);
 
             maxPreferredHeightInRows = new float[rowCount];
@@ -183,10 +180,10 @@ namespace UnityEngine.UI.Extensions
 
         public override void SetLayoutHorizontal()
         {
-            int columnCount = columnWidths.Length;
+            if (columnWidths.Length == 0)
+                columnWidths = new float[1] { 0f };
 
-            if (columnCount == 0)
-                return;
+            int columnCount = columnWidths.Length;
 
             for (int i = 0; i < rectChildren.Count; i++)
             {
@@ -206,8 +203,6 @@ namespace UnityEngine.UI.Extensions
         public override void SetLayoutVertical()
         {
             int columnCount = columnWidths.Length;
-            if (columnCount == 0)
-                return;
 
             int rowCount = Mathf.CeilToInt(rectChildren.Count / (float)columnCount);
 
