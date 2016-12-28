@@ -99,7 +99,8 @@ namespace UnityEngine.UI.Extensions
                 SetProperty(ref rowSpacing, value);
             }
         }
-
+        
+        // Temporarily stores data generated during the execution CalculateLayoutInputVertical for use in SetLayoutVertical
         private float[] preferredRowHeights;
 
         public override void CalculateLayoutInputHorizontal()
@@ -141,37 +142,42 @@ namespace UnityEngine.UI.Extensions
 
             if (flexibleRowHeight)
             {
-                // Find the max value for minimum and preferred heights in each row
-                for (int i = 0; i < rowCount; i++)
+                // If flexibleRowHeight is enabled, find the max value for minimum and preferred heights in each row
+
+                float maxMinimumHeightInRow = 0;
+                float maxPreferredHeightInRow = 0;
+
+                for (int i = 0; i < rectChildren.Count; i++)
                 {
-                    float maxMinimumHeightInRow = 0;
-                    float maxPreferredHeightInRow = 0;
+                    int currentRowIndex = i / columnCount;
+                    int currentColumnIndex = i % columnCount;
 
-                    for (int j = 0; j < columnCount; j++)
+                    // If it's the first cell in the row, reset heights for the row
+                    if (currentColumnIndex == 0)
                     {
-                        int childIndex = (i * columnCount) + j;
-
-                        if (childIndex >= rectChildren.Count)
-                            break;
-
-                        maxPreferredHeightInRow = Mathf.Max(LayoutUtility.GetPreferredHeight(rectChildren[childIndex]), maxPreferredHeightInRow);
-                        maxMinimumHeightInRow = Mathf.Max(LayoutUtility.GetMinHeight(rectChildren[childIndex]), maxMinimumHeightInRow);
+                        maxMinimumHeightInRow = minimumRowHeight;
+                        maxPreferredHeightInRow = minimumRowHeight;
                     }
 
-                    maxMinimumHeightInRow = Mathf.Max(minimumRowHeight, maxMinimumHeightInRow);
-                    totalMinHeight += maxMinimumHeightInRow;
+                    maxPreferredHeightInRow = Mathf.Max(LayoutUtility.GetPreferredHeight(rectChildren[i]), maxPreferredHeightInRow);
+                    maxMinimumHeightInRow = Mathf.Max(LayoutUtility.GetMinHeight(rectChildren[i]), maxMinimumHeightInRow);
 
-                    maxPreferredHeightInRow = Mathf.Max(minimumRowHeight, maxPreferredHeightInRow);
-                    preferredRowHeights[i] = maxPreferredHeightInRow;
-                    totalPreferredHeight += maxPreferredHeightInRow;
+                    // If it's the last cell in the row, or if it's the last cell and the row is incomplete, set calculated heights
+                    if (currentColumnIndex == columnCount - 1 || (i == rectChildren.Count - 1 && currentRowIndex == rowCount - 1))
+                    {
+                        totalMinHeight += maxMinimumHeightInRow;
+                        totalPreferredHeight += maxPreferredHeightInRow;
+
+                        // Add calculated row height to a commonly accessible array for reuse in SetLayoutVertical()
+                        preferredRowHeights[currentRowIndex] = maxPreferredHeightInRow;
+                    }
                 }
             }
             else
             {
+                // If flexibleRowHeight is disabled, then use the minimumRowHeight to calculate vertical layout information
                 for (int i = 0; i < rowCount; i++)
-                {
                     preferredRowHeights[i] = minimumRowHeight;
-                }
 
                 totalMinHeight += rowCount * minimumRowHeight;
                 totalPreferredHeight = totalMinHeight;
@@ -183,6 +189,7 @@ namespace UnityEngine.UI.Extensions
 
         public override void SetLayoutHorizontal()
         {
+            // If no column width is defined, then assign a reasonable default
             if (columnWidths.Length == 0)
                 columnWidths = new float[1] { 0f };
 
@@ -191,6 +198,8 @@ namespace UnityEngine.UI.Extensions
 
             float startOffset = 0;
             float requiredSizeWithoutPadding = 0;
+            
+            // We calculate the actual cell count for cases where the number of children is lesser than the number of columns
             int actualCellCount = Mathf.Min(rectChildren.Count, columnWidths.Length);
 
             for (int i = 0; i < actualCellCount; i++)
@@ -210,9 +219,9 @@ namespace UnityEngine.UI.Extensions
 
             for (int i = 0; i < rectChildren.Count; i++)
             {
-                int currentRowIndex = i / columnCount;
                 int currentColumnIndex = i % columnCount;
 
+                // If it's the first cell in the row, reset positionX
                 if (currentColumnIndex == 0)
                     positionX = startOffset;
 
@@ -258,11 +267,13 @@ namespace UnityEngine.UI.Extensions
                 int currentRowIndex = i / columnCount;
                 int currentColumnIndex = i % columnCount;
 
+                // If it's the first cell in the row and start corner is one of the bottom corners, then modify positionY appropriately
                 if (currentColumnIndex == 0 && cornerY == 1)
                         positionY -= preferredRowHeights[currentRowIndex];
                 
                 SetChildAlongAxis(rectChildren[i], 1, positionY, preferredRowHeights[currentRowIndex]);
-                
+
+                // If it's the first last cell in the row, then modify positionY appropriately
                 if (currentColumnIndex == columnCount - 1)
                 {
                     if (cornerY == 1)
@@ -271,6 +282,9 @@ namespace UnityEngine.UI.Extensions
                         positionY += preferredRowHeights[currentRowIndex] + rowSpacing;
                 }
             }
+
+            // Set preferredRowHeights to null to free memory
+            preferredRowHeights = null;
         }
     }
 }
