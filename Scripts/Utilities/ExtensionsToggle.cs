@@ -130,7 +130,7 @@ namespace UnityEngine.UI
         protected override void OnDidApplyAnimationProperties()
         {
             // Check if isOn has been changed by the animation.
-            // Unfortunately there is no way to check if we donï¿½t have a graphic.
+            // Unfortunately there is no way to check if we don't have a graphic.
             if (graphic != null)
             {
                 bool oldValue = !Mathf.Approximately(graphic.canvasRenderer.GetColor().a, 0);
@@ -194,7 +194,7 @@ namespace UnityEngine.UI
             m_IsOn = value;
             if (m_Group != null && IsActive())
             {
-                if (m_IsOn || (!m_Group.AnyTogglesOn() && !m_Group.allowSwitchOff))
+                if (m_IsOn || (!m_Group.AnyTogglesOn() && !m_Group.AllowSwitchOff))
                 {
                     m_IsOn = true;
                     m_Group.NotifyToggleOn(this);

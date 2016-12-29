@@ -12,7 +12,7 @@ namespace UnityEngine.UI
     {
         [SerializeField]
         private bool m_AllowSwitchOff = false;
-        public bool allowSwitchOff { get { return m_AllowSwitchOff; } set { m_AllowSwitchOff = value; } }
+        public bool AllowSwitchOff { get { return m_AllowSwitchOff; } set { m_AllowSwitchOff = value; } }
 
         private List<ExtensionsToggle> m_Toggles = new List<ExtensionsToggle>();
 

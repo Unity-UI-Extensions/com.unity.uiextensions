@@ -14,10 +14,11 @@ namespace UnityEngine.UI.Extensions
         void Start()
         {
             isVertical = false;
+            childAnchorPoint = new Vector2(0, 0.5f);
             DistributePages();
             if(MaskArea) CalculateVisible();
             _lerp = false;
-            _currentPage = StartingScreen - 1;
+            _currentPage = StartingScreen;
             SetScrollContainerPosition();
         }
 
@@ -51,10 +52,10 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        //used for changing between screen resolutions
         private void DistributePages()
         {
             _screens = _screensContainer.childCount;
+            _scroll_rect.horizontalNormalizedPosition = 0;
 
             int _offset = 0;
             float _dimension = 0;
@@ -69,9 +70,7 @@ namespace UnityEngine.UI.Extensions
                 currentXPosition = _offset + (int)(i * pageStepValue);
                 child.sizeDelta = new Vector2(panelDimensions.width, panelDimensions.height);
                 child.anchoredPosition = new Vector2(currentXPosition, 0f);
-                child.anchorMin = new Vector2(0f, child.anchorMin.y);
-                child.anchorMax = new Vector2(0f, child.anchorMax.y);
-                child.pivot = new Vector2(0f, child.pivot.y);
+                child.anchorMin = child.anchorMax = child.pivot = childAnchorPoint;
             }
 
             _dimension = currentXPosition + _offset * -1;
@@ -127,6 +126,16 @@ namespace UnityEngine.UI.Extensions
         {
             _scrollStartPosition = _screensContainer.localPosition.x;
             _scroll_rect.horizontalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
+        }
+
+        /// <summary>
+        /// used for changing / updating between screen resolutions
+        /// </summary>
+        public void UpdateLayout()
+        {
+            _lerp = false;
+            DistributePages();
+            SetScrollContainerPosition();
         }
 
         #region Interfaces

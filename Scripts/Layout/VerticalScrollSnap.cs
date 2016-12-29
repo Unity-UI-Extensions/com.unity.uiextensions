@@ -14,10 +14,11 @@ namespace UnityEngine.UI.Extensions
         void Start()
         {
             isVertical = true;
+            childAnchorPoint = new Vector2(0.5f,0);
             DistributePages();
             if(MaskArea) CalculateVisible();
             _lerp = false;
-            _currentPage = StartingScreen - 1;
+            _currentPage = StartingScreen;
             SetScrollContainerPosition();
         }
 
@@ -52,10 +53,10 @@ namespace UnityEngine.UI.Extensions
 
         }
 
-        //used for changing between screen resolutions
         public void DistributePages()
         {
             _screens = _screensContainer.childCount;
+            _scroll_rect.verticalNormalizedPosition = 0;
 
             float _offset = 0;
             float _dimension = 0;
@@ -69,9 +70,7 @@ namespace UnityEngine.UI.Extensions
                 currentYPosition = _offset + i * pageStepValue;
                 child.sizeDelta = new Vector2(panelDimensions.width, panelDimensions.height);
                 child.anchoredPosition = new Vector2(0f, currentYPosition);
-                child.anchorMin = new Vector2(child.anchorMin.x, 0f);
-                child.anchorMax = new Vector2(child.anchorMax.x, 0f);
-                child.pivot = new Vector2(child.pivot.x, 0f);
+                child.anchorMin = child.anchorMax = child.pivot = childAnchorPoint;
             }
 
             _dimension = currentYPosition + _offset * -1;
@@ -130,6 +129,15 @@ namespace UnityEngine.UI.Extensions
             _scroll_rect.verticalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
         }
 
+        /// <summary>
+        /// used for changing / updating between screen resolutions
+        /// </summary>
+        public void UpdateLayout()
+        {
+            _lerp = false;
+            DistributePages();
+            SetScrollContainerPosition();
+        }
         #region Interfaces
         /// <summary>
         /// Release screen to swipe

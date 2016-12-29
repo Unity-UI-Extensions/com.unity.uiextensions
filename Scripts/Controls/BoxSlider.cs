@@ -7,8 +7,8 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-    [AddComponentMenu("UI/BoxSlider", 35)]
     [RequireComponent(typeof(RectTransform))]
+    [AddComponentMenu("UI/Extensions/BoxSlider")]
     public class BoxSlider : Selectable, IDragHandler, IInitializePotentialDragHandler, ICanvasElement
     {
         public enum Direction
@@ -30,15 +30,15 @@ namespace UnityEngine.UI.Extensions
 
         [SerializeField]
         private float m_MinValue = 0;
-        public float MinValue { get { return m_MinValue; } set { if (SetStruct(ref m_MinValue, value)) { Set(m_ValueX); SetY(m_ValueY); UpdateVisuals(); } } }
+        public float MinValue { get { return m_MinValue; } set { if (SetStruct(ref m_MinValue, value)) { SetX(m_ValueX); SetY(m_ValueY); UpdateVisuals(); } } }
 
         [SerializeField]
         private float m_MaxValue = 1;
-        public float MaxValue { get { return m_MaxValue; } set { if (SetStruct(ref m_MaxValue, value)) { Set(m_ValueX); SetY(m_ValueY); UpdateVisuals(); } } }
+        public float MaxValue { get { return m_MaxValue; } set { if (SetStruct(ref m_MaxValue, value)) { SetX(m_ValueX); SetY(m_ValueY); UpdateVisuals(); } } }
 
         [SerializeField]
         private bool m_WholeNumbers = false;
-        public bool WholeNumbers { get { return m_WholeNumbers; } set { if (SetStruct(ref m_WholeNumbers, value)) { Set(m_ValueX); SetY(m_ValueY); UpdateVisuals(); } } }
+        public bool WholeNumbers { get { return m_WholeNumbers; } set { if (SetStruct(ref m_WholeNumbers, value)) { SetX(m_ValueX); SetY(m_ValueY); UpdateVisuals(); } } }
 
         [SerializeField]
         private float m_ValueX = 1f;
@@ -52,7 +52,7 @@ namespace UnityEngine.UI.Extensions
             }
             set
             {
-                Set(value);
+                SetX(value);
             }
         }
 
@@ -109,9 +109,6 @@ namespace UnityEngine.UI.Extensions
 
         // Private fields
 
-        //private Image m_FillImage;
-        //private Transform m_FillTransform;
-        //private RectTransform m_FillContainerRect;
         private Transform m_HandleTransform;
         private RectTransform m_HandleContainerRect;
 
@@ -137,7 +134,7 @@ namespace UnityEngine.UI.Extensions
                 m_MaxValue = Mathf.Round(m_MaxValue);
             }
             UpdateCachedReferences();
-            Set(m_ValueX, false);
+            SetX(m_ValueX, false);
             SetY(m_ValueY, false);
             // Update rects since other things might affect them even if value didn't change.
             UpdateVisuals();
@@ -189,7 +186,7 @@ namespace UnityEngine.UI.Extensions
         {
             base.OnEnable();
             UpdateCachedReferences();
-            Set(m_ValueX, false);
+            SetX(m_ValueX, false);
             SetY(m_ValueY, false);
             // Update rects since they need to be initialized correctly.
             UpdateVisuals();
@@ -217,12 +214,12 @@ namespace UnityEngine.UI.Extensions
         }
 
         // Set the valueUpdate the visible Image.
-        void Set(float input)
+        void SetX(float input)
         {
-            Set(input, true);
+            SetX(input, true);
         }
 
-        void Set(float input, bool sendCallback)
+        void SetX(float input, bool sendCallback)
         {
             // Clamp the input
             float newValue = Mathf.Clamp(input, MinValue, MaxValue);
@@ -320,14 +317,14 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        private bool MayDrag(PointerEventData eventData)
+        private bool CanDrag(PointerEventData eventData)
         {
             return IsActive() && IsInteractable() && eventData.button == PointerEventData.InputButton.Left;
         }
 
         public override void OnPointerDown(PointerEventData eventData)
         {
-            if (!MayDrag(eventData))
+            if (!CanDrag(eventData))
                 return;
 
             base.OnPointerDown(eventData);
@@ -349,84 +346,11 @@ namespace UnityEngine.UI.Extensions
 
         public virtual void OnDrag(PointerEventData eventData)
         {
-            if (!MayDrag(eventData))
+            if (!CanDrag(eventData))
                 return;
 
             UpdateDrag(eventData, eventData.pressEventCamera);
         }
-
-        //public override void OnMove(AxisEventData eventData)
-        //{
-        //    if (!IsActive() || !IsInteractable())
-        //    {
-        //        base.OnMove(eventData);
-        //        return;
-        //    }
-
-        //    switch (eventData.moveDir)
-        //    {
-        //    case MoveDirection.Left:
-        //        if (axis == Axis.Horizontal && FindSelectableOnLeft() == null) {
-        //            Set(reverseValue ? value + stepSize : value - stepSize);
-        //            SetY (reverseValue ? valueY + stepSize : valueY - stepSize);
-        //        }
-        //        else
-        //            base.OnMove(eventData);
-        //        break;
-        //    case MoveDirection.Right:
-        //        if (axis == Axis.Horizontal && FindSelectableOnRight() == null) {
-        //            Set(reverseValue ? value - stepSize : value + stepSize);
-        //            SetY(reverseValue ? valueY - stepSize : valueY + stepSize);
-        //        }
-        //        else
-        //            base.OnMove(eventData);
-        //        break;
-        //    case MoveDirection.Up:
-        //        if (axis == Axis.Vertical && FindSelectableOnUp() == null) {
-        //            Set(reverseValue ? value - stepSize : value + stepSize);
-        //            SetY(reverseValue ? valueY - stepSize : valueY + stepSize);
-        //        }
-        //        else
-        //            base.OnMove(eventData);
-        //        break;
-        //    case MoveDirection.Down:
-        //        if (axis == Axis.Vertical && FindSelectableOnDown() == null) {
-        //            Set(reverseValue ? value + stepSize : value - stepSize);
-        //            SetY(reverseValue ? valueY + stepSize : valueY - stepSize);
-        //        }
-        //        else
-        //            base.OnMove(eventData);
-        //        break;
-        //    }
-        //}
-
-        //public override Selectable FindSelectableOnLeft()
-        //{
-        //    if (navigation.mode == Navigation.Mode.Automatic && axis == Axis.Horizontal)
-        //        return null;
-        //    return base.FindSelectableOnLeft();
-        //}
-
-        //public override Selectable FindSelectableOnRight()
-        //{
-        //    if (navigation.mode == Navigation.Mode.Automatic && axis == Axis.Horizontal)
-        //        return null;
-        //    return base.FindSelectableOnRight();
-        //}
-
-        //public override Selectable FindSelectableOnUp()
-        //{
-        //    if (navigation.mode == Navigation.Mode.Automatic && axis == Axis.Vertical)
-        //        return null;
-        //    return base.FindSelectableOnUp();
-        //}
-
-        //public override Selectable FindSelectableOnDown()
-        //{
-        //    if (navigation.mode == Navigation.Mode.Automatic && axis == Axis.Vertical)
-        //        return null;
-        //    return base.FindSelectableOnDown();
-        //}
 
         public virtual void OnInitializePotentialDrag(PointerEventData eventData)
         {
