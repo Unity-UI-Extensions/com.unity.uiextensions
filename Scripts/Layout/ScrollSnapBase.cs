@@ -80,11 +80,15 @@ namespace UnityEngine.UI.Extensions
                 {
                     _previousPage = _currentPage;
                     _currentPage = value;
-                    ChangeBulletsInfo(_currentPage);
                     if(MaskArea) UpdateVisible();
+                    ScreenChange();
+                    ChangeBulletsInfo(_currentPage);
                 }
             }
         }
+
+        [Tooltip("(Experimental)\nBy default, child array objects will use the parent transform\nHowever you can disable this for some interesting effects")]
+        public bool UseParentTransform = true;
 
         [Tooltip("Scroll Snap children. (optional)\nEither place objects in the scene as children OR\nPrefabs in this array, NOT BOTH")]
         public GameObject[] ChildObjects;
@@ -156,10 +160,21 @@ namespace UnityEngine.UI.Extensions
         internal void InitialiseChildObjectsFromArray()
         {
             int childCount = ChildObjects.Length;
+            RectTransform childRect;
+            GameObject child;
             for (int i = 0; i < childCount; i++)
             {
-                ChildObjects[i] = GameObject.Instantiate(ChildObjects[i]);
-                ChildObjects[i].transform.SetParent(_screensContainer.transform);
+                child = GameObject.Instantiate(ChildObjects[i]);
+                //Optionally, use original GO transform when initialising, by default will use parent RectTransform position/rotation
+                if (UseParentTransform)
+                {
+                    childRect = child.GetComponent<RectTransform>();
+                    childRect.rotation = _screensContainer.rotation;
+                    childRect.localScale = _screensContainer.localScale;
+                    childRect.position = _screensContainer.position;
+                }
+                child.transform.SetParent(_screensContainer.transform);
+                ChildObjects[i] = child;
                 if (MaskArea && ChildObjects[i].activeSelf)
                 {
                     ChildObjects[i].SetActive(false);
@@ -306,9 +321,8 @@ namespace UnityEngine.UI.Extensions
             OnSelectionChangeStartEvent.Invoke();
         }
 
-        internal void ScreenChange(int previousScreen)
+        internal void ScreenChange()
         {
-
             OnSelectionPageChangedEvent.Invoke(_currentPage);
         }
 

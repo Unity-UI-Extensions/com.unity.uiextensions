@@ -1654,10 +1654,46 @@ namespace UnityEditor.UI
 			Selection.activeGameObject = go;
 		}
 
-		#endregion
+        #region BoxSlider
+        [MenuItem("GameObject/UI/Extensions/Box Slider", false)]
+        static public void AddBoxSlider(MenuCommand menuCommand)
+        {
 
-		#region Helper Functions
-		private static GameObject AddInputFieldAsChild(GameObject parent)
+            GameObject uiboxSliderRoot = CreateUIElementRoot("Box Slider", menuCommand, s_ImageGUIElementSize);
+
+            GameObject handleSlideArea = CreateUIObject("Handle Slide Area", uiboxSliderRoot);
+
+            GameObject handle = CreateUIObject("Handle", handleSlideArea);
+
+            // Set RectTransform to stretch
+            SetAnchorsAndStretch(uiboxSliderRoot);
+            Image backgroundImage = uiboxSliderRoot.AddComponent<Image>();
+            backgroundImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath);
+            backgroundImage.type = Image.Type.Sliced;
+            backgroundImage.fillCenter = false;
+            backgroundImage.color = new Color(1f, 1f, 1f, 0.392f);
+
+            RectTransform handleRect = SetAnchorsAndStretch(handle); 
+            handleRect.sizeDelta = new Vector2(25, 25);
+            Image handleImage = handle.AddComponent<Image>();
+            handleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kKnobPath);
+            handleImage.type = Image.Type.Simple;
+            handleImage.fillCenter = false;
+            handleImage.color = new Color(1f, 1f, 1f, 0.392f);
+
+
+            BoxSlider selectableArea = uiboxSliderRoot.AddComponent<BoxSlider>();
+            selectableArea.HandleRect = handle.GetComponent<RectTransform>();
+            selectableArea.ValueX = selectableArea.ValueY = 0.5f;
+
+            Selection.activeGameObject = uiboxSliderRoot;
+        }
+        #endregion
+
+        #endregion
+
+        #region Helper Functions
+        private static GameObject AddInputFieldAsChild(GameObject parent)
 		{
 			GameObject root = CreateUIObject("InputField", parent);
 
@@ -1787,7 +1823,16 @@ namespace UnityEditor.UI
 			return buttonRoot;
 		}
 
-		#endregion
+        private static RectTransform SetAnchorsAndStretch(GameObject root)
+        {
+            RectTransform rectTransformRoot = root.GetComponent<RectTransform>();
+            rectTransformRoot.anchorMin = new Vector2(0.5f, 0.5f);
+            rectTransformRoot.anchorMax = new Vector2(0.5f, 0.5f);
+            rectTransformRoot.anchoredPosition = Vector2.zero;
+            return rectTransformRoot;
+        }
 
-	}
+        #endregion
+
+    }
 }
