@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-    public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler, IPointerDownHandler, IPointerUpHandler
+    public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler
     {
         internal RectTransform _screensContainer;
         internal bool isVertical;
@@ -18,7 +18,6 @@ namespace UnityEngine.UI.Extensions
         internal ScrollRect _scroll_rect;
         internal Vector3 _lerp_target;
         internal bool _lerp;
-        internal bool _pointerDown = false;
         internal Vector3 _startPosition = new Vector3();
         [Tooltip("The currently active page")]
         internal int _currentPage;
@@ -30,7 +29,7 @@ namespace UnityEngine.UI.Extensions
         [Serializable]
         public class SelectionPageChangedEvent : UnityEvent<int> { }
         [Serializable]
-        public class SelectionChangeEndEvent : UnityEvent { }
+        public class SelectionChangeEndEvent : UnityEvent<int> { }
 
         [Tooltip("The screen / page to start the control on\n*Note, this is a 0 indexed array")]
         [SerializeField]
@@ -316,19 +315,28 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        /// <summary>
+        /// Event fires when the user starts to change the page, either via swipe or button
+        /// </summary>
         internal void StartScreenChange()
         {
             OnSelectionChangeStartEvent.Invoke();
         }
 
+        /// <summary>
+        /// Event fires when the currently viewed page changes, also updates while the scroll is moving
+        /// </summary>
         internal void ScreenChange()
         {
             OnSelectionPageChangedEvent.Invoke(_currentPage);
         }
 
+        /// <summary>
+        /// Event fires when control settles on a page, outputs the new page number
+        /// </summary>
         internal void EndScreenChange()
         {
-            OnSelectionChangeEndEvent.Invoke();
+            OnSelectionChangeEndEvent.Invoke(_currentPage);
         }
 
         #region Interfaces
@@ -349,16 +357,6 @@ namespace UnityEngine.UI.Extensions
         public void OnDrag(PointerEventData eventData)
         {
             _lerp = false;
-        }
-
-        public void OnPointerDown(PointerEventData eventData)
-        {
-            _pointerDown = true;
-        }
-
-        public void OnPointerUp(PointerEventData eventData)
-        {
-            _pointerDown = false;
         }
         #endregion
     }
