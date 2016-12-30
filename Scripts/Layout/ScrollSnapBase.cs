@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-    public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler
+    public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler, IPointerDownHandler, IPointerUpHandler
     {
         internal RectTransform _screensContainer;
         internal bool isVertical;
@@ -18,6 +18,7 @@ namespace UnityEngine.UI.Extensions
         internal ScrollRect _scroll_rect;
         internal Vector3 _lerp_target;
         internal bool _lerp;
+        internal bool _pointerDown = false;
         internal Vector3 _startPosition = new Vector3();
         [Tooltip("The currently active page")]
         internal int _currentPage;
@@ -316,7 +317,7 @@ namespace UnityEngine.UI.Extensions
         }
 
         /// <summary>
-        /// Event fires when the user starts to change the page, either via swipe or button
+        /// Event fires when the user starts to change the page, either via swipe or button.
         /// </summary>
         internal void StartScreenChange()
         {
@@ -357,6 +358,16 @@ namespace UnityEngine.UI.Extensions
         public void OnDrag(PointerEventData eventData)
         {
             _lerp = false;
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            _pointerDown = true;
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            _pointerDown = false;
         }
         #endregion
     }
