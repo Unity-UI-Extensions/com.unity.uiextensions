@@ -2,17 +2,33 @@
 This file contains the up to date release notes for each release of the UI Extensions project including release videos where required.
 
 ----------------
-##Update 1.1.1##
-
-Incremental release with a few new features and fixes
+##Update 1.2##
+[![View 1.2 update Video](http://img.youtube.com/vi/tbc/0.jpg)](https://www.youtube.com/watch?v=tbc "Update 1.2 for the Unity UI Extensions Project")
 
 ###New / updated features###
+* Major updates to the Horizontal and Vertical Scroll Snap controls
+* Replacement HSV/Color picker control (and new Box Slider control)
+* Fixes / updates to the TextPic control
+* Updates to SoftAlphaUI script - improved Text / worldspace support
+* New Gadient control (gradient 2)
 * New UI ScrollRect Occlusion utility
 * New UI Tween Scale utility
 * New UI Infinite ScrollRect
+* New Table Layout Group
 
 ###Fixes###
-* UI Particles effect updated with minor fixes
+* H&S Scroll Snap indexing issues
+* H&S Scroll Snap performance updates 
+* H&S Scroll Snap Long swipe behavior updated
+* TextPic Set set before draw issues
+* HSV picker replaced with more generic color picker
+
+###Known issues###
+* The Image_Extended control has been removed due to Unity upgrade issues. Will return in a future update.
+
+##Upgrade Notes##
+Although not specifically required, it is recommended to remove the old UI Extensions folder before importing the new asset
+The HSS picker especially had a lot of file changes in this update.
 
 ----------------
 ##Update 1.1##
