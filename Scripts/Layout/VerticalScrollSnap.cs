@@ -13,19 +13,23 @@ namespace UnityEngine.UI.Extensions
     {
         void Start()
         {
-            isVertical = true;
-            childAnchorPoint = new Vector2(0.5f,0);
-            DistributePages();
-            if(MaskArea) CalculateVisible();
-            _lerp = false;
+            _isVertical = true;
+            _childAnchorPoint = new Vector2(0.5f,0);
             _currentPage = StartingScreen;
-            SetScrollContainerPosition();
+            UpdateLayout();
         }
 
         void Update()
         {
             if (!_lerp && _scroll_rect.velocity == Vector2.zero)
             {
+                if (!_settled && !_pointerDown)
+                {
+                    if (!IsRectSettledOnaPage(_screensContainer.localPosition))
+                    {
+                        ScrollToClosestElement();
+                    }
+                }
                 return;
             }
             else if (_lerp)
@@ -70,7 +74,7 @@ namespace UnityEngine.UI.Extensions
                 currentYPosition = _offset + i * pageStepValue;
                 child.sizeDelta = new Vector2(panelDimensions.width, panelDimensions.height);
                 child.anchoredPosition = new Vector2(0f, currentYPosition);
-                child.anchorMin = child.anchorMax = child.pivot = childAnchorPoint;
+                child.anchorMin = child.anchorMax = child.pivot = _childAnchorPoint;
             }
 
             _dimension = currentYPosition + _offset * -1;
@@ -136,8 +140,18 @@ namespace UnityEngine.UI.Extensions
         {
             _lerp = false;
             DistributePages();
+            if (MaskArea) UpdateVisible();
             SetScrollContainerPosition();
         }
+
+        private void OnRectTransformDimensionsChange()
+        {
+            if (_childAnchorPoint != Vector2.zero)
+            {
+                UpdateLayout();
+            }
+        }
+
         #region Interfaces
         /// <summary>
         /// Release screen to swipe

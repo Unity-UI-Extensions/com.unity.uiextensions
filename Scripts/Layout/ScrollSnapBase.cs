@@ -7,23 +7,25 @@ namespace UnityEngine.UI.Extensions
     public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler, IPointerDownHandler, IPointerUpHandler
     {
         internal RectTransform _screensContainer;
-        internal bool isVertical;
+        internal bool _isVertical;
 
         internal int _screens = 1;
 
         internal float _scrollStartPosition;
         internal float _childSize;
-        private float _childPos;
-        internal Vector2 childAnchorPoint;
+        private float _childPos, _maskSize;
+        internal Vector2 _childAnchorPoint;
         internal ScrollRect _scroll_rect;
         internal Vector3 _lerp_target;
         internal bool _lerp;
         internal bool _pointerDown = false;
+        internal bool _settled = true;
         internal Vector3 _startPosition = new Vector3();
         [Tooltip("The currently active page")]
         internal int _currentPage;
         internal int _previousPage;
-        internal int HalfNoVisibleItems;
+        internal int _halfNoVisibleItems;
+        private int _bottomItem, _topItem;
 
         [Serializable]
         public class SelectionChangeStartEvent : UnityEvent { }
@@ -76,7 +78,7 @@ namespace UnityEngine.UI.Extensions
             }
             internal set
             {
-                if (value != _currentPage)
+                if (value != _currentPage && value >= 0 && value < _screensContainer.childCount)
                 {
                     _previousPage = _currentPage;
                     _currentPage = value;
@@ -94,14 +96,17 @@ namespace UnityEngine.UI.Extensions
         public GameObject[] ChildObjects;
         
         [SerializeField]
+        [Tooltip("Event fires when a user starts to change the selection")]
         private SelectionChangeStartEvent m_OnSelectionChangeStartEvent = new SelectionChangeStartEvent();
         public SelectionChangeStartEvent OnSelectionChangeStartEvent { get { return m_OnSelectionChangeStartEvent; } set { m_OnSelectionChangeStartEvent = value; } }
 
         [SerializeField]
+        [Tooltip("Event fires as the page changes, while dragging or jumping")]
         private SelectionPageChangedEvent m_OnSelectionPageChangedEvent = new SelectionPageChangedEvent();
         public SelectionPageChangedEvent OnSelectionPageChangedEvent { get { return m_OnSelectionPageChangedEvent; } set { m_OnSelectionPageChangedEvent = value; } }
 
         [SerializeField]
+        [Tooltip("Event fires when the page settles after a user has dragged")]
         private SelectionChangeEndEvent m_OnSelectionChangeEndEvent = new SelectionChangeEndEvent();
         public SelectionChangeEndEvent OnSelectionChangeEndEvent { get { return m_OnSelectionChangeEndEvent; } set { m_OnSelectionChangeEndEvent = value; } }
 
@@ -182,33 +187,43 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        internal void CalculateVisible()
-        {
-            float MaskSize = isVertical ? MaskArea.rect.height : MaskArea.rect.width;
-            HalfNoVisibleItems = (int)Math.Round(MaskSize / (_childSize * MaskBuffer), MidpointRounding.AwayFromZero) / 2 + 2;
-            int StartingItemsBefore = StartingScreen - HalfNoVisibleItems < 0 ? 0 : HalfNoVisibleItems;
-            int StartingItemsAfter = _screensContainer.childCount - StartingScreen < HalfNoVisibleItems ? _screensContainer.childCount - StartingScreen : HalfNoVisibleItems;
-            for (int i = StartingScreen - StartingItemsBefore; i < StartingScreen + StartingItemsAfter - 1; i++)
-            {
-                ChildObjects[i].SetActive(true);
-            }
-        }
-
         internal void UpdateVisible()
         {
-            //If there are no objects in the scene, exit
-            if (ChildObjects == null || ChildObjects.Length < 1 || _screensContainer.childCount < 1) return;
+            //If there are no objects in the scene or a mask, exit
+            if (!MaskArea && (ChildObjects == null || ChildObjects.Length < 1 || _screensContainer.childCount < 1)) return;
 
-            int BottomItem = _currentPage - HalfNoVisibleItems < 0 ? 0 : HalfNoVisibleItems;
-            int TopItem = _screensContainer.childCount - _currentPage < HalfNoVisibleItems ? _screensContainer.childCount - _currentPage : HalfNoVisibleItems;
-
-            for (int i = CurrentPage - BottomItem; i < CurrentPage + TopItem; i++)
+            _maskSize = _isVertical ? MaskArea.rect.height : MaskArea.rect.width;
+            _halfNoVisibleItems = (int)Math.Round(_maskSize / (_childSize * MaskBuffer), MidpointRounding.AwayFromZero) / 2;
+            _bottomItem = _topItem = 0;
+            //work out how many items below the current page can be visible
+            for (int i = _halfNoVisibleItems + 1; i > 0 ; i--)
             {
-                ChildObjects[i].SetActive(true);
+                _bottomItem = _currentPage - i < 0 ? 0 : i;
+                if (_bottomItem > 0) break;
+            }
+            //work out how many items above the current page can be visible
+            for (int i = _halfNoVisibleItems + 1; i > 0; i--)
+            {
+                _topItem = _screensContainer.childCount - _currentPage - i < 0 ? 0 : i;
+                if (_topItem > 0) break;
+            }
+            //Set the active items active
+            for (int i = CurrentPage - _bottomItem; i < CurrentPage + _topItem; i++)
+            {
+                try
+                {
+                    ChildObjects[i].SetActive(true);
+                }
+                catch
+                {
+                    Debug.Log("Failed to setactive child [" + i + "]");
+                }
             }
 
-            if (_screensContainer.childCount - _currentPage > HalfNoVisibleItems + 1) ChildObjects[CurrentPage + TopItem + 1].SetActive(false);
-            if(_currentPage - HalfNoVisibleItems > 0) ChildObjects[CurrentPage - BottomItem - 1].SetActive(false);
+            //Deactivate items out of visibility at the bottom of the ScrollRect Mask (only on scroll)
+            if (_currentPage > _halfNoVisibleItems) ChildObjects[CurrentPage - _bottomItem].SetActive(false);
+            //Deactivate items out of visibility at the top of the ScrollRect Mask (only on scroll)
+            if (_screensContainer.childCount - _currentPage > _topItem) ChildObjects[CurrentPage + _topItem].SetActive(false);
         }
 
 
@@ -256,17 +271,39 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        /// <summary>
+        /// Gets the closest page for the current Scroll Rect container position
+        /// </summary>
+        /// <param name="pos">Position to test, normally the Scroll Rect container Local position</param>
+        /// <returns>Closest Page number (zero indexed array value)</returns>
         internal int GetPageforPosition(Vector3 pos)
         {
-            return isVertical ? 
+            return _isVertical ? 
                 -(int)Math.Round((pos.y - _scrollStartPosition) / _childSize) :
                 -(int)Math.Round((pos.x - _scrollStartPosition) / _childSize);
         }
 
+        /// <summary>
+        /// Validates if the current Scroll Rect container position is within the bounds for a page
+        /// </summary>
+        /// <param name="pos">Position to test, normally the Scroll Rect container Local position</param>
+        /// <returns>True / False, is the position in the bounds of a page</returns>
+        internal bool IsRectSettledOnaPage(Vector3 pos)
+        {
+            return _isVertical ?
+                -((pos.y - _scrollStartPosition) / _childSize) == -(int)Math.Round((pos.y - _scrollStartPosition) / _childSize) :
+                -((pos.x - _scrollStartPosition) / _childSize)  == -(int)Math.Round((pos.x - _scrollStartPosition) / _childSize);
+        }
+
+        /// <summary>
+        /// Returns the local position for a child page based on the required page number
+        /// </summary>
+        /// <param name="page">Page that the position is required for (Zero indexed array value)</param>
+        /// <param name="target">Outputs the local position for the selected page</param>
         internal void GetPositionforPage(int page, ref Vector3 target)
         {
             _childPos = -_childSize * page;
-            if (isVertical)
+            if (_isVertical)
             {
                 target.y = _childPos + _scrollStartPosition;
             }
@@ -276,6 +313,9 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        /// <summary>
+        /// Updates the _Lerp target to the closest page and updates the pagination bullets.  Each control's update loop will then handle the move.
+        /// </summary>
         internal void ScrollToClosestElement()
         {
             _lerp = true;
@@ -283,8 +323,10 @@ namespace UnityEngine.UI.Extensions
             GetPositionforPage(_currentPage, ref _lerp_target);
             ChangeBulletsInfo(_currentPage);
         }
-
-        //changes the bullets on the bottom of the page - pagination
+        /// <summary>
+        /// changes the bullets on the bottom of the page - pagination
+        /// </summary>
+        /// <param name="targetScreen"></param>
         internal void ChangeBulletsInfo(int targetScreen)
         {
             if (Pagination)
@@ -314,6 +356,14 @@ namespace UnityEngine.UI.Extensions
             {
                 MaskBuffer = 1;
             }
+            if (PageStep < 0)
+            {
+                PageStep = 0;
+            }
+            if (PageStep > 8)
+            {
+                PageStep = 9;
+            }
         }
 
         /// <summary>
@@ -338,6 +388,7 @@ namespace UnityEngine.UI.Extensions
         internal void EndScreenChange()
         {
             OnSelectionChangeEndEvent.Invoke(_currentPage);
+            _settled = true;
         }
 
         #region Interfaces
@@ -347,6 +398,7 @@ namespace UnityEngine.UI.Extensions
         /// <param name="eventData"></param>
         public void OnBeginDrag(PointerEventData eventData)
         {
+            _settled = false;
             StartScreenChange();
             _startPosition = _screensContainer.localPosition;
         }

@@ -13,10 +13,9 @@ namespace UnityEngine.UI.Extensions
     {
         void Start()
         {
-            isVertical = false;
-            childAnchorPoint = new Vector2(0, 0.5f);
+            _isVertical = false;
+            _childAnchorPoint = new Vector2(0, 0.5f);
             DistributePages();
-            if(MaskArea) CalculateVisible();
             _lerp = false;
             _currentPage = StartingScreen;
             SetScrollContainerPosition();
@@ -26,6 +25,13 @@ namespace UnityEngine.UI.Extensions
         {
             if (!_lerp && _scroll_rect.velocity == Vector2.zero)
             {
+                if (!_settled && !_pointerDown)
+                {
+                    if (!IsRectSettledOnaPage(_screensContainer.localPosition))
+                    {
+                        ScrollToClosestElement();
+                    }
+                }
                 return;
             }
             else if (_lerp)
@@ -44,12 +50,17 @@ namespace UnityEngine.UI.Extensions
             if (!_pointerDown && (_scroll_rect.velocity.x > 0.01 || _scroll_rect.velocity.x < 0.01))
             {
                 // if the pointer is released and is moving slower than the threshold, then just land on a page
-                if ((_scroll_rect.velocity.x > 0 && _scroll_rect.velocity.x < SwipeVelocityThreshold) ||
-                    (_scroll_rect.velocity.x < 0 && _scroll_rect.velocity.x > -SwipeVelocityThreshold))
+                if (IsRectMovingFasterThanThreshold(0))
                 {
                     ScrollToClosestElement();
                 }
             }
+        }
+
+        private bool IsRectMovingFasterThanThreshold(float startingSpeed)
+        {
+            return (_scroll_rect.velocity.x > startingSpeed && _scroll_rect.velocity.x < SwipeVelocityThreshold) ||
+                                (_scroll_rect.velocity.x < startingSpeed && _scroll_rect.velocity.x > -SwipeVelocityThreshold);
         }
 
         private void DistributePages()
@@ -70,7 +81,7 @@ namespace UnityEngine.UI.Extensions
                 currentXPosition = _offset + (int)(i * pageStepValue);
                 child.sizeDelta = new Vector2(panelDimensions.width, panelDimensions.height);
                 child.anchoredPosition = new Vector2(currentXPosition, 0f);
-                child.anchorMin = child.anchorMax = child.pivot = childAnchorPoint;
+                child.anchorMin = child.anchorMax = child.pivot = _childAnchorPoint;
             }
 
             _dimension = currentXPosition + _offset * -1;
@@ -135,7 +146,16 @@ namespace UnityEngine.UI.Extensions
         {
             _lerp = false;
             DistributePages();
+            if (MaskArea) UpdateVisible();
             SetScrollContainerPosition();
+        }
+
+        private void OnRectTransformDimensionsChange()
+        {
+            if (_childAnchorPoint != Vector2.zero)
+            {
+                UpdateLayout();
+            }
         }
 
         #region Interfaces
