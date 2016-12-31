@@ -15,10 +15,8 @@ namespace UnityEngine.UI.Extensions
         {
             _isVertical = false;
             _childAnchorPoint = new Vector2(0, 0.5f);
-            DistributePages();
-            _lerp = false;
             _currentPage = StartingScreen;
-            SetScrollContainerPosition();
+            UpdateLayout();
         }
 
         void Update()

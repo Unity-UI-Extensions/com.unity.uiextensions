@@ -114,13 +114,13 @@ UIPolygon||||
 
 [Layouts](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Controls#Layouts)|||||
 ------|------|------|------|
-HorizontalScrollSnap|VerticalScrollSnap|FlowLayoutGroup|RadialLayout|TileSizeFitter
-ScrollSnap|ReorderableList|UIVerticalScroller|CurvedLayout|
+Horizontal Scroll Snap|Vertical Scroll Snap|Flow Layout Group|Radial Layout|Tile Size Fitter
+Scroll Snap (alt implementation)|Reorderable List|UI Vertical Scroller|Curved Layout|Table Layout
 ||||
 
 [Effects](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Controls#Effects)|||||
 ------|------|------|------|
-BestFitOutline|CurvedText|Gradient|Gradient2|LetterSpacing|
+Best Fit Outline|Curved Text|Gradient|Gradient2|Letter Spacing|
 NicerOutline|RaycastMask|UIFlippable|UIImageCrop|SoftAlphaMask
 CylinderText|UIParticleSystem|||
 ||||
@@ -149,9 +149,11 @@ PPIViewer|UI_TweenScale|UI_InfiniteScroll|UI_ScrollRectOcclusion|
 
 
 #[ How do I get set up? ](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/GettingStarted)#
+
 Either clone / download this repository to your machine and then copy the scripts in, or use the pre-packaged .UnityPackage for your version of Unity and import it as a custom package in to your project.
 
 #[ Contribution guidelines ](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/ContributionGuidelines)#
+
 Got a script you want added? Then just fork the bitbucket repository and submit a PR.  All contributions accepted (including fixes)
 Just ensure 
 * The header of the script matches the standard used in all scripts
@@ -159,18 +161,22 @@ Just ensure
 * (optional) Add Component and Editor options where possible (editor options are in the Editor\UIExtensionsMenuOptions.cs file)
 
 #[ License ](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/License)#
+
 All scripts conform to the BSD license and are free to use / distribute.  See the [LICENSE](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/License) file for more information 
 
 #[ Like what you see? ](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/FurtherInfo)#
+
 All these scripts were put together for my latest book Unity3D UI Essentials
 Check out the [page on my blog](http://bit.ly/Unity3DUIEssentials) for more details and learn all about the inner workings of the new Unity UI System.
 
 #[ The downloads ](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Downloads)#
+
 As this repo was created to support my new Unity UI Title ["Unity 3D UI Essentials"](http://bit.ly/Unity3DUIEssentials), in the downloads section you will find two custom assets (SpaceShip-DemoScene-Start.unitypackage and RollABallSample-Start.unitypackage).  These are just here as starter scenes for doing UI tasks in the book.
 
 I will add more sample scenes for the UI examples in this repository and detail them above over time.
 
 #[Previous Releases](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Downloads)#
+
 * [Unity UI Extensions Unity 4.x Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-4.x.unitypackage)
 
 * [Unity UI Extensions Unity 5.1 Asset](https://bitbucket.org/ddreaper/unity-ui-extensions/downloads/UnityUIExtensions-5.1.unitypackage)
@@ -183,4 +189,5 @@ I will add more sample scenes for the UI examples in this repository and detail 
 > ```
 > `UnityEngine.UI.InputField.onValueChange' is obsolete.  
 > ```
-> This has no effect on the package working in 5.4 plus and is only there to maintain backwards compatibility.  We will look to update/remove this in a future release, likely after 5.4.  If you have any concerns, feel free to update your code in your project to add the missing "d".  Unity have ensured it still works as they have mapped the API change for now.
+> This has no effect on the package working in 5.4 plus and is only there to maintain backwards compatibility.  We will look to update/remove this in a future release, likely after 5.4.  
+If you have any concerns, feel free to update your code in your project to add the missing "d".  Unity have ensured it still works as they have mapped the API change for now.
