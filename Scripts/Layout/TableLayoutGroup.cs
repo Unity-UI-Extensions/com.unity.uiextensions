@@ -100,7 +100,7 @@ namespace UnityEngine.UI.Extensions
                 SetProperty(ref rowSpacing, value);
             }
         }
-        
+
         // Temporarily stores data generated during the execution CalculateLayoutInputVertical for use in SetLayoutVertical
         private float[] preferredRowHeights;
 
@@ -109,7 +109,7 @@ namespace UnityEngine.UI.Extensions
             base.CalculateLayoutInputHorizontal();
 
             float horizontalSize = padding.horizontal;
-            
+
             // We calculate the actual cell count for cases where the number of children is lesser than the number of columns
             int actualCellCount = Mathf.Min(rectChildren.Count, columnWidths.Length);
 
@@ -148,30 +148,28 @@ namespace UnityEngine.UI.Extensions
                 float maxMinimumHeightInRow = 0;
                 float maxPreferredHeightInRow = 0;
 
-                for (int i = 0; i < rectChildren.Count; i++)
+                for (int i = 0; i < rowCount; i++)
                 {
-                    int currentRowIndex = i / columnCount;
-                    int currentColumnIndex = i % columnCount;
+                    maxMinimumHeightInRow = minimumRowHeight;
+                    maxPreferredHeightInRow = minimumRowHeight;
 
-                    // If it's the first cell in the row, reset heights for the row
-                    if (currentColumnIndex == 0)
+                    for (int j = 0; j < columnCount; j++)
                     {
-                        maxMinimumHeightInRow = minimumRowHeight;
-                        maxPreferredHeightInRow = minimumRowHeight;
+                        int childIndex = (i * columnCount) + j;
+
+                        // Safeguard against tables with incomplete rows
+                        if (childIndex == rectChildren.Count)
+                            break;
+
+                        maxPreferredHeightInRow = Mathf.Max(LayoutUtility.GetPreferredHeight(rectChildren[childIndex]), maxPreferredHeightInRow);
+                        maxMinimumHeightInRow = Mathf.Max(LayoutUtility.GetMinHeight(rectChildren[childIndex]), maxMinimumHeightInRow);
                     }
 
-                    maxPreferredHeightInRow = Mathf.Max(LayoutUtility.GetPreferredHeight(rectChildren[i]), maxPreferredHeightInRow);
-                    maxMinimumHeightInRow = Mathf.Max(LayoutUtility.GetMinHeight(rectChildren[i]), maxMinimumHeightInRow);
+                    totalMinHeight += maxMinimumHeightInRow;
+                    totalPreferredHeight += maxPreferredHeightInRow;
 
-                    // If it's the last cell in the row, or if it's the last cell and the row is incomplete, set calculated heights
-                    if (currentColumnIndex == columnCount - 1 || (i == rectChildren.Count - 1 && currentRowIndex == rowCount - 1))
-                    {
-                        totalMinHeight += maxMinimumHeightInRow;
-                        totalPreferredHeight += maxPreferredHeightInRow;
-
-                        // Add calculated row height to a commonly accessible array for reuse in SetLayoutVertical()
-                        preferredRowHeights[currentRowIndex] = maxPreferredHeightInRow;
-                    }
+                    // Add calculated row height to a commonly accessible array for reuse in SetLayoutVertical()
+                    preferredRowHeights[i] = maxPreferredHeightInRow;
                 }
             }
             else
@@ -199,7 +197,7 @@ namespace UnityEngine.UI.Extensions
 
             float startOffset = 0;
             float requiredSizeWithoutPadding = 0;
-            
+
             // We calculate the actual cell count for cases where the number of children is lesser than the number of columns
             int actualCellCount = Mathf.Min(rectChildren.Count, columnWidths.Length);
 
@@ -242,46 +240,45 @@ namespace UnityEngine.UI.Extensions
         {
             int columnCount = columnWidths.Length;
             int rowCount = preferredRowHeights.Length;
-            
+
             int cornerY = (int)startCorner / 2;
 
             float startOffset = 0;
             float requiredSizeWithoutPadding = 0;
-            
-            for (int i = 0; i < rowCount; i++)
-            {
-                requiredSizeWithoutPadding += preferredRowHeights[i];
-                requiredSizeWithoutPadding += rowSpacing;
-            }
 
-            requiredSizeWithoutPadding -= rowSpacing;
+            for (int i = 0; i < rowCount; i++)
+                requiredSizeWithoutPadding += preferredRowHeights[i];
+
+            if (rowCount > 1)
+                requiredSizeWithoutPadding += (rowCount - 1) * rowSpacing;
 
             startOffset = GetStartOffset(1, requiredSizeWithoutPadding);
-            
+
             if (cornerY == 1)
                 startOffset += requiredSizeWithoutPadding;
 
             float positionY = startOffset;
 
-            for (int i = 0; i < rectChildren.Count; i++)
+            for (int i = 0; i < rowCount; i++)
             {
-                int currentRowIndex = i / columnCount;
-                int currentColumnIndex = i % columnCount;
+                if (cornerY == 1)
+                    positionY -= preferredRowHeights[i];
 
-                // If it's the first cell in the row and start corner is one of the bottom corners, then modify positionY appropriately
-                if (currentColumnIndex == 0 && cornerY == 1)
-                        positionY -= preferredRowHeights[currentRowIndex];
-                
-                SetChildAlongAxis(rectChildren[i], 1, positionY, preferredRowHeights[currentRowIndex]);
-
-                // If it's the first last cell in the row, then modify positionY appropriately
-                if (currentColumnIndex == columnCount - 1)
+                for (int j = 0; j < columnCount; j++)
                 {
-                    if (cornerY == 1)
-                        positionY -= rowSpacing;
-                    else
-                        positionY += preferredRowHeights[currentRowIndex] + rowSpacing;
+                    int childIndex = (i * columnCount) + j;
+
+                    // Safeguard against tables with incomplete rows
+                    if (childIndex == rectChildren.Count)
+                        break;
+
+                    SetChildAlongAxis(rectChildren[childIndex], 1, positionY, preferredRowHeights[i]);
                 }
+
+                if (cornerY == 1)
+                    positionY -= rowSpacing;
+                else
+                    positionY += preferredRowHeights[i] + rowSpacing;
             }
 
             // Set preferredRowHeights to null to free memory
