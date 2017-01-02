@@ -3,13 +3,14 @@ This file contains the up to date release notes for each release of the UI Exten
 
 ----------------
 ##Update 1.2##
-[![View 1.2 update Video](http://img.youtube.com/vi/tbc/0.jpg)](https://www.youtube.com/watch?v=tbc "Update 1.2 for the Unity UI Extensions Project")
+[![View 1.2 update Video](http://img.youtube.com/vi/cWv0A6rEEc8/0.jpg)](https://www.youtube.com/watch?v=cWv0A6rEEc8 "Update 1.2 for the Unity UI Extensions Project")
 
 ###New / updated features###
 * Major updates to the Horizontal and Vertical Scroll Snap controls
 * Replacement HSV/Color picker control (and new Box Slider control)
 * Fixes / updates to the TextPic control
 * Updates to SoftAlphaUI script - improved Text / worldspace support
+* Updates to Extensions Toggle - Adds ID and event to publish ID on change
 * New Gadient control (gradient 2)
 * New UI ScrollRect Occlusion utility
 * New UI Tween Scale utility
@@ -17,9 +18,10 @@ This file contains the up to date release notes for each release of the UI Exten
 * New Table Layout Group
 
 ###Fixes###
-* H&S Scroll Snap indexing issues
-* H&S Scroll Snap performance updates 
-* H&S Scroll Snap Long swipe behavior updated
+* H&V Scroll Snap indexing issues
+* H&V Scroll Snap performance updates 
+* H&V Scroll Snap Long swipe behavior updated
+* H&V Scroll Snap support for Rect Resizing
 * TextPic Set set before draw issues
 * HSV picker replaced with more generic color picker
 
@@ -29,6 +31,9 @@ This file contains the up to date release notes for each release of the UI Exten
 ##Upgrade Notes##
 Although not specifically required, it is recommended to remove the old UI Extensions folder before importing the new asset
 The HSS picker especially had a lot of file changes in this update.
+
+>**Note** In Unity 5.5 the particle system was overhauled and several methods were marked for removal. However, the UI Particle System script currently still uses them
+> Either ignore these errors or remove the *_UIParticleSystem_* script in the "*Unity UI Extensions / Scripts / Effects*" folder
 
 ----------------
 ##Update 1.1##
