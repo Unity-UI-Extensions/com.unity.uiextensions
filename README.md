@@ -55,24 +55,25 @@ To get started with the project, here's a little guide:
 #[Updates:](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/ReleaseNotes/RELEASENOTES)#
 
 ##Update 1.2##
-
-[![View 1.2 update Video](http://img.youtube.com/vi/tbc/0.jpg)](https://www.youtube.com/watch?v=tbc "Update 1.2 for the Unity UI Extensions Project")
+[![View 1.2 update Video](http://img.youtube.com/vi/cWv0A6rEEc8/0.jpg)](https://www.youtube.com/watch?v=cWv0A6rEEc8 "Update 1.2 for the Unity UI Extensions Project")
 
 ###New / updated features###
 * Major updates to the Horizontal and Vertical Scroll Snap controls
 * Replacement HSV/Color picker control (and new Box Slider control)
 * Fixes / updates to the TextPic control
-* Updates to SoftAlphaUI script - improved Text / world space support
-* New Gradient control (gradient 2)
+* Updates to SoftAlphaUI script - improved Text / worldspace support
+* Updates to Extensions Toggle - Adds ID and event to publish ID on change
+* New Gadient control (gradient 2)
 * New UI ScrollRect Occlusion utility
 * New UI Tween Scale utility
 * New UI Infinite ScrollRect
 * New Table Layout Group
 
 ###Fixes###
-* H&S Scroll Snap indexing issues
-* H&S Scroll Snap performance updates 
-* H&S Scroll Snap Long swipe behavior updated
+* H&V Scroll Snap indexing issues
+* H&V Scroll Snap performance updates 
+* H&V Scroll Snap Long swipe behavior updated
+* H&V Scroll Snap support for Rect Resizing
 * TextPic Set set before draw issues
 * HSV picker replaced with more generic color picker
 
