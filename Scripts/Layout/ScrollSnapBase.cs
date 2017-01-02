@@ -340,9 +340,10 @@ namespace UnityEngine.UI.Extensions
 
         private void OnValidate()
         {
-            if (_screensContainer || ChildObjects != null)
+            var children  = gameObject.GetComponent<ScrollRect>().content.childCount;
+            if (children != 0 || ChildObjects != null)
             {
-                var childCount = ChildObjects == null ? _screensContainer.childCount : ChildObjects.Length;
+                var childCount = ChildObjects == null || ChildObjects.Length == 0 ? children : ChildObjects.Length;
                 if (StartingScreen > childCount - 1)
                 {
                     StartingScreen = childCount - 1;
