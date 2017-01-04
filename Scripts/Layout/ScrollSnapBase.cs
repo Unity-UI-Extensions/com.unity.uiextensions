@@ -78,7 +78,7 @@ namespace UnityEngine.UI.Extensions
             }
             internal set
             {
-                if (value != _currentPage && value >= 0 && value < _screensContainer.childCount)
+                if ((value != _currentPage && value >= 0 && value < _screensContainer.childCount) || (value == 0 && _screensContainer.childCount == 0))
                 {
                     _previousPage = _currentPage;
                     _currentPage = value;
@@ -190,7 +190,10 @@ namespace UnityEngine.UI.Extensions
         internal void UpdateVisible()
         {
             //If there are no objects in the scene or a mask, exit
-            if (!MaskArea && (ChildObjects == null || ChildObjects.Length < 1 || _screensContainer.childCount < 1)) return;
+            if (!MaskArea || ChildObjects == null || ChildObjects.Length < 1 || _screensContainer.childCount < 1)
+            {
+                return;
+            }
 
             _maskSize = _isVertical ? MaskArea.rect.height : MaskArea.rect.width;
             _halfNoVisibleItems = (int)Math.Round(_maskSize / (_childSize * MaskBuffer), MidpointRounding.AwayFromZero) / 2;

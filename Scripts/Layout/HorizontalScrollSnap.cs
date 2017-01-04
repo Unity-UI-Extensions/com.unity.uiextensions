@@ -93,8 +93,18 @@ namespace UnityEngine.UI.Extensions
         /// <param name="GO">GameObject to add to the ScrollSnap</param>
         public void AddChild(GameObject GO)
         {
+            AddChild(GO, false);
+        }
+
+        /// <summary>
+        /// Add a new child to this Scroll Snap and recalculate it's children
+        /// </summary>
+        /// <param name="GO">GameObject to add to the ScrollSnap</param>
+        /// <param name="WorldPositionStays">Should the world position be updated to it's parent transform?</param>
+        public void AddChild(GameObject GO, bool WorldPositionStays)
+        {
             _scroll_rect.horizontalNormalizedPosition = 0;
-            GO.transform.SetParent(_screensContainer);
+            GO.transform.SetParent(_screensContainer, WorldPositionStays);
             DistributePages();
             if (MaskArea) UpdateVisible();
 
@@ -129,6 +139,28 @@ namespace UnityEngine.UI.Extensions
             }
 
             SetScrollContainerPosition();
+        }
+
+        /// <summary>
+        /// Remove all children from this ScrollSnap
+        /// </summary>
+        /// <param name="ChildrenRemoved"></param>
+        public void RemoveAllChildren(out GameObject[] ChildrenRemoved)
+        {
+            var _screenCount = _screensContainer.childCount;
+            ChildrenRemoved = new GameObject[_screenCount];
+
+            for (int i = _screenCount - 1; i >= 0; i--)
+            {
+                ChildrenRemoved[i] = _screensContainer.GetChild(i).gameObject;
+                ChildrenRemoved[i].transform.SetParent(null);
+            }
+
+            _scroll_rect.horizontalNormalizedPosition = 0;
+            CurrentPage = 0;
+            InitialiseChildObjectsFromScene();
+            DistributePages();
+            if (MaskArea) UpdateVisible();
         }
 
         private void SetScrollContainerPosition()
