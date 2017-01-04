@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-    public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler, IPointerDownHandler, IPointerUpHandler
+    public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler
     {
         internal RectTransform _screensContainer;
         internal bool _isVertical;
@@ -404,6 +404,7 @@ namespace UnityEngine.UI.Extensions
         /// <param name="eventData"></param>
         public void OnBeginDrag(PointerEventData eventData)
         {
+            _pointerDown = true;
             _settled = false;
             StartScreenChange();
             _startPosition = _screensContainer.localPosition;
@@ -418,15 +419,6 @@ namespace UnityEngine.UI.Extensions
             _lerp = false;
         }
 
-        public void OnPointerDown(PointerEventData eventData)
-        {
-            _pointerDown = true;
-        }
-
-        public void OnPointerUp(PointerEventData eventData)
-        {
-            _pointerDown = false;
-        }
         #endregion
     }
 }

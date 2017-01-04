@@ -43,19 +43,22 @@ namespace UnityEngine.UI.Extensions
             }
 
             CurrentPage = GetPageforPosition(_screensContainer.localPosition);
-            
+
             //If the container is moving check if it needs to settle on a page
-            if (!_pointerDown && (_scroll_rect.velocity.x > 0.01 || _scroll_rect.velocity.x < 0.01))
+            if (!_pointerDown)
             {
-                // if the pointer is released and is moving slower than the threshold, then just land on a page
-                if (IsRectMovingFasterThanThreshold(0))
+                if (_scroll_rect.velocity.x > 0.01 || _scroll_rect.velocity.x < 0.01)
                 {
-                    ScrollToClosestElement();
+                    //if the pointer is released and is moving slower than the threshold, then just land on a page
+                    if (IsRectMovingSlowerThanThreshold(0))
+                    {
+                        ScrollToClosestElement();
+                    }
                 }
             }
         }
 
-        private bool IsRectMovingFasterThanThreshold(float startingSpeed)
+        private bool IsRectMovingSlowerThanThreshold(float startingSpeed)
         {
             return (_scroll_rect.velocity.x > startingSpeed && _scroll_rect.velocity.x < SwipeVelocityThreshold) ||
                                 (_scroll_rect.velocity.x < startingSpeed && _scroll_rect.velocity.x > -SwipeVelocityThreshold);
@@ -195,6 +198,8 @@ namespace UnityEngine.UI.Extensions
         /// <param name="eventData"></param>
         public void OnEndDrag(PointerEventData eventData)
         {
+            _pointerDown = false;
+
             if (_scroll_rect.horizontal)
             {
                 if (UseFastSwipe)
