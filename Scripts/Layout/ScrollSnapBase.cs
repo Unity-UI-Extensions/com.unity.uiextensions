@@ -83,7 +83,7 @@ namespace UnityEngine.UI.Extensions
                     _previousPage = _currentPage;
                     _currentPage = value;
                     if(MaskArea) UpdateVisible();
-                    ScreenChange();
+                    if(!_lerp) ScreenChange();
                     ChangeBulletsInfo(_currentPage);
                 }
             }
@@ -240,6 +240,7 @@ namespace UnityEngine.UI.Extensions
                 _lerp = true;
                 CurrentPage = _currentPage + 1;
                 GetPositionforPage(_currentPage, ref _lerp_target);
+                ScreenChange();
             }
         }
 
@@ -253,6 +254,7 @@ namespace UnityEngine.UI.Extensions
                 _lerp = true;
                 CurrentPage = _currentPage - 1;
                 GetPositionforPage(_currentPage, ref _lerp_target);
+                ScreenChange();
             }
         }
 
