@@ -1690,6 +1690,26 @@ namespace UnityEditor.UI
         }
         #endregion
 
+        #region Non Drawing  Graphic options
+        [MenuItem("GameObject/UI/Extensions/NonDrawingGraphicClickable", false)]
+        static public void AddNonDrawingGraphic(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("NonDrawing Graphic", menuCommand, s_ImageGUIElementSize);
+            go.AddComponent<NonDrawingGraphic>();
+            Selection.activeGameObject = go;
+        }
+
+        [MenuItem("GameObject/UI/Extensions/NonDrawingGraphic", false)]
+        static public void AddClickableNonDrawingGraphic(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("NonDrawing Graphic-Clickable", menuCommand, s_ImageGUIElementSize);
+            go.AddComponent<NonDrawingGraphic>();
+            go.AddComponent<UISelectableExtension>();
+            Selection.activeGameObject = go;
+        }
+        #endregion
+
+
         #endregion
 
         #region Helper Functions
