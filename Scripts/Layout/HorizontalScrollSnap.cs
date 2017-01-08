@@ -181,6 +181,7 @@ namespace UnityEngine.UI.Extensions
             DistributePages();
             if (MaskArea) UpdateVisible();
             SetScrollContainerPosition();
+            ChangeBulletsInfo(_currentPage);
         }
 
         private void OnRectTransformDimensionsChange()
