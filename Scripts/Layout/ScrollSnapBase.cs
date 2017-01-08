@@ -272,7 +272,7 @@ namespace UnityEngine.UI.Extensions
                 _lerp = true;
                 CurrentPage = screenIndex;
                 GetPositionforPage(_currentPage, ref _lerp_target);
-
+                ScreenChange();
             }
         }
 
