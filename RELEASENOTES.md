@@ -16,6 +16,7 @@ This file contains the up to date release notes for each release of the UI Exten
 * New UI Tween Scale utility
 * New UI Infinite ScrollRect
 * New Table Layout Group
+* New Non Drawing Graphic Control
 
 ###Fixes###
 * H&V Scroll Snap indexing issues

@@ -68,6 +68,7 @@ To get started with the project, here's a little guide:
 * New UI Tween Scale utility
 * New UI Infinite ScrollRect
 * New Table Layout Group
+* New Non Drawing Graphic Control
 
 ###Fixes###
 * H&V Scroll Snap indexing issues
