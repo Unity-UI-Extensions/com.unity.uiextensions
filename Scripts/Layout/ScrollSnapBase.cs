@@ -46,11 +46,11 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("The gameobject that contains toggles which suggest pagination. (optional)")]
         public GameObject Pagination;
 
-        [Tooltip("Button to go to the next page. (optional)")]
-        public GameObject NextButton;
-
         [Tooltip("Button to go to the previous page. (optional)")]
         public GameObject PrevButton;
+
+        [Tooltip("Button to go to the next page. (optional)")]
+        public GameObject NextButton;
 
         [Tooltip("Transition speed between pages. (optional)")]
         public float transitionSpeed = 7.5f;
@@ -84,7 +84,7 @@ namespace UnityEngine.UI.Extensions
                     _currentPage = value;
                     if(MaskArea) UpdateVisible();
                     if(!_lerp) ScreenChange();
-                    ChangeBulletsInfo(_currentPage);
+                    OnCurrentScreenChange(_currentPage);
                 }
             }
         }
@@ -326,13 +326,23 @@ namespace UnityEngine.UI.Extensions
             _lerp = true;
             CurrentPage = GetPageforPosition(_screensContainer.localPosition);
             GetPositionforPage(_currentPage, ref _lerp_target);
-            ChangeBulletsInfo(_currentPage);
+            OnCurrentScreenChange(_currentPage);
         }
+
+        /// <summary>
+        /// notifies pagination indicator and navigation buttons of a screen change
+        /// </summary>
+        internal void OnCurrentScreenChange(int currentScreen)
+        {
+            ChangeBulletsInfo(currentScreen);
+            ToggleNavigationButtons(currentScreen);
+        }
+
         /// <summary>
         /// changes the bullets on the bottom of the page - pagination
         /// </summary>
         /// <param name="targetScreen"></param>
-        internal void ChangeBulletsInfo(int targetScreen)
+        private void ChangeBulletsInfo(int targetScreen)
         {
             if (Pagination)
                 for (int i = 0; i < Pagination.transform.childCount; i++)
@@ -341,6 +351,19 @@ namespace UnityEngine.UI.Extensions
                         ? true
                         : false;
                 }
+        }
+
+        /// <summary>
+        /// disables the page navigation buttons when at the first or last screen
+        /// </summary>
+        /// <param name="targetScreen"></param>
+        private void ToggleNavigationButtons(int targetScreen) {
+            if (PrevButton) {
+                PrevButton.GetComponent<Button>().interactable = targetScreen > 0;
+            }
+            if (NextButton) {
+                NextButton.GetComponent<Button>().interactable = targetScreen < _screensContainer.transform.childCount - 1;
+            }
         }
 
         private void OnValidate()
