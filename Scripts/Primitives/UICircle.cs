@@ -9,26 +9,56 @@ namespace UnityEngine.UI.Extensions
     {
         [Tooltip("The circular fill percentage of the primitive, affected by FixedToSegments")]
         [Range(0, 100)]
-        public int fillPercent = 100;
+        [SerializeField]
+        private int m_fillPercent = 100;
         [Tooltip("Should the primitive fill draw by segments or absolute percentage")]
         public bool FixedToSegments = false;
         [Tooltip("Draw the primitive filled or as a line")]
-        public bool fill = true;
+        [SerializeField]
+        private bool m_fill = true;
         [Tooltip("If not filled, the thickness of the primitive line")]
-        public float thickness = 5;
+        [SerializeField]
+        private float m_thickness = 5;
         [Tooltip("The number of segments to draw the primitive, more segments = smoother primitive")]
         [Range(0, 360)]
-        public int segments = 360;
+        [SerializeField]
+        private int m_segments = 360;
+
+
+        public int FillPercent
+        {
+            get { return m_fillPercent; }
+            set { m_fillPercent = value; SetAllDirty(); }
+        }
+
+        public bool Fill
+        {
+            get { return m_fill; }
+            set { m_fill = value; SetAllDirty(); }
+        }
+
+        public float Thickness
+        {
+            get { return m_thickness; }
+            set { m_thickness = value; SetAllDirty(); }
+        }
+
 
         void Update()
         {
-            this.thickness = (float)Mathf.Clamp(this.thickness, 0, rectTransform.rect.width / 2);
+            this.m_thickness = (float)Mathf.Clamp(this.m_thickness, 0, rectTransform.rect.width / 2);
         }
-     
+
+        public int Segments
+        {
+            get { return m_segments; }
+            set { m_segments = value; SetAllDirty(); }
+        }
+
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             float outer = -rectTransform.pivot.x * rectTransform.rect.width;
-            float inner = -rectTransform.pivot.x * rectTransform.rect.width + this.thickness;
+            float inner = -rectTransform.pivot.x * rectTransform.rect.width + this.m_thickness;
      
             vh.Clear();
      
@@ -45,9 +75,9 @@ namespace UnityEngine.UI.Extensions
 
             if (FixedToSegments)
             {
-                float f = (this.fillPercent / 100f);
-                float degrees = 360f / segments;
-                int fa = (int)((segments + 1) * f);
+                float f = (this.m_fillPercent / 100f);
+                float degrees = 360f / m_segments;
+                int fa = (int)((m_segments + 1) * f);
 
 
                 for (int i = 0; i < fa; i++)
@@ -71,9 +101,9 @@ namespace UnityEngine.UI.Extensions
                 float tw = rectTransform.rect.width;
                 float th = rectTransform.rect.height;
 
-                float angleByStep = (fillPercent / 100f * (Mathf.PI * 2f)) / segments;
+                float angleByStep = (m_fillPercent / 100f * (Mathf.PI * 2f)) / m_segments;
                 float currentAngle = 0f;
-                for (int i = 0; i < segments + 1; i++)
+                for (int i = 0; i < m_segments + 1; i++)
                 {
 
                     float c = Mathf.Cos(currentAngle);
@@ -98,7 +128,7 @@ namespace UnityEngine.UI.Extensions
             pos0 = prevX;
             pos1 = new Vector2(outer * c, outer * s);
 
-            if (fill)
+            if (m_fill)
             {
                 pos2 = Vector2.zero;
                 pos3 = Vector2.zero;

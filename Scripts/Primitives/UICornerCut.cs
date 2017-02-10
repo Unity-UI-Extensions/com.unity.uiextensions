@@ -23,22 +23,82 @@ namespace UnityEngine.UI.Extensions {
          public Vector2 cornerSize = new Vector2(16, 16);
 
         [Header("Corners to cut")]
-        public bool cutUL = true;
-        public bool cutUR;
-        public bool cutLL;
-        public bool cutLR;
- 
+        [SerializeField]
+        private bool m_cutUL = true;
+        [SerializeField]
+        private bool m_cutUR;
+        [SerializeField]
+        private bool m_cutLL;
+        [SerializeField]
+        private bool m_cutLR;
+        
         [Tooltip("Up-Down colors become Left-Right colors")]
-        public bool makeColumns = false;
- 
+        [SerializeField]
+        private bool m_makeColumns;
+
         [Header("Color the cut bars differently")]
-        public bool useColorUp;
-//        [HideUnless("useColorUp")]
-        public Color32 colorUp = Color.blue;
- 
-        public bool useColorDown;
-//        [HideUnless("useColorDown")]
-        public Color32 colorDown = Color.green;
+        [SerializeField]
+        private bool m_useColorUp;
+        [SerializeField]
+        private Color32 m_colorUp;
+        [SerializeField]
+        private bool m_useColorDown;
+        [SerializeField]
+        private Color32 m_colorDown;
+
+        public bool CutUL
+        {
+            get { return m_cutUL; }
+            set { m_cutUL = value; SetAllDirty(); }
+        }
+        
+        public bool CutUR
+        {
+            get { return m_cutUR; }
+            set { m_cutUR = value; SetAllDirty(); }
+        }
+
+        public bool CutLL
+        {
+            get { return m_cutLL; }
+            set { m_cutLL = value; SetAllDirty(); }
+        }
+        
+        public bool CutLR
+        {
+            get { return m_cutLR; }
+            set { m_cutLR = value; SetAllDirty(); }
+        }
+        
+        public bool MakeColumns
+        {
+            get { return m_makeColumns; }
+            set { m_makeColumns = value; SetAllDirty(); }
+        }
+        
+        public bool UseColorUp
+        {
+            get { return m_useColorUp; }
+            set { m_useColorUp = value; }
+        }
+        
+        public Color32 ColorUp
+        {
+            get { return m_colorUp; }
+            set { m_colorUp = value; }
+        }
+        
+        public bool UseColorDown
+        {
+            get { return m_useColorDown; }
+            set { m_useColorDown = value; }
+        }
+        
+        public Color32 ColorDown
+        {
+            get { return m_colorDown; }
+            set { m_colorDown = value; }
+        }
 
         protected override void OnPopulateMesh(VertexHelper vh)
         {
@@ -46,10 +106,10 @@ namespace UnityEngine.UI.Extensions {
             var rectNew = rect;
 
             Color32 color32 = color;
-            bool up = cutUL | cutUR;
-            bool down = cutLL | cutLR;
-            bool left = cutLL | cutUL;
-            bool right = cutLR | cutUR;
+            bool up = m_cutUL | m_cutUR;
+            bool down = m_cutLL | m_cutLR;
+            bool left = m_cutLL | m_cutUL;
+            bool right = m_cutLR | m_cutUR;
             bool any = up | down;
 
             if (any && cornerSize.sqrMagnitude > 0)
@@ -69,48 +129,48 @@ namespace UnityEngine.UI.Extensions {
                 //add two squares to the main square
                 Vector2 ul, ur, ll, lr;
 
-                if (makeColumns)
+                if (m_makeColumns)
                 {
-                    ul = new Vector2(rect.xMin, cutUL ? rectNew.yMax : rect.yMax);
-                    ur = new Vector2(rect.xMax, cutUR ? rectNew.yMax : rect.yMax);
-                    ll = new Vector2(rect.xMin, cutLL ? rectNew.yMin : rect.yMin);
-                    lr = new Vector2(rect.xMax, cutLR ? rectNew.yMin : rect.yMin);
+                    ul = new Vector2(rect.xMin, m_cutUL ? rectNew.yMax : rect.yMax);
+                    ur = new Vector2(rect.xMax, m_cutUR ? rectNew.yMax : rect.yMax);
+                    ll = new Vector2(rect.xMin, m_cutLL ? rectNew.yMin : rect.yMin);
+                    lr = new Vector2(rect.xMax, m_cutLR ? rectNew.yMin : rect.yMin);
 
                     if (left)
                         AddSquare(
                             ll, ul,
                             new Vector2(rectNew.xMin, rect.yMax),
                             new Vector2(rectNew.xMin, rect.yMin),
-                            rect, useColorUp ? colorUp : color32, vh);
+                            rect, m_useColorUp ? m_colorUp : color32, vh);
                     if (right)
                         AddSquare(
                             ur, lr,
                             new Vector2(rectNew.xMax, rect.yMin),
                             new Vector2(rectNew.xMax, rect.yMax),
-                            rect, useColorDown ? colorDown : color32, vh);
+                            rect, m_useColorDown ? m_colorDown : color32, vh);
                 }
                 else
                 {
-                    ul = new Vector2(cutUL ? rectNew.xMin : rect.xMin, rect.yMax);
-                    ur = new Vector2(cutUR ? rectNew.xMax : rect.xMax, rect.yMax);
-                    ll = new Vector2(cutLL ? rectNew.xMin : rect.xMin, rect.yMin);
-                    lr = new Vector2(cutLR ? rectNew.xMax : rect.xMax, rect.yMin);
+                    ul = new Vector2(m_cutUL ? rectNew.xMin : rect.xMin, rect.yMax);
+                    ur = new Vector2(m_cutUR ? rectNew.xMax : rect.xMax, rect.yMax);
+                    ll = new Vector2(m_cutLL ? rectNew.xMin : rect.xMin, rect.yMin);
+                    lr = new Vector2(m_cutLR ? rectNew.xMax : rect.xMax, rect.yMin);
                     if (down)
                         AddSquare(
                             lr, ll,
                             new Vector2(rect.xMin, rectNew.yMin),
                             new Vector2(rect.xMax, rectNew.yMin),
-                            rect, useColorDown ? colorDown : color32, vh);
+                            rect, m_useColorDown ? m_colorDown : color32, vh);
                     if (up)
                         AddSquare(
                             ul, ur,
                             new Vector2(rect.xMax, rectNew.yMax),
                             new Vector2(rect.xMin, rectNew.yMax),
-                            rect, useColorUp ? colorUp : color32, vh);
+                            rect, m_useColorUp ? m_colorUp : color32, vh);
                 }
 
                 //center
-                if (makeColumns)
+                if (m_makeColumns)
                     AddSquare(new Rect(rectNew.xMin, rect.yMin, rectNew.width, rect.height), rect, color32, vh);
                 else
                     AddSquare(new Rect(rect.xMin, rectNew.yMin, rect.width, rectNew.height), rect, color32, vh);
