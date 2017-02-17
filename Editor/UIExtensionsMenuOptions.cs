@@ -1126,11 +1126,19 @@ namespace UnityEditor.UI
 			go.AddComponent<UIPolygon>();
 			Selection.activeGameObject = go;
 		}
-		#endregion
 
-		#region Re-Orderable Lists
+        [MenuItem("GameObject/UI/Extensions/Primitives/UI Grid Renderer", false)]
+        static public void AddUIGridRenderer(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("UI GridRenderer", menuCommand, s_ImageGUIElementSize);
+            go.AddComponent<UIGridRenderer>();
+            Selection.activeGameObject = go;
+        }
+        #endregion
 
-		[MenuItem("GameObject/UI/Extensions/Re-orderable Lists/Re-orderable Vertical Scroll Rect", false)]
+        #region Re-Orderable Lists
+
+        [MenuItem("GameObject/UI/Extensions/Re-orderable Lists/Re-orderable Vertical Scroll Rect", false)]
 		static public void AddReorderableScrollRectVertical(MenuCommand menuCommand)
 		{
 			GameObject reorderableScrollRoot = CreateUIElementRoot("Re-orderable Vertical ScrollRect", menuCommand, s_ThickGUIElementSize);
