@@ -212,6 +212,12 @@ namespace UnityEngine.UI.Extensions
 
         #endregion
 
+        #region onEnable
+        protected override void OnEnable()
+        {
+            SetAllDirty();
+        }
+        #endregion
 
     }
 }
