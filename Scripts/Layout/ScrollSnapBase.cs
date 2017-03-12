@@ -93,6 +93,9 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("By default the container will lerp to the start when enabled in the scene, this option overrides this and forces it to simply jump without lerping")]
         public bool JumpOnEnable = false;
 
+        [Tooltip("By default the container will return to the original starting page when enabled, this option overrides this behaviour and stays on the current selection")]
+        public bool RestartOnEnable = false;
+
         [Tooltip("(Experimental)\nBy default, child array objects will use the parent transform\nHowever you can disable this for some interesting effects")]
 		public bool UseParentTransform = true;
 

@@ -195,12 +195,12 @@ namespace UnityEngine.UI.Extensions
 
         private void OnEnable()
         {
-            InitialiseChildObjects();
+            InitialiseChildObjectsFromScene();
             DistributePages();
             if (MaskArea) UpdateVisible();
 
-            if (JumpOnEnable) SetScrollContainerPosition();
-            GoToScreen(StartingScreen);
+            if (JumpOnEnable  || !RestartOnEnable) SetScrollContainerPosition();
+            if(RestartOnEnable) GoToScreen(StartingScreen);
         }
 
         #region Interfaces
