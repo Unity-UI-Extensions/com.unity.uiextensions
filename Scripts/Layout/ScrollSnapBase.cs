@@ -90,7 +90,10 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 
-		[Tooltip("(Experimental)\nBy default, child array objects will use the parent transform\nHowever you can disable this for some interesting effects")]
+        [Tooltip("By default the container will lerp to the start when enabled in the scene, this option overrides this and forces it to simply jump without lerping")]
+        public bool JumpOnEnable = false;
+
+        [Tooltip("(Experimental)\nBy default, child array objects will use the parent transform\nHowever you can disable this for some interesting effects")]
 		public bool UseParentTransform = true;
 
 		[Tooltip("Scroll Snap children. (optional)\nEither place objects in the scene as children OR\nPrefabs in this array, NOT BOTH")]
@@ -112,7 +115,7 @@ namespace UnityEngine.UI.Extensions
 		public SelectionChangeEndEvent OnSelectionChangeEndEvent { get { return m_OnSelectionChangeEndEvent; } set { m_OnSelectionChangeEndEvent = value; } }
 
 		// Use this for initialization
-        void Awake()
+		void Awake()
 		{
 			_scroll_rect = gameObject.GetComponent<ScrollRect>();
 
@@ -127,20 +130,8 @@ namespace UnityEngine.UI.Extensions
 			}
 
 			_screensContainer = _scroll_rect.content;
-			if (ChildObjects != null && ChildObjects.Length > 0)
-			{
-				if (_screensContainer.transform.childCount > 0)
-				{
-					Debug.LogError("ScrollRect Content has children, this is not supported when using managed Child Objects\n Either remove the ScrollRect Content children or clear the ChildObjects array");
-					return;
-				}
 
-				InitialiseChildObjectsFromArray();
-			}
-			else
-			{
-				InitialiseChildObjectsFromScene();
-			}
+			InitialiseChildObjects();
 
 			if (NextButton)
 				NextButton.GetComponent<Button>().onClick.AddListener(() => { NextScreen(); });
@@ -149,7 +140,25 @@ namespace UnityEngine.UI.Extensions
 				PrevButton.GetComponent<Button>().onClick.AddListener(() => { PreviousScreen(); });
 			}
 
-		internal void InitialiseChildObjectsFromScene()
+        internal void InitialiseChildObjects()
+        {
+            if (ChildObjects != null && ChildObjects.Length > 0)
+            {
+                if (_screensContainer.transform.childCount > 0)
+                {
+                    Debug.LogError("ScrollRect Content has children, this is not supported when using managed Child Objects\n Either remove the ScrollRect Content children or clear the ChildObjects array");
+                    return;
+                }
+
+                InitialiseChildObjectsFromArray();
+            }
+            else
+            {
+                InitialiseChildObjectsFromScene();
+            }
+        }
+
+        internal void InitialiseChildObjectsFromScene()
 		{
 			int childCount = _screensContainer.childCount;
 			ChildObjects = new GameObject[childCount];
@@ -172,7 +181,7 @@ namespace UnityEngine.UI.Extensions
 			{
 				child = GameObject.Instantiate(ChildObjects[i]);
 				//Optionally, use original GO transform when initialising, by default will use parent RectTransform position/rotation
-                if (UseParentTransform)
+				if (UseParentTransform)
 				{
 					childRect = child.GetComponent<RectTransform>();
 					childRect.rotation = _screensContainer.rotation;
@@ -192,7 +201,7 @@ namespace UnityEngine.UI.Extensions
 		internal void UpdateVisible()
 		{
 			//If there are no objects in the scene or a mask, exit
-            if (!MaskArea || ChildObjects == null || ChildObjects.Length < 1 || _screensContainer.childCount < 1)
+			if (!MaskArea || ChildObjects == null || ChildObjects.Length < 1 || _screensContainer.childCount < 1)
 			{
 				return;
 			}
@@ -201,21 +210,21 @@ namespace UnityEngine.UI.Extensions
 			_halfNoVisibleItems = (int)Math.Round(_maskSize / (_childSize * MaskBuffer), MidpointRounding.AwayFromZero) / 2;
 			_bottomItem = _topItem = 0;
 			//work out how many items below the current page can be visible
-            for (int i = _halfNoVisibleItems + 1; i > 0; i--)
+			for (int i = _halfNoVisibleItems + 1; i > 0; i--)
 			{
 				_bottomItem = _currentPage - i < 0 ? 0 : i;
 				if (_bottomItem > 0) break;
 			}
 
 			//work out how many items above the current page can be visible
-            for (int i = _halfNoVisibleItems + 1; i > 0; i--)
+			for (int i = _halfNoVisibleItems + 1; i > 0; i--)
 			{
 				_topItem = _screensContainer.childCount - _currentPage - i < 0 ? 0 : i;
 				if (_topItem > 0) break;
 			}
 
 			//Set the active items active
-            for (int i = CurrentPage - _bottomItem; i < CurrentPage + _topItem; i++)
+			for (int i = CurrentPage - _bottomItem; i < CurrentPage + _topItem; i++)
 			{
 				try
 				{
@@ -234,7 +243,7 @@ namespace UnityEngine.UI.Extensions
 		}
 
 		//Function for switching screens with buttons
-        public void NextScreen()
+		public void NextScreen()
 		{
 			if (_currentPage < _screens - 1)
 			{
@@ -248,7 +257,7 @@ namespace UnityEngine.UI.Extensions
 		}
 
 		//Function for switching screens with buttons
-        public void PreviousScreen()
+		public void PreviousScreen()
 		{
 			if (_currentPage > 0)
 			{
@@ -266,7 +275,7 @@ namespace UnityEngine.UI.Extensions
 		/// *Note, this is based on a 0 starting index - 0 to x
 		/// </summary>
 		/// <param name="screenIndex">0 starting index of page to jump to</param>
-        public void GoToScreen(int screenIndex)
+		public void GoToScreen(int screenIndex)
 		{
 			if (screenIndex <= _screens - 1 && screenIndex >= 0)
 			{
@@ -284,11 +293,11 @@ namespace UnityEngine.UI.Extensions
 		/// </summary>
 		/// <param name="pos">Position to test, normally the Scroll Rect container Local position</param>
 		/// <returns>Closest Page number (zero indexed array value)</returns>
-        internal int GetPageforPosition(Vector3 pos)
+		internal int GetPageforPosition(Vector3 pos)
 		{
 			return _isVertical ?
-                -(int)Math.Round((pos.y - _scrollStartPosition) / _childSize) :
-                -(int)Math.Round((pos.x - _scrollStartPosition) / _childSize);
+				-(int)Math.Round((pos.y - _scrollStartPosition) / _childSize) :
+				-(int)Math.Round((pos.x - _scrollStartPosition) / _childSize);
 		}
 
 		/// <summary>
@@ -296,11 +305,11 @@ namespace UnityEngine.UI.Extensions
 		/// </summary>
 		/// <param name="pos">Position to test, normally the Scroll Rect container Local position</param>
 		/// <returns>True / False, is the position in the bounds of a page</returns>
-        internal bool IsRectSettledOnaPage(Vector3 pos)
+		internal bool IsRectSettledOnaPage(Vector3 pos)
 		{
 			return _isVertical ?
-                -((pos.y - _scrollStartPosition) / _childSize) == -(int)Math.Round((pos.y - _scrollStartPosition) / _childSize) :
-                -((pos.x - _scrollStartPosition) / _childSize) == -(int)Math.Round((pos.x - _scrollStartPosition) / _childSize);
+				-((pos.y - _scrollStartPosition) / _childSize) == -(int)Math.Round((pos.y - _scrollStartPosition) / _childSize) :
+				-((pos.x - _scrollStartPosition) / _childSize) == -(int)Math.Round((pos.x - _scrollStartPosition) / _childSize);
 		}
 
 		/// <summary>
@@ -308,7 +317,7 @@ namespace UnityEngine.UI.Extensions
 		/// </summary>
 		/// <param name="page">Page that the position is required for (Zero indexed array value)</param>
 		/// <param name="target">Outputs the local position for the selected page</param>
-        internal void GetPositionforPage(int page, ref Vector3 target)
+		internal void GetPositionforPage(int page, ref Vector3 target)
 		{
 			_childPos = -_childSize * page;
 			if (_isVertical)
@@ -324,7 +333,7 @@ namespace UnityEngine.UI.Extensions
 		/// <summary>
 		/// Updates the _Lerp target to the closest page and updates the pagination bullets.  Each control's update loop will then handle the move.
 		/// </summary>
-        internal void ScrollToClosestElement()
+		internal void ScrollToClosestElement()
 		{
 			_lerp = true;
 			CurrentPage = GetPageforPosition(_screensContainer.localPosition);
@@ -335,7 +344,7 @@ namespace UnityEngine.UI.Extensions
 		/// <summary>
 		/// notifies pagination indicator and navigation buttons of a screen change
 		/// </summary>
-        internal void OnCurrentScreenChange(int currentScreen)
+		internal void OnCurrentScreenChange(int currentScreen)
 		{
 			ChangeBulletsInfo(currentScreen);
 			ToggleNavigationButtons(currentScreen);
@@ -345,14 +354,14 @@ namespace UnityEngine.UI.Extensions
 		/// changes the bullets on the bottom of the page - pagination
 		/// </summary>
 		/// <param name="targetScreen"></param>
-        private void ChangeBulletsInfo(int targetScreen)
+		private void ChangeBulletsInfo(int targetScreen)
 		{
 			if (Pagination)
 				for (int i = 0; i < Pagination.transform.childCount; i++)
 				{
 					Pagination.transform.GetChild(i).GetComponent<Toggle>().isOn = (targetScreen == i)
 			? true
-                        : false;
+						: false;
 		}
 	}
 
@@ -360,7 +369,7 @@ namespace UnityEngine.UI.Extensions
 	/// disables the page navigation buttons when at the first or last screen
 	/// </summary>
 	/// <param name="targetScreen"></param>
-        private void ToggleNavigationButtons(int targetScreen) {
+		private void ToggleNavigationButtons(int targetScreen) {
 		if (PrevButton) {
 			PrevButton.GetComponent<Button>().interactable = targetScreen > 0;
 		}
@@ -406,7 +415,7 @@ namespace UnityEngine.UI.Extensions
 	/// <summary>
 	/// Event fires when the user starts to change the page, either via swipe or button.
 	/// </summary>
-        internal void StartScreenChange()
+		internal void StartScreenChange()
 	{
 		OnSelectionChangeStartEvent.Invoke();
 	}
@@ -414,7 +423,7 @@ namespace UnityEngine.UI.Extensions
 	/// <summary>
 	/// Event fires when the currently viewed page changes, also updates while the scroll is moving
 	/// </summary>
-        internal void ScreenChange()
+		internal void ScreenChange()
 	{
 		OnSelectionPageChangedEvent.Invoke(_currentPage);
 	}
@@ -422,7 +431,7 @@ namespace UnityEngine.UI.Extensions
 	/// <summary>
 	/// Event fires when control settles on a page, outputs the new page number
 	/// </summary>
-        internal void EndScreenChange()
+		internal void EndScreenChange()
 	{
 		OnSelectionChangeEndEvent.Invoke(_currentPage);
 		_settled = true;
@@ -433,7 +442,7 @@ namespace UnityEngine.UI.Extensions
 	/// Touch screen to start swiping
 	/// </summary>
 	/// <param name="eventData"></param>
-        public void OnBeginDrag(PointerEventData eventData)
+		public void OnBeginDrag(PointerEventData eventData)
 	{
 		_pointerDown = true;
 		_settled = false;
@@ -445,7 +454,7 @@ namespace UnityEngine.UI.Extensions
 	/// While dragging do
 	/// </summary>
 	/// <param name="eventData"></param>
-        public void OnDrag(PointerEventData eventData)
+		public void OnDrag(PointerEventData eventData)
 	{
 		_lerp = false;
 	}

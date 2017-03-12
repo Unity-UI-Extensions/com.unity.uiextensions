@@ -37,6 +37,7 @@ namespace UnityEngine.UI.Extensions
                 _screensContainer.localPosition = Vector3.Lerp(_screensContainer.localPosition, _lerp_target, transitionSpeed * Time.deltaTime);
                 if (Vector3.Distance(_screensContainer.localPosition, _lerp_target) < 0.1f)
                 {
+                    _screensContainer.localPosition = _lerp_target;
                     _lerp = false;
                     EndScreenChange();
                 }
@@ -190,6 +191,16 @@ namespace UnityEngine.UI.Extensions
             {
                 UpdateLayout();
             }
+        }
+
+        private void OnEnable()
+        {
+            InitialiseChildObjects();
+            DistributePages();
+            if (MaskArea) UpdateVisible();
+
+            if (JumpOnEnable) SetScrollContainerPosition();
+            GoToScreen(StartingScreen);
         }
 
         #region Interfaces
