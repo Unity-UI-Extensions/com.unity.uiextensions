@@ -15,7 +15,7 @@ namespace UnityEngine.UI.Extensions
         public Color vertex2 = Color.black;
         private Graphic targetGraphic;
 
-        protected override void Start()
+        protected override void Awake()
         {
             targetGraphic = GetComponent<Graphic>();
         }
