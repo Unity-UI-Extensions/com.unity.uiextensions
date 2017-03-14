@@ -25,6 +25,9 @@ For more info, here's a little introduction video for the project:
 You can follow the UI Extensions team for updates and news on:
 ### [Twitter](https://twitter.com/search?q=%23unityuiextensions) / [Facebook](https://www.facebook.com/UnityUIExtensions/) / [YouTube](https://www.youtube.com/channel/UCG3gZOkmL-2rmZat4ufv28Q)###
 
+Also, come chat live with the Unity UI Extensions community on Gitter here:
+### [UI Extensions Live Chat](https://gitter.im/Unity-UI-Extensions/Lobby) ###
+
 -----
 
 #[ What is this repository for? ](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/About)#
