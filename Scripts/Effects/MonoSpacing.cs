@@ -1,10 +1,10 @@
-﻿/// Credit Deeperbeige
+﻿/// Credit herbst / derived from LetterSpacing by Deeperbeige
 /// Sourced from - http://forum.unity3d.com/threads/adjustable-character-spacing-free-script.288277/
 /*
 
-Produces an simple tracking/letter-spacing effect on UI Text components.
+Produces an simple mono-spacing effect on UI Text components.
 
-Set the spacing parameter to adjust letter spacing.
+Set the spacing parameter to adjust mono spacing.
   Negative values cuddle the text up tighter than normal. Go too far and it'll look odd.
   Positive values spread the text out more than normal. This will NOT respect the text area you've defined.
   Zero spacing will present the font with no changes.
@@ -50,10 +50,13 @@ namespace UnityEngine.UI.Extensions
     /// Note, Vertex Count has changed in 5.2.1+, is now 6 (two tris) instead of 4 (tri strip).
     public class MonoSpacing : BaseMeshEffect
 	{
+        public bool useHalfCharWidth = false;
         public float halfCharWidth = 1;
 
 		[SerializeField]
 		private float m_spacing = 0f;
+
+        RectTransform rectTransform;
 
 		protected MonoSpacing() { }
 		
@@ -61,6 +64,7 @@ namespace UnityEngine.UI.Extensions
 		protected override void OnValidate()
 		{
 			spacing = m_spacing;
+            rectTransform = GetComponent<Text>().GetComponent<RectTransform>();
 			base.OnValidate();
 		}
 		#endif
@@ -86,7 +90,7 @@ namespace UnityEngine.UI.Extensions
             Text text = GetComponent<Text>();
 			if (text == null)
 			{
-				Debug.LogWarning("LetterSpacing: Missing Text component");
+				Debug.LogWarning("MonoSpacing: Missing Text component");
 				return;
 			}
 			
@@ -120,9 +124,10 @@ namespace UnityEngine.UI.Extensions
 			for (int lineIdx=0; lineIdx < lines.Length; lineIdx++)
 			{
 				string line = lines[lineIdx];
-				float lineOffset = (line.Length -1) * letterOffset * alignmentFactor;
+                float lineOffset = (line.Length - 1) * letterOffset * (alignmentFactor) - (alignmentFactor - 0.5f) * rectTransform.rect.width;
 
-                var offsetX = - lineOffset + letterOffset / 2;
+                var offsetX = -lineOffset + letterOffset / 2 * (1 - alignmentFactor * 2);
+
 				for (int charIdx = 0; charIdx < line.Length; charIdx++)
 				{
 					int idx1 = glyphIdx * 6 + 0;
@@ -144,10 +149,10 @@ namespace UnityEngine.UI.Extensions
 
                     // pos = Vector3.right * (letterOffset * (charIdx) - lineOffset);
                     float charWidth = (vert2.position - vert1.position).x;
-                    var smallChar = charWidth < halfCharWidth;
+                    var smallChar = useHalfCharWidth && (charWidth < halfCharWidth);
 
                     var smallCharOffset = smallChar ? -letterOffset/4 : 0;
-
+                    
                     vert1.position += new Vector3(-vert1.position.x + offsetX + -.5f * charWidth + smallCharOffset, 0, 0);
                     vert2.position += new Vector3(-vert2.position.x + offsetX + .5f * charWidth + smallCharOffset, 0, 0);
                     vert3.position += new Vector3(-vert3.position.x + offsetX + .5f * charWidth + smallCharOffset, 0, 0);
