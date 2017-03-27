@@ -114,6 +114,26 @@ namespace UnityEngine.UI.Extensions
 
 		public bool SelectFirstItemOnStart = false;
 
+		[SerializeField]
+		private bool _ChangeInputTextColorBasedOnMatchingItems = false;
+		public bool ChangeInputTextColorBasedOnMatchingItems{
+			get { return _remainInteractableIfEmpty; }
+			set 
+			{
+				_ChangeInputTextColorBasedOnMatchingItems = value;
+				if (_ChangeInputTextColorBasedOnMatchingItems) {
+					SetInputTextColor ();
+				}
+			}
+		}
+
+		//TODO design as foldout for Inspector
+		public Color ValidSelectionTextColor = Color.green;
+		public Color MatchingItemsRemainingTextColor = Color.black;
+		public Color NoItemsRemainingTextColor = Color.red;
+
+		private bool _selectionIsValid = false;
+
         public void Awake()
         {
             Initialize();
@@ -250,6 +270,7 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 			interactible = _technicallyInteractible && (AvailableOptions.Count > 0 || _remainInteractableIfEmpty);
+			SetInputTextColor ();
         }
 
         /// <summary>
@@ -348,7 +369,23 @@ namespace UnityEngine.UI.Extensions
             {
                 ToggleDropdownPanel(false);
             }
+			_selectionIsValid = _panelItems.Contains (Text);
+			SetInputTextColor ();
         }
+
+		private void SetInputTextColor(){
+			if (ChangeInputTextColorBasedOnMatchingItems) {
+				if (_selectionIsValid) {
+					_mainInput.textComponent.color = ValidSelectionTextColor;
+				} else if (_panelItems.Count > 0) {
+					_mainInput.textComponent.color = MatchingItemsRemainingTextColor;
+				} else {
+					_mainInput.textComponent.color = NoItemsRemainingTextColor;
+				}
+			}
+		}
+
+
 
         /// <summary>
         /// Toggle the drop down list
