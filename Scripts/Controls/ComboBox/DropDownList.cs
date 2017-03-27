@@ -107,10 +107,15 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 
+		public bool SelectFirstItemOnStart = false;
 
 		public void Start()
 		{
 			Initialize();
+			if (SelectFirstItemOnStart && Items.Count > 0) {
+				ToggleDropdownPanel (false);
+				OnItemClicked (0);
+			}
 		}
 
 		private bool Initialize()

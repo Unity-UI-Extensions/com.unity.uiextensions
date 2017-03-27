@@ -112,11 +112,19 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 
+		public bool SelectFirstItemOnStart = false;
 
         public void Awake()
         {
             Initialize();
         }
+		public void Start()
+		{
+			if (SelectFirstItemOnStart && AvailableOptions.Count > 0) {
+				ToggleDropdownPanel (false);
+				OnItemClicked (AvailableOptions [0]);
+			}
+		}
 
         private bool Initialize()
         {
