@@ -71,6 +71,17 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 
+		public bool interactible 
+		{
+			get { return _mainButton.btn.interactable;	}
+			set {
+				_mainButton.btn.interactable = value;
+				if (!value && _isPanelActive) {
+					ToggleDropdownPanel (false);
+				}
+			}
+		}
+
 		public void Start()
 		{
 			Initialize();

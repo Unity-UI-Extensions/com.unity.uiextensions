@@ -24,6 +24,7 @@ namespace UnityEngine.UI.Extensions
         private InputField _mainInput;
         private RectTransform _inputRT;
 
+		private Button _arrow_Button;
 
         private RectTransform _rectTransform;
 
@@ -73,7 +74,19 @@ namespace UnityEngine.UI.Extensions
                 RedrawPanel();
             }
         }
-        
+
+		public bool interactible 
+		{
+			get { return _mainInput.interactable || _arrow_Button.interactable;	}
+			set {
+				_mainInput.interactable = value;
+				_arrow_Button.interactable = value;
+				if (!value && _isPanelActive) {
+					ToggleDropdownPanel (false);
+				}
+			}
+		}
+
         public void Awake()
         {
             Initialize();
@@ -87,6 +100,8 @@ namespace UnityEngine.UI.Extensions
                 _rectTransform = GetComponent<RectTransform>();
                 _inputRT = _rectTransform.FindChild("InputField").GetComponent<RectTransform>();
                 _mainInput = _inputRT.GetComponent<InputField>();
+
+				_arrow_Button = _rectTransform.FindChild ("ArrowBtn").GetComponent<Button> ();
 
                 _overlayRT = _rectTransform.FindChild("Overlay").GetComponent<RectTransform>();
                 _overlayRT.gameObject.SetActive(false);
