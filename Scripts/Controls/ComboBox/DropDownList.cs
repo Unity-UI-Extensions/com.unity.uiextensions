@@ -74,13 +74,39 @@ namespace UnityEngine.UI.Extensions
 		public bool interactible 
 		{
 			get { return _mainButton.btn.interactable;	}
-			set {
+			private set {
 				_mainButton.btn.interactable = value;
 				if (!value && _isPanelActive) {
 					ToggleDropdownPanel (false);
 				}
 			}
 		}
+
+		[SerializeField]
+		//I couldn't come up with a better name
+		private bool _technicallyInteractible = true;
+		public bool TechnicallyInteractible
+		{ 
+			get { return _technicallyInteractible; }
+			set 
+			{
+				_technicallyInteractible = value;
+				interactible = _technicallyInteractible && (Items.Count > 0 || _remainInteractableIfEmpty);
+			}
+		}
+
+		[SerializeField]
+		private bool _remainInteractableIfEmpty = true;
+		public bool RemainInteractableIfEmpty
+		{ 
+			get { return _remainInteractableIfEmpty; }
+			set 
+			{
+				_remainInteractableIfEmpty = value;
+				interactible = _technicallyInteractible && (Items.Count > 0 || _remainInteractableIfEmpty);
+			}
+		}
+
 
 		public void Start()
 		{
@@ -202,6 +228,7 @@ namespace UnityEngine.UI.Extensions
 				}
 				_panelItems[i].gameobject.SetActive(i < Items.Count);// if we have more thanks in the panel than Items in the list hide them
 			}
+			interactible = _technicallyInteractible && (Items.Count > 0 || _remainInteractableIfEmpty);
 		}
 
 		private void OnItemClicked(int indx)
