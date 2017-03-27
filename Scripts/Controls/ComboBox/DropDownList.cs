@@ -17,7 +17,6 @@ namespace UnityEngine.UI.Extensions
 		public DropDownListItem SelectedItem { get; private set; } //outside world gets to get this, not set it
 
 		public List<DropDownListItem> Items;
-		public System.Action<int> OnSelectionChanged; // fires when selection is changed;
         public bool OverrideHighlighted = true;
 
 		//private bool isInitialized = false;
@@ -108,6 +107,15 @@ namespace UnityEngine.UI.Extensions
 		}
 
 		public bool SelectFirstItemOnStart = false;
+
+		[System.Serializable]
+		public class SelectionChangedEvent :  UnityEngine.Events.UnityEvent<int> {
+		}
+		// fires when item is changed;
+		public SelectionChangedEvent OnSelectionChanged;
+
+
+
 
 		public void Start()
 		{
@@ -239,7 +247,7 @@ namespace UnityEngine.UI.Extensions
 		private void OnItemClicked(int indx)
 		{
 			Debug.Log("item " + indx + " clicked");
-			if (indx != _selectedIndex && OnSelectionChanged != null) OnSelectionChanged(indx);
+			if (indx != _selectedIndex && OnSelectionChanged != null) OnSelectionChanged.Invoke(indx);
 
 			_selectedIndex = indx;
 			ToggleDropdownPanel(true);

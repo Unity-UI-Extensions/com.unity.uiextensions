@@ -15,8 +15,6 @@ namespace UnityEngine.UI.Extensions
 
         public List<string> AvailableOptions;
 
-        public System.Action<int> OnSelectionChanged; // fires when selection is changed;
-
         //private bool isInitialized = false;
         private bool _isPanelActive = false;
         private bool _hasDrawnOnce = false;
@@ -133,6 +131,27 @@ namespace UnityEngine.UI.Extensions
 		public Color NoItemsRemainingTextColor = Color.red;
 
 		private bool _selectionIsValid = false;
+
+		[System.Serializable]
+		public class SelectionChangedEvent :  UnityEngine.Events.UnityEvent<string, bool> {
+		}
+
+		[System.Serializable]
+		public class SelectinTextChangedEvent :  UnityEngine.Events.UnityEvent<string> {
+		}
+
+		[System.Serializable]
+		public class SelectionValidityChangedEvent :  UnityEngine.Events.UnityEvent<bool> {
+		}
+
+		// fires when input text is changed;
+		public SelectinTextChangedEvent OnSelectinTextChanged;
+		// fires when when an Item gets selected / deselected (including when items are added/removed once this is possible)
+		public SelectionValidityChangedEvent OnSelectionValidityChanged;
+		// fires in both cases
+		public SelectionChangedEvent OnSelectionChanged;
+
+
 
         public void Awake()
         {
@@ -369,7 +388,15 @@ namespace UnityEngine.UI.Extensions
             {
                 ToggleDropdownPanel(false);
             }
+
+			bool validity_changed = (_panelItems.Contains (Text) == _selectionIsValid);
 			_selectionIsValid = _panelItems.Contains (Text);
+			OnSelectionChanged.Invoke (Text, _selectionIsValid);
+			OnSelectinTextChanged.Invoke (Text);
+			if(validity_changed){
+				OnSelectionValidityChanged.Invoke (_selectionIsValid);
+			}
+
 			SetInputTextColor ();
         }
 
