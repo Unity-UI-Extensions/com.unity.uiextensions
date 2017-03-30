@@ -35,10 +35,8 @@ namespace UnityEngine.UI.Extensions
 		/// </summary>
 		public override void OnEndDrag (UnityEngine.EventSystems.PointerEventData eventData)
 		{
-			if (pid == eventData.pointerId) {
 				pid = -100;
 				base.OnEndDrag (eventData);
-			}
 		}
 
 	}
