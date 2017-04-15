@@ -1,15 +1,12 @@
 /// Credit Erdener Gonenc - @PixelEnvision
 /*USAGE: Simply use that instead of the regular ScrollRect */
 
-using System;
-using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-	[AddComponentMenu ("UI/Extensions/ScrollRectMultiTouchFix")]
-	public class ScrollRectMultiTouchFix : ScrollRect
+    [AddComponentMenu ("UI/Extensions/MultiTouchScrollRect")]
+	public class MultiTouchScrollRect : ScrollRect
 	{
-
 		private int pid = -100;
 
 		/// <summary>
@@ -38,6 +35,5 @@ namespace UnityEngine.UI.Extensions
 				pid = -100;
 				base.OnEndDrag (eventData);
 		}
-
 	}
 }

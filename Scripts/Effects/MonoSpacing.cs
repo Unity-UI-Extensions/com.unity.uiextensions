@@ -1,4 +1,4 @@
-﻿/// Credit herbst / derived from LetterSpacing by Deeperbeige
+/// Credit herbst / derived from LetterSpacing by Deeperbeige
 /// Sourced from - http://forum.unity3d.com/threads/adjustable-character-spacing-free-script.288277/
 /*
 
@@ -46,30 +46,42 @@ using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
 {
 	[AddComponentMenu("UI/Effects/Extensions/Mono Spacing")]
+    [RequireComponent(typeof(Text))]
+    [RequireComponent(typeof(RectTransform))]
     ///Summary
     /// Note, Vertex Count has changed in 5.2.1+, is now 6 (two tris) instead of 4 (tri strip).
     public class MonoSpacing : BaseMeshEffect
 	{
-        public bool useHalfCharWidth = false;
-        public float halfCharWidth = 1;
-
 		[SerializeField]
 		private float m_spacing = 0f;
+        public float HalfCharWidth = 1;
+        public bool UseHalfCharWidth = false;
 
-        RectTransform rectTransform;
+        private RectTransform rectTransform;
+        private Text text;
 
 		protected MonoSpacing() { }
-		
-		#if UNITY_EDITOR
-		protected override void OnValidate()
+
+        protected override void Awake()
+        {
+            text = GetComponent<Text>();
+            if (text == null)
+            {
+                Debug.LogWarning("MonoSpacing: Missing Text component");
+                return;
+            }
+            rectTransform = text.GetComponent<RectTransform>();
+        }
+
+        #if UNITY_EDITOR
+        protected override void OnValidate()
 		{
-			spacing = m_spacing;
-            rectTransform = GetComponent<Text>().GetComponent<RectTransform>();
+			Spacing = m_spacing;
 			base.OnValidate();
 		}
 		#endif
 		
-		public float spacing
+		public float Spacing
 		{
 			get { return m_spacing; }
 			set
@@ -86,17 +98,10 @@ namespace UnityEngine.UI.Extensions
 
             List<UIVertex> verts = new List<UIVertex>();
             vh.GetUIVertexStream(verts);
-
-            Text text = GetComponent<Text>();
-			if (text == null)
-			{
-				Debug.LogWarning("MonoSpacing: Missing Text component");
-				return;
-			}
 			
 			string[] lines = text.text.Split('\n');
 			// Vector3  pos;
-			float    letterOffset    = spacing * (float)text.fontSize / 100f;
+			float    letterOffset    = Spacing * (float)text.fontSize / 100f;
 			float    alignmentFactor = 0;
 			int      glyphIdx        = 0;
 			
@@ -149,7 +154,7 @@ namespace UnityEngine.UI.Extensions
 
                     // pos = Vector3.right * (letterOffset * (charIdx) - lineOffset);
                     float charWidth = (vert2.position - vert1.position).x;
-                    var smallChar = useHalfCharWidth && (charWidth < halfCharWidth);
+                    var smallChar = UseHalfCharWidth && (charWidth < HalfCharWidth);
 
                     var smallCharOffset = smallChar ? -letterOffset/4 : 0;
                     

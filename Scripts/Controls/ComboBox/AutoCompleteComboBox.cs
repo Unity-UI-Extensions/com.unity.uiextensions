@@ -73,49 +73,12 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-		public bool interactible 
-		{
-			get { return _mainInput.interactable || _arrow_Button.interactable;	}
-			private set {
-				_mainInput.interactable = value;
-				_arrow_Button.interactable = value;
-				if (!value && _isPanelActive) {
-					ToggleDropdownPanel (false);
-				}
-			}
-		}
-
-		[SerializeField]
-		//I couldn't come up with a better name
-		private bool _technicallyInteractible = true;
-		public bool TechnicallyInteractible
-		{ 
-			get { return _technicallyInteractible; }
-			set 
-			{
-				_technicallyInteractible = value;
-				interactible = _technicallyInteractible && (AvailableOptions.Count > 0 || _remainInteractableIfEmpty);
-			}
-		}
-
-		[SerializeField]
-		private bool _remainInteractableIfEmpty = true;
-		public bool RemainInteractableIfEmpty
-		{ 
-			get { return _remainInteractableIfEmpty; }
-			set 
-			{
-				_remainInteractableIfEmpty = value;
-				interactible = _technicallyInteractible && (AvailableOptions.Count > 0 || _remainInteractableIfEmpty);
-			}
-		}
-
 		public bool SelectFirstItemOnStart = false;
 
 		[SerializeField]
 		private bool _ChangeInputTextColorBasedOnMatchingItems = false;
 		public bool ChangeInputTextColorBasedOnMatchingItems{
-			get { return _remainInteractableIfEmpty; }
+			get { return _ChangeInputTextColorBasedOnMatchingItems; }
 			set 
 			{
 				_ChangeInputTextColorBasedOnMatchingItems = value;
@@ -288,7 +251,6 @@ namespace UnityEngine.UI.Extensions
                     panelObjects[_panelItems[i]] = itemObjs[i];
                 }
             }
-			interactible = _technicallyInteractible && (AvailableOptions.Count > 0 || _remainInteractableIfEmpty);
 			SetInputTextColor ();
         }
 
