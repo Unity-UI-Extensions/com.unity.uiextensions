@@ -15,8 +15,6 @@ namespace UnityEngine.UI.Extensions
 
         public List<string> AvailableOptions;
 
-        public System.Action<int> OnSelectionChanged; // fires when selection is changed;
-
         //private bool isInitialized = false;
         private bool _isPanelActive = false;
         private bool _hasDrawnOnce = false;
@@ -24,6 +22,7 @@ namespace UnityEngine.UI.Extensions
         private InputField _mainInput;
         private RectTransform _inputRT;
 
+		private Button _arrow_Button;
 
         private RectTransform _rectTransform;
 
@@ -73,11 +72,98 @@ namespace UnityEngine.UI.Extensions
                 RedrawPanel();
             }
         }
-        
+
+		public bool interactible 
+		{
+			get { return _mainInput.interactable || _arrow_Button.interactable;	}
+			private set {
+				_mainInput.interactable = value;
+				_arrow_Button.interactable = value;
+				if (!value && _isPanelActive) {
+					ToggleDropdownPanel (false);
+				}
+			}
+		}
+
+		[SerializeField]
+		//I couldn't come up with a better name
+		private bool _technicallyInteractible = true;
+		public bool TechnicallyInteractible
+		{ 
+			get { return _technicallyInteractible; }
+			set 
+			{
+				_technicallyInteractible = value;
+				interactible = _technicallyInteractible && (AvailableOptions.Count > 0 || _remainInteractableIfEmpty);
+			}
+		}
+
+		[SerializeField]
+		private bool _remainInteractableIfEmpty = true;
+		public bool RemainInteractableIfEmpty
+		{ 
+			get { return _remainInteractableIfEmpty; }
+			set 
+			{
+				_remainInteractableIfEmpty = value;
+				interactible = _technicallyInteractible && (AvailableOptions.Count > 0 || _remainInteractableIfEmpty);
+			}
+		}
+
+		public bool SelectFirstItemOnStart = false;
+
+		[SerializeField]
+		private bool _ChangeInputTextColorBasedOnMatchingItems = false;
+		public bool ChangeInputTextColorBasedOnMatchingItems{
+			get { return _remainInteractableIfEmpty; }
+			set 
+			{
+				_ChangeInputTextColorBasedOnMatchingItems = value;
+				if (_ChangeInputTextColorBasedOnMatchingItems) {
+					SetInputTextColor ();
+				}
+			}
+		}
+
+		//TODO design as foldout for Inspector
+		public Color ValidSelectionTextColor = Color.green;
+		public Color MatchingItemsRemainingTextColor = Color.black;
+		public Color NoItemsRemainingTextColor = Color.red;
+
+		private bool _selectionIsValid = false;
+
+		[System.Serializable]
+		public class SelectionChangedEvent :  UnityEngine.Events.UnityEvent<string, bool> {
+		}
+
+		[System.Serializable]
+		public class SelectinTextChangedEvent :  UnityEngine.Events.UnityEvent<string> {
+		}
+
+		[System.Serializable]
+		public class SelectionValidityChangedEvent :  UnityEngine.Events.UnityEvent<bool> {
+		}
+
+		// fires when input text is changed;
+		public SelectinTextChangedEvent OnSelectinTextChanged;
+		// fires when when an Item gets selected / deselected (including when items are added/removed once this is possible)
+		public SelectionValidityChangedEvent OnSelectionValidityChanged;
+		// fires in both cases
+		public SelectionChangedEvent OnSelectionChanged;
+
+
+
         public void Awake()
         {
             Initialize();
         }
+		public void Start()
+		{
+			if (SelectFirstItemOnStart && AvailableOptions.Count > 0) {
+				ToggleDropdownPanel (false);
+				OnItemClicked (AvailableOptions [0]);
+			}
+		}
 
         private bool Initialize()
         {
@@ -87,6 +173,8 @@ namespace UnityEngine.UI.Extensions
                 _rectTransform = GetComponent<RectTransform>();
                 _inputRT = _rectTransform.FindChild("InputField").GetComponent<RectTransform>();
                 _mainInput = _inputRT.GetComponent<InputField>();
+
+				_arrow_Button = _rectTransform.FindChild ("ArrowBtn").GetComponent<Button> ();
 
                 _overlayRT = _rectTransform.FindChild("Overlay").GetComponent<RectTransform>();
                 _overlayRT.gameObject.SetActive(false);
@@ -200,6 +288,8 @@ namespace UnityEngine.UI.Extensions
                     panelObjects[_panelItems[i]] = itemObjs[i];
                 }
             }
+			interactible = _technicallyInteractible && (AvailableOptions.Count > 0 || _remainInteractableIfEmpty);
+			SetInputTextColor ();
         }
 
         /// <summary>
@@ -298,7 +388,31 @@ namespace UnityEngine.UI.Extensions
             {
                 ToggleDropdownPanel(false);
             }
+
+			bool validity_changed = (_panelItems.Contains (Text) == _selectionIsValid);
+			_selectionIsValid = _panelItems.Contains (Text);
+			OnSelectionChanged.Invoke (Text, _selectionIsValid);
+			OnSelectinTextChanged.Invoke (Text);
+			if(validity_changed){
+				OnSelectionValidityChanged.Invoke (_selectionIsValid);
+			}
+
+			SetInputTextColor ();
         }
+
+		private void SetInputTextColor(){
+			if (ChangeInputTextColorBasedOnMatchingItems) {
+				if (_selectionIsValid) {
+					_mainInput.textComponent.color = ValidSelectionTextColor;
+				} else if (_panelItems.Count > 0) {
+					_mainInput.textComponent.color = MatchingItemsRemainingTextColor;
+				} else {
+					_mainInput.textComponent.color = NoItemsRemainingTextColor;
+				}
+			}
+		}
+
+
 
         /// <summary>
         /// Toggle the drop down list

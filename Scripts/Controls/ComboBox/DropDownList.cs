@@ -17,7 +17,6 @@ namespace UnityEngine.UI.Extensions
 		public DropDownListItem SelectedItem { get; private set; } //outside world gets to get this, not set it
 
 		public List<DropDownListItem> Items;
-		public System.Action<int> OnSelectionChanged; // fires when selection is changed;
         public bool OverrideHighlighted = true;
 
 		//private bool isInitialized = false;
@@ -71,9 +70,60 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 
+		public bool interactible 
+		{
+			get { return _mainButton.btn.interactable;	}
+			private set {
+				_mainButton.btn.interactable = value;
+				if (!value && _isPanelActive) {
+					ToggleDropdownPanel (false);
+				}
+			}
+		}
+
+		[SerializeField]
+		//I couldn't come up with a better name
+		private bool _technicallyInteractible = true;
+		public bool TechnicallyInteractible
+		{ 
+			get { return _technicallyInteractible; }
+			set 
+			{
+				_technicallyInteractible = value;
+				interactible = _technicallyInteractible && (Items.Count > 0 || _remainInteractableIfEmpty);
+			}
+		}
+
+		[SerializeField]
+		private bool _remainInteractableIfEmpty = true;
+		public bool RemainInteractableIfEmpty
+		{ 
+			get { return _remainInteractableIfEmpty; }
+			set 
+			{
+				_remainInteractableIfEmpty = value;
+				interactible = _technicallyInteractible && (Items.Count > 0 || _remainInteractableIfEmpty);
+			}
+		}
+
+		public bool SelectFirstItemOnStart = false;
+
+		[System.Serializable]
+		public class SelectionChangedEvent :  UnityEngine.Events.UnityEvent<int> {
+		}
+		// fires when item is changed;
+		public SelectionChangedEvent OnSelectionChanged;
+
+
+
+
 		public void Start()
 		{
 			Initialize();
+			if (SelectFirstItemOnStart && Items.Count > 0) {
+				ToggleDropdownPanel (false);
+				OnItemClicked (0);
+			}
 		}
 
 		private bool Initialize()
@@ -191,12 +241,13 @@ namespace UnityEngine.UI.Extensions
 				}
 				_panelItems[i].gameobject.SetActive(i < Items.Count);// if we have more thanks in the panel than Items in the list hide them
 			}
+			interactible = _technicallyInteractible && (Items.Count > 0 || _remainInteractableIfEmpty);
 		}
 
 		private void OnItemClicked(int indx)
 		{
 			Debug.Log("item " + indx + " clicked");
-			if (indx != _selectedIndex && OnSelectionChanged != null) OnSelectionChanged(indx);
+			if (indx != _selectedIndex && OnSelectionChanged != null) OnSelectionChanged.Invoke(indx);
 
 			_selectedIndex = indx;
 			ToggleDropdownPanel(true);
