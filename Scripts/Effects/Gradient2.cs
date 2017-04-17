@@ -107,6 +107,117 @@ namespace UnityEngine.UI.Extensions
 					 }
 				 }
 				 break;
+
+			 case Type.Diamond: {
+				
+					float bottom = _vertexList[0].position.y;
+					float top = _vertexList[0].position.y;
+					float y = 0f;
+
+					for(int i = nCount - 1; i >= 1; --i) {
+						y = _vertexList[i].position.y;
+
+						if(y > top) top = y;
+						else if(y < bottom) bottom = y;
+					}
+
+					float height = 1f / (top - bottom);
+
+					helper.Clear();
+					for (int i = 0; i < nCount; i++) helper.AddVert(_vertexList[i]);
+
+					float center = (bottom + top) / 2f;
+					UIVertex centralVertex = new UIVertex();
+					centralVertex.position = (Vector3.right + Vector3.up) * center + Vector3.forward * _vertexList[0].position.z;
+					centralVertex.normal = _vertexList[0].normal;
+					centralVertex.color = Color.white;
+					helper.AddVert(centralVertex);
+
+					for (int i = 1; i < nCount; i++) helper.AddTriangle(i-1,i,nCount);
+					helper.AddTriangle(0,nCount-1,nCount);
+
+					UIVertex vertex = new UIVertex();
+
+					for(int i = 0; i < helper.currentVertCount; i++) {
+						helper.PopulateUIVertex(ref vertex, i);
+
+						vertex.color = BlendColor(vertex.color, EffectGradient.Evaluate(
+							Vector3.Distance(vertex.position, centralVertex.position) * height - Offset));
+						
+						helper.SetUIVertex(vertex, i);
+					}
+				}
+				break;
+
+			case Type.Radial: {
+
+					float left = _vertexList[0].position.x;
+					float right = _vertexList[0].position.x;
+					float bottom = _vertexList[0].position.y;
+					float top = _vertexList[0].position.y;
+
+					float x = 0f;
+					float y = 0f;
+
+					for(int i = nCount - 1; i >= 1; --i) {
+						x = _vertexList[i].position.x;
+
+						if(x > right) right = x;
+						else if(x < left) left = x;
+
+						y = _vertexList[i].position.y;
+
+						if(y > top) top = y;
+						else if(y < bottom) bottom = y;
+					}
+
+					float width = 1f / (right - left);
+					float height = 1f / (top - bottom);
+
+					helper.Clear();
+
+					float centerX = (right + left) / 2f;
+					float centerY = (bottom + top) / 2f;
+					float radiusX = (right - left) / 2f;
+					float radiusY = (top - bottom) / 2f;
+					UIVertex centralVertex = new UIVertex();
+					centralVertex.position = Vector3.right * centerX + Vector3.up * centerY + Vector3.forward * _vertexList[0].position.z;
+					centralVertex.normal = _vertexList[0].normal;
+					centralVertex.color = Color.white;
+
+					int steps = 64;
+					for (int i = 0; i < steps; i++)
+					{
+						UIVertex curVertex = new UIVertex();
+						float angle = (float)i * 360f / (float)steps;
+						float curX = Mathf.Cos(Mathf.Deg2Rad * angle) * radiusX;
+						float curY = Mathf.Sin(Mathf.Deg2Rad * angle) * radiusY;
+
+						curVertex.position = Vector3.right * curX + Vector3.up * curY + Vector3.forward * _vertexList[0].position.z;
+						curVertex.normal = _vertexList[0].normal;
+						curVertex.color = Color.white;
+						helper.AddVert(curVertex);
+					}
+
+					helper.AddVert(centralVertex);
+
+					for (int i = 1; i < steps; i++) helper.AddTriangle(i-1,i,steps);
+					helper.AddTriangle(0,steps-1,steps);
+
+					UIVertex vertex = new UIVertex();
+
+					for(int i = 0; i < helper.currentVertCount; i++) {
+						helper.PopulateUIVertex(ref vertex, i);
+
+						vertex.color = BlendColor(vertex.color, EffectGradient.Evaluate(
+							Mathf.Sqrt(
+								Mathf.Pow(Mathf.Abs(vertex.position.x - centerX) * width, 2f) +
+								Mathf.Pow(Mathf.Abs(vertex.position.y - centerY) * height, 2f)) * 2f - Offset));
+
+						helper.SetUIVertex(vertex, i);
+					}
+				}
+				break;
 		 }
 	 }
 
@@ -120,7 +231,9 @@ namespace UnityEngine.UI.Extensions
 
 	 public enum Type {
 		 Horizontal,
-		 Vertical
+		 Vertical,
+		 Radial,
+		 Diamond
 	 }
 
 	 public enum Blend {
