@@ -76,8 +76,9 @@ namespace UnityEngine.UI.Extensions
 		public bool SelectFirstItemOnStart = false;
 
 		[SerializeField]
-		private bool _ChangeInputTextColorBasedOnMatchingItems = false;
-		public bool ChangeInputTextColorBasedOnMatchingItems{
+        [Tooltip("Change input text color based on matching items")]
+        private bool _ChangeInputTextColorBasedOnMatchingItems = false;
+		public bool InputColorMatching{
 			get { return _ChangeInputTextColorBasedOnMatchingItems; }
 			set 
 			{
@@ -99,8 +100,8 @@ namespace UnityEngine.UI.Extensions
 		public class SelectionChangedEvent :  UnityEngine.Events.UnityEvent<string, bool> {
 		}
 
-		[System.Serializable]
-		public class SelectinTextChangedEvent :  UnityEngine.Events.UnityEvent<string> {
+        [System.Serializable]
+		public class SelectionTextChangedEvent :  UnityEngine.Events.UnityEvent<string> {
 		}
 
 		[System.Serializable]
@@ -108,13 +109,11 @@ namespace UnityEngine.UI.Extensions
 		}
 
 		// fires when input text is changed;
-		public SelectinTextChangedEvent OnSelectinTextChanged;
+		public SelectionTextChangedEvent OnSelectionTextChanged;
 		// fires when when an Item gets selected / deselected (including when items are added/removed once this is possible)
 		public SelectionValidityChangedEvent OnSelectionValidityChanged;
 		// fires in both cases
 		public SelectionChangedEvent OnSelectionChanged;
-
-
 
         public void Awake()
         {
@@ -354,7 +353,7 @@ namespace UnityEngine.UI.Extensions
 			bool validity_changed = (_panelItems.Contains (Text) == _selectionIsValid);
 			_selectionIsValid = _panelItems.Contains (Text);
 			OnSelectionChanged.Invoke (Text, _selectionIsValid);
-			OnSelectinTextChanged.Invoke (Text);
+			OnSelectionTextChanged.Invoke (Text);
 			if(validity_changed){
 				OnSelectionValidityChanged.Invoke (_selectionIsValid);
 			}
@@ -363,7 +362,7 @@ namespace UnityEngine.UI.Extensions
         }
 
 		private void SetInputTextColor(){
-			if (ChangeInputTextColorBasedOnMatchingItems) {
+			if (InputColorMatching) {
 				if (_selectionIsValid) {
 					_mainInput.textComponent.color = ValidSelectionTextColor;
 				} else if (_panelItems.Count > 0) {

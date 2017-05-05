@@ -15,7 +15,18 @@ namespace UnityEngine.UI.Extensions
 
         public List<string> AvailableOptions;
 
-        public System.Action<int> OnSelectionChanged; // fires when selection is changed;
+        [SerializeField]
+        private float _scrollBarWidth = 20.0f;
+
+        [SerializeField]
+        private int _itemsToDisplay;
+
+        [System.Serializable]
+        public class SelectionChangedEvent : UnityEngine.Events.UnityEvent<string>
+        {
+        }
+        // fires when item is changed;
+        public SelectionChangedEvent OnSelectionChanged;
 
         //private bool isInitialized = false;
         private bool _isPanelActive = false;
@@ -46,8 +57,6 @@ namespace UnityEngine.UI.Extensions
 
         public string Text { get; private set; }
 
-        [SerializeField]
-        private float _scrollBarWidth = 20.0f;
         public float ScrollBarWidth
         {
             get { return _scrollBarWidth; }
@@ -61,8 +70,6 @@ namespace UnityEngine.UI.Extensions
         //    private int scrollOffset; //offset of the selected item
         //    private int _selectedIndex = 0;
 
-        [SerializeField]
-        private int _itemsToDisplay;
         public int ItemsToDisplay
         {
             get { return _itemsToDisplay; }
@@ -294,6 +301,7 @@ namespace UnityEngine.UI.Extensions
             {
                 ToggleDropdownPanel(false);
             }
+            OnSelectionChanged.Invoke(Text);
         }
 
         /// <summary>

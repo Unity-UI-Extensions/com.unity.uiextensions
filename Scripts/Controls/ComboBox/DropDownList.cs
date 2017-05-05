@@ -79,8 +79,6 @@ namespace UnityEngine.UI.Extensions
 		public SelectionChangedEvent OnSelectionChanged;
 
 
-
-
 		public void Start()
 		{
 			Initialize();

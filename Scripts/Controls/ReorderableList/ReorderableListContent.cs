@@ -14,9 +14,15 @@ namespace UnityEngine.UI.Extensions
         private ReorderableList _extList;
         private RectTransform _rect;
 
+        private void OnEnable()
+        {
+            if(_rect)StartCoroutine(RefreshChildren());
+        }
+
+
         public void OnTransformChildrenChanged()
         {
-            StartCoroutine(RefreshChildren());
+            if(this.isActiveAndEnabled)StartCoroutine(RefreshChildren());
         }
 
         public void Init(ReorderableList extList)

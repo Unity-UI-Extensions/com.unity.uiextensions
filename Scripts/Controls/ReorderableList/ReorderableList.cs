@@ -2,6 +2,8 @@
 /// Sourced from - http://forum.unity3d.com/threads/free-reorderable-list.364600/
 
 using System;
+using System.Collections;
+using System.Linq;
 using UnityEngine.Events;
 
 namespace UnityEngine.UI.Extensions
@@ -22,12 +24,13 @@ namespace UnityEngine.UI.Extensions
 
         [Tooltip("Can new draggable items be dropped in to the container?")]
         public bool IsDropable = true;
-
+        
 
         [Header("UI Re-orderable Events")]
         public ReorderableListHandler OnElementDropped = new ReorderableListHandler();
         public ReorderableListHandler OnElementGrabbed = new ReorderableListHandler();
         public ReorderableListHandler OnElementRemoved = new ReorderableListHandler();
+        public ReorderableListHandler OnElementAdded = new ReorderableListHandler();
 
         private RectTransform _content;
         private ReorderableListContent _listContent;
@@ -83,9 +86,9 @@ namespace UnityEngine.UI.Extensions
                 Debug.LogError("You need to have a Graphic control (such as an Image) for the list [" + name + "] to be droppable", gameObject);
                 return;
             }
-            if (GetCanvas().renderMode != RenderMode.ScreenSpaceOverlay)
+            if (GetCanvas().renderMode > RenderMode.ScreenSpaceCamera)
             {
-                Debug.LogError("The ReOrderable List is only supported on a Screenspace-Overlay Canvas at the moment");
+                Debug.LogError("The ReOrderable List is only supported on a Screen-Space Canvas at the moment");
             }
 
             _listContent = ContentLayout.gameObject.AddComponent<ReorderableListContent>();
@@ -104,6 +107,11 @@ namespace UnityEngine.UI.Extensions
             public GameObject SourceObject;
             public int ToIndex;
             public ReorderableList ToList;
+
+            public void Cancel()
+            {
+                SourceObject.GetComponent<ReorderableListElement>().isValid = false;
+            }
         }
 
         #endregion

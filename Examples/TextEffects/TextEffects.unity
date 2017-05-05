@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -756,9 +756,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97a58789aa01843488ef44dc747ee8e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useHalfCharWidth: 0
-  halfCharWidth: 0
   m_spacing: 94.2
+  HalfCharWidth: 1
+  UseHalfCharWidth: 0
 --- !u!114 &755348327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -985,7 +985,7 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1101119004}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1009,7 +1009,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ec526a95e7733b4396be80d3e1df80e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 121.96
+  radius: 98.31
 --- !u!114 &1101119007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1339,9 +1339,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97a58789aa01843488ef44dc747ee8e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useHalfCharWidth: 1
-  halfCharWidth: 4.55
   m_spacing: 71.12
+  HalfCharWidth: 1
+  UseHalfCharWidth: 0
 --- !u!114 &1814753282
 MonoBehaviour:
   m_ObjectHideFlags: 0

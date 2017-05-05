@@ -57,9 +57,12 @@ namespace UnityEngine.UI.Extensions
         }
         protected override void OnRectTransformDimensionsChange()
         {
-            var tmpRect = curveForText[curveForText.length - 1];
-            tmpRect.time = rectTrans.rect.width;
-            curveForText.MoveKey(curveForText.length - 1, tmpRect);
+            if (rectTrans)
+            {
+                Keyframe tmpRect = curveForText[curveForText.length - 1];
+                tmpRect.time = rectTrans.rect.width;
+                curveForText.MoveKey(curveForText.length - 1, tmpRect);
+            }
         }
     }
 }
