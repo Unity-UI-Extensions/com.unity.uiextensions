@@ -1,11 +1,10 @@
 /// Credit John Hattan (http://thecodezone.com/)
 /// Sourced from - https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/issues/117/uigridrenderer
 
-using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
-	[AddComponentMenu("UI/Extensions/Primitives/UIGridRenderer")]
+    [AddComponentMenu("UI/Extensions/Primitives/UIGridRenderer")]
 	public class UIGridRenderer : UILineRenderer
 	{
 		[SerializeField]

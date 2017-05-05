@@ -16,7 +16,8 @@
 ///
 /// </summary>
 
-namespace UnityEngine.UI.Extensions {
+namespace UnityEngine.UI.Extensions
+{
     [AddComponentMenu("UI/Extensions/Primitives/Cut Corners")]
     public class UICornerCut : UIPrimitiveBase
     {

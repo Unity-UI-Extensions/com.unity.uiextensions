@@ -5,10 +5,10 @@ using System.Collections;
 
 namespace UnityEngine.UI.Extensions.Tweens
 {
-	// Tween runner, executes the given tween.
-	// The coroutine will live within the given 
-	// behaviour container.
-	internal class TweenRunner<T> where T : struct, ITweenValue
+    // Tween runner, executes the given tween.
+    // The coroutine will live within the given 
+    // behaviour container.
+    internal class TweenRunner<T> where T : struct, ITweenValue
 	{
 		protected MonoBehaviour m_CoroutineContainer;
 		protected IEnumerator m_Tween;

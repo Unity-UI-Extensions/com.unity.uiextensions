@@ -5,11 +5,11 @@ using UnityEngine.UI.Extensions;
 
 namespace UnityEditor.UI
 {
-	/// <summary>
-	/// This script adds the Extensions UI menu options to the Unity Editor.
-	/// </summary>
+    /// <summary>
+    /// This script adds the Extensions UI menu options to the Unity Editor.
+    /// </summary>
 
-	static internal class ExtensionMenuOptions
+    static internal class ExtensionMenuOptions
 	{
 		#region Unity Builder section  - Do not change unless UI Source (Editor\MenuOptions) changes
 		#region Unity Builder properties  - Do not change unless UI Source (Editor\MenuOptions) changes

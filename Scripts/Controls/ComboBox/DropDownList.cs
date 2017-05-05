@@ -6,10 +6,10 @@ using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
-	/// <summary>
-	///  Extension to the UI class which creates a dropdown list 
-	/// </summary>
-	[RequireComponent(typeof(RectTransform))]
+    /// <summary>
+    ///  Extension to the UI class which creates a dropdown list 
+    /// </summary>
+    [RequireComponent(typeof(RectTransform))]
 	[AddComponentMenu("UI/Extensions/Dropdown List")]
 	public class DropDownList : MonoBehaviour
 	{

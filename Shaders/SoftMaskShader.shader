@@ -1,4 +1,6 @@
-﻿Shader "UI Extensions/SoftMaskShader"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "UI Extensions/SoftMaskShader"
 {
 	Properties
 	{
@@ -92,7 +94,7 @@
 				v2f OUT;
 				float4 wolrdPos = IN.vertex;
 				OUT.maskTexcoord = TRANSFORM_TEX(wolrdPos.xy, _AlphaMask);
-				OUT.vertex = mul(UNITY_MATRIX_MVP, IN.vertex);
+				OUT.vertex = UnityObjectToClipPos(IN.vertex);
 				OUT.texcoord = IN.texcoord;
 
 				#ifdef UNITY_HALF_TEXEL_OFFSET

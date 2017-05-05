@@ -8,10 +8,10 @@ using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
-	/// <summary>
-	/// Layout Group controller that arranges children in rows, fitting as many on a line until total width exceeds parent bounds
-	/// </summary>
-	[AddComponentMenu("Layout/Extensions/Flow Layout Group")]
+    /// <summary>
+    /// Layout Group controller that arranges children in rows, fitting as many on a line until total width exceeds parent bounds
+    /// </summary>
+    [AddComponentMenu("Layout/Extensions/Flow Layout Group")]
 	public class FlowLayoutGroup : LayoutGroup
 	{
 		public float SpacingX = 0f;

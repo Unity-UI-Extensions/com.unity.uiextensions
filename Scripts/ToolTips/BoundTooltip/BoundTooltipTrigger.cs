@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-	[AddComponentMenu("UI/Extensions/Bound Tooltip/Tooltip Trigger")]
+    [AddComponentMenu("UI/Extensions/Bound Tooltip/Tooltip Trigger")]
 	public class BoundTooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 	{
 		[TextAreaAttribute]

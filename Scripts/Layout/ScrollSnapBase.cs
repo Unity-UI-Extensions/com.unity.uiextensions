@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-	public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler
+    public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler
 	{
 		internal RectTransform _screensContainer;
 		internal bool _isVertical;

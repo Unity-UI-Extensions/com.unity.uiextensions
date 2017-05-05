@@ -6,7 +6,7 @@ using UnityEngine.UI.Extensions.Tweens;
 
 namespace UnityEngine.UI.Extensions
 {
-	[RequireComponent(typeof(RectTransform), typeof(LayoutElement))]
+    [RequireComponent(typeof(RectTransform), typeof(LayoutElement))]
 	[AddComponentMenu("UI/Extensions/Accordion/Accordion Element")]
 	public class AccordionElement : Toggle
 	{

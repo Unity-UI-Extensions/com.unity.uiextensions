@@ -2,8 +2,6 @@
 /// Sourced from - http://forum.unity3d.com/threads/free-reorderable-list.364600/
 
 using System;
-using System.Collections;
-using System.Linq;
 using UnityEngine.Events;
 
 namespace UnityEngine.UI.Extensions

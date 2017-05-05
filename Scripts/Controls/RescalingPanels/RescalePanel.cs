@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-	[AddComponentMenu("UI/Extensions/RescalePanels/RescalePanel")]
+    [AddComponentMenu("UI/Extensions/RescalePanels/RescalePanel")]
     public class RescalePanel : MonoBehaviour, IPointerDownHandler, IDragHandler
     {
         public Vector2 minSize;

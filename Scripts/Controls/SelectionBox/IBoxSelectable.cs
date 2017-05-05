@@ -4,13 +4,13 @@
 ///Sourced from - http://forum.unity3d.com/threads/color-picker.267043/
 
 
-namespace UnityEngine.UI.Extensions 
+namespace UnityEngine.UI.Extensions
 {
 
-	/*
+    /*
 	 * Implement this interface on any MonoBehaviour that you'd like to be considered selectable.
 	 */
-	public interface IBoxSelectable {
+    public interface IBoxSelectable {
 		bool selected {
 			get; 
 			set;

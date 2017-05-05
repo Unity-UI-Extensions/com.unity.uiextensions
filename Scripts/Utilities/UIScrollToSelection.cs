@@ -1,4 +1,5 @@
-﻿/// Credit zero3growlithe
+﻿using System.Collections.Generic;
+/// Credit zero3growlithe
 /// sourced from: http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/page-2#post-2011648
 
 /*USAGE:
@@ -6,7 +7,6 @@ Simply place the script on the ScrollRect that contains the selectable children 
 and drag'n'drop the RectTransform of the options "container" that we'll be scrolling.*/
 
 using UnityEngine.EventSystems;
-using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {

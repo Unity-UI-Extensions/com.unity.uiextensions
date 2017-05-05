@@ -5,7 +5,7 @@ using UnityEngine.UI.Extensions;
 
 namespace UnityEditor.UI
 {
-	[CustomEditor(typeof(AccordionElement), true)]
+    [CustomEditor(typeof(AccordionElement), true)]
 	public class AccordionElementEditor : ToggleEditor {
 	
 		public override void OnInspectorGUI()

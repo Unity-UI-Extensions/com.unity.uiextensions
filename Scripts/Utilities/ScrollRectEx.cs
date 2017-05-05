@@ -11,7 +11,7 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-	[AddComponentMenu("UI/Extensions/ScrollRectEx")]
+    [AddComponentMenu("UI/Extensions/ScrollRectEx")]
     public class ScrollRectEx : ScrollRect
     {
         private bool routeToParent = false;

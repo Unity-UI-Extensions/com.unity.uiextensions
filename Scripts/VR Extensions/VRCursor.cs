@@ -1,7 +1,6 @@
 ﻿/// Credit Ralph Barbagallo (www.flarb.com /www.ralphbarbagallo.com / @flarb)
 /// Sourced from - http://forum.unity3d.com/threads/vr-cursor-possible-unity-4-6-gui-bug-or-is-it-me
 
-using System.Collections;
 namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/VR Cursor")]

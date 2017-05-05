@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-	[AddComponentMenu("UI/Extensions/RescalePanels/RescaleDragPanel")]
+    [AddComponentMenu("UI/Extensions/RescalePanels/RescaleDragPanel")]
     public class RescaleDragPanel : MonoBehaviour, IPointerDownHandler, IDragHandler
     {
         private Vector2 pointerOffset;

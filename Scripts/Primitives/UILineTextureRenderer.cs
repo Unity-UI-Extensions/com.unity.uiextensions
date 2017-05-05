@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
- 	[AddComponentMenu("UI/Extensions/Primitives/UILineTextureRenderer")]
+    [AddComponentMenu("UI/Extensions/Primitives/UILineTextureRenderer")]
     public class UILineTextureRenderer : UIPrimitiveBase
     {
         [SerializeField]

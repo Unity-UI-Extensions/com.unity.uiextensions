@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
-	[AddComponentMenu("UI/Effects/Extensions/Gradient2")]
+    [AddComponentMenu("UI/Effects/Extensions/Gradient2")]
 	public class Gradient2 : BaseMeshEffect {
 	 [SerializeField]
 	 Type _gradientType;

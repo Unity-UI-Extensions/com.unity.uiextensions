@@ -1,7 +1,6 @@
 /// Credit Ges
 /// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/page-3#post-2280109
 
-using System.Collections;
 using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions

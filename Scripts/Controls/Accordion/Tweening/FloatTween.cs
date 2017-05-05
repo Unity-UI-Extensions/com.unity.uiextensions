@@ -1,12 +1,11 @@
 ﻿///Credit ChoMPHi
 ///Sourced from - http://forum.unity3d.com/threads/accordion-type-layout.271818/
 
-using System.Collections;
 using UnityEngine.Events;
 
 namespace UnityEngine.UI.Extensions.Tweens
 {
-	public struct FloatTween : ITweenValue
+    public struct FloatTween : ITweenValue
 	{
 		public class FloatTweenCallback : UnityEvent<float> {}
 		public class FloatFinishCallback : UnityEvent {}

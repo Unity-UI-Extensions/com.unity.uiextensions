@@ -6,7 +6,7 @@ using System.Globalization;
 namespace UnityEngine.UI.Extensions.ColorPicker
 {
 
-[RequireComponent(typeof(InputField))]
+    [RequireComponent(typeof(InputField))]
 public class HexColorField : MonoBehaviour
 {
     public ColorPickerControl ColorPicker;

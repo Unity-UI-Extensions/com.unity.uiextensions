@@ -1,11 +1,10 @@
 ///Credit judah4
 ///Sourced from - http://forum.unity3d.com/threads/color-picker.267043/
 
-using System.Globalization;
 
 namespace UnityEngine.UI.Extensions
 {
-public class TiltWindow : MonoBehaviour
+    public class TiltWindow : MonoBehaviour
 {
 	public Vector2 range = new Vector2(5f, 3f);
 

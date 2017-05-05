@@ -4,7 +4,7 @@
 
 namespace UnityEngine.UI.Extensions
 {
-	[RequireComponent(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(ToggleGroup))]
+    [RequireComponent(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(ToggleGroup))]
 	[AddComponentMenu("UI/Extensions/Accordion/Accordion Group")]
 	public class Accordion : MonoBehaviour
 	{

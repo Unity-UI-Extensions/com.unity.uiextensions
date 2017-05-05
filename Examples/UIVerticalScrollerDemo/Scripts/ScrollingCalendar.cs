@@ -7,7 +7,6 @@
 
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 using UnityEngine.UI.Extensions;
 
 

@@ -1,7 +1,6 @@
 ﻿///Credit judah4
 ///Sourced from - http://forum.unity3d.com/threads/color-picker.267043/
 
-using System.Globalization;
 
 namespace UnityEngine.UI.Extensions.ColorPicker
 {

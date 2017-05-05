@@ -45,7 +45,7 @@ using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
-	[AddComponentMenu("UI/Effects/Extensions/Mono Spacing")]
+    [AddComponentMenu("UI/Effects/Extensions/Mono Spacing")]
     [RequireComponent(typeof(Text))]
     [RequireComponent(typeof(RectTransform))]
     ///Summary
