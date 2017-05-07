@@ -350,7 +350,7 @@ namespace UnityEngine.UI.Extensions
                 ToggleDropdownPanel(false);
             }
 
-			bool validity_changed = (_panelItems.Contains (Text) == _selectionIsValid);
+			bool validity_changed = (_panelItems.Contains (Text) != _selectionIsValid);
 			_selectionIsValid = _panelItems.Contains (Text);
 			OnSelectionChanged.Invoke (Text, _selectionIsValid);
 			OnSelectionTextChanged.Invoke (Text);
