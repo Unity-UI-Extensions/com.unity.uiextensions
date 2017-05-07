@@ -7,7 +7,8 @@ using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/Primitives/UILineRenderer")]
-	public class UILineRenderer : UIPrimitiveBase
+    [RequireComponent(typeof(RectTransform))]
+    public class UILineRenderer : UIPrimitiveBase
 	{
 		private enum SegmentType
 		{
@@ -54,8 +55,6 @@ namespace UnityEngine.UI.Extensions
 		protected Vector2[] m_points;
 
 		public float LineThickness = 2;
-		public bool UseMargins;
-		public Vector2 Margin;
 		public bool relativeSize;
 
 		public bool LineList = false;
@@ -103,7 +102,7 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 
-		protected override void OnPopulateMesh(VertexHelper vh)
+        protected override void OnPopulateMesh(VertexHelper vh)
 		{
 			if (m_points == null)
 				return;
@@ -132,25 +131,11 @@ namespace UnityEngine.UI.Extensions
 				pointsToDraw = drawingPoints.ToArray();
 			}
 
-			var sizeX = rectTransform.rect.width;
-			var sizeY = rectTransform.rect.height;
-			var offsetX = -rectTransform.pivot.x * rectTransform.rect.width;
-			var offsetY = -rectTransform.pivot.y * rectTransform.rect.height;
-
-			// don't want to scale based on the size of the rect, so this is switchable now
-            if (!relativeSize)
-			{
-				sizeX = 1;
-				sizeY = 1;
-			}
-
-			if (UseMargins)
-			{
-				sizeX -= Margin.x;
-				sizeY -= Margin.y;
-				offsetX += Margin.x / 2f;
-				offsetY += Margin.y / 2f;
-			}
+            // scale based on the size of the rect or use absolute, this is switchable
+            var sizeX = !relativeSize ? 1 : rectTransform.rect.width;
+            var sizeY = !relativeSize ? 1 : rectTransform.rect.height;
+            var offsetX = -rectTransform.pivot.x * sizeX;
+            var offsetY = -rectTransform.pivot.y * sizeY;
 
 			vh.Clear();
 
@@ -279,18 +264,21 @@ namespace UnityEngine.UI.Extensions
 
 		private UIVertex[] CreateLineSegment(Vector2 start, Vector2 end, SegmentType type)
 		{
-			var uvs = middleUvs;
-			if (type == SegmentType.Start)
-				uvs = startUvs;
-			else if (type == SegmentType.End)
-				uvs = endUvs;
-
-			Vector2 offset = new Vector2(start.y - end.y, end.x - start.x).normalized * LineThickness / 2;
+			Vector2 offset = new Vector2((start.y - end.y), end.x - start.x).normalized * LineThickness / 2;
 			var v1 = start - offset;
 			var v2 = start + offset;
 			var v3 = end + offset;
 			var v4 = end - offset;
-			return SetVbo(new[] { v1, v2, v3, v4 }, uvs);
+            //Return the VDO with the correct uvs
+            switch (type)
+            {
+                case SegmentType.Start:
+                    return SetVbo(new[] { v1, v2, v3, v4 }, startUvs);
+                case SegmentType.End:
+                    return SetVbo(new[] { v1, v2, v3, v4 }, endUvs);
+                default:
+                    return SetVbo(new[] { v1, v2, v3, v4 }, middleUvs);
+            }
 		}
 	}
 }

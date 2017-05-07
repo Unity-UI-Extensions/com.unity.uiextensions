@@ -20,10 +20,11 @@ namespace UnityEngine.UI.Extensions
             var oldMatrix = Handles.matrix;
             var transform = curveRenderer.GetComponent<RectTransform>();
             //Pivot must be 0,0 to edit
-            transform.pivot = Vector2.zero;
+            //transform.pivot = Vector2.zero;
             Handles.matrix = transform.localToWorldMatrix;
 
             var points = curveRenderer.Points;
+            //Need to transform points to worldspace! when set to Relative
 
             for (int i = 0; i < points.Length - 1; i += 2)
             {
