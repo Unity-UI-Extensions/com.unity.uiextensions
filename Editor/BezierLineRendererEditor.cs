@@ -12,7 +12,7 @@ namespace UnityEngine.UI.Extensions
         {
             UILineRenderer curveRenderer = target as UILineRenderer;
 
-            if (!curveRenderer && curveRenderer.Points.Length < 2)
+            if (!curveRenderer || curveRenderer.Points == null || curveRenderer.Points.Length < 2)
             {
                 return;
             }
