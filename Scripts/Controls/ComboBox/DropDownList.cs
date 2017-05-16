@@ -55,7 +55,7 @@ namespace UnityEngine.UI.Extensions
 		}
 
 		//    private int scrollOffset; //offset of the selected item
-		private int _selectedIndex = 0;
+		private int _selectedIndex = -1;
 
 
 		[SerializeField]
@@ -207,7 +207,7 @@ namespace UnityEngine.UI.Extensions
 
 		private void OnItemClicked(int indx)
 		{
-			Debug.Log("item " + indx + " clicked");
+			//Debug.Log("item " + indx + " clicked");
 			if (indx != _selectedIndex && OnSelectionChanged != null) OnSelectionChanged.Invoke(indx);
 
 			_selectedIndex = indx;
