@@ -84,10 +84,6 @@ namespace UnityEngine.UI.Extensions
                 Debug.LogError("You need to have a Graphic control (such as an Image) for the list [" + name + "] to be droppable", gameObject);
                 return;
             }
-            if (GetCanvas().renderMode > RenderMode.ScreenSpaceCamera)
-            {
-                Debug.LogError("The ReOrderable List is only supported on a Screen-Space Canvas at the moment");
-            }
 
             _listContent = ContentLayout.gameObject.AddComponent<ReorderableListContent>();
             _listContent.Init(this);

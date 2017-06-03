@@ -94,17 +94,17 @@ namespace UnityEngine.UI.Extensions
 			try
 			{
 				_rectTransform = GetComponent<RectTransform>();
-				_mainButton = new DropDownListButton(_rectTransform.FindChild("MainButton").gameObject);
+				_mainButton = new DropDownListButton(_rectTransform.Find("MainButton").gameObject);
 
-				_overlayRT = _rectTransform.FindChild("Overlay").GetComponent<RectTransform>();
+				_overlayRT = _rectTransform.Find("Overlay").GetComponent<RectTransform>();
 				_overlayRT.gameObject.SetActive(false);
 
 
-				_scrollPanelRT = _overlayRT.FindChild("ScrollPanel").GetComponent<RectTransform>();
-				_scrollBarRT = _scrollPanelRT.FindChild("Scrollbar").GetComponent<RectTransform>();
-				_slidingAreaRT = _scrollBarRT.FindChild("SlidingArea").GetComponent<RectTransform>();
+				_scrollPanelRT = _overlayRT.Find("ScrollPanel").GetComponent<RectTransform>();
+				_scrollBarRT = _scrollPanelRT.Find("Scrollbar").GetComponent<RectTransform>();
+				_slidingAreaRT = _scrollBarRT.Find("SlidingArea").GetComponent<RectTransform>();
 				//  scrollHandleRT = slidingAreaRT.FindChild("Handle").GetComponent<RectTransform>();
-				_itemsPanelRT = _scrollPanelRT.FindChild("Items").GetComponent<RectTransform>();
+				_itemsPanelRT = _scrollPanelRT.Find("Items").GetComponent<RectTransform>();
 				//itemPanelLayout = itemsPanelRT.gameObject.GetComponent<LayoutGroup>();
 
 				_canvas = GetComponentInParent<Canvas>();
@@ -116,7 +116,7 @@ namespace UnityEngine.UI.Extensions
 				_scrollRect.content = _itemsPanelRT;
 
 
-				_itemTemplate = _rectTransform.FindChild("ItemTemplate").gameObject;
+				_itemTemplate = _rectTransform.Find("ItemTemplate").gameObject;
 				_itemTemplate.SetActive(false);
 			}
 			catch (System.NullReferenceException ex)

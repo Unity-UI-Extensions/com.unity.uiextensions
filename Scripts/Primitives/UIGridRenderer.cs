@@ -8,44 +8,44 @@ namespace UnityEngine.UI.Extensions
 	public class UIGridRenderer : UILineRenderer
 	{
 		[SerializeField]
-		private int m_gridWidth = 10;
+		private int m_GridColumns = 10;
 		[SerializeField]
-		private int m_gridHeight = 10;
+		private int m_GridRows = 10;
 
 		/// <summary>
-		/// Width of the grid in Cells.
+		/// Number of columns in the Grid
 		/// </summary>
-        public int GridWidth
+        public int GridColumns
 		{
 			get
 			{
-				return m_gridWidth;
+				return m_GridColumns;
 			}
 
 			set
 			{
-				if (m_gridWidth == value)
+				if (m_GridColumns == value)
 					return;
-				m_gridWidth = value;
+				m_GridColumns = value;
 				SetAllDirty();
 			}
 		}
 
 		/// <summary>
-		/// Height of the Grid in cells.
+		/// Number of rows in the grid.
 		/// </summary>
-        public int GridHeight
+        public int GridRows
 		{
 			get
 			{
-				return m_gridHeight;
+				return m_GridRows;
 			}
 
 			set
 			{
-				if (m_gridHeight == value)
+				if (m_GridRows == value)
 					return;
-				m_gridHeight = value;
+				m_GridRows = value;
 				SetAllDirty();
 			}
 		}
@@ -54,16 +54,16 @@ namespace UnityEngine.UI.Extensions
 		{
 			relativeSize = true;
 
-			int ArraySize = (GridHeight * 3) + 1;
-			if(GridHeight % 2 == 0)
+			int ArraySize = (GridRows * 3) + 1;
+			if(GridRows % 2 == 0)
 				++ArraySize; // needs one more line
 
-			ArraySize += (GridWidth * 3) + 1;
+			ArraySize += (GridColumns * 3) + 1;
 
 			m_points = new Vector2[ArraySize];
 
 			int Index = 0;
-			for(int i = 0; i < GridHeight; ++i)
+			for(int i = 0; i < GridRows; ++i)
 			{
 				float xFrom = 1;
 				float xTo = 0;
@@ -74,7 +74,7 @@ namespace UnityEngine.UI.Extensions
 					xTo = 1;
 				}
 
-				float y = ((float)i) / GridHeight;
+				float y = ((float)i) / GridRows;
 				m_points[Index].x = xFrom;
 				m_points[Index].y = y;
 				++Index;
@@ -82,11 +82,11 @@ namespace UnityEngine.UI.Extensions
 				m_points[Index].y = y;
 				++Index;
 				m_points[Index].x = xTo;
-				m_points[Index].y = (float)(i + 1) / GridHeight;
+				m_points[Index].y = (float)(i + 1) / GridRows;
 				++Index;
 			}
 
-			if(GridHeight % 2 == 0)
+			if(GridRows % 2 == 0)
 			{
 				// two lines to get to 0, 1
 				m_points[Index].x = 1;
@@ -99,7 +99,7 @@ namespace UnityEngine.UI.Extensions
 			++Index;
 
 			// line is now at 0,1, so we can draw the columns
-			for(int i = 0; i < GridWidth; ++i)
+			for(int i = 0; i < GridColumns; ++i)
 			{
 				float yFrom = 1;
 				float yTo = 0;
@@ -110,19 +110,19 @@ namespace UnityEngine.UI.Extensions
 					yTo = 1;
 				}
 
-				float x = ((float)i) / GridWidth;
+				float x = ((float)i) / GridColumns;
 				m_points[Index].x = x;
 				m_points[Index].y = yFrom;
 				++Index;
 				m_points[Index].x = x;
 				m_points[Index].y = yTo;
 				++Index;
-				m_points[Index].x = (float)(i + 1) / GridWidth;
+				m_points[Index].x = (float)(i + 1) / GridColumns;
 				m_points[Index].y = yTo;
 				++Index;
 			}
 
-			if(GridWidth % 2 == 0)
+			if(GridColumns % 2 == 0)
 			{
 				// one more line to get to 1, 1
 				m_points[Index].x = 1;

@@ -549,9 +549,10 @@ namespace UnityEditor.UI
 
 			Selection.activeGameObject = uiVerticalScrollerRoot;
 		}
-		#endregion
+        #endregion
 
-		[MenuItem("GameObject/UI/Extensions/UI Button", false)]
+        #region UI Button
+        [MenuItem("GameObject/UI/Extensions/UI Button", false)]
 		static public void AddUIButton(MenuCommand menuCommand)
 		{
 			GameObject uiButtonRoot = CreateUIElementRoot("UI Button", menuCommand, s_ThickGUIElementSize);
@@ -578,8 +579,10 @@ namespace UnityEditor.UI
 
 			Selection.activeGameObject = uiButtonRoot;
 		}
+        #endregion
 
-		[MenuItem("GameObject/UI/Extensions/UI Flippable", false)]
+        #region UI Flippable
+        [MenuItem("GameObject/UI/Extensions/UI Flippable", false)]
 		static public void AddUIFlippableImage(MenuCommand menuCommand)
 		{
 			GameObject go = CreateUIElementRoot("UI Flippable", menuCommand, s_ImageGUIElementSize);
@@ -587,8 +590,10 @@ namespace UnityEditor.UI
 			go.AddComponent<UIFlippable>();
 			Selection.activeGameObject = go;
 		}
+        #endregion
 
-		[MenuItem("GameObject/UI/Extensions/UI Window Base", false)]
+        #region UI WindowBase
+        [MenuItem("GameObject/UI/Extensions/UI Window Base", false)]
 		static public void AddUIWindowBase(MenuCommand menuCommand)
 		{
 			GameObject go = CreateUIElementRoot("UI Window Base", menuCommand, s_ThickGUIElementSize);
@@ -596,9 +601,10 @@ namespace UnityEditor.UI
 			go.AddComponent<Image>();
 			Selection.activeGameObject = go;
 		}
+        #endregion
 
-		#region Accordian
-		[MenuItem("GameObject/UI/Extensions/Accordion/Accordion Group", false)]
+        #region Accordian
+        [MenuItem("GameObject/UI/Extensions/Accordion/Accordion Group", false)]
 		static public void AddAccordionGroup(MenuCommand menuCommand)
 		{
 			GameObject go = CreateUIElementRoot("Accordion Group", menuCommand, s_ThickGUIElementSize);
@@ -1134,6 +1140,7 @@ namespace UnityEditor.UI
             go.AddComponent<UIGridRenderer>();
             Selection.activeGameObject = go;
         }
+
         #endregion
 
         #region Re-Orderable Lists
@@ -1401,7 +1408,7 @@ namespace UnityEditor.UI
 		[MenuItem("GameObject/UI/Extensions/Re-orderable Lists/Re-orderable Vertical List", false)]
 		static public void AddReorderableVerticalList(MenuCommand menuCommand)
 		{
-			GameObject reorderableScrollRoot = CreateUIElementRoot("Re-orderable Vertial List", menuCommand, s_ThickGUIElementSize);
+			GameObject reorderableScrollRoot = CreateUIElementRoot("Re-orderable Vertical List", menuCommand, s_ThickGUIElementSize);
 
 			GameObject childContent = CreateUIObject("List_Content", reorderableScrollRoot);
 
@@ -1643,9 +1650,10 @@ namespace UnityEditor.UI
 		}
 
 
-		#endregion
+        #endregion
 
-		[MenuItem("GameObject/UI/Extensions/UI Knob", false)]
+        #region UI Knob
+        [MenuItem("GameObject/UI/Extensions/UI Knob", false)]
 		static public void AddUIKnob(MenuCommand menuCommand)
 		{
 			GameObject go = CreateUIElementRoot("UI Knob", menuCommand, s_ImageGUIElementSize);
@@ -1653,14 +1661,17 @@ namespace UnityEditor.UI
 			go.AddComponent<UI_Knob>();
 			Selection.activeGameObject = go;
 		}
-		
-		[MenuItem("GameObject/UI/Extensions/TextPic", false)]
+        #endregion
+
+        #region TextPic
+        [MenuItem("GameObject/UI/Extensions/TextPic", false)]
 		static public void AddTextPic(MenuCommand menuCommand)
 		{
 			GameObject go = CreateUIElementRoot("TextPic", menuCommand, s_ImageGUIElementSize);
 			go.AddComponent<TextPic>();
 			Selection.activeGameObject = go;
 		}
+        #endregion
 
         #region BoxSlider
         [MenuItem("GameObject/UI/Extensions/Box Slider", false)]
@@ -1699,7 +1710,7 @@ namespace UnityEditor.UI
         #endregion
 
         #region Non Drawing  Graphic options
-        [MenuItem("GameObject/UI/Extensions/NonDrawingGraphicClickable", false)]
+        [MenuItem("GameObject/UI/Extensions/NonDrawingGraphic", false)]
         static public void AddNonDrawingGraphic(MenuCommand menuCommand)
         {
             GameObject go = CreateUIElementRoot("NonDrawing Graphic", menuCommand, s_ImageGUIElementSize);
@@ -1707,7 +1718,7 @@ namespace UnityEditor.UI
             Selection.activeGameObject = go;
         }
 
-        [MenuItem("GameObject/UI/Extensions/NonDrawingGraphic", false)]
+        [MenuItem("GameObject/UI/Extensions/NonDrawingGraphicClickable", false)]
         static public void AddClickableNonDrawingGraphic(MenuCommand menuCommand)
         {
             GameObject go = CreateUIElementRoot("NonDrawing Graphic-Clickable", menuCommand, s_ImageGUIElementSize);

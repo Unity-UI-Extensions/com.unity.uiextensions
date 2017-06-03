@@ -78,10 +78,10 @@ namespace UnityEngine.UI.Extensions
                 _draggingObject = clone.GetComponent<RectTransform>();
             }
 
-            //Put _dragging object into the draggin area
+            //Put _dragging object into the dragging area
             _draggingObjectOriginalSize = gameObject.GetComponent<RectTransform>().rect.size;
             _draggingObjectLE = _draggingObject.GetComponent<LayoutElement>();
-            _draggingObject.SetParent(_reorderableList.DraggableArea, false);
+            _draggingObject.SetParent(_reorderableList.DraggableArea, true);
             _draggingObject.SetAsLastSibling();
 
             //Create a fake element for previewing placement
@@ -222,6 +222,7 @@ namespace UnityEngine.UI.Extensions
                     }
                     RefreshSizes();
                     _draggingObject.SetParent(_currentReorderableListRaycasted.Content, false);
+                    _draggingObject.rotation = _currentReorderableListRaycasted.transform.rotation;
                     _draggingObject.SetSiblingIndex(_fakeElement.GetSiblingIndex());
 
                     _reorderableList.OnElementAdded.Invoke(args);
@@ -271,6 +272,7 @@ namespace UnityEngine.UI.Extensions
             {
                 RefreshSizes();
                 _draggingObject.SetParent(_reorderableList.Content, false);
+                _draggingObject.rotation = _reorderableList.Content.transform.rotation;
                 _draggingObject.SetSiblingIndex(_fromIndex);
 
 

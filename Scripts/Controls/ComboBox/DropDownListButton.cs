@@ -19,8 +19,8 @@ namespace UnityEngine.UI.Extensions
             rectTransform = btnObj.GetComponent<RectTransform>();
             btnImg = btnObj.GetComponent<Image>();
             btn = btnObj.GetComponent<Button>();
-            txt = rectTransform.FindChild("Text").GetComponent<Text>();
-            img = rectTransform.FindChild("Image").GetComponent<Image>();
+            txt = rectTransform.Find("Text").GetComponent<Text>();
+            img = rectTransform.Find("Image").GetComponent<Image>();
         }
     }
 }

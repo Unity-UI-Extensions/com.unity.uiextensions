@@ -133,20 +133,20 @@ namespace UnityEngine.UI.Extensions
             try
             {
                 _rectTransform = GetComponent<RectTransform>();
-                _inputRT = _rectTransform.FindChild("InputField").GetComponent<RectTransform>();
+                _inputRT = _rectTransform.Find("InputField").GetComponent<RectTransform>();
                 _mainInput = _inputRT.GetComponent<InputField>();
 
 				//_arrow_Button = _rectTransform.FindChild ("ArrowBtn").GetComponent<Button> ();
 
-                _overlayRT = _rectTransform.FindChild("Overlay").GetComponent<RectTransform>();
+                _overlayRT = _rectTransform.Find("Overlay").GetComponent<RectTransform>();
                 _overlayRT.gameObject.SetActive(false);
 
 
-                _scrollPanelRT = _overlayRT.FindChild("ScrollPanel").GetComponent<RectTransform>();
-                _scrollBarRT = _scrollPanelRT.FindChild("Scrollbar").GetComponent<RectTransform>();
-                _slidingAreaRT = _scrollBarRT.FindChild("SlidingArea").GetComponent<RectTransform>();
+                _scrollPanelRT = _overlayRT.Find("ScrollPanel").GetComponent<RectTransform>();
+                _scrollBarRT = _scrollPanelRT.Find("Scrollbar").GetComponent<RectTransform>();
+                _slidingAreaRT = _scrollBarRT.Find("SlidingArea").GetComponent<RectTransform>();
                 //  scrollHandleRT = slidingAreaRT.FindChild("Handle").GetComponent<RectTransform>();
-                _itemsPanelRT = _scrollPanelRT.FindChild("Items").GetComponent<RectTransform>();
+                _itemsPanelRT = _scrollPanelRT.Find("Items").GetComponent<RectTransform>();
                 //itemPanelLayout = itemsPanelRT.gameObject.GetComponent<LayoutGroup>();
 
                 _canvas = GetComponentInParent<Canvas>();
@@ -157,7 +157,7 @@ namespace UnityEngine.UI.Extensions
                 _scrollRect.movementType = ScrollRect.MovementType.Clamped;
                 _scrollRect.content = _itemsPanelRT;
 
-                itemTemplate = _rectTransform.FindChild("ItemTemplate").gameObject;
+                itemTemplate = _rectTransform.Find("ItemTemplate").gameObject;
                 itemTemplate.SetActive(false);
             }
             catch (System.NullReferenceException ex)
@@ -238,7 +238,7 @@ namespace UnityEngine.UI.Extensions
                 if (i < AvailableOptions.Count)
                 {
                     itemObjs[i].name = "Item " + i + " " + _panelItems[i];
-                    itemObjs[i].transform.FindChild("Text").GetComponent<Text>().text = _panelItems[i]; //set the text value
+                    itemObjs[i].transform.Find("Text").GetComponent<Text>().text = _panelItems[i]; //set the text value
 
                     Button itemBtn = itemObjs[i].GetComponent<Button>();
                     itemBtn.onClick.RemoveAllListeners();
