@@ -29,22 +29,38 @@ namespace UnityEngine.UI.Extensions
 	 #region Properties
 	 public Blend BlendMode {
 		 get { return _blendMode; }
-		 set { _blendMode = value; }
+		 set 
+		 { 
+			 _blendMode = value;
+			 graphic.SetVerticesDirty(); 
+		 }
 	 }
 
 	 public UnityEngine.Gradient EffectGradient {
 		 get { return _effectGradient; }
-		 set { _effectGradient = value; }
+		 set 
+		 {
+			  _effectGradient = value;
+			  graphic.SetVerticesDirty(); 
+		 }
 	 }
 
 	 public Type GradientType {
 		 get { return _gradientType; }
-		 set { _gradientType = value; }
+		 set 
+		 { 
+			 _gradientType = value;
+			 graphic.SetVerticesDirty(); 
+		 }
 	 }
 
 	 public float Offset {
 		 get { return _offset; }
-		 set { _offset = value; }
+		 set 
+		 { 
+			 _offset = value;
+			 graphic.SetVerticesDirty(); 
+		 }
 	 }
 	 #endregion
 
