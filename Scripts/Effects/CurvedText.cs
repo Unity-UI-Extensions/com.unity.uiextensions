@@ -7,8 +7,24 @@ namespace UnityEngine.UI.Extensions
     [AddComponentMenu("UI/Effects/Extensions/Curved Text")]
     public class CurvedText : BaseMeshEffect
     {
-        public AnimationCurve curveForText = AnimationCurve.Linear(0, 0, 1, 10);
-        public float curveMultiplier = 1;
+        [SerializeField]
+        private AnimationCurve _curveForText = AnimationCurve.Linear(0, 0, 1, 10);
+
+        public AnimationCurve CurveForText
+        {
+            get { return _curveForText; }
+            set { _curveForText = value; graphic.SetVerticesDirty(); }
+        }
+
+        [SerializeField]
+        private float _curveMultiplier = 1;
+
+        public float CurveMultiplier
+        {
+            get { return _curveMultiplier; }
+            set { _curveMultiplier = value; graphic.SetVerticesDirty(); }
+        }
+
         private RectTransform rectTrans;
 
 
@@ -16,15 +32,15 @@ namespace UnityEngine.UI.Extensions
         protected override void OnValidate()
         {
             base.OnValidate();
-            if (curveForText[0].time != 0)
+            if (_curveForText[0].time != 0)
             {
-                var tmpRect = curveForText[0];
+                var tmpRect = _curveForText[0];
                 tmpRect.time = 0;
-                curveForText.MoveKey(0, tmpRect);
+                _curveForText.MoveKey(0, tmpRect);
             }
             if (rectTrans == null)
                 rectTrans = GetComponent<RectTransform>();
-            if (curveForText[curveForText.length - 1].time != rectTrans.rect.width)
+            if (_curveForText[_curveForText.length - 1].time != rectTrans.rect.width)
                 OnRectTransformDimensionsChange();
         }
 #endif
@@ -51,7 +67,7 @@ namespace UnityEngine.UI.Extensions
             {
                 UIVertex uiVertex = new UIVertex();
                 vh.PopulateUIVertex(ref uiVertex, index);
-                uiVertex.position.y += curveForText.Evaluate(rectTrans.rect.width * rectTrans.pivot.x + uiVertex.position.x) * curveMultiplier;
+                uiVertex.position.y += _curveForText.Evaluate(rectTrans.rect.width * rectTrans.pivot.x + uiVertex.position.x) * _curveMultiplier;
                 vh.SetUIVertex(uiVertex, index);
             }
         }
@@ -59,9 +75,9 @@ namespace UnityEngine.UI.Extensions
         {
             if (rectTrans)
             {
-                Keyframe tmpRect = curveForText[curveForText.length - 1];
+                Keyframe tmpRect = _curveForText[_curveForText.length - 1];
                 tmpRect.time = rectTrans.rect.width;
-                curveForText.MoveKey(curveForText.length - 1, tmpRect);
+                _curveForText.MoveKey(_curveForText.length - 1, tmpRect);
             }
         }
     }

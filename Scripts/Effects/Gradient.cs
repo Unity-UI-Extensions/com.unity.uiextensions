@@ -24,8 +24,8 @@ namespace UnityEngine.UI.Extensions
         public GradientMode GradientMode { get { return _gradientMode; } set { _gradientMode = value; graphic.SetVerticesDirty(); } }
         public GradientDir GradientDir { get { return _gradientDir; } set { _gradientDir = value; graphic.SetVerticesDirty(); } }
         public bool OverwriteAllColor { get { return _overwriteAllColor; } set { _overwriteAllColor = value; graphic.SetVerticesDirty(); } }
-        public Color Vertex1 { get { return _vertex1; } set { _vertex1 = value; graphic.SetVerticesDirty(); } }
-        public Color Vertex2 { get { return _vertex2; } set { _vertex2 = value; graphic.SetVerticesDirty(); } }
+        public Color Vertex1 { get { return _vertex1; } set { _vertex1 = value; graphic.SetAllDirty(); } }
+        public Color Vertex2 { get { return _vertex2; } set { _vertex2 = value; graphic.SetAllDirty(); } }
         #endregion
 
         protected override void Awake()
