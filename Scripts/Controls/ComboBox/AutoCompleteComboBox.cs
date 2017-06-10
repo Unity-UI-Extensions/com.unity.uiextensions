@@ -6,6 +6,12 @@ using System.Linq;
 
 namespace UnityEngine.UI.Extensions
 {
+    public enum AutoCompleteSearchType
+    {
+        ArraySort,
+        Linq
+    }
+
     [RequireComponent(typeof(RectTransform))]
     [AddComponentMenu("UI/Extensions/AutoComplete ComboBox")]
     public class AutoCompleteComboBox : MonoBehaviour
@@ -94,7 +100,9 @@ namespace UnityEngine.UI.Extensions
 		public Color MatchingItemsRemainingTextColor = Color.black;
 		public Color NoItemsRemainingTextColor = Color.red;
 
-		private bool _selectionIsValid = false;
+        public AutoCompleteSearchType autocompleteSearchType = AutoCompleteSearchType.Linq;
+
+        private bool _selectionIsValid = false;
 
 		[System.Serializable]
 		public class SelectionChangedEvent :  UnityEngine.Events.UnityEvent<string, bool> {
@@ -169,7 +177,7 @@ namespace UnityEngine.UI.Extensions
             panelObjects = new Dictionary<string, GameObject>();
 
             _prunedPanelItems = new List<string>();
-            _panelItems = AvailableOptions.ToList();
+            _panelItems = new List<string>();
 
             RebuildPanel();
             //RedrawPanel(); - causes an initialisation failure in U5
@@ -212,15 +220,15 @@ namespace UnityEngine.UI.Extensions
         {
             //panel starts with all options
             _panelItems.Clear();
+            _prunedPanelItems.Clear();
+            panelObjects.Clear();
+
             foreach (string option in AvailableOptions)
             {
                 _panelItems.Add(option.ToLower());
             }
-            _panelItems.Sort();
 
-            _prunedPanelItems.Clear();
             List<GameObject> itemObjs = new List<GameObject>(panelObjects.Values);
-            panelObjects.Clear();
 
             int indx = 0;
             while (itemObjs.Count < AvailableOptions.Count)
@@ -396,23 +404,60 @@ namespace UnityEngine.UI.Extensions
 
         private void PruneItems(string currText)
         {
-            List<string> notToPrune = _panelItems.Where(x => x.ToLower().Contains(currText.ToLower())).ToList();
-            List<string> toPrune = _panelItems.Except(notToPrune).ToList();
+            if (autocompleteSearchType == AutoCompleteSearchType.Linq)
+            {
+                PruneItemsLinq(currText);
+            }
+            else
+            {
+                PruneItemsArray(currText);
+            }
+        }
+
+        private void PruneItemsLinq(string currText)
+        {
+            currText = currText.ToLower();
+            var toPrune = _panelItems.Where(x => !x.Contains(currText)).ToArray();
             foreach (string key in toPrune)
             {
-                //            Debug.Log("pruning key " + key);
                 panelObjects[key].SetActive(false);
                 _panelItems.Remove(key);
                 _prunedPanelItems.Add(key);
             }
 
-            List<string> toAddBack = _prunedPanelItems.Where(x => x.ToLower().Contains(currText)).ToList();
+            var toAddBack = _prunedPanelItems.Where(x => x.Contains(currText)).ToArray();
             foreach (string key in toAddBack)
             {
-                //            Debug.Log("adding back key " + key);
                 panelObjects[key].SetActive(true);
                 _panelItems.Add(key);
                 _prunedPanelItems.Remove(key);
+            }
+        }
+
+        //Updated to not use Linq
+        private void PruneItemsArray(string currText)
+        {
+            string _currText = currText.ToLower();
+
+            for (int i = _panelItems.Count - 1; i >= 0; i--)
+            {
+                string _item = _panelItems[i];
+                if (!_item.Contains(_currText))
+                {
+                    panelObjects[_panelItems[i]].SetActive(false);
+                    _panelItems.RemoveAt(i);
+                    _prunedPanelItems.Add(_item);
+                }
+            }
+            for (int i = _prunedPanelItems.Count - 1; i >= 0; i--)
+            {
+                string _item = _prunedPanelItems[i];
+                if (_item.Contains(_currText))
+                {
+                    panelObjects[_prunedPanelItems[i]].SetActive(true);
+                    _prunedPanelItems.RemoveAt(i);
+                    _panelItems.Add(_item);
+                }
             }
         }
     }
