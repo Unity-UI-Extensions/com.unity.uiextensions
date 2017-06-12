@@ -131,6 +131,11 @@ namespace UnityEngine.UI.Extensions
 				pointsToDraw = drawingPoints.ToArray();
 			}
 
+            if (ImproveResolution != ResolutionMode.None)
+            {
+                pointsToDraw = IncreaseResolution(pointsToDraw);
+            }
+
             // scale based on the size of the rect or use absolute, this is switchable
             var sizeX = !relativeSize ? 1 : rectTransform.rect.width;
             var sizeY = !relativeSize ? 1 : rectTransform.rect.height;
@@ -243,7 +248,13 @@ namespace UnityEngine.UI.Extensions
 
 				vh.AddUIVertexQuad(segments[i]);
 			}
-		}
+            if (vh.currentVertCount > 64000)
+            {
+                Debug.LogError("Max Verticies size is 64000, current mesh vertcies count is [" + vh.currentVertCount + "] - Cannot Draw");
+                vh.Clear();
+                return;
+            }
+        }
 
 		private UIVertex[] CreateLineCap(Vector2 start, Vector2 end, SegmentType type)
 		{

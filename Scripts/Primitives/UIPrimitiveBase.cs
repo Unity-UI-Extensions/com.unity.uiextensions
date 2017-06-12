@@ -1,7 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
+    public enum ResolutionMode
+    {
+        None,
+        PerSegment,
+        PerLine
+    }
+
     public class UIPrimitiveBase : MaskableGraphic, ILayoutElement, ICanvasRaycastFilter
     {
 
@@ -16,6 +24,14 @@ namespace UnityEngine.UI.Extensions
         // Not serialized until we support read-enabled sprites better.
         internal float m_EventAlphaThreshold = 1;
         public float eventAlphaThreshold { get { return m_EventAlphaThreshold; } set { m_EventAlphaThreshold = value; } }
+
+        [SerializeField]
+        private ResolutionMode m_improveResolution;
+        public ResolutionMode ImproveResolution { get { return m_improveResolution; } set { m_improveResolution = value; SetAllDirty(); } }
+
+        [SerializeField]
+        private float m_Resolution;
+        public float Resoloution { get { return m_Resolution; } set { m_Resolution = value; SetAllDirty(); } }
 
 
 
@@ -70,6 +86,52 @@ namespace UnityEngine.UI.Extensions
             return vbo;
         }
 
+        protected Vector2[] IncreaseResolution(Vector2[] input)
+        {
+            var outputList = new List<Vector2>();
+
+            switch (ImproveResolution)
+            {
+                case ResolutionMode.PerLine:
+                    float totalDistance = 0, increments = 0;
+                    for (int i = 0; i < input.Length - 1; i++)
+                    {
+                        totalDistance += Vector2.Distance(input[i], input[i + 1]);
+                    }
+                    increments = totalDistance / m_Resolution;
+                    var incrementCount = 0;
+                    for (int i = 0; i < input.Length - 1; i++)
+                    {
+                        var p1 = input[i];
+                        outputList.Add(p1);
+                        var p2 = input[i + 1];
+                        var segmentDistance = Vector2.Distance(p1, p2) / increments;
+                        var incrementTime = 1f / segmentDistance;
+                        for (int j=0; j < segmentDistance; j++)
+                        {
+                            outputList.Add(Vector2.Lerp(p1, (Vector2)p2, j * incrementTime));
+                            incrementCount++;
+                        }
+                        outputList.Add(p2);
+                    }
+                    break;
+                case ResolutionMode.PerSegment:
+                    for (int i = 0; i < input.Length - 1; i++)
+                    {
+                        var p1 = input[i];
+                        outputList.Add(p1);
+                        var p2 = input[i + 1];
+                        increments = 1f / m_Resolution;
+                        for (Single j = 1; j < m_Resolution; j++)
+                        {
+                            outputList.Add(Vector2.Lerp(p1, (Vector2)p2, increments * j));
+                        }
+                        outputList.Add(p2);
+                    }
+                    break;
+            }
+            return outputList.ToArray();
+        }
 
         #region ILayoutElement Interface
 
@@ -111,6 +173,7 @@ namespace UnityEngine.UI.Extensions
         #region ICanvasRaycastFilter Interface
         public virtual bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCamera)
         {
+            // add test for line check
             if (m_EventAlphaThreshold >= 1)
                 return true;
 
@@ -128,6 +191,8 @@ namespace UnityEngine.UI.Extensions
             local.y += rectTransform.pivot.y * rect.height;
 
             local = MapCoordinate(local, rect);
+
+            //test local coord with Mesh
 
             // Normalize local coordinates.
             Rect spriteRect = sprite.textureRect;
