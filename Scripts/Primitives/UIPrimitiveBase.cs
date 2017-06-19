@@ -224,7 +224,7 @@ namespace UnityEngine.UI.Extensions
         {
             Rect spriteRect = sprite.rect;
             //if (type == Type.Simple || type == Type.Filled)
-                return new Vector2(local.x * spriteRect.width / rect.width, local.y * spriteRect.height / rect.height);
+                return new Vector2(local.x * rect.width, local.y * rect.height);
 
             //Vector4 border = sprite.border;
             //Vector4 adjustedBorder = GetAdjustedBorders(border / pixelsPerUnit, rect);
@@ -280,6 +280,7 @@ namespace UnityEngine.UI.Extensions
         #region onEnable
         protected override void OnEnable()
         {
+            base.OnEnable();
             SetAllDirty();
         }
         #endregion
