@@ -14,6 +14,12 @@ public class ComboBoxChanged : MonoBehaviour {
         Debug.Log("AutoCompleteComboBox changed [" + text + "]");
     }
 
+    public void AutoCompleteComboBoxSelectionChangedEvent(string text, bool valid)
+    {
+
+        Debug.Log("AutoCompleteComboBox selection changed [" + text + "] and its validity was [" + valid + "]");
+    }
+
     public void DropDownChangedEvent(int newValue)
     {
 

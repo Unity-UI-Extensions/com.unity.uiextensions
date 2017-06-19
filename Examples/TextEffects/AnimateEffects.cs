@@ -14,7 +14,6 @@ public class AnimateEffects : MonoBehaviour
     float gradient2Max = 1, gradient2Min = -1, gradient2Modifier = 0.01f;
     public CylinderText cylinderText;
     private Transform cylinderTextRT;
-    float cylinderTextMax = 0.5f, cylinderTextMin = -0.5f, cylinderTextModifier = 1f;
     Vector3 cylinderRotation = new Vector3(0, 1, 0);
     public SoftMaskScript SAUIM;
     float SAUIMMax = 1, SAUIMMin = 0, SAUIMModifier = 0.01f;
