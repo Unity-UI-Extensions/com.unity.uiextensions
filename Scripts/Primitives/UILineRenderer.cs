@@ -64,6 +64,9 @@ namespace UnityEngine.UI.Extensions
 		public BezierType BezierMode = BezierType.None;
 		public int BezierSegmentsPerCurve = 10;
 
+        [HideInInspector]
+        public bool drivenExternally = false;
+
 		/// <summary>
 		/// UV rectangle used by the texture.
 		/// </summary>
