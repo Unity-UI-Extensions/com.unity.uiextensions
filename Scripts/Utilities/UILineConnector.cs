@@ -3,6 +3,7 @@
 
 namespace UnityEngine.UI.Extensions
 {
+    [AddComponentMenu("UI/Extensions/UI Line Connector")]
     [RequireComponent(typeof(UILineRenderer))]
     [ExecuteInEditMode]
     public class UILineConnector : MonoBehaviour

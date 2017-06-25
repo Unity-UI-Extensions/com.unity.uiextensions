@@ -100,54 +100,55 @@ For the full release history, follow the below link to the full release notes pa
 ### [Release Notes](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/ReleaseNotes/RELEASENOTES)###
 
 ---
-#[Controls and extensions listed in this project](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Controls):#
+#[Controls and extensions listed in this project](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls):#
 
-There are almost 70 extension controls / effect and other utilities in the project which are listed on the following page:
+There are almost 70+ extension controls / effect and other utilities in the project which are listed on the following page:
 
-##[UI Extensions controls list](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Controls)##
+##[UI Extensions controls list](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls)##
 
-[Controls](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Controls#Controls)|||||
+[Controls](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#Controls)|||||
 ------|------|------|------|
 Accordion|ColorPicker|SelectionBox|UIButton|UIFlippable
 ComboBox|AutoCompleteComboBox|DropDownList|BoundToolTip|UIWindowBase
-UI_Knob|TextPic|InputFocus|Box Slider
+UI_Knob|TextPic|InputFocus|Box Slider|CooldownButton
 ||||
 
-[Primitives](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Controls#Primitives)|||||
+[Primitives](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#Primitives)|||||
 ------|------|------|------|
 UILineRenderer|UILineTextureRenderer|UICircle|DiamondGraph|UICornerCut
 UIPolygon||||
 ||||
 
-[Layouts](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Controls#Layouts)|||||
+[Layouts](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#Layouts)|||||
 ------|------|------|------|
 Horizontal Scroll Snap|Vertical Scroll Snap|Flow Layout Group|Radial Layout|Tile Size Fitter
 Scroll Snap (alt implementation)|Reorderable List|UI Vertical Scroller|Curved Layout|Table Layout
 ||||
 
-[Effects](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Controls#Effects)|||||
+[Effects](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#Effects)|||||
 ------|------|------|------|
-Best Fit Outline|Curved Text|Gradient|Gradient2|Letter Spacing|
+Best Fit Outline|Curved Text|Gradient|Gradient2|Letter Spacing
 NicerOutline|RaycastMask|UIFlippable|UIImageCrop|SoftAlphaMask
 CylinderText|UIParticleSystem|||
 ||||
 
-[VR Components](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Controls#VR)|||||
+[VR Components](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#VR)|||||
 ------|------|------|------|
 VRCursor|VRInputModule|||
 ||||
 
-[Input Modules](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Controls#InputModules)|||||
+[Input Modules](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#InputModules)|||||
 ------|------|------|------|
 AimerInputModule|GamePadInputModule|||
 ||||
 
-[Additional Components](https://bitbucket.org/ddreaper/unity-ui-extensions/wiki/Controls#Additional_Components)|||||
+[Additional Components](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#Additional_Components)|||||
 ------|------|------|------|
 ReturnKeyTrigger|TabNavigation|uGUITools|ScrollRectTweener|ScrollRectLinker
 ScrollRectEx|UI_InfiniteScroll|UI_ScrollRectOcclusion|UIScrollToSelection|UISelectableExtension
 switchToRectTransform|ScrollConflictManager|CLFZ2 (Encryption)|Serialization|DragCorrector
-PPIViewer|UI_TweenScale|UI_InfiniteScroll|UI_ScrollRectOcclusion|
+PPIViewer|UI_TweenScale|UI_InfiniteScroll|UI_ScrollRectOcclusion|NonDrawingGraphic
+UILineConnector||||
 ||||
 
 *More to come*

@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
+    [AddComponentMenu("UI/Extensions/Cooldown Button")]
     public class CooldownButton : MonoBehaviour, IPointerDownHandler
     {
         #region Sub-Classes
