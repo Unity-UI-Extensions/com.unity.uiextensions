@@ -14,4 +14,9 @@ public class TestAddingPoints : MonoBehaviour {
         pointlist.Add(point);
         LineRenderer.Points = pointlist.ToArray();
     }
+
+    public void ClearPoints()
+    {
+        LineRenderer.Points = new Vector2[0];
+    }
 }

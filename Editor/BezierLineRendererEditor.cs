@@ -35,7 +35,7 @@ namespace UnityEngine.UI.Extensions
             }
 
             //Need to transform points to worldspace! when set to Relative
-            if (curveRenderer.relativeSize)
+            if (curveRenderer.RelativeSize)
             {
                 for (int i = 0; i < points.Length; i++)
                 {
@@ -57,7 +57,7 @@ namespace UnityEngine.UI.Extensions
                     if (check.changed)
                     {
                         Undo.RecordObject(curveRenderer, "Changed Curve Position");
-                        if (curveRenderer.relativeSize)
+                        if (curveRenderer.RelativeSize)
                         {
                             curveRenderer.Points[i] = new Vector2((p.x - offsetX) / sizeX, (p.y - offsetY) / sizeY);
                         }

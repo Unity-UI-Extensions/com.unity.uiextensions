@@ -58,7 +58,7 @@ namespace UnityEngine.UI.Extensions
 
             // And assign the converted points to the line renderer
             lr.Points = points;
-            lr.relativeSize = false;
+            lr.RelativeSize = false;
             lr.drivenExternally = true;
         }
     }
