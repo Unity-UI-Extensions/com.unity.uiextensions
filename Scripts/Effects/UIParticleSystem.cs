@@ -193,7 +193,11 @@ namespace UnityEngine.UI.Extensions
                 Vector4 particleUV = _uv;
                 if (_textureSheetAnimation.enabled)
                 {
+#if UNITY_5_5_OR_NEWER
                     float frameProgress = 1 - (particle.remainingLifetime / particle.startLifetime);
+#else
+                    float frameProgress = 1 - (particle.lifetime / particle.startLifetime);
+#endif
                     //                float frameProgress = textureSheetAnimation.frameOverTime.curveMin.Evaluate(1 - (particle.lifetime / particle.startLifetime)); // TODO - once Unity allows MinMaxCurve reading
                     frameProgress = Mathf.Repeat(frameProgress * _textureSheetAnimation.cycleCount, 1);
                     int frame = 0;
