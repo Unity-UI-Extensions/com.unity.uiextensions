@@ -196,11 +196,11 @@ namespace UnityEngine.UI.Extensions
                 {
 #if UNITY_5_5_OR_NEWER
                     float frameProgress = 1 - (particle.remainingLifetime / particle.startLifetime);
+                    frameProgress = _textureSheetAnimation.frameOverTime.curveMin.Evaluate(1 - (particle.remainingLifetime / particle.startLifetime)); // TODO - once Unity allows MinMaxCurve reading
 #else
                     float frameProgress = 1 - (particle.lifetime / particle.startLifetime);
-#endif
-                    //                float frameProgress = textureSheetAnimation.frameOverTime.curveMin.Evaluate(1 - (particle.lifetime / particle.startLifetime)); // TODO - once Unity allows MinMaxCurve reading
                     frameProgress = Mathf.Repeat(frameProgress * _textureSheetAnimation.cycleCount, 1);
+#endif
                     int frame = 0;
 
                     switch (_textureSheetAnimation.animation)
@@ -214,9 +214,13 @@ namespace UnityEngine.UI.Extensions
                             frame = Mathf.FloorToInt(frameProgress * _textureSheetAnimation.numTilesX);
 
                             int row = _textureSheetAnimation.rowIndex;
-                            //                    if (textureSheetAnimation.useRandomRow) { // FIXME - is this handled internally by rowIndex?
-                            //                        row = Random.Range(0, textureSheetAnimation.numTilesY, using: particle.randomSeed);
-                            //                    }
+#if UNITY_5_5_OR_NEWER
+                            if (_textureSheetAnimation.useRandomRow)
+                            { 
+                                Random.InitState((int)particle.randomSeed);
+                                row = Random.Range(0, _textureSheetAnimation.numTilesY);
+                            }
+#endif
                             frame += row * _textureSheetAnimation.numTilesX;
                             break;
 
