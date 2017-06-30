@@ -74,7 +74,8 @@ namespace UnityEngine.UI.Extensions
                 }
 
                 // automatically set scaling
-                _particleSystem.scalingMode = ParticleSystemScalingMode.Local;
+				var main = _particleSystem.main;
+				main.scalingMode = ParticleSystemScalingMode.Local;
 
                 _particles = null;
                 setParticleSystemMaterial = true;
@@ -113,7 +114,7 @@ namespace UnityEngine.UI.Extensions
             // prepare particles array
             if (_particles == null)
             {
-                _particles = new ParticleSystem.Particle[_particleSystem.maxParticles];
+				_particles = new ParticleSystem.Particle[_particleSystem.main.maxParticles];
             }
 
             // prepare uvs
@@ -177,14 +178,14 @@ namespace UnityEngine.UI.Extensions
                 ParticleSystem.Particle particle = _particles[i];
 
                 // get particle properties
-                Vector2 position = (_particleSystem.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
+				Vector2 position = (_particleSystem.main.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
                 float rotation = -particle.rotation * Mathf.Deg2Rad;
                 float rotation90 = rotation + Mathf.PI / 2;
                 Color32 color = particle.GetCurrentColor(_particleSystem);
                 float size = particle.GetCurrentSize(_particleSystem) * 0.5f;
 
                 // apply scale
-                if (_particleSystem.scalingMode == ParticleSystemScalingMode.Shape)
+				if (_particleSystem.main.scalingMode == ParticleSystemScalingMode.Shape)
                 {
                     position /= canvas.scaleFactor;
                 }
@@ -193,7 +194,11 @@ namespace UnityEngine.UI.Extensions
                 Vector4 particleUV = _uv;
                 if (_textureSheetAnimation.enabled)
                 {
+#if UNITY_5_5_OR_NEWER
+                    float frameProgress = 1 - (particle.remainingLifetime / particle.startLifetime);
+#else
                     float frameProgress = 1 - (particle.lifetime / particle.startLifetime);
+#endif
                     //                float frameProgress = textureSheetAnimation.frameOverTime.curveMin.Evaluate(1 - (particle.lifetime / particle.startLifetime)); // TODO - once Unity allows MinMaxCurve reading
                     frameProgress = Mathf.Repeat(frameProgress * _textureSheetAnimation.cycleCount, 1);
                     int frame = 0;
