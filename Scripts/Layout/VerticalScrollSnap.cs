@@ -214,25 +214,17 @@ namespace UnityEngine.UI.Extensions
 
             if (_scroll_rect.vertical)
             {
-                if (UseFastSwipe)
+                var distance = Vector3.Distance(_startPosition, _screensContainer.localPosition);
+                if (UseFastSwipe && distance < panelDimensions.height + FastSwipeThreshold)
                 {
-                    //If using fastswipe - then a swipe does page next / previous
-                    if ((_scroll_rect.velocity.y > 0 && _scroll_rect.velocity.y > FastSwipeThreshold) ||
-                        _scroll_rect.velocity.y < 0 && _scroll_rect.velocity.y < -FastSwipeThreshold)
+                    _scroll_rect.velocity = Vector3.zero;
+                    if (_startPosition.y - _screensContainer.localPosition.y > 0)
                     {
-                        _scroll_rect.velocity = Vector3.zero;
-                        if (_startPosition.y - _screensContainer.localPosition.y > 0)
-                        {
-                            NextScreen();
-                        }
-                        else
-                        {
-                            PreviousScreen();
-                        }
+                        NextScreen();
                     }
                     else
                     {
-                        ScrollToClosestElement();
+                        PreviousScreen();
                     }
                 }
             }

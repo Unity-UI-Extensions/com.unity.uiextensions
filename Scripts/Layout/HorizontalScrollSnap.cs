@@ -72,7 +72,6 @@ namespace UnityEngine.UI.Extensions
 
             int _offset = 0;
             float _dimension = 0;
-            Rect panelDimensions = gameObject.GetComponent<RectTransform>().rect;
             float currentXPosition = 0;
             var pageStepValue = _childSize = (int)panelDimensions.width * ((PageStep == 0) ? 3 : PageStep);
 
@@ -88,7 +87,7 @@ namespace UnityEngine.UI.Extensions
 
             _dimension = currentXPosition + _offset * -1;
 
-            _screensContainer.GetComponent<RectTransform>().offsetMax = new Vector2(_dimension, 0f);
+            _screensContainer.offsetMax = new Vector2(_dimension, 0f);
         }
 
         /// <summary>
@@ -214,25 +213,17 @@ namespace UnityEngine.UI.Extensions
 
             if (_scroll_rect.horizontal)
             {
-                if (UseFastSwipe)
+                var distance = Vector3.Distance(_startPosition, _screensContainer.localPosition);
+                if (UseFastSwipe && distance < panelDimensions.width + FastSwipeThreshold)
                 {
-                    //If using fastswipe - then a swipe does page next / previous
-                    if ((_scroll_rect.velocity.x > 0 &&_scroll_rect.velocity.x > FastSwipeThreshold) ||
-                        _scroll_rect.velocity.x < 0 && _scroll_rect.velocity.x < -FastSwipeThreshold)
+                    _scroll_rect.velocity = Vector3.zero;
+                    if (_startPosition.x - _screensContainer.localPosition.x > 0)
                     {
-                        _scroll_rect.velocity = Vector3.zero;
-                        if (_startPosition.x - _screensContainer.localPosition.x > 0)
-                        {
-                            NextScreen();
-                        }
-                        else
-                        {
-                            PreviousScreen();
-                        }
+                        NextScreen();
                     }
                     else
                     {
-                        ScrollToClosestElement();
+                        PreviousScreen();
                     }
                 }
             }

@@ -10,6 +10,7 @@ namespace UnityEngine.UI.Extensions
 {
     public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler, IScrollSnap
     {
+        internal Rect panelDimensions;
         internal RectTransform _screensContainer;
         internal bool _isVertical;
 
@@ -29,8 +30,8 @@ namespace UnityEngine.UI.Extensions
         internal int _currentPage;
         internal int _previousPage;
         internal int _halfNoVisibleItems;
+        internal bool _moveStarted;
         private int _bottomItem, _topItem;
-        private bool _moveStarted;
 
         [Serializable]
         public class SelectionChangeStartEvent : UnityEvent { }
@@ -63,7 +64,7 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Fast Swipe makes swiping page next / previous (optional)")]
         public Boolean UseFastSwipe = false;
 
-        [Tooltip("How far swipe has to travel to initiate a page change (optional)")]
+        [Tooltip("Offset for how far a swipe has to travel to initiate a page change (optional)\nDefault is the panel dimensions")]
         public int FastSwipeThreshold = 100;
 
         [Tooltip("Speed at which the ScrollRect will keep scrolling before slowing down and stopping (optional)")]
@@ -139,7 +140,8 @@ namespace UnityEngine.UI.Extensions
                 var vscroll = _scroll_rect.verticalScrollbar.gameObject.AddComponent<ScrollSnapScrollbarHelper>();
                 vscroll.ss = this;
             }
-
+            panelDimensions = gameObject.GetComponent<RectTransform>().rect;
+            
             if (StartingScreen < 0)
             {
                 StartingScreen = 0;
