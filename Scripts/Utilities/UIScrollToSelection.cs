@@ -203,9 +203,9 @@ namespace UnityEngine.UI.Extensions
 
         private float GetScrollOffset(float position, float listAnchorPosition, float targetLength, float maskLength)
         {
-            if (position < listAnchorPosition)
+            if (position < listAnchorPosition + (targetLength / 2))
             {
-                return listAnchorPosition - position;
+                return (listAnchorPosition + maskLength) - (position - targetLength);
             }
             else if (position + targetLength > listAnchorPosition + maskLength)
             {
