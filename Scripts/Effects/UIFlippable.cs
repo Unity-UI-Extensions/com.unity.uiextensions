@@ -5,11 +5,18 @@ namespace UnityEngine.UI.Extensions
 {
     [RequireComponent(typeof(RectTransform), typeof(Graphic)), DisallowMultipleComponent]
     [AddComponentMenu("UI/Effects/Extensions/Flippable")]
-    public class UIFlippable : MonoBehaviour, IMeshModifier
+    public class UIFlippable : BaseMeshEffect
     {     
         [SerializeField] private bool m_Horizontal = false;
         [SerializeField] private bool m_Veritical = false;
-     
+
+#if UNITY_EDITOR
+        protected override void Awake()
+        {
+            OnValidate();
+        }
+#endif
+
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="UnityEngine.UI.UIFlippable"/> should be flipped horizontally.
         /// </summary>
@@ -29,13 +36,8 @@ namespace UnityEngine.UI.Extensions
             get { return this.m_Veritical; }
             set { this.m_Veritical = value; }
         }
-     
-        protected void OnValidate()
-        {
-            this.GetComponent<Graphic>().SetVerticesDirty();
-        }
-     
-        public void ModifyMesh(VertexHelper verts)
+
+        public override void ModifyMesh(VertexHelper verts)
         {
             RectTransform rt = this.transform as RectTransform;
          
@@ -56,9 +58,21 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        public void ModifyMesh(Mesh mesh)
+#if UNITY_EDITOR
+        protected override void OnValidate()
         {
-            //Obsolete member implementation
+            var components = gameObject.GetComponents(typeof(BaseMeshEffect));
+            foreach (var comp in components)
+            {
+                if (comp.GetType() != typeof(UIFlippable))
+                {
+                    UnityEditorInternal.ComponentUtility.MoveComponentUp(this);
+                }
+                else break;
+            }
+            this.GetComponent<Graphic>().SetVerticesDirty();
+            base.OnValidate();
         }
+#endif
     }
 }
