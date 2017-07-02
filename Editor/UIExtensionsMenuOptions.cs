@@ -379,7 +379,7 @@ namespace UnityEditor.UI
 
 			ScrollSnap scrollSnap = scrollSnapRoot.AddComponent<ScrollSnap>();
 			scrollSnap.direction = direction;
-			scrollSnap.itemsVisibleAtOnce = itemVisible;
+			scrollSnap.ItemsVisibleAtOnce = itemVisible;
 
 			//Setup Content container
 			RectTransform rectTransformContent = itemList.GetComponent<RectTransform>();
