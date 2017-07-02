@@ -119,9 +119,21 @@ namespace UnityEngine.UI.Extensions
         /// Remove a new child to this Scroll Snap and recalculate it's children 
         /// *Note, this is an index address (0-x)
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="ChildRemoved"></param>
+        /// <param name="index">Index element of child to remove</param>
+        /// <param name="ChildRemoved">>Resulting removed GO</param>
         public void RemoveChild(int index, out GameObject ChildRemoved)
+        {
+            RemoveChild(index, false, out ChildRemoved);
+        }
+
+        /// <summary>
+        /// Remove a new child to this Scroll Snap and recalculate it's children 
+        /// *Note, this is an index address (0-x)
+        /// </summary>
+        /// <param name="index">Index element of child to remove</param>
+        /// <param name="WorldPositionStays">If true, the parent-relative position, scale and rotation are modified such that the object keeps the same world space position, rotation and scale as before</param>
+        /// <param name="ChildRemoved">Resulting removed GO</param>
+        public void RemoveChild(int index, bool WorldPositionStays, out GameObject ChildRemoved)
         {
             ChildRemoved = null;
             if (index < 0 || index > _screensContainer.childCount)
@@ -131,7 +143,7 @@ namespace UnityEngine.UI.Extensions
             _scroll_rect.verticalNormalizedPosition = 0;
 
             Transform child = _screensContainer.transform.GetChild(index);
-            child.SetParent(null);
+            child.SetParent(null, WorldPositionStays);
             ChildRemoved = child.gameObject;
             InitialiseChildObjectsFromScene();
             DistributePages();
@@ -145,11 +157,22 @@ namespace UnityEngine.UI.Extensions
             SetScrollContainerPosition();
         }
 
+
         /// <summary>
         /// Remove all children from this ScrollSnap
         /// </summary>
-        /// <param name="ChildrenRemoved"></param>
+        /// <param name="ChildrenRemoved">Array of child GO's removed</param>
         public void RemoveAllChildren(out GameObject[] ChildrenRemoved)
+        {
+            RemoveAllChildren(false, out ChildrenRemoved);
+        }
+
+        /// <summary>
+        /// Remove all children from this ScrollSnap
+        /// </summary>
+        /// <param name="WorldPositionStays">If true, the parent-relative position, scale and rotation are modified such that the object keeps the same world space position, rotation and scale as before</param>
+        /// <param name="ChildrenRemoved">Array of child GO's removed</param>
+        public void RemoveAllChildren(bool WorldPositionStays, out GameObject[] ChildrenRemoved)
         {
             var _screenCount = _screensContainer.childCount;
             ChildrenRemoved = new GameObject[_screenCount];
@@ -157,7 +180,7 @@ namespace UnityEngine.UI.Extensions
             for (int i = _screenCount - 1; i >= 0; i--)
             {
                 ChildrenRemoved[i] = _screensContainer.GetChild(i).gameObject;
-                ChildrenRemoved[i].transform.SetParent(null);
+                ChildrenRemoved[i].transform.SetParent(null, WorldPositionStays);
             }
 
             _scroll_rect.verticalNormalizedPosition = 0;
