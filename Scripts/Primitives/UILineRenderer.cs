@@ -50,20 +50,20 @@ namespace UnityEngine.UI.Extensions
 		private static readonly Vector2[] endUvs = new[] { UV_TOP_CENTER, UV_BOTTOM_CENTER, UV_BOTTOM_RIGHT, UV_TOP_RIGHT };
 
 		[SerializeField]
-		private Rect m_UVRect = new Rect(0f, 0f, 1f, 1f);
+        internal Rect m_UVRect = new Rect(0f, 0f, 1f, 1f);
 		[SerializeField]
-		protected Vector2[] m_points;
+        internal Vector2[] m_points;
 
         [SerializeField]
-        private float lineThickness = 2;
+        internal float lineThickness = 2;
         [SerializeField]
-        private bool relativeSize;
+        internal bool relativeSize;
         [SerializeField]
-        private bool lineList;
+        internal bool lineList;
         [SerializeField]
-        private bool lineCaps;
+        internal bool lineCaps;
         [SerializeField]
-        private int bezierSegmentsPerCurve = 10;
+        internal int bezierSegmentsPerCurve = 10;
 
         public float LineThickness
         {

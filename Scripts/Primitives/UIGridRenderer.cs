@@ -52,7 +52,7 @@ namespace UnityEngine.UI.Extensions
 
 		protected override void OnPopulateMesh(VertexHelper vh)
 		{
-			RelativeSize = true;
+			relativeSize = true;
 
 			int ArraySize = (GridRows * 3) + 1;
 			if(GridRows % 2 == 0)
