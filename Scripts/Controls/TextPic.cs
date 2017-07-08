@@ -25,6 +25,9 @@ namespace UnityEngine.UI.Extensions
         private bool clearImages = false;
 		private Object thisLock = new Object();
 
+
+
+
         /// <summary>
         /// Vertex Index
         /// </summary>
@@ -37,6 +40,16 @@ namespace UnityEngine.UI.Extensions
             new Regex(@"<quad name=(.+?) size=(\d*\.?\d+%?) width=(\d*\.?\d+%?) />", RegexOptions.Singleline);
 
         private string fixedString;
+
+        [SerializeField]
+        [Tooltip("Allow click events to be received by parents, (default) blocks")]
+        private bool m_ClickParents;
+
+        public bool AllowClickParents
+        {
+            get { return m_ClickParents; }
+            set { m_ClickParents = value; }
+        }
 
         public override void SetVerticesDirty()
         {
@@ -77,6 +90,7 @@ namespace UnityEngine.UI.Extensions
         public Vector2 imageOffset = Vector2.zero;
 
         private Button button;
+        private Selectable highlightselectable;
 
         //Commented out as private and not used.. Yet?
         //private bool selected = false;
@@ -95,7 +109,23 @@ namespace UnityEngine.UI.Extensions
         */
         new void Start()
         {
-            button = GetComponent<Button>();
+            button = GetComponentInParent<Button>();
+            if (button != null)
+            {
+                CanvasGroup cg;
+                cg = GetComponent<CanvasGroup>();
+                if (cg == null)
+                {
+                    cg = gameObject.AddComponent<CanvasGroup>();
+                }
+                cg.blocksRaycasts = false;
+                highlightselectable = cg.GetComponent<Selectable>();
+            }
+            else
+            {
+                highlightselectable = GetComponent<Selectable>();
+            }
+
             if (inspectorIconList != null && inspectorIconList.Length > 0)
             {
                 foreach (IconName icon in inspectorIconList)
@@ -105,6 +135,7 @@ namespace UnityEngine.UI.Extensions
                 }
             }
             Reset_m_HrefInfos ();
+            base.Start();
         }
 
         protected void UpdateQuadImage()
@@ -379,9 +410,9 @@ namespace UnityEngine.UI.Extensions
             {
                 foreach (Image img in m_ImagesPool)
                 {
-                    if (button != null && button.isActiveAndEnabled)
+                    if (highlightselectable != null && highlightselectable.isActiveAndEnabled)
                     {
-                        img.color = button.colors.highlightedColor;
+                        img.color = highlightselectable.colors.highlightedColor;
                     }
                 }
             }
@@ -396,9 +427,9 @@ namespace UnityEngine.UI.Extensions
             {
                 foreach (Image img in m_ImagesPool)
                 {
-                    if (button != null && button.isActiveAndEnabled)
+                    if (highlightselectable != null && highlightselectable.isActiveAndEnabled)
                     {
-                        img.color = button.colors.normalColor;
+                        img.color = highlightselectable.colors.normalColor;
                     }
                     else
                     {
@@ -415,9 +446,9 @@ namespace UnityEngine.UI.Extensions
             {
                 foreach (Image img in m_ImagesPool)
                 {
-                    if (button != null && button.isActiveAndEnabled)
+                    if (highlightselectable != null && highlightselectable.isActiveAndEnabled)
                     {
-                        img.color = button.colors.highlightedColor;
+                        img.color = highlightselectable.colors.highlightedColor;
                     }
                 }
             }
