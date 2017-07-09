@@ -476,7 +476,25 @@ namespace UnityEngine.UI.Extensions
             _moveStarted = false;
         }
 
-        #region Interfaces
+        /// <summary>
+        /// Returns the Transform of the Currentpage
+        /// </summary>
+        /// <returns>Currently selected Page Transform</returns>
+        public Transform CurrentPageObject()
+        {
+            return _screensContainer.GetChild(CurrentPage);
+        }
+
+        /// <summary>
+        /// Returns the Transform of the Currentpage in an out param for performance
+        /// </summary>
+        /// <param name="returnObject">Currently selected Page Transform</param>
+        public void CurrentPageObject(out Transform returnObject)
+        {
+            returnObject = _screensContainer.GetChild(CurrentPage);
+        }
+
+        #region Drag Interfaces
         /// <summary>
         /// Touch screen to start swiping
         /// </summary>
