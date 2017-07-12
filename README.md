@@ -148,7 +148,7 @@ ReturnKeyTrigger|TabNavigation|uGUITools|ScrollRectTweener|ScrollRectLinker
 ScrollRectEx|UI_InfiniteScroll|UI_ScrollRectOcclusion|UIScrollToSelection|UISelectableExtension
 switchToRectTransform|ScrollConflictManager|CLFZ2 (Encryption)|Serialization|DragCorrector
 PPIViewer|UI_TweenScale|UI_InfiniteScroll|UI_ScrollRectOcclusion|NonDrawingGraphic
-UILineConnector||||
+UILineConnector|UIHighlightable|||
 ||||
 
 *More to come*
