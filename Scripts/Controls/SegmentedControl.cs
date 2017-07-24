@@ -146,33 +146,50 @@ namespace UnityEngine.UI.Extensions
             selectedSegment = null;
         }
 
+        private void RecreateSprites()
+        {
+            for (int i = 0; i < segments.Length; i++)
+            {
+                if (segments[i].image == null)
+                    continue;
+
+                var sprite = segments[i].image.sprite;
+                if (sprite.border.x == 0 || sprite.border.z == 0)
+                    continue;
+
+                var rect = sprite.rect;
+                var border = sprite.border;
+
+                if (i > 0)
+                {
+                    rect.xMin = border.x;
+                    border.x = 0;
+                }
+                if (i < segments.Length - 1)
+                {
+                    rect.xMax = border.z;
+                    border.z = 0;
+                }
+
+                segments[i].image.sprite = Sprite.Create(sprite.texture, rect, sprite.pivot, sprite.pixelsPerUnit, 0, SpriteMeshType.FullRect, border);
+            }
+        }
+
         public void LayoutSegments()
         {
+            RecreateSprites();
+
             RectTransform transform = this.transform as RectTransform;
             float width = (transform.rect.width / segments.Length) - (separatorWidth * (segments.Length - 1));
 
             for (int i = 0; i < segments.Length; i++)
             {
-                float leftX = 0;
-                float rightX = 0;
-                if (segments[i].image != null && segments[i].image.hasBorder)
-                {
-                    if (i > 0)
-                    {
-                        leftX = segments[i].image.sprite.border.x / segments[i].image.pixelsPerUnit;
-                    }
-                    if (i < segments.Length - 1)
-                    {
-                        rightX = segments[i].image.sprite.border.z / segments[i].image.pixelsPerUnit;
-                    }
-                }
-
-                float insetX = ((width + separatorWidth) * i) - leftX;
+                float insetX = ((width + separatorWidth) * i);
 
                 var rectTransform = segments[i].GetComponent<RectTransform>();
                 rectTransform.anchorMin = Vector2.zero;
                 rectTransform.anchorMax = Vector2.zero;
-                rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, insetX, width + leftX + rightX);
+                rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, insetX, width);
                 rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, transform.rect.height);
 
                 if (separator && i > 0)
@@ -184,7 +201,7 @@ namespace UnityEngine.UI.Extensions
                     sep.rectTransform.SetParent(this.transform, false);
                     sep.rectTransform.anchorMin = Vector2.zero;
                     sep.rectTransform.anchorMax = Vector2.zero;
-                    sep.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, insetX + leftX - separatorWidth, separatorWidth);
+                    sep.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, insetX - separatorWidth, separatorWidth);
                     sep.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, transform.rect.height);
                 }
 // TODO: maybe adjust text position
@@ -195,7 +212,6 @@ namespace UnityEngine.UI.Extensions
     [RequireComponent(typeof(Button))]
     public class Segment :
         UIBehaviour,
-        IMeshModifier,
         IPointerClickHandler,
         ISubmitHandler,
         IPointerEnterHandler, IPointerExitHandler,
@@ -401,34 +417,6 @@ namespace UnityEngine.UI.Extensions
             button.animator.ResetTrigger(button.animationTriggers.disabledTrigger);
 
             button.animator.SetTrigger(triggername);
-        }
-
-        public void ModifyMesh(Mesh mesh)
-        {
-            throw new NotSupportedException();
-        }
-
-        public void ModifyMesh(VertexHelper verts)
-        {
-            if (verts.currentIndexCount != 54)
-            {
-                return;
-            }
-
-            List<UIVertex> vertexList = new List<UIVertex>();
-            verts.GetUIVertexStream(vertexList);
-
-            if (!leftmost)
-            {
-                vertexList.RemoveRange(0, 18);
-            }
-            if (!rightmost)
-            {
-                vertexList.RemoveRange(vertexList.Count - 18, 18);
-            }
-
-            verts.Clear();
-            verts.AddUIVertexTriangleStream(vertexList);
         }
     }
 }
