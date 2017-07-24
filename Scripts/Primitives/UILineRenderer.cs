@@ -15,6 +15,7 @@ namespace UnityEngine.UI.Extensions
 			Start,
             Middle,
             End,
+            Full,
 		}
 
 		public enum JoinType
@@ -38,20 +39,10 @@ namespace UnityEngine.UI.Extensions
 		// there is no overlapping.
         private const float MIN_BEVEL_NICE_JOIN = 30 * Mathf.Deg2Rad;
 
-		private static readonly Vector2 UV_TOP_LEFT = Vector2.zero;
-		private static readonly Vector2 UV_BOTTOM_LEFT = new Vector2(0, 1);
-		private static readonly Vector2 UV_TOP_CENTER = new Vector2(0.5f, 0);
-		private static readonly Vector2 UV_BOTTOM_CENTER = new Vector2(0.5f, 1);
-		private static readonly Vector2 UV_TOP_RIGHT = new Vector2(1, 0);
-		private static readonly Vector2 UV_BOTTOM_RIGHT = new Vector2(1, 1);
+		private static Vector2 UV_TOP_LEFT, UV_BOTTOM_LEFT, UV_TOP_CENTER_LEFT, UV_TOP_CENTER_RIGHT, UV_BOTTOM_CENTER_LEFT, UV_BOTTOM_CENTER_RIGHT, UV_TOP_RIGHT, UV_BOTTOM_RIGHT;
+		private static Vector2[] startUvs, middleUvs, endUvs, fullUvs;
 
-		private static readonly Vector2[] startUvs = new[] { UV_TOP_LEFT, UV_BOTTOM_LEFT, UV_BOTTOM_CENTER, UV_TOP_CENTER };
-		private static readonly Vector2[] middleUvs = new[] { UV_TOP_CENTER, UV_BOTTOM_CENTER, UV_BOTTOM_CENTER, UV_TOP_CENTER };
-		private static readonly Vector2[] endUvs = new[] { UV_TOP_CENTER, UV_BOTTOM_CENTER, UV_BOTTOM_RIGHT, UV_TOP_RIGHT };
-
-		[SerializeField]
-        internal Rect m_UVRect = new Rect(0f, 0f, 1f, 1f);
-		[SerializeField]
+        [SerializeField]
         internal Vector2[] m_points;
 
         [SerializeField]
@@ -102,24 +93,6 @@ namespace UnityEngine.UI.Extensions
         [HideInInspector]
         public bool drivenExternally = false;
 
-		/// <summary>
-		/// UV rectangle used by the texture.
-		/// </summary>
-        public Rect uvRect
-		{
-			get
-			{
-				return m_UVRect;
-			}
-
-			set
-			{
-				if (m_UVRect == value)
-					return;
-				m_UVRect = value;
-				SetVerticesDirty();
-			}
-		}
 
 		/// <summary>
 		/// Points to be drawn in the line.
@@ -144,6 +117,7 @@ namespace UnityEngine.UI.Extensions
 		{
 			if (m_points == null)
 				return;
+            GeneratedUVs();
 			Vector2[] pointsToDraw = m_points;
 			//If Bezier is desired, pick the implementation
             if (BezierMode != BezierType.None && m_points.Length > 3)
@@ -198,9 +172,10 @@ namespace UnityEngine.UI.Extensions
 						segments.Add(CreateLineCap(start, end, SegmentType.Start));
 					}
 
+					//segments.Add(CreateLineSegment(start, end, SegmentType.Full));
 					segments.Add(CreateLineSegment(start, end, SegmentType.Middle));
 
-					if (lineCaps)
+                    if (lineCaps)
 					{
 						segments.Add(CreateLineCap(start, end, SegmentType.End));
 					}
@@ -221,6 +196,7 @@ namespace UnityEngine.UI.Extensions
 					}
 
 					segments.Add(CreateLineSegment(start, end, SegmentType.Middle));
+					//segments.Add(CreateLineSegment(start, end, SegmentType.Full));
 
 					if (lineCaps && i == pointsToDraw.Length - 1)
 					{
@@ -314,6 +290,7 @@ namespace UnityEngine.UI.Extensions
 		private UIVertex[] CreateLineSegment(Vector2 start, Vector2 end, SegmentType type)
 		{
 			Vector2 offset = new Vector2((start.y - end.y), end.x - start.x).normalized * lineThickness / 2;
+
 			var v1 = start - offset;
 			var v2 = start + offset;
 			var v3 = end + offset;
@@ -325,9 +302,54 @@ namespace UnityEngine.UI.Extensions
                     return SetVbo(new[] { v1, v2, v3, v4 }, startUvs);
                 case SegmentType.End:
                     return SetVbo(new[] { v1, v2, v3, v4 }, endUvs);
+                case SegmentType.Full:
+                    return SetVbo(new[] { v1, v2, v3, v4 }, fullUvs);
                 default:
                     return SetVbo(new[] { v1, v2, v3, v4 }, middleUvs);
             }
 		}
+
+        protected override void GeneratedUVs()
+        {
+            if (activeSprite != null)
+            {
+                var outer = Sprites.DataUtility.GetOuterUV(activeSprite);
+                var inner = Sprites.DataUtility.GetInnerUV(activeSprite);
+                UV_TOP_LEFT = new Vector2(outer.x, outer.y);
+                UV_BOTTOM_LEFT = new Vector2(outer.x, outer.w);
+                UV_TOP_CENTER_LEFT = new Vector2(inner.x, inner.y);
+                UV_TOP_CENTER_RIGHT = new Vector2(inner.z, inner.y);
+                UV_BOTTOM_CENTER_LEFT = new Vector2(inner.x, inner.w);
+                UV_BOTTOM_CENTER_RIGHT = new Vector2(inner.z, inner.w);
+                UV_TOP_RIGHT = new Vector2(outer.z, outer.y);
+                UV_BOTTOM_RIGHT = new Vector2(outer.z, outer.w);
+            }
+            else
+            {
+                UV_TOP_LEFT = Vector2.zero;
+                UV_BOTTOM_LEFT = new Vector2(0, 1);
+                UV_TOP_CENTER_LEFT = new Vector2(0.5f, 0);
+                UV_TOP_CENTER_RIGHT = new Vector2(0.5f, 0);
+                UV_BOTTOM_CENTER_LEFT = new Vector2(0.5f, 1);
+                UV_BOTTOM_CENTER_RIGHT = new Vector2(0.5f, 1);
+                UV_TOP_RIGHT = new Vector2(1, 0);
+                UV_BOTTOM_RIGHT = Vector2.one;
+            }
+
+
+            startUvs = new[] { UV_TOP_LEFT, UV_BOTTOM_LEFT, UV_BOTTOM_CENTER_LEFT, UV_TOP_CENTER_LEFT };
+            middleUvs = new[] { UV_TOP_CENTER_LEFT, UV_BOTTOM_CENTER_LEFT, UV_BOTTOM_CENTER_RIGHT, UV_TOP_CENTER_RIGHT };
+            endUvs = new[] { UV_TOP_CENTER_RIGHT, UV_BOTTOM_CENTER_RIGHT, UV_BOTTOM_RIGHT, UV_TOP_RIGHT };
+            fullUvs = new[] { UV_TOP_LEFT, UV_BOTTOM_LEFT, UV_BOTTOM_RIGHT, UV_TOP_RIGHT };
+        }
+
+        protected override void ResolutionToNativeSize(float distance)
+        {
+            if (UseNativeSize)
+            {
+                m_Resolution = distance / (activeSprite.rect.width / pixelsPerUnit);
+                lineThickness = activeSprite.rect.height / pixelsPerUnit;
+            }
+        }
     }
 }
