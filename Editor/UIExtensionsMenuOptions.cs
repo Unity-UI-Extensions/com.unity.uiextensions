@@ -1652,6 +1652,32 @@ namespace UnityEditor.UI
 
         #endregion
 
+        #region Segmented Control
+        [MenuItem("GameObject/UI/Extensions/Segmented Control", false)]
+        static public void AddSegmentedControl(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("Segmented Control", menuCommand, s_ThinGUIElementSize);
+            SegmentedControl control = go.AddComponent<SegmentedControl>();
+
+            Color selectedColor = new Color(0f, 0.455f, 0.894f);
+            control.selectedColor = selectedColor;
+
+            var labels = new string[] { "This", "That", "Other" };
+            for (int i = 0; i < 3; i++)
+			{
+                var button = AddButtonAsChild(go);
+                button.name = "Segment " + (i + 1);
+                var text = button.GetComponentInChildren<Text>();
+                text.text = labels[i];
+                text.color = selectedColor;
+            }
+
+            control.LayoutSegments();
+
+            Selection.activeGameObject = go;
+        }
+        #endregion
+
         #region UI Knob
         [MenuItem("GameObject/UI/Extensions/UI Knob", false)]
 		static public void AddUIKnob(MenuCommand menuCommand)
