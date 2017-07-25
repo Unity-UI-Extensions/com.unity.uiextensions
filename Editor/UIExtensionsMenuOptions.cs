@@ -1677,6 +1677,29 @@ namespace UnityEditor.UI
             Selection.activeGameObject = go;
         }
         #endregion
+		
+        #region Stepper
+        [MenuItem("GameObject/UI/Extensions/Stepper", false)]
+        static public void AddStepper(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("Stepper", menuCommand, new Vector2(42, kThinHeight));
+            Stepper control = go.AddComponent<Stepper>();
+
+            var labels = new string[] { "−", "+" };
+            for (int i = 0; i < 2; i++)
+            {
+                var button = AddButtonAsChild(go);
+				button.gameObject.AddComponent<StepperSide>();
+                button.name = i == 0 ? "Minus" : "Plus";
+                var text = button.GetComponentInChildren<Text>();
+                text.text = labels[i];
+            }
+
+            control.LayoutSides();
+
+            Selection.activeGameObject = go;
+        }
+        #endregion
 
         #region UI Knob
         [MenuItem("GameObject/UI/Extensions/UI Knob", false)]
