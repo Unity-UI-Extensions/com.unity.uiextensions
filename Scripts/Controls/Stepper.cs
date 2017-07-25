@@ -12,44 +12,27 @@ namespace UnityEngine.UI.Extensions
     [RequireComponent(typeof(RectTransform))]
     public class Stepper : UIBehaviour
     {
-        public Button[] sides
-        {
-            get
-            {
-                if (_sides == null || _sides.Length == 0)
-                {
-                    _sides = GetSides();
-                }
-                return _sides;
-            }
-        }
         private Button[] _sides;
-
         [SerializeField]
+        [Tooltip("The current step value of the control")]
         private int _value = 0;
-        public int value { get { return _value; } set { _value = value; } }
-
         [SerializeField]
+        [Tooltip("The minimum step value allowed by the control. When reached it will disable the '-' button")]
         private int _minimum = 0;
-        public int minimum { get { return _minimum; } set { _minimum = value; } }
-
         [SerializeField]
+        [Tooltip("The maximum step value allowed by the control. When reached it will disable the '+' button")]
         private int _maximum = 100;
-        public int maximum { get { return _maximum; } set { _maximum = value; } }
-
         [SerializeField]
+        [Tooltip("The step increment used to increment / decrement the step value")]
         private int _step = 1;
-        public int step { get { return _step; } set { _step = value; } }
-
         [SerializeField]
+        [Tooltip("Does the step value loop around from end to end")]
         private bool _wrap = false;
-        public bool wrap { get { return _wrap; } set { _wrap = value; } }
-
         [SerializeField]
+        [Tooltip("A GameObject with an Image to use as a separator between segments. Size of the RectTransform will determine the size of the separator used.\nNote, make sure to disable the separator GO so that it does not affect the scene")]
         private Graphic _separator;
-        public Graphic separator { get { return _separator; } set { _separator = value; _separatorWidth = 0; LayoutSides(sides); } }
-
         private float _separatorWidth = 0;
+
         private float separatorWidth
         {
             get
@@ -65,12 +48,37 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        [Serializable]
-        public class StepperValueChangedEvent : UnityEvent<int> { }
-
         // Event delegates triggered on click.
         [SerializeField]
         private StepperValueChangedEvent _onValueChanged = new StepperValueChangedEvent();
+
+        [Serializable]
+        public class StepperValueChangedEvent : UnityEvent<int> { }
+
+        public Button[] sides
+        {
+            get
+            {
+                if (_sides == null || _sides.Length == 0)
+                {
+                    _sides = GetSides();
+                }
+                return _sides;
+            }
+        }
+
+        public int value { get { return _value; } set { _value = value; } }
+
+        public int minimum { get { return _minimum; } set { _minimum = value; } }
+
+        public int maximum { get { return _maximum; } set { _maximum = value; } }
+
+        public int step { get { return _step; } set { _step = value; } }
+
+        public bool wrap { get { return _wrap; } set { _wrap = value; } }
+
+        public Graphic separator { get { return _separator; } set { _separator = value; _separatorWidth = 0; LayoutSides(sides); } }
+
         public StepperValueChangedEvent onValueChanged
         {
             get { return _onValueChanged; }

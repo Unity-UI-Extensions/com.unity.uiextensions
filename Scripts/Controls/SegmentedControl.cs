@@ -1,9 +1,9 @@
+/// Credit David Gileadi
+/// Sourced from - https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/pull-requests/12
+
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 
 namespace UnityEngine.UI.Extensions
 {
@@ -12,49 +12,61 @@ namespace UnityEngine.UI.Extensions
     [RequireComponent(typeof(RectTransform))]
     public class SegmentedControl : UIBehaviour
     {
+        private Button[] m_segments;
+        [SerializeField]
+        [Tooltip("A GameObject with an Image to use as a separator between segments. Size of the RectTransform will determine the size of the separator used.\nNote, make sure to disable the separator GO so that it does not affect the scene")]
+        private Graphic m_separator;
+        private float m_separatorWidth = 0;
+        [SerializeField]
+        [Tooltip("When True, it allows each button to be toggled on/off")]
+        private bool m_allowSwitchingOff = false;
+        [SerializeField]
+        [Tooltip("The selected default for the control (zero indexed array)")]
+        private int m_selectedSegmentIndex = -1;
+        // Event delegates triggered on click.
+        [SerializeField]
+        [Tooltip("Event to fire once the selection has been changed")]
+        private SegmentSelectedEvent m_onValueChanged = new SegmentSelectedEvent();
+
+        protected internal Button selectedSegment;
+
+        protected float SeparatorWidth
+        {
+            get
+            {
+                if (m_separatorWidth == 0 && separator)
+                {
+                    m_separatorWidth = separator.rectTransform.rect.width;
+                    var image = separator.GetComponent<Image>();
+                    if (image)
+                        m_separatorWidth /= image.pixelsPerUnit;
+                }
+                return m_separatorWidth;
+            }
+        }
+
+        [Serializable]
+        public class SegmentSelectedEvent : UnityEvent<int> { }
+
         public Button[] segments
         {
             get
             {
-                if (_segments == null || _segments.Length == 0)
+                if (m_segments == null || m_segments.Length == 0)
                 {
-                    _segments = GetChildSegments();
+                    m_segments = GetChildSegments();
                 }
-                return _segments;
+                return m_segments;
             }
         }
-        private Button[] _segments;
 
         [SerializeField]
         public Color selectedColor;
 
-        [SerializeField]
-        private Graphic _separator;
-        public Graphic separator { get { return _separator; } set { _separator = value; _separatorWidth = 0; LayoutSegments(); } }
+        public Graphic separator { get { return m_separator; } set { m_separator = value; m_separatorWidth = 0; LayoutSegments(); } }
 
-        private float _separatorWidth = 0;
-        private float separatorWidth
-        {
-            get
-            {
-                if (_separatorWidth == 0 && separator)
-                {
-                    _separatorWidth = separator.rectTransform.rect.width;
-                    var image = separator.GetComponent<Image>();
-                    if (image)
-                        _separatorWidth /= image.pixelsPerUnit;
-                }
-                return _separatorWidth;
-            }
-        }
+        public bool allowSwitchingOff { get { return m_allowSwitchingOff; } set { m_allowSwitchingOff = value; } }
 
-        [SerializeField] private bool _allowSwitchingOff = false;
-        public bool allowSwitchingOff { get { return _allowSwitchingOff; } set { _allowSwitchingOff = value; } }
-
-        protected internal Button selectedSegment;
-
-        [SerializeField]
-        private int _selectedSegmentIndex = -1;
         public int selectedSegmentIndex
         {
             get { return Array.IndexOf(segments, selectedSegment); }
@@ -62,7 +74,7 @@ namespace UnityEngine.UI.Extensions
             {
                 value = Math.Max(value, -1);
                 value = Math.Min(value, segments.Length - 1);
-                _selectedSegmentIndex = value;
+                m_selectedSegmentIndex = value;
                 if (value == -1)
                 {
                     if (selectedSegment)
@@ -81,17 +93,10 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        [Serializable]
-        public class SegmentSelectedEvent : UnityEvent<int> { }
-
-        // Event delegates triggered on click.
-        [SerializeField]
-        private SegmentSelectedEvent _onValueChanged = new SegmentSelectedEvent();
-
         public SegmentSelectedEvent onValueChanged
         {
-            get { return _onValueChanged; }
-            set { _onValueChanged = value; }
+            get { return m_onValueChanged; }
+            set { m_onValueChanged = value; }
         }
 
         protected SegmentedControl()
@@ -103,8 +108,8 @@ namespace UnityEngine.UI.Extensions
 
             LayoutSegments();
 
-            if (_selectedSegmentIndex != -1)
-                selectedSegmentIndex = _selectedSegmentIndex;
+            if (m_selectedSegmentIndex != -1)
+                selectedSegmentIndex = m_selectedSegmentIndex;
         }
 
 #if UNITY_EDITOR
@@ -115,8 +120,18 @@ namespace UnityEngine.UI.Extensions
             if (separator)
                 LayoutSegments();
 
-            if (_selectedSegmentIndex != -1)
-                selectedSegmentIndex = _selectedSegmentIndex;
+            if (m_selectedSegmentIndex != -1)
+                selectedSegmentIndex = m_selectedSegmentIndex;
+
+            if (m_selectedSegmentIndex > transform.childCount)
+            {
+                selectedSegmentIndex = transform.childCount - 1;
+            }
+
+            if (selectedColor == new Color(0, 0, 0, 0))
+            {
+                selectedColor = new Color(0f, 0.455f, 0.894f);
+            }
         }
 #endif
 
@@ -180,11 +195,11 @@ namespace UnityEngine.UI.Extensions
             RecreateSprites();
 
             RectTransform transform = this.transform as RectTransform;
-            float width = (transform.rect.width / segments.Length) - (separatorWidth * (segments.Length - 1));
+            float width = (transform.rect.width / segments.Length) - (SeparatorWidth * (segments.Length - 1));
 
             for (int i = 0; i < segments.Length; i++)
             {
-                float insetX = ((width + separatorWidth) * i);
+                float insetX = ((width + SeparatorWidth) * i);
 
                 var rectTransform = segments[i].GetComponent<RectTransform>();
                 rectTransform.anchorMin = Vector2.zero;
@@ -201,7 +216,7 @@ namespace UnityEngine.UI.Extensions
                     sep.rectTransform.SetParent(this.transform, false);
                     sep.rectTransform.anchorMin = Vector2.zero;
                     sep.rectTransform.anchorMax = Vector2.zero;
-                    sep.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, insetX - separatorWidth, separatorWidth);
+                    sep.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, insetX - SeparatorWidth, SeparatorWidth);
                     sep.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, transform.rect.height);
                 }
 // TODO: maybe adjust text position
