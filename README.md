@@ -106,43 +106,44 @@ There are almost 70+ extension controls / effect and other utilities in the proj
 
 ##[UI Extensions controls list](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls)##
 
-[Controls](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#Controls)|||||
+[Controls](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#markdown-header-controls)|||||
 ------|------|------|------|
 Accordion|ColorPicker|SelectionBox|UIButton|UIFlippable
 ComboBox|AutoCompleteComboBox|DropDownList|BoundToolTip|UIWindowBase
 UI_Knob|TextPic|InputFocus|Box Slider|CooldownButton
+Segmented Control|Stepper|||
 ||||
 
-[Primitives](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#Primitives)|||||
+[Primitives](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#markdown-header-primitives)|||||
 ------|------|------|------|
 UILineRenderer|UILineTextureRenderer|UICircle|DiamondGraph|UICornerCut
 UIPolygon||||
 ||||
 
-[Layouts](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#Layouts)|||||
+[Layouts](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#markdown-header-layouts)|||||
 ------|------|------|------|
 Horizontal Scroll Snap|Vertical Scroll Snap|Flow Layout Group|Radial Layout|Tile Size Fitter
 Scroll Snap (alt implementation)|Reorderable List|UI Vertical Scroller|Curved Layout|Table Layout
 ||||
 
-[Effects](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#Effects)|||||
+[Effects](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#markdown-header-effect_components)|||||
 ------|------|------|------|
 Best Fit Outline|Curved Text|Gradient|Gradient2|Letter Spacing
 NicerOutline|RaycastMask|UIFlippable|UIImageCrop|SoftAlphaMask
 CylinderText|UIParticleSystem|||
 ||||
 
-[VR Components](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#VR)|||||
+[VR Components](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#markdown-header-vr_components)|||||
 ------|------|------|------|
 VRCursor|VRInputModule|||
 ||||
 
-[Input Modules](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#InputModules)|||||
+[Input Modules](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#markdown-header-input_modules)|||||
 ------|------|------|------|
 AimerInputModule|GamePadInputModule|||
 ||||
 
-[Additional Components](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#Additional_Components)|||||
+[Additional Components](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#markdown-header-additional_components)|||||
 ------|------|------|------|
 ReturnKeyTrigger|TabNavigation|uGUITools|ScrollRectTweener|ScrollRectLinker
 ScrollRectEx|UI_InfiniteScroll|UI_ScrollRectOcclusion|UIScrollToSelection|UISelectableExtension

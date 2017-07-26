@@ -12,7 +12,7 @@ namespace UnityEngine.UI.Extensions
     [RequireComponent(typeof(RectTransform))]
     public class Stepper : UIBehaviour
     {
-        private Button[] _sides;
+        private Selectable[] _sides;
         [SerializeField]
         [Tooltip("The current step value of the control")]
         private int _value = 0;
@@ -55,7 +55,7 @@ namespace UnityEngine.UI.Extensions
         [Serializable]
         public class StepperValueChangedEvent : UnityEvent<int> { }
 
-        public Button[] sides
+        public Selectable[] sides
         {
             get
             {
@@ -103,9 +103,9 @@ namespace UnityEngine.UI.Extensions
         }
 #endif
 
-        private Button[] GetSides()
+        private Selectable[] GetSides()
         {
-            var buttons = GetComponentsInChildren<Button>();
+            var buttons = GetComponentsInChildren<Selectable>();
             if (buttons.Length != 2)
             {
                 throw new InvalidOperationException("A stepper must have two Button children");
@@ -159,13 +159,13 @@ namespace UnityEngine.UI.Extensions
             _onValueChanged.Invoke(value);
         }
 
-        private void DisableAtExtremes(Button[] sides)
+        private void DisableAtExtremes(Selectable[] sides)
         {
             sides[0].interactable = wrap || value > minimum;
             sides[1].interactable = wrap || value < maximum;
         }
 
-        private void RecreateSprites(Button[] sides)
+        private void RecreateSprites(Selectable[] sides)
         {
             for (int i = 0; i < 2; i++)
             {
@@ -194,7 +194,7 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        public void LayoutSides(Button[] sides = null)
+        public void LayoutSides(Selectable[] sides = null)
         {
             sides = sides ?? this.sides;
 
@@ -231,10 +231,10 @@ namespace UnityEngine.UI.Extensions
         }
     }
 
-    [RequireComponent(typeof(Button))]
+    [RequireComponent(typeof(Selectable))]
     public class StepperSide : UIBehaviour, IPointerClickHandler, ISubmitHandler
     {
-        Button button { get { return GetComponent<Button>(); } }
+        Selectable button { get { return GetComponent<Selectable>(); } }
 
         Stepper stepper { get { return GetComponentInParent<Stepper>(); } }
 

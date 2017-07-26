@@ -12,7 +12,7 @@ namespace UnityEngine.UI.Extensions
     [RequireComponent(typeof(RectTransform))]
     public class SegmentedControl : UIBehaviour
     {
-        private Button[] m_segments;
+        private Selectable[] m_segments;
         [SerializeField]
         [Tooltip("A GameObject with an Image to use as a separator between segments. Size of the RectTransform will determine the size of the separator used.\nNote, make sure to disable the separator GO so that it does not affect the scene")]
         private Graphic m_separator;
@@ -28,7 +28,7 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Event to fire once the selection has been changed")]
         private SegmentSelectedEvent m_onValueChanged = new SegmentSelectedEvent();
 
-        protected internal Button selectedSegment;
+        protected internal Selectable selectedSegment;
 
         protected float SeparatorWidth
         {
@@ -48,7 +48,7 @@ namespace UnityEngine.UI.Extensions
         [Serializable]
         public class SegmentSelectedEvent : UnityEvent<int> { }
 
-        public Button[] segments
+        public Selectable[] segments
         {
             get
             {
@@ -135,9 +135,9 @@ namespace UnityEngine.UI.Extensions
         }
 #endif
 
-        private Button[] GetChildSegments()
+        private Selectable[] GetChildSegments()
         {
-            var buttons = GetComponentsInChildren<Button>();
+            var buttons = GetComponentsInChildren<Selectable>();
             if (buttons.Length < 2)
             {
                 throw new InvalidOperationException("A segmented control must have at least two Button children");
@@ -224,7 +224,7 @@ namespace UnityEngine.UI.Extensions
         }
     }
 
-    [RequireComponent(typeof(Button))]
+    [RequireComponent(typeof(Selectable))]
     public class Segment :
         UIBehaviour,
         IPointerClickHandler,
@@ -255,9 +255,9 @@ namespace UnityEngine.UI.Extensions
             get { return GetComponentInParent<SegmentedControl>(); }
         }
 
-        internal Button button
+        internal Selectable button
         {
-            get { return GetComponent<Button>(); }
+            get { return GetComponent<Selectable>(); }
         }
 
         [SerializeField]
