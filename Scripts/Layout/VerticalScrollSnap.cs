@@ -16,6 +16,7 @@ namespace UnityEngine.UI.Extensions
             _isVertical = true;
             _childAnchorPoint = new Vector2(0.5f,0);
             _currentPage = StartingScreen;
+            panelDimensions = gameObject.GetComponent<RectTransform>().rect;
             UpdateLayout();
         }
 
