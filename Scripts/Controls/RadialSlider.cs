@@ -114,6 +114,7 @@ namespace UnityEngine.UI.Extensions
                     m_image.type = Image.Type.Filled;
                     m_image.fillMethod = Image.FillMethod.Radial360;
                     m_image.fillOrigin = 3;
+                    m_image.fillAmount = 0;
                 }
                 return m_image;
             }
@@ -215,17 +216,17 @@ namespace UnityEngine.UI.Extensions
             _onTextValueChanged.Invoke(((int)(m_targetAngle * 360f)).ToString());
         }
 
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
 
-        private void OnValidate()
-        {
-            if (LerpToTarget && LerpCurve.length < 2)
-            {
-                LerpToTarget = false;
-                Debug.LogError("You need to define a Lerp Curve to enable 'Lerp To Target'");
-            }
-        }
-#endif
+//        private void OnValidate()
+//        {
+//            if (LerpToTarget && LerpCurve.length < 2)
+//            {
+//                LerpToTarget = false;
+//                Debug.LogError("You need to define a Lerp Curve to enable 'Lerp To Target'");
+//            }
+//        }
+//#endif
 
         #region Interfaces
         // Called when the pointer enters our GUI component.
