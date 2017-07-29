@@ -9,12 +9,13 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
+    [AddComponentMenu("UI/Extensions/Radial Slider")]
     [RequireComponent(typeof(Image))]
     public class RadialSlider : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler, IPointerUpHandler
     {
         private bool isPointerDown, isPointerReleased, lerpInProgress;
         private Vector2 m_localPos; 
-        private float m_targetAngle, m_lerpTargetAngle, m_startAngle, m_currentLerpTime;
+        private float m_targetAngle, m_lerpTargetAngle, m_startAngle, m_currentLerpTime, m_lerpTime;
         private Camera m_eventCamera;
         private Image m_image;
 
@@ -90,7 +91,7 @@ namespace UnityEngine.UI.Extensions
         public AnimationCurve LerpCurve
         {
             get { return m_lerpCurve; }
-            set { m_lerpCurve = value; }
+            set { m_lerpCurve = value; m_lerpTime = LerpCurve[LerpCurve.length - 1].time; }
         }
 
         public bool LerpInProgress
@@ -112,6 +113,7 @@ namespace UnityEngine.UI.Extensions
                     m_image = GetComponent<Image>();
                     m_image.type = Image.Type.Filled;
                     m_image.fillMethod = Image.FillMethod.Radial360;
+                    m_image.fillOrigin = 3;
                 }
                 return m_image;
             }
@@ -126,6 +128,18 @@ namespace UnityEngine.UI.Extensions
         {
             get { return _onTextValueChanged; }
             set { _onTextValueChanged = value; }
+        }
+
+        private void Awake()
+        {
+            if (LerpCurve != null && LerpCurve.length > 0)
+            {
+                m_lerpTime = LerpCurve[LerpCurve.length - 1].time;
+            }
+            else
+            {
+                m_lerpTime = 1;
+            }
         }
 
         private void Update()
@@ -151,10 +165,17 @@ namespace UnityEngine.UI.Extensions
             if (lerpInProgress && Value != m_lerpTargetAngle)
             {
                 m_currentLerpTime += Time.deltaTime;
-                float perc = m_currentLerpTime / LerpCurve[LerpCurve.length - 1].time;
-                UpdateRadialImage(Mathf.Lerp(m_startAngle, m_lerpTargetAngle, LerpCurve.Evaluate(perc)));
+                float perc = m_currentLerpTime / m_lerpTime;
+                if (LerpCurve != null && LerpCurve.length > 0)
+                {
+                    UpdateRadialImage(Mathf.Lerp(m_startAngle, m_lerpTargetAngle, LerpCurve.Evaluate(perc)));
+                }
+                else
+                {
+                    UpdateRadialImage(Mathf.Lerp(m_startAngle, m_lerpTargetAngle, perc));
+                }
             }
-            if (m_currentLerpTime >= LerpCurve[LerpCurve.length - 1].time || Value == m_lerpTargetAngle)
+            if (m_currentLerpTime >= m_lerpTime || Value == m_lerpTargetAngle)
             {
                 lerpInProgress = false;
                 UpdateRadialImage(m_lerpTargetAngle);
@@ -201,7 +222,7 @@ namespace UnityEngine.UI.Extensions
             if (LerpToTarget && LerpCurve.length < 2)
             {
                 LerpToTarget = false;
-                Debug.LogError("Need to define a Lerp Curve to enable 'Lerp To Target'");
+                Debug.LogError("You need to define a Lerp Curve to enable 'Lerp To Target'");
             }
         }
 #endif

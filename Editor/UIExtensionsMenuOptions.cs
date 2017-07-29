@@ -1777,6 +1777,44 @@ namespace UnityEditor.UI
         }
         #endregion
 
+        #region Radial Slider
+        [MenuItem("GameObject/UI/Extensions/RadialSlider", false)]
+        static public void AddRadialSlider(MenuCommand menuCommand)
+        {
+            GameObject sliderRoot = CreateUIElementRoot("Radial Slider", menuCommand, s_ThickGUIElementSize);
+            GameObject SliderControl = CreateUIObject("Slider", sliderRoot);
+
+            Image image = sliderRoot.AddComponent<Image>();
+            image.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+            image.type = Image.Type.Simple;
+            image.color = s_DefaultSelectableColor;
+
+            RectTransform sliderRootRectTransform = sliderRoot.GetComponent<RectTransform>();
+            sliderRootRectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            sliderRootRectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            sliderRootRectTransform.anchoredPosition = Vector2.zero;
+            sliderRootRectTransform.sizeDelta = new Vector2(250f, 250f);
+
+            Image slidrImage = SliderControl.AddComponent<Image>();
+            slidrImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+            slidrImage.type = Image.Type.Filled;
+            slidrImage.fillMethod = Image.FillMethod.Radial360;
+            slidrImage.fillOrigin = 3;
+            slidrImage.color = Color.red;
+            slidrImage.fillAmount = 0;
+            RadialSlider slider = SliderControl.AddComponent<RadialSlider>();
+            slider.StartColor = Color.green;
+            slider.EndColor = Color.red;
+
+            RectTransform sliderRectTransform = SliderControl.GetComponent<RectTransform>();
+            sliderRectTransform.anchorMin = Vector2.zero;
+            sliderRectTransform.anchorMax = Vector2.one;
+            sliderRectTransform.sizeDelta = Vector2.zero;
+
+            Selection.activeGameObject = sliderRoot;
+        }
+        #endregion
+
 
         #endregion
 
