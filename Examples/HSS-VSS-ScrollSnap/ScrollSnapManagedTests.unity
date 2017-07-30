@@ -145,8 +145,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 259, y: -106}
-  m_SizeDelta: {x: -577, y: -279}
+  m_AnchoredPosition: {x: 225.1, y: -99.100006}
+  m_SizeDelta: {x: -496.4, y: -233.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2641525
 MonoBehaviour:
@@ -233,7 +233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -310,7 +310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 609dcc22aadcc16418bfac22716ee9a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartingScreen: 0
+  StartingScreen: 2
   PageStep: 2.7
   Pagination: {fileID: 266467291}
   PrevButton: {fileID: 1112321044}
@@ -504,7 +504,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Page_01
+  m_Text: Page_5
 --- !u!222 &96249206
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -549,8 +549,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -18, y: -108}
-  m_SizeDelta: {x: -651, y: -244}
+  m_AnchoredPosition: {x: 59.299988, y: -108}
+  m_SizeDelta: {x: -496.4, y: -244}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &266467293
 MonoBehaviour:
@@ -595,6 +595,7 @@ GameObject:
   m_Component:
   - component: {fileID: 344218386}
   - component: {fileID: 344218387}
+  - component: {fileID: 344218388}
   m_Layer: 5
   m_Name: Toggle (3)
   m_TagString: Untagged
@@ -667,6 +668,19 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_IsOn: 1
+--- !u!114 &344218388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 344218385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ea46c3573b42624aa573f2d6b091ed1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hss: {fileID: 67156823}
+  Page: 3
 --- !u!1 &369849432
 GameObject:
   m_ObjectHideFlags: 0
@@ -1063,7 +1077,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1506,7 +1520,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Page_01
+  m_Text: Page_6
 --- !u!222 &580834257
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1831,7 +1845,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2179,7 +2193,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Page_01
+  m_Text: Page_2
 --- !u!222 &871292880
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2195,6 +2209,7 @@ GameObject:
   m_Component:
   - component: {fileID: 896078184}
   - component: {fileID: 896078185}
+  - component: {fileID: 896078186}
   m_Layer: 5
   m_Name: Toggle (4)
   m_TagString: Untagged
@@ -2267,6 +2282,19 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_IsOn: 1
+--- !u!114 &896078186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 896078183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ea46c3573b42624aa573f2d6b091ed1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hss: {fileID: 67156823}
+  Page: 4
 --- !u!1 &911861601
 GameObject:
   m_ObjectHideFlags: 0
@@ -2387,7 +2415,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartingScreen: 5
   PageStep: 1.27
-  Pagination: {fileID: 266467291}
+  Pagination: {fileID: 0}
   PrevButton: {fileID: 1112321044}
   NextButton: {fileID: 803284189}
   transitionSpeed: 7.5
@@ -2604,6 +2632,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1096492862}
   - component: {fileID: 1096492863}
+  - component: {fileID: 1096492864}
   m_Layer: 5
   m_Name: Toggle (5)
   m_TagString: Untagged
@@ -2676,6 +2705,19 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_IsOn: 1
+--- !u!114 &1096492864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1096492861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ea46c3573b42624aa573f2d6b091ed1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hss: {fileID: 67156823}
+  Page: 5
 --- !u!1 &1112321044
 GameObject:
   m_ObjectHideFlags: 0
@@ -2854,7 +2896,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Page_01
+  m_Text: Page_3
 --- !u!222 &1113803476
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2959,6 +3001,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1196803093}
   - component: {fileID: 1196803094}
+  - component: {fileID: 1196803095}
   m_Layer: 5
   m_Name: Toggle
   m_TagString: Untagged
@@ -3031,6 +3074,19 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_IsOn: 1
+--- !u!114 &1196803095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1196803092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ea46c3573b42624aa573f2d6b091ed1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hss: {fileID: 67156823}
+  Page: 0
 --- !u!1 &1200934014
 GameObject:
   m_ObjectHideFlags: 0
@@ -3063,8 +3119,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -302, y: -0.125}
-  m_SizeDelta: {x: -648, y: -27.25}
+  m_AnchoredPosition: {x: -215, y: -6}
+  m_SizeDelta: {x: -475, y: -39}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1200934016
 MonoBehaviour:
@@ -4035,7 +4091,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Page_01
+  m_Text: Page_0
 --- !u!222 &1535867281
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4380,7 +4436,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Page_01
+  m_Text: Page_4
 --- !u!222 &1735277982
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4465,6 +4521,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1771801965}
   - component: {fileID: 1771801966}
+  - component: {fileID: 1771801967}
   m_Layer: 5
   m_Name: Toggle (1)
   m_TagString: Untagged
@@ -4537,6 +4594,19 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_IsOn: 1
+--- !u!114 &1771801967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1771801964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ea46c3573b42624aa573f2d6b091ed1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hss: {fileID: 67156823}
+  Page: 1
 --- !u!1 &1790564029
 GameObject:
   m_ObjectHideFlags: 0
@@ -4834,7 +4904,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Page_01
+  m_Text: Page_1
 --- !u!222 &1857291964
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4993,6 +5063,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2019749174}
   - component: {fileID: 2019749175}
+  - component: {fileID: 2019749176}
   m_Layer: 5
   m_Name: Toggle (2)
   m_TagString: Untagged
@@ -5065,6 +5136,19 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_IsOn: 1
+--- !u!114 &2019749176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2019749173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ea46c3573b42624aa573f2d6b091ed1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hss: {fileID: 67156823}
+  Page: 2
 --- !u!1 &2069867491
 GameObject:
   m_ObjectHideFlags: 0
@@ -5180,7 +5264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -5376,7 +5460,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -5450,7 +5534,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

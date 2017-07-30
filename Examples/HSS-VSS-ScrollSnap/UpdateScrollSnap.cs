@@ -70,4 +70,9 @@ public class UpdateScrollSnap : MonoBehaviour {
         HSS.RemoveAllChildren(out children);
         VSS.RemoveAllChildren(out children);
     }
+
+    public void JumpToSelectedToggle(int page)
+    {
+        HSS.GoToScreen(page);
+    }
 }
