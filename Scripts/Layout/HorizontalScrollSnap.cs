@@ -236,7 +236,7 @@ namespace UnityEngine.UI.Extensions
             if (_scroll_rect.horizontal)
             {
                 var distance = Vector3.Distance(_startPosition, _screensContainer.localPosition);
-                if (UseFastSwipe && distance < panelDimensions.width + FastSwipeThreshold && distance >=1f)
+                if (UseFastSwipe && distance < panelDimensions.width && distance >= FastSwipeThreshold)
                 {
                     _scroll_rect.velocity = Vector3.zero;
                     if (_startPosition.x - _screensContainer.localPosition.x > 0)
