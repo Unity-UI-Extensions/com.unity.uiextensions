@@ -3,12 +3,10 @@
 /// Updated Credit BenZed
 /// Sourced from - http://forum.unity3d.com/threads/color-picker.267043/
 
-
 namespace UnityEngine.UI.Extensions
 {
     public class ExampleSelectable : MonoBehaviour, IBoxSelectable
     {
-
         #region Implemented members of IBoxSelectable
         bool _selected = false;
         public bool selected

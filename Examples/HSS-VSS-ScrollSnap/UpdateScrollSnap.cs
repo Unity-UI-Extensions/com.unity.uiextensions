@@ -1,73 +1,80 @@
-﻿using UnityEngine;
-
-public class UpdateScrollSnap : MonoBehaviour {
-
-    public UnityEngine.UI.Extensions.HorizontalScrollSnap HSS;
-    public UnityEngine.UI.Extensions.VerticalScrollSnap VSS;
-    public GameObject HorizontalPagePrefab;
-    public GameObject VerticalPagePrefab;
-    public UnityEngine.UI.InputField JumpPage;
-
-
-    public void AddButton()
+﻿namespace UnityEngine.UI.Extensions.Examples
+{
+    public class UpdateScrollSnap : MonoBehaviour
     {
-        if (HSS)
+
+        public UnityEngine.UI.Extensions.HorizontalScrollSnap HSS;
+        public UnityEngine.UI.Extensions.VerticalScrollSnap VSS;
+        public GameObject HorizontalPagePrefab;
+        public GameObject VerticalPagePrefab;
+        public UnityEngine.UI.InputField JumpPage;
+
+
+        public void AddButton()
         {
-            var newHSSPage = GameObject.Instantiate(HorizontalPagePrefab);
-            HSS.AddChild(newHSSPage);
+            if (HSS)
+            {
+                var newHSSPage = GameObject.Instantiate(HorizontalPagePrefab);
+                HSS.AddChild(newHSSPage);
+            }
+            if (VSS)
+            {
+                var newVSSPage = GameObject.Instantiate(VerticalPagePrefab);
+                VSS.AddChild(newVSSPage);
+            }
         }
-        if (VSS)
-        {
-            var newVSSPage = GameObject.Instantiate(VerticalPagePrefab);
-            VSS.AddChild(newVSSPage);
-        }
-    }
 
-    public void RemoveButton()
-    {
-        GameObject removed, removed2;
-        if (HSS)
+        public void RemoveButton()
         {
-            HSS.RemoveChild(HSS.CurrentPage, out removed);
-            removed.SetActive(false);
+            GameObject removed, removed2;
+            if (HSS)
+            {
+                HSS.RemoveChild(HSS.CurrentPage, out removed);
+                removed.SetActive(false);
+            }
+            if (VSS)
+            {
+                VSS.RemoveChild(VSS.CurrentPage, out removed2);
+                removed2.SetActive(false);
+            }
         }
-        if (VSS)
-        {
-            VSS.RemoveChild(VSS.CurrentPage, out removed2);
-            removed2.SetActive(false);
-        }
-    }
 
-    public void JumpToPage()
-    {
-        int jumpPage = int.Parse(JumpPage.text);
-        if (HSS)
+        public void JumpToPage()
         {
-            HSS.GoToScreen(jumpPage);
+            int jumpPage = int.Parse(JumpPage.text);
+            if (HSS)
+            {
+                HSS.GoToScreen(jumpPage);
+            }
+            if (VSS)
+            {
+                VSS.GoToScreen(jumpPage);
+            }
         }
-        if (VSS)
+
+        public void SelectionStartChange()
         {
-            VSS.GoToScreen(jumpPage);
+            Debug.Log("Scroll Snap change started");
         }
-    }
+        public void SelectionEndChange()
+        {
+            Debug.Log("Scroll Snap change finished");
+        }
+        public void PageChange(int page)
+        {
+            Debug.Log(string.Format("Scroll Snap page changed to {0}", page));
+        }
 
-    public void SelectionStartChange()
-    {
-        Debug.Log("Scroll Snap change started");
-    }
-    public void SelectionEndChange()
-    {
-        Debug.Log("Scroll Snap change finished");
-    }
-    public void PageChange(int page)
-    {
-        Debug.Log(string.Format("Scroll Snap page changed to {0}",page));
-    }
+        public void RemoveAll()
+        {
+            GameObject[] children;
+            HSS.RemoveAllChildren(out children);
+            VSS.RemoveAllChildren(out children);
+        }
 
-    public void RemoveAll()
-    {
-        GameObject[] children;
-        HSS.RemoveAllChildren(out children);
-        VSS.RemoveAllChildren(out children);
+        public void JumpToSelectedToggle(int page)
+        {
+            HSS.GoToScreen(page);
+        }
     }
 }

@@ -130,7 +130,7 @@ Scroll Snap (alt implementation)|Reorderable List|UI Vertical Scroller|Curved La
 ------|------|------|------|
 Best Fit Outline|Curved Text|Gradient|Gradient2|Letter Spacing
 NicerOutline|RaycastMask|UIFlippable|UIImageCrop|SoftAlphaMask
-CylinderText|UIParticleSystem|||
+CylinderText|UIParticleSystem|CurlyUI||
 ||||
 
 [VR Components](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#markdown-header-vr_components)|||||

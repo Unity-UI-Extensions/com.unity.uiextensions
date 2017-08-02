@@ -16,6 +16,7 @@ namespace UnityEngine.UI.Extensions
             _isVertical = false;
             _childAnchorPoint = new Vector2(0, 0.5f);
             _currentPage = StartingScreen;
+            panelDimensions = gameObject.GetComponent<RectTransform>().rect;
             UpdateLayout();
         }
 
@@ -192,6 +193,7 @@ namespace UnityEngine.UI.Extensions
         {
             _scrollStartPosition = _screensContainer.localPosition.x;
             _scroll_rect.horizontalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
+            OnCurrentScreenChange(_currentPage);
         }
 
         /// <summary>
