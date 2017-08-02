@@ -64,7 +64,7 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Fast Swipe makes swiping page next / previous (optional)")]
         public Boolean UseFastSwipe = false;
 
-        [Tooltip("Offset for how far a swipe has to travel to initiate a page change (optional)\nDefault is the panel dimensions")]
+        [Tooltip("Offset for how far a swipe has to travel to initiate a page change (optional)")]
         public int FastSwipeThreshold = 100;
 
         [Tooltip("Speed at which the ScrollRect will keep scrolling before slowing down and stopping (optional)")]
@@ -314,8 +314,8 @@ namespace UnityEngine.UI.Extensions
         internal int GetPageforPosition(Vector3 pos)
         {
             return _isVertical ?
-                -(int)Math.Round((pos.y - _scrollStartPosition) / _childSize) :
-                -(int)Math.Round((pos.x - _scrollStartPosition) / _childSize);
+                (int)Math.Round((_scrollStartPosition - pos.y) / _childSize) :
+                (int)Math.Round((_scrollStartPosition - pos.x) / _childSize);
         }
 
         /// <summary>
