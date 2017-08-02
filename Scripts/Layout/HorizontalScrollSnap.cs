@@ -193,6 +193,7 @@ namespace UnityEngine.UI.Extensions
         {
             _scrollStartPosition = _screensContainer.localPosition.x;
             _scroll_rect.horizontalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
+            OnCurrentScreenChange(_currentPage);
         }
 
         /// <summary>

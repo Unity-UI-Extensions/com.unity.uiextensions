@@ -1,30 +1,30 @@
 /// Credit playemgames 
 /// Sourced from - http://forum.unity3d.com/threads/sprite-icons-with-text-e-g-emoticons.265927/
 
-using UnityEngine;
-using UnityEngine.UI.Extensions;
-
-public class testHref : MonoBehaviour
+namespace UnityEngine.UI.Extensions.Examples
 {
-    public TextPic textPic;
-
-    void Awake()
+    public class testHref : MonoBehaviour
     {
-        textPic = GetComponent<TextPic>();
-    }
+        public TextPic textPic;
 
-    void OnEnable()
-    {
-        textPic.onHrefClick.AddListener(OnHrefClick);
-    }
+        void Awake()
+        {
+            textPic = GetComponent<TextPic>();
+        }
 
-    void OnDisable()
-    {
-        textPic.onHrefClick.RemoveListener(OnHrefClick);
-    }
+        void OnEnable()
+        {
+            textPic.onHrefClick.AddListener(OnHrefClick);
+        }
 
-    private void OnHrefClick(string hrefName)
-    {
-        Debug.Log("Click on the " + hrefName);
+        void OnDisable()
+        {
+            textPic.onHrefClick.RemoveListener(OnHrefClick);
+        }
+
+        private void OnHrefClick(string hrefName)
+        {
+            Debug.Log("Click on the " + hrefName);
+        }
     }
 }

@@ -1,17 +1,18 @@
-﻿using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI.Extensions;
+﻿using UnityEngine.EventSystems;
 
-public class PaginationScript : MonoBehaviour, IPointerClickHandler
+namespace UnityEngine.UI.Extensions.Examples
 {
-    public HorizontalScrollSnap hss;
-    public int Page;
-
-    public void OnPointerClick(PointerEventData eventData)
+    public class PaginationScript : MonoBehaviour, IPointerClickHandler
     {
-        if (hss != null)
+        public HorizontalScrollSnap hss;
+        public int Page;
+
+        public void OnPointerClick(PointerEventData eventData)
         {
-            hss.GoToScreen(Page);
+            if (hss != null)
+            {
+                hss.GoToScreen(Page);
+            }
         }
     }
 }
