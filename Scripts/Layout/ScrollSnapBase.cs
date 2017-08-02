@@ -314,8 +314,8 @@ namespace UnityEngine.UI.Extensions
         internal int GetPageforPosition(Vector3 pos)
         {
             return _isVertical ?
-                -(int)Math.Round((pos.y - _scrollStartPosition) / _childSize) :
-                -(int)Math.Round((pos.x - _scrollStartPosition) / _childSize);
+                (int)Math.Round((_scrollStartPosition - pos.y) / _childSize) :
+                (int)Math.Round((_scrollStartPosition - pos.x) / _childSize);
         }
 
         /// <summary>
