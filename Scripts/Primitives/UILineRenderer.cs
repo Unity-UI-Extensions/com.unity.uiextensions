@@ -30,7 +30,8 @@ namespace UnityEngine.UI.Extensions
             Quick,
             Basic,
             Improved,
-		}
+            Catenary,
+        }
 
 		private const float MIN_MITER_JOIN = 15 * Mathf.Deg2Rad;
 
@@ -42,18 +43,18 @@ namespace UnityEngine.UI.Extensions
 		private static Vector2 UV_TOP_LEFT, UV_BOTTOM_LEFT, UV_TOP_CENTER_LEFT, UV_TOP_CENTER_RIGHT, UV_BOTTOM_CENTER_LEFT, UV_BOTTOM_CENTER_RIGHT, UV_TOP_RIGHT, UV_BOTTOM_RIGHT;
 		private static Vector2[] startUvs, middleUvs, endUvs, fullUvs;
 
-        [SerializeField]
+        [SerializeField, Tooltip("Points to draw lines between\n Can be improved using the Resolution Option")]
         internal Vector2[] m_points;
 
-        [SerializeField]
+        [SerializeField, Tooltip("Thickness of the line")]
         internal float lineThickness = 2;
-        [SerializeField]
+        [SerializeField, Tooltip("Use the relative bounds of the Rect Transform (0,0 -> 0,1) or screen space coordinates")]
         internal bool relativeSize;
-        [SerializeField]
+        [SerializeField, Tooltip("Do the points identify a single line or split pairs of lines")]
         internal bool lineList;
-        [SerializeField]
+        [SerializeField, Tooltip("Add end caps to each line\nMultiple caps when used with Line List")]
         internal bool lineCaps;
-        [SerializeField]
+        [SerializeField, Tooltip("Resolution of the Bezier curve, different to line Resolution")]
         internal int bezierSegmentsPerCurve = 10;
 
         public float LineThickness
@@ -80,9 +81,11 @@ namespace UnityEngine.UI.Extensions
             set { lineCaps = value; SetAllDirty(); }
         }
 
+        [Tooltip("The type of Join used between lines, Square/Mitre or Curved/Bevel")]
 		public JoinType LineJoins = JoinType.Bevel;
 
-		public BezierType BezierMode = BezierType.None;
+        [Tooltip("Bezier method to apply to line, see docs for options\nCan't be used in conjunction with Resolution as Bezier already changes the resolution")]
+        public BezierType BezierMode = BezierType.None;
 
         public int BezierSegmentsPerCurve
         {
@@ -120,7 +123,7 @@ namespace UnityEngine.UI.Extensions
             GeneratedUVs();
 			Vector2[] pointsToDraw = m_points;
 			//If Bezier is desired, pick the implementation
-            if (BezierMode != BezierType.None && m_points.Length > 3)
+            if (BezierMode != BezierType.None && BezierMode != BezierType.Catenary && m_points.Length > 3)
 			{
 				BezierPath bezierPath = new BezierPath();
 
@@ -142,6 +145,13 @@ namespace UnityEngine.UI.Extensions
 
 				pointsToDraw = drawingPoints.ToArray();
 			}
+            if (BezierMode == BezierType.Catenary && m_points.Length == 2)
+            {
+                CableCurve cable = new CableCurve(pointsToDraw);
+                cable.slack = Resoloution;
+                cable.steps = BezierSegmentsPerCurve;
+                pointsToDraw = cable.Points();
+            }
 
             if (ImproveResolution != ResolutionMode.None)
             {
