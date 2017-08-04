@@ -11,6 +11,7 @@ namespace UnityEngine.UI.Extensions
 
         // The elements between which line segments should be drawn
         public RectTransform[] transforms;
+        private Vector2[] previousPositions;
         private RectTransform canvas;
         private RectTransform rt;
         private UILineRenderer lr;
@@ -28,6 +29,19 @@ namespace UnityEngine.UI.Extensions
             if (transforms == null || transforms.Length < 1)
             {
                 return;
+            }
+            //Performance check to only redraw when the child transforms move
+            if (previousPositions != null && previousPositions.Length == transforms.Length)
+            {
+                bool updateLine = false;
+                for (int i = 0; i < transforms.Length; i++)
+                {
+                    if (!updateLine && previousPositions[i] != transforms[i].anchoredPosition)
+                    {
+                        updateLine = true;
+                    }
+                }
+                if (!updateLine) return;
             }
 
             // Get the pivot points
@@ -61,6 +75,12 @@ namespace UnityEngine.UI.Extensions
             lr.Points = points;
             lr.RelativeSize = false;
             lr.drivenExternally = true;
+
+            previousPositions = new Vector2[transforms.Length];
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                previousPositions[i] = transforms[i].anchoredPosition;
+            }
         }
     }
 }
