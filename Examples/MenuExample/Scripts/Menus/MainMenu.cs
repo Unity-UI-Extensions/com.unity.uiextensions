@@ -1,6 +1,4 @@
-﻿using UnityEngine.UI.Extensions.Examples;
-
-namespace UnityEngine.UI.Extensions.Examples
+﻿namespace UnityEngine.UI.Extensions.Examples
 {
     public class MainMenu : SimpleMenu<MainMenu>
     {

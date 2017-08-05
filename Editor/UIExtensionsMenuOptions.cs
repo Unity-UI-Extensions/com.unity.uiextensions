@@ -1815,6 +1815,17 @@ namespace UnityEditor.UI
         }
         #endregion
 
+        #region Menu Manager GO
+        [MenuItem("GameObject/UI/Extensions/Menu Manager", false)]
+        static public void AddMenuManager(MenuCommand menuCommand)
+        {
+            GameObject child = new GameObject("MenuManager");
+            Undo.RegisterCreatedObjectUndo(child, "Create " + "MenuManager");
+            child.AddComponent<MenuManager>();
+            Selection.activeGameObject = child;
+        }
+        #endregion
+
 
         #endregion
 

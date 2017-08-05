@@ -1,13 +1,14 @@
-﻿/// Credit BinaryX 
-/// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/page-2#post-1945602
-/// Updated by ddreaper - removed dependency on a custom ScrollRect script. Now implements drag interfaces and standard Scroll Rect.
+﻿/// Credit Adam Kapos (Nezz) - http://www.songarc.net
+/// Sourced from - https://github.com/YousicianGit/UnityMenuSystem
+/// Updated by SimonDarksideJ - Refactored to be a more generic component
 
 using System.Collections.Generic;
 using System.Reflection;
 
 namespace UnityEngine.UI.Extensions
 {
-
+    [AddComponentMenu("UI/Extensions/Menu Manager")]
+    [DisallowMultipleComponent]
     public class MenuManager : MonoBehaviour
     {
         public Menu[] MenuScreens;
