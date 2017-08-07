@@ -109,6 +109,7 @@ namespace UnityEngine.UI.Extensions
         {
             _scroll_rect.horizontalNormalizedPosition = 0;
             GO.transform.SetParent(_screensContainer, WorldPositionStays);
+            InitialiseChildObjectsFromScene();
             DistributePages();
             if (MaskArea) UpdateVisible();
 
