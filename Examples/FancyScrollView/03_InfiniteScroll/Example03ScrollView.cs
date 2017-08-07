@@ -10,6 +10,10 @@ namespace UnityEngine.UI.Extensions.Examples
         new void Awake()
         {
             scrollPositionController.OnUpdatePosition.AddListener(UpdatePosition);
+
+            // Add OnItemSelected event listener
+            scrollPositionController.OnItemSelected.AddListener(CellSelected);
+
             SetContext(new Example03ScrollViewContext { OnPressedCell = OnPressedCell });
             base.Awake();
         }
@@ -28,5 +32,12 @@ namespace UnityEngine.UI.Extensions.Examples
             UpdateContents();
         }
 
+        // An event triggered when a cell is selected.
+        void CellSelected(int cellIndex)
+        {
+            // Update context.SelectedIndex and call UpdateContents for updating cell's content.
+            context.SelectedIndex = cellIndex;
+            UpdateContents();
+        }
     }
 }
