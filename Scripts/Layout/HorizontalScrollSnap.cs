@@ -146,7 +146,7 @@ namespace UnityEngine.UI.Extensions
             Transform child = _screensContainer.transform.GetChild(index);
             child.SetParent(null, WorldPositionStays);
             ChildRemoved = child.gameObject;
-
+            InitialiseChildObjectsFromScene();
             DistributePages();
             if (MaskArea) UpdateVisible();
 
