@@ -15,7 +15,7 @@ namespace UnityEngine.UI.Extensions
         static protected Material s_ETC1DefaultUI = null;
 
         [SerializeField] private Sprite m_Sprite;
-        public Sprite sprite { get { return m_Sprite; } set { if (SetPropertyUtility.SetClass(ref m_Sprite, value)) ; GeneratedUVs(); SetAllDirty(); } }
+        public Sprite sprite { get { return m_Sprite; } set { if (SetPropertyUtility.SetClass(ref m_Sprite, value)) GeneratedUVs(); SetAllDirty(); } }
 
         [NonSerialized]
         private Sprite m_OverrideSprite;

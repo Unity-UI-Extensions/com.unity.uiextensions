@@ -33,7 +33,7 @@ namespace UnityEngine.UI.Extensions
 
         private Transform _listContainerTransform;
 
-        private RectTransform _rectTransform;
+        //private RectTransform _rectTransform;
 
         private int _pages;
 
@@ -113,7 +113,7 @@ namespace UnityEngine.UI.Extensions
             _listContainerTransform = _scroll_rect.content;
             _listContainerRectTransform = _listContainerTransform.GetComponent<RectTransform>();
 
-            _rectTransform = _listContainerTransform.gameObject.GetComponent<RectTransform>();
+            //_rectTransform = _listContainerTransform.gameObject.GetComponent<RectTransform>();
             UpdateListItemsSize();
             UpdateListItemPositions();
 

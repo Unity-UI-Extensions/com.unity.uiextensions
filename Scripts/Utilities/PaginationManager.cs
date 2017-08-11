@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace UnityEngine.UI.Extensions
 {
+    [AddComponentMenu("UI/Extensions/Pagination Manager")]
     public class PaginationManager : ToggleGroup
     {
         private List<Toggle> m_PaginationChildren;

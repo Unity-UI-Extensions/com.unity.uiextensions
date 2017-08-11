@@ -2,7 +2,6 @@
 /// Sourced from - https://github.com/YousicianGit/UnityMenuSystem
 /// Updated by SimonDarksideJ - Refactored to be a more generic component
 
-using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {

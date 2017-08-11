@@ -3,7 +3,6 @@
 /// Updated to include lerping features and programatic access to angle/value
 
 using System;
-using System.Collections;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
