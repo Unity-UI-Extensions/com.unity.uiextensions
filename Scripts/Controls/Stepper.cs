@@ -174,7 +174,11 @@ namespace UnityEngine.UI.Extensions
                     continue;
 
                 var sprite = CutSprite(sides[i].image.sprite, i == 0);
-                sides[i].GetComponent<StepperSide>().cutSprite = sprite;
+                var side = sides[i].GetComponent<StepperSide>();
+                if (side)
+                {
+                    side.cutSprite = sprite;
+                }
                 sides[i].image.overrideSprite = sprite;
             }
         }

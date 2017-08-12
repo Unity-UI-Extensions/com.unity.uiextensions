@@ -79,16 +79,24 @@ namespace UnityEngine.UI.Extensions
                 {
                     if (selectedSegment)
                     {
-                        selectedSegment.GetComponent<Segment>().selected = false;
+                        var segment = selectedSegment.GetComponent<Segment>();
+                        if (segment)
+                        {
+                            segment.selected = false;
+                        }
                         selectedSegment = null;
                     }
                 }
                 else
                 {
+                    var segment = selectedSegment.GetComponent<Segment>();
+                    if (segment)
+                    {
 #if UNITY_EDITOR
-                    segments[value].GetComponent<Segment>().StoreTextColor();
+                        segment.StoreTextColor();
 #endif
-                    segments[value].GetComponent<Segment>().selected = true;
+                        segment.selected = true;
+                    }
                 }
             }
         }
@@ -164,7 +172,11 @@ namespace UnityEngine.UI.Extensions
                     continue;
 
                 var sprite = CutSprite(segments[i].image.sprite, i == 0, i == segments.Length - 1);
-                segments[i].GetComponent<Segment>().cutSprite = sprite;
+                var segment = segments[i].GetComponent<Segment>();
+                if (segment)
+                {
+                    segment.cutSprite = sprite;
+                }
                 segments[i].image.overrideSprite = sprite;
             }
         }
@@ -328,7 +340,10 @@ namespace UnityEngine.UI.Extensions
                     {
                         var segment = segmentedControl.selectedSegment.GetComponent<Segment>();
                         segmentedControl.selectedSegment = null;
-                        segment.TransitionButton();
+                        if (segment)
+                        {
+                            segment.TransitionButton();
+                        }
                     }
 
                     segmentedControl.selectedSegment = this.button;
