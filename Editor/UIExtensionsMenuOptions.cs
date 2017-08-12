@@ -1656,7 +1656,7 @@ namespace UnityEditor.UI
         [MenuItem("GameObject/UI/Extensions/Segmented Control", false)]
         static public void AddSegmentedControl(MenuCommand menuCommand)
         {
-            GameObject go = CreateUIElementRoot("Segmented Control", menuCommand, s_ThinGUIElementSize);
+            GameObject go = CreateUIElementRoot("Segmented Control", menuCommand, s_ThickGUIElementSize);
             SegmentedControl control = go.AddComponent<SegmentedControl>();
 
             Color selectedColor = new Color(0f, 0.455f, 0.894f);
@@ -1677,12 +1677,12 @@ namespace UnityEditor.UI
             Selection.activeGameObject = go;
         }
         #endregion
-		
+
         #region Stepper
         [MenuItem("GameObject/UI/Extensions/Stepper", false)]
         static public void AddStepper(MenuCommand menuCommand)
         {
-            GameObject go = CreateUIElementRoot("Stepper", menuCommand, new Vector2(42, kThinHeight));
+            GameObject go = CreateUIElementRoot("Stepper", menuCommand, new Vector2(kWidth / 2, kThickHeight));
             Stepper control = go.AddComponent<Stepper>();
 
             var labels = new string[] { "−", "+" };
@@ -1741,7 +1741,7 @@ namespace UnityEditor.UI
             backgroundImage.fillCenter = false;
             backgroundImage.color = new Color(1f, 1f, 1f, 0.392f);
 
-            RectTransform handleRect = SetAnchorsAndStretch(handle); 
+            RectTransform handleRect = SetAnchorsAndStretch(handle);
             handleRect.sizeDelta = new Vector2(25, 25);
             Image handleImage = handle.AddComponent<Image>();
             handleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kKnobPath);

@@ -117,8 +117,7 @@ namespace UnityEngine.UI.Extensions
         {
             base.OnValidate();
 
-            if (separator)
-                LayoutSegments();
+            LayoutSegments();
 
             if (m_selectedSegmentIndex != -1)
                 selectedSegmentIndex = m_selectedSegmentIndex;
@@ -151,14 +150,10 @@ namespace UnityEngine.UI.Extensions
                     segment = buttons[i].gameObject.AddComponent<Segment>();
                 }
                 segment.index = i;
+                segment.segmentedControl = this;
             }
 
             return buttons;
-        }
-
-        public void SetAllSegmentsOff()
-        {
-            selectedSegment = null;
         }
 
         private void RecreateSprites()
@@ -168,26 +163,32 @@ namespace UnityEngine.UI.Extensions
                 if (segments[i].image == null)
                     continue;
 
-                var sprite = segments[i].image.sprite;
-                if (sprite.border.x == 0 || sprite.border.z == 0)
-                    continue;
-
-                var rect = sprite.rect;
-                var border = sprite.border;
-
-                if (i > 0)
-                {
-                    rect.xMin = border.x;
-                    border.x = 0;
-                }
-                if (i < segments.Length - 1)
-                {
-                    rect.xMax = border.z;
-                    border.z = 0;
-                }
-
-                segments[i].image.sprite = Sprite.Create(sprite.texture, rect, sprite.pivot, sprite.pixelsPerUnit, 0, SpriteMeshType.FullRect, border);
+                var sprite = CutSprite(segments[i].image.sprite, i == 0, i == segments.Length - 1);
+                segments[i].GetComponent<Segment>().cutSprite = sprite;
+                segments[i].image.overrideSprite = sprite;
             }
+        }
+
+        static internal Sprite CutSprite(Sprite sprite, bool leftmost, bool rightmost)
+        {
+            if (sprite.border.x == 0 || sprite.border.z == 0)
+                return sprite;
+
+            var rect = sprite.rect;
+            var border = sprite.border;
+
+            if (!leftmost)
+            {
+                rect.xMin = border.x;
+                border.x = 0;
+            }
+            if (!rightmost)
+            {
+                rect.xMax = border.z;
+                border.z = 0;
+            }
+
+            return Sprite.Create(sprite.texture, rect, sprite.pivot, sprite.pixelsPerUnit, 0, SpriteMeshType.FullRect, border);
         }
 
         public void LayoutSegments()
@@ -234,6 +235,7 @@ namespace UnityEngine.UI.Extensions
         ISelectHandler, IDeselectHandler
     {
         internal int index;
+        internal SegmentedControl segmentedControl;
 
         internal bool leftmost
         {
@@ -241,18 +243,13 @@ namespace UnityEngine.UI.Extensions
         }
         internal bool rightmost
         {
-            get { return index == segmentControl.segments.Length - 1; }
+            get { return index == segmentedControl.segments.Length - 1; }
         }
 
         public bool selected
         {
-            get { return segmentControl.selectedSegment == this.button; }
+            get { return segmentedControl.selectedSegment == this.button; }
             set { SetSelected(value); }
-        }
-
-        internal SegmentedControl segmentControl
-        {
-            get { return GetComponentInParent<SegmentedControl>(); }
         }
 
         internal Selectable button
@@ -262,6 +259,7 @@ namespace UnityEngine.UI.Extensions
 
         [SerializeField]
         Color textColor;
+        internal Sprite cutSprite;
 
         protected Segment()
         { }
@@ -313,9 +311,9 @@ namespace UnityEngine.UI.Extensions
         {
             if (value && button.IsActive() && button.IsInteractable())
             {
-                if (segmentControl.selectedSegment == this.button)
+                if (segmentedControl.selectedSegment == this.button)
                 {
-                    if (segmentControl.allowSwitchingOff)
+                    if (segmentedControl.allowSwitchingOff)
                     {
                         Deselect();
                     }
@@ -326,20 +324,20 @@ namespace UnityEngine.UI.Extensions
                 }
                 else
                 {
-                    if (segmentControl.selectedSegment)
+                    if (segmentedControl.selectedSegment)
                     {
-                        var segment = segmentControl.selectedSegment.GetComponent<Segment>();
-                        segmentControl.selectedSegment = null;
+                        var segment = segmentedControl.selectedSegment.GetComponent<Segment>();
+                        segmentedControl.selectedSegment = null;
                         segment.TransitionButton();
                     }
 
-                    segmentControl.selectedSegment = this.button;
+                    segmentedControl.selectedSegment = this.button;
                     StoreTextColor();
                     TransitionButton();
-                    segmentControl.onValueChanged.Invoke(index);
+                    segmentedControl.onValueChanged.Invoke(index);
                 }
             }
-            else if (segmentControl.selectedSegment == this.button)
+            else if (segmentedControl.selectedSegment == this.button)
             {
                 Deselect();
             }
@@ -347,14 +345,14 @@ namespace UnityEngine.UI.Extensions
 
         private void Deselect()
         {
-            segmentControl.selectedSegment = null;
+            segmentedControl.selectedSegment = null;
             TransitionButton();
-            segmentControl.onValueChanged.Invoke(-1);
+            segmentedControl.onValueChanged.Invoke(-1);
         }
 
         void MaintainSelection()
         {
-            if (button != segmentControl.selectedSegment)
+            if (button != segmentedControl.selectedSegment)
                 return;
 
             TransitionButton(true);
@@ -367,9 +365,9 @@ namespace UnityEngine.UI.Extensions
 
         internal void TransitionButton(bool instant)
         {
-            Color tintColor = selected ? segmentControl.selectedColor : button.colors.normalColor;
+            Color tintColor = selected ? segmentedControl.selectedColor : button.colors.normalColor;
             Color textColor = selected ? button.colors.normalColor : this.textColor;
-            Sprite transitionSprite = selected ? button.spriteState.pressedSprite : null;
+            Sprite transitionSprite = selected ? button.spriteState.pressedSprite : cutSprite;
             string triggerName = selected ? button.animationTriggers.pressedTrigger : button.animationTriggers.normalTrigger;
 
             switch (button.transition)
@@ -379,6 +377,8 @@ namespace UnityEngine.UI.Extensions
                     ChangeTextColor(textColor * button.colors.colorMultiplier);
                     break;
                 case Selectable.Transition.SpriteSwap:
+                    if (transitionSprite != cutSprite)
+                        transitionSprite = SegmentedControl.CutSprite(transitionSprite, leftmost, rightmost);
                     DoSpriteSwap(transitionSprite);
                     break;
                 case Selectable.Transition.Animation:

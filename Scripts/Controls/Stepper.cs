@@ -93,6 +93,7 @@ namespace UnityEngine.UI.Extensions
         {
             base.OnValidate();
 
+            RecreateSprites(sides);
             if (separator)
                 LayoutSides();
 
@@ -172,26 +173,32 @@ namespace UnityEngine.UI.Extensions
                 if (sides[i].image == null)
                     continue;
 
-                var sprite = sides[i].image.sprite;
-                if (sprite.border.x == 0 || sprite.border.z == 0)
-                    continue;
-
-                var rect = sprite.rect;
-                var border = sprite.border;
-
-                if (i == 0)
-                {
-                    rect.xMax = border.z;
-                    border.z = 0;
-                }
-                else
-                {
-                    rect.xMin = border.x;
-                    border.x = 0;
-                }
-
-                sides[i].image.sprite = Sprite.Create(sprite.texture, rect, sprite.pivot, sprite.pixelsPerUnit, 0, SpriteMeshType.FullRect, border);
+                var sprite = CutSprite(sides[i].image.sprite, i == 0);
+                sides[i].GetComponent<StepperSide>().cutSprite = sprite;
+                sides[i].image.overrideSprite = sprite;
             }
+        }
+
+        static internal Sprite CutSprite(Sprite sprite, bool leftmost)
+        {
+            if (sprite.border.x == 0 || sprite.border.z == 0)
+                return sprite;
+
+            var rect = sprite.rect;
+            var border = sprite.border;
+
+            if (leftmost)
+            {
+                rect.xMax = border.z;
+                border.z = 0;
+            }
+            else
+            {
+                rect.xMin = border.x;
+                border.x = 0;
+            }
+
+            return Sprite.Create(sprite.texture, rect, sprite.pivot, sprite.pixelsPerUnit, 0, SpriteMeshType.FullRect, border);
         }
 
         public void LayoutSides(Selectable[] sides = null)
@@ -232,13 +239,21 @@ namespace UnityEngine.UI.Extensions
     }
 
     [RequireComponent(typeof(Selectable))]
-    public class StepperSide : UIBehaviour, IPointerClickHandler, ISubmitHandler
+    public class StepperSide :
+        UIBehaviour,
+        IPointerClickHandler,
+        ISubmitHandler,
+        IPointerEnterHandler, IPointerExitHandler,
+        IPointerDownHandler, IPointerUpHandler,
+        ISelectHandler, IDeselectHandler
     {
         Selectable button { get { return GetComponent<Selectable>(); } }
 
         Stepper stepper { get { return GetComponentInParent<Stepper>(); } }
 
         bool leftmost { get { return button == stepper.sides[0]; } }
+
+        internal Sprite cutSprite;
 
         protected StepperSide()
         { }
@@ -249,11 +264,43 @@ namespace UnityEngine.UI.Extensions
                 return;
 
             Press();
+            AdjustSprite(false);
         }
 
         public virtual void OnSubmit(BaseEventData eventData)
         {
             Press();
+            AdjustSprite(true);
+        }
+
+        public virtual void OnPointerEnter(PointerEventData eventData)
+        {
+            AdjustSprite(false);
+        }
+
+        public virtual void OnPointerExit(PointerEventData eventData)
+        {
+            AdjustSprite(true);
+        }
+
+        public virtual void OnPointerDown(PointerEventData eventData)
+        {
+            AdjustSprite(false);
+        }
+
+        public virtual void OnPointerUp(PointerEventData eventData)
+        {
+            AdjustSprite(false);
+        }
+
+        public virtual void OnSelect(BaseEventData eventData)
+        {
+            AdjustSprite(false);
+        }
+
+        public virtual void OnDeselect(BaseEventData eventData)
+        {
+            AdjustSprite(true);
         }
 
         private void Press()
@@ -269,6 +316,18 @@ namespace UnityEngine.UI.Extensions
             {
                 stepper.StepUp();
             }
+        }
+
+        private void AdjustSprite(bool restore)
+        {
+            var image = button.image;
+            if (!image || image.overrideSprite == cutSprite)
+                return;
+
+            if (restore)
+                image.overrideSprite = cutSprite;
+            else
+                image.overrideSprite = Stepper.CutSprite(image.overrideSprite, leftmost);
         }
     }
 }
