@@ -121,7 +121,7 @@ namespace UnityEngine.UI.Extensions
         /// *Note, this is an index address (0-x)
         /// </summary>
         /// <param name="index">Index element of child to remove</param>
-        /// <param name="ChildRemoved">>Resulting removed GO</param>
+        /// <param name="ChildRemoved">Resulting removed GO</param>
         public void RemoveChild(int index, out GameObject ChildRemoved)
         {
             RemoveChild(index, false, out ChildRemoved);
@@ -157,7 +157,6 @@ namespace UnityEngine.UI.Extensions
 
             SetScrollContainerPosition();
         }
-
 
         /// <summary>
         /// Remove all children from this ScrollSnap

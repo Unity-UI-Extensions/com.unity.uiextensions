@@ -66,21 +66,21 @@ namespace UnityEngine.UI.Extensions
                                 (_scroll_rect.velocity.x < startingSpeed && _scroll_rect.velocity.x > -SwipeVelocityThreshold);
         }
 
-        private void DistributePages()
+        public void DistributePages()
         {
             _screens = _screensContainer.childCount;
             _scroll_rect.horizontalNormalizedPosition = 0;
 
-            int _offset = 0;
+            float _offset = 0;
             float _dimension = 0;
+            Rect panelDimensions = gameObject.GetComponent<RectTransform>().rect;
             float currentXPosition = 0;
             var pageStepValue = _childSize = (int)panelDimensions.width * ((PageStep == 0) ? 3 : PageStep);
-
 
             for (int i = 0; i < _screensContainer.transform.childCount; i++)
             {
                 RectTransform child = _screensContainer.transform.GetChild(i).gameObject.GetComponent<RectTransform>();
-                currentXPosition = _offset + (int)(i * pageStepValue);
+                currentXPosition = _offset + i * pageStepValue;
                 child.sizeDelta = new Vector2(panelDimensions.width, panelDimensions.height);
                 child.anchoredPosition = new Vector2(currentXPosition, 0f);
                 child.anchorMin = child.anchorMax = child.pivot = _childAnchorPoint;
@@ -88,7 +88,7 @@ namespace UnityEngine.UI.Extensions
 
             _dimension = currentXPosition + _offset * -1;
 
-            _screensContainer.offsetMax = new Vector2(_dimension, 0f);
+            _screensContainer.GetComponent<RectTransform>().offsetMax = new Vector2(_dimension, 0f);
         }
 
         /// <summary>
