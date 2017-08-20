@@ -104,6 +104,11 @@ namespace UnityEngine.UI.Extensions
         }
 #endif
 
+        protected override void Start()
+        {
+            RecreateSprites(sides);
+        }
+
         private Selectable[] GetSides()
         {
             var buttons = GetComponentsInChildren<Selectable>();

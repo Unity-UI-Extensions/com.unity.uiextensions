@@ -1666,6 +1666,7 @@ namespace UnityEditor.UI
             for (int i = 0; i < 3; i++)
 			{
                 var button = AddButtonAsChild(go);
+				button.gameObject.AddComponent<Segment>();
                 button.name = "Segment " + (i + 1);
                 var text = button.GetComponentInChildren<Text>();
                 text.text = labels[i];

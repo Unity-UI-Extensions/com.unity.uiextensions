@@ -74,21 +74,24 @@ namespace UnityEngine.UI.Extensions
             {
                 value = Math.Max(value, -1);
                 value = Math.Min(value, segments.Length - 1);
+                if (value == m_selectedSegmentIndex)
+                    return;
+
                 m_selectedSegmentIndex = value;
-                if (value == -1)
+
+                if (selectedSegment)
                 {
-                    if (selectedSegment)
+                    var segment = selectedSegment.GetComponent<Segment>();
+                    if (segment)
                     {
-                        var segment = selectedSegment.GetComponent<Segment>();
-                        if (segment)
-                        {
-                            segment.selected = false;
-                        }
-                        selectedSegment = null;
+                        segment.selected = false;
                     }
+                    selectedSegment = null;
                 }
-                else
+
+                if (value != -1)
                 {
+                    selectedSegment = segments[value];
                     var segment = selectedSegment.GetComponent<Segment>();
                     if (segment)
                     {
@@ -314,6 +317,13 @@ namespace UnityEngine.UI.Extensions
             MaintainSelection();
         }
 
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            if (segmentedControl)
+                MaintainSelection();
+        }
+
         public virtual void OnSubmit(BaseEventData eventData)
         {
             selected = true;
@@ -388,6 +398,7 @@ namespace UnityEngine.UI.Extensions
             switch (button.transition)
             {
                 case Selectable.Transition.ColorTint:
+                    button.image.overrideSprite = cutSprite;
                     StartColorTween(tintColor * button.colors.colorMultiplier, instant);
                     ChangeTextColor(textColor * button.colors.colorMultiplier);
                     break;
@@ -397,6 +408,7 @@ namespace UnityEngine.UI.Extensions
                     DoSpriteSwap(transitionSprite);
                     break;
                 case Selectable.Transition.Animation:
+                    button.image.overrideSprite = cutSprite;
                     TriggerAnimation(triggerName);
                     break;
             }
