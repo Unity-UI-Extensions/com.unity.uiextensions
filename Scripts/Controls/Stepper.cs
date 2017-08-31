@@ -2,6 +2,7 @@
 /// Sourced from - https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/pull-requests/11
 
 using System;
+using System.Collections;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
@@ -106,6 +107,19 @@ namespace UnityEngine.UI.Extensions
 
         protected override void Start()
         {
+            if (isActiveAndEnabled)
+                StartCoroutine(DelayedInit());
+        }
+
+        protected override void OnEnable()
+        {
+            StartCoroutine(DelayedInit());
+        }
+
+        IEnumerator DelayedInit()
+        {
+            yield return null;
+
             RecreateSprites(sides);
         }
 
@@ -115,15 +129,6 @@ namespace UnityEngine.UI.Extensions
             if (buttons.Length != 2)
             {
                 throw new InvalidOperationException("A stepper must have two Button children");
-            }
-
-            for (int i = 0; i < 2; i++)
-            {
-                var side = buttons[i].GetComponent<StepperSide>();
-                if (side == null)
-                {
-                    side = buttons[i].gameObject.AddComponent<StepperSide>();
-                }
             }
 
             if (!wrap)
@@ -244,99 +249,6 @@ namespace UnityEngine.UI.Extensions
                 sep.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, width, separatorWidth);
                 sep.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, transform.rect.height);
             }
-        }
-    }
-
-    [RequireComponent(typeof(Selectable))]
-    public class StepperSide :
-        UIBehaviour,
-        IPointerClickHandler,
-        ISubmitHandler,
-        IPointerEnterHandler, IPointerExitHandler,
-        IPointerDownHandler, IPointerUpHandler,
-        ISelectHandler, IDeselectHandler
-    {
-        Selectable button { get { return GetComponent<Selectable>(); } }
-
-        Stepper stepper { get { return GetComponentInParent<Stepper>(); } }
-
-        bool leftmost { get { return button == stepper.sides[0]; } }
-
-        internal Sprite cutSprite;
-
-        protected StepperSide()
-        { }
-
-        public virtual void OnPointerClick(PointerEventData eventData)
-        {
-            if (eventData.button != PointerEventData.InputButton.Left)
-                return;
-
-            Press();
-            AdjustSprite(false);
-        }
-
-        public virtual void OnSubmit(BaseEventData eventData)
-        {
-            Press();
-            AdjustSprite(true);
-        }
-
-        public virtual void OnPointerEnter(PointerEventData eventData)
-        {
-            AdjustSprite(false);
-        }
-
-        public virtual void OnPointerExit(PointerEventData eventData)
-        {
-            AdjustSprite(true);
-        }
-
-        public virtual void OnPointerDown(PointerEventData eventData)
-        {
-            AdjustSprite(false);
-        }
-
-        public virtual void OnPointerUp(PointerEventData eventData)
-        {
-            AdjustSprite(false);
-        }
-
-        public virtual void OnSelect(BaseEventData eventData)
-        {
-            AdjustSprite(false);
-        }
-
-        public virtual void OnDeselect(BaseEventData eventData)
-        {
-            AdjustSprite(true);
-        }
-
-        private void Press()
-        {
-            if (!button.IsActive() || !button.IsInteractable())
-                return;
-
-            if (leftmost)
-            {
-                stepper.StepDown();
-            }
-            else
-            {
-                stepper.StepUp();
-            }
-        }
-
-        private void AdjustSprite(bool restore)
-        {
-            var image = button.image;
-            if (!image || image.overrideSprite == cutSprite)
-                return;
-
-            if (restore)
-                image.overrideSprite = cutSprite;
-            else
-                image.overrideSprite = Stepper.CutSprite(image.overrideSprite, leftmost);
         }
     }
 }

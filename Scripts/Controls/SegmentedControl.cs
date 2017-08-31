@@ -2,13 +2,14 @@
 /// Sourced from - https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/pull-requests/12
 
 using System;
+using System.Collections;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
     // Segmented control, like a group of buttons
-    [AddComponentMenu("UI/Extensions/Segmented Control")]
+    [AddComponentMenu("UI/Extensions/Segmented Control/Segmented Control")]
     [RequireComponent(typeof(RectTransform))]
     public class SegmentedControl : UIBehaviour
     {
@@ -28,7 +29,7 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Event to fire once the selection has been changed")]
         private SegmentSelectedEvent m_onValueChanged = new SegmentSelectedEvent();
 
-        protected internal Selectable selectedSegment;
+        internal Selectable selectedSegment;
 
         protected float SeparatorWidth
         {
@@ -74,8 +75,6 @@ namespace UnityEngine.UI.Extensions
             {
                 value = Math.Max(value, -1);
                 value = Math.Min(value, segments.Length - 1);
-                if (value == m_selectedSegmentIndex)
-                    return;
 
                 m_selectedSegmentIndex = value;
 
@@ -117,6 +116,19 @@ namespace UnityEngine.UI.Extensions
         {
             base.Start();
 
+            if (isActiveAndEnabled)
+                StartCoroutine(DelayedInit());
+        }
+
+        protected override void OnEnable()
+        {
+            StartCoroutine(DelayedInit());
+        }
+
+        IEnumerator DelayedInit()
+        {
+            yield return null;
+
             LayoutSegments();
 
             if (m_selectedSegmentIndex != -1)
@@ -128,10 +140,8 @@ namespace UnityEngine.UI.Extensions
         {
             base.OnValidate();
 
-            LayoutSegments();
-
-            if (m_selectedSegmentIndex != -1)
-                selectedSegmentIndex = m_selectedSegmentIndex;
+            if (isActiveAndEnabled)
+                StartCoroutine(DelayedInit());
 
             if (m_selectedSegmentIndex > transform.childCount)
             {
@@ -156,12 +166,11 @@ namespace UnityEngine.UI.Extensions
             for (int i = 0; i < buttons.Length; i++)
             {
                 var segment = buttons[i].GetComponent<Segment>();
-                if (segment == null)
+                if (segment != null)
                 {
-                    segment = buttons[i].gameObject.AddComponent<Segment>();
+                    segment.index = i;
+                    segment.segmentedControl = this;
                 }
-                segment.index = i;
-                segment.segmentedControl = this;
             }
 
             return buttons;
@@ -237,228 +246,6 @@ namespace UnityEngine.UI.Extensions
                 }
 // TODO: maybe adjust text position
             }
-        }
-    }
-
-    [RequireComponent(typeof(Selectable))]
-    public class Segment :
-        UIBehaviour,
-        IPointerClickHandler,
-        ISubmitHandler,
-        IPointerEnterHandler, IPointerExitHandler,
-        IPointerDownHandler, IPointerUpHandler,
-        ISelectHandler, IDeselectHandler
-    {
-        internal int index;
-        internal SegmentedControl segmentedControl;
-
-        internal bool leftmost
-        {
-            get { return index == 0; }
-        }
-        internal bool rightmost
-        {
-            get { return index == segmentedControl.segments.Length - 1; }
-        }
-
-        public bool selected
-        {
-            get { return segmentedControl.selectedSegment == this.button; }
-            set { SetSelected(value); }
-        }
-
-        internal Selectable button
-        {
-            get { return GetComponent<Selectable>(); }
-        }
-
-        [SerializeField]
-        Color textColor;
-        internal Sprite cutSprite;
-
-        protected Segment()
-        { }
-
-        public virtual void OnPointerClick(PointerEventData eventData)
-        {
-            if (eventData.button != PointerEventData.InputButton.Left)
-                return;
-
-            selected = true;
-        }
-
-        public virtual void OnPointerEnter(PointerEventData eventData)
-        {
-            MaintainSelection();
-        }
-
-        public virtual void OnPointerExit(PointerEventData eventData)
-        {
-            MaintainSelection();
-        }
-
-        public virtual void OnPointerDown(PointerEventData eventData)
-        {
-            MaintainSelection();
-        }
-
-        public virtual void OnPointerUp(PointerEventData eventData)
-        {
-            MaintainSelection();
-        }
-
-        public virtual void OnSelect(BaseEventData eventData)
-        {
-            MaintainSelection();
-        }
-
-        public virtual void OnDeselect(BaseEventData eventData)
-        {
-            MaintainSelection();
-        }
-
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-            if (segmentedControl)
-                MaintainSelection();
-        }
-
-        public virtual void OnSubmit(BaseEventData eventData)
-        {
-            selected = true;
-        }
-
-        private void SetSelected(bool value)
-        {
-            if (value && button.IsActive() && button.IsInteractable())
-            {
-                if (segmentedControl.selectedSegment == this.button)
-                {
-                    if (segmentedControl.allowSwitchingOff)
-                    {
-                        Deselect();
-                    }
-                    else
-                    {
-                        MaintainSelection();
-                    }
-                }
-                else
-                {
-                    if (segmentedControl.selectedSegment)
-                    {
-                        var segment = segmentedControl.selectedSegment.GetComponent<Segment>();
-                        segmentedControl.selectedSegment = null;
-                        if (segment)
-                        {
-                            segment.TransitionButton();
-                        }
-                    }
-
-                    segmentedControl.selectedSegment = this.button;
-                    StoreTextColor();
-                    TransitionButton();
-                    segmentedControl.onValueChanged.Invoke(index);
-                }
-            }
-            else if (segmentedControl.selectedSegment == this.button)
-            {
-                Deselect();
-            }
-        }
-
-        private void Deselect()
-        {
-            segmentedControl.selectedSegment = null;
-            TransitionButton();
-            segmentedControl.onValueChanged.Invoke(-1);
-        }
-
-        void MaintainSelection()
-        {
-            if (button != segmentedControl.selectedSegment)
-                return;
-
-            TransitionButton(true);
-        }
-
-        internal void TransitionButton()
-        {
-            TransitionButton(false);
-        }
-
-        internal void TransitionButton(bool instant)
-        {
-            Color tintColor = selected ? segmentedControl.selectedColor : button.colors.normalColor;
-            Color textColor = selected ? button.colors.normalColor : this.textColor;
-            Sprite transitionSprite = selected ? button.spriteState.pressedSprite : cutSprite;
-            string triggerName = selected ? button.animationTriggers.pressedTrigger : button.animationTriggers.normalTrigger;
-
-            switch (button.transition)
-            {
-                case Selectable.Transition.ColorTint:
-                    button.image.overrideSprite = cutSprite;
-                    StartColorTween(tintColor * button.colors.colorMultiplier, instant);
-                    ChangeTextColor(textColor * button.colors.colorMultiplier);
-                    break;
-                case Selectable.Transition.SpriteSwap:
-                    if (transitionSprite != cutSprite)
-                        transitionSprite = SegmentedControl.CutSprite(transitionSprite, leftmost, rightmost);
-                    DoSpriteSwap(transitionSprite);
-                    break;
-                case Selectable.Transition.Animation:
-                    button.image.overrideSprite = cutSprite;
-                    TriggerAnimation(triggerName);
-                    break;
-            }
-        }
-
-        void StartColorTween(Color targetColor, bool instant)
-        {
-            if (button.targetGraphic == null)
-                return;
-
-            button.targetGraphic.CrossFadeColor(targetColor, instant ? 0f : button.colors.fadeDuration, true, true);
-        }
-
-        internal void StoreTextColor()
-        {
-            var text = GetComponentInChildren<Text>();
-            if (!text)
-                return;
-
-            textColor = text.color;
-        }
-
-        void ChangeTextColor(Color targetColor)
-        {
-            var text = GetComponentInChildren<Text>();
-            if (!text)
-                return;
-
-            text.color = targetColor;
-        }
-
-        void DoSpriteSwap(Sprite newSprite)
-        {
-            if (button.image == null)
-                return;
-
-            button.image.overrideSprite = newSprite;
-        }
-
-        void TriggerAnimation(string triggername)
-        {
-            if (button.animator == null || !button.animator.isActiveAndEnabled || !button.animator.hasBoundPlayables || string.IsNullOrEmpty(triggername))
-                return;
-
-            button.animator.ResetTrigger(button.animationTriggers.normalTrigger);
-            button.animator.ResetTrigger(button.animationTriggers.pressedTrigger);
-            button.animator.ResetTrigger(button.animationTriggers.highlightedTrigger);
-            button.animator.ResetTrigger(button.animationTriggers.disabledTrigger);
-
-            button.animator.SetTrigger(triggername);
         }
     }
 }
