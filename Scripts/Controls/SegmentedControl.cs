@@ -61,9 +61,6 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        [SerializeField]
-        public Color selectedColor;
-
         public Graphic separator { get { return m_separator; } set { m_separator = value; m_separatorWidth = 0; LayoutSegments(); } }
 
         public bool allowSwitchingOff { get { return m_allowSwitchingOff; } set { m_allowSwitchingOff = value; } }
@@ -94,9 +91,6 @@ namespace UnityEngine.UI.Extensions
                     var segment = selectedSegment.GetComponent<Segment>();
                     if (segment)
                     {
-#if UNITY_EDITOR
-                        segment.StoreTextColor();
-#endif
                         segment.selected = true;
                     }
                 }
@@ -146,11 +140,6 @@ namespace UnityEngine.UI.Extensions
             if (m_selectedSegmentIndex > transform.childCount)
             {
                 selectedSegmentIndex = transform.childCount - 1;
-            }
-
-            if (selectedColor == new Color(0, 0, 0, 0))
-            {
-                selectedColor = new Color(0f, 0.455f, 0.894f);
             }
         }
 #endif

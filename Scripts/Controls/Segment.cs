@@ -41,12 +41,25 @@ namespace UnityEngine.UI.Extensions
             get { return GetComponent<Selectable>(); }
         }
 
-        [SerializeField]
-        Color textColor;
         internal Sprite cutSprite;
 
         protected Segment()
         { }
+
+        protected override void Start()
+        {
+            StartCoroutine(DelayedInit());
+        }
+
+        IEnumerator DelayedInit()
+        {
+            yield return null;
+            yield return null;
+
+            button.image.overrideSprite = cutSprite;
+            if (selected)
+                MaintainSelection();
+        }
 
         public virtual void OnPointerClick(PointerEventData eventData)
         {
@@ -126,7 +139,6 @@ namespace UnityEngine.UI.Extensions
                     }
 
                     segmentedControl.selectedSegment = this.button;
-                    StoreTextColor();
                     TransitionButton();
                     segmentedControl.onValueChanged.Invoke(index);
                 }
@@ -159,8 +171,8 @@ namespace UnityEngine.UI.Extensions
 
         internal void TransitionButton(bool instant)
         {
-            Color tintColor = selected ? segmentedControl.selectedColor : button.colors.normalColor;
-            Color textColor = selected ? button.colors.normalColor : this.textColor;
+            Color tintColor = selected ? button.colors.pressedColor : button.colors.normalColor;
+            Color textColor = selected ? button.colors.normalColor : button.colors.pressedColor;
             Sprite transitionSprite = selected ? button.spriteState.pressedSprite : cutSprite;
             string triggerName = selected ? button.animationTriggers.pressedTrigger : button.animationTriggers.normalTrigger;
 
@@ -189,15 +201,6 @@ namespace UnityEngine.UI.Extensions
                 return;
 
             button.targetGraphic.CrossFadeColor(targetColor, instant ? 0f : button.colors.fadeDuration, true, true);
-        }
-
-        internal void StoreTextColor()
-        {
-            var text = GetComponentInChildren<Text>();
-            if (!text)
-                return;
-
-            textColor = text.color;
         }
 
         void ChangeTextColor(Color targetColor)

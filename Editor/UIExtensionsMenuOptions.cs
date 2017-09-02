@@ -1660,14 +1660,18 @@ namespace UnityEditor.UI
             SegmentedControl control = go.AddComponent<SegmentedControl>();
 
             Color selectedColor = new Color(0f, 0.455f, 0.894f);
-            control.selectedColor = selectedColor;
 
             var labels = new string[] { "This", "That", "Other" };
             for (int i = 0; i < 3; i++)
 			{
-                var button = AddButtonAsChild(go);
+                var button = AddButtonAsChild(go).GetComponent<Button>();
 				button.gameObject.AddComponent<Segment>();
                 button.name = "Segment " + (i + 1);
+
+                var colors = button.colors;
+                colors.pressedColor = selectedColor;
+                button.colors = colors;
+
                 var text = button.GetComponentInChildren<Text>();
                 text.text = labels[i];
                 text.color = selectedColor;
