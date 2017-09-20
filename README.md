@@ -142,10 +142,10 @@ There are almost 70+ extension controls / effect and other utilities in the proj
 
 [Controls](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#markdown-header-controls)|||||
 ------|------|------|------|
-Accordion|ColorPicker|SelectionBox|UIButton|UIFlippable
-ComboBox|AutoCompleteComboBox|DropDownList|BoundToolTip|UIWindowBase
-UI_Knob|TextPic|InputFocus|Box Slider|CooldownButton
-Segmented Control|Stepper|||
+Accordion|ColorPicker|SelectionBox|UIFlippable|ComboBox
+AutoCompleteComboBox|DropDownList|BoundToolTip|UIWindowBase|UI_Knob
+TextPic|InputFocus|Box Slider|CooldownButton|Segmented Control
+Stepper||||
 ||||
 
 [Primitives](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#markdown-header-primitives)|||||
