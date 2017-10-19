@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI.Extensions;
 
-public class ChangeColor : MonoBehaviour
+public class UICircleChangeColor : MonoBehaviour
 {
     public GameObject TargetUICircle;
     private Color baseColor;

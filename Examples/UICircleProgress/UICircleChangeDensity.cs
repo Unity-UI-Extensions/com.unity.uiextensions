@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
-public class ChangeDensity : MonoBehaviour
+public class UICircleChangeDensity : MonoBehaviour
 {
     public GameObject MultiColorObject;
     public GameObject TextOutputObject;
