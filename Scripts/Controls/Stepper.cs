@@ -2,6 +2,7 @@
 /// Sourced from - https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/pull-requests/11
 
 using System;
+using System.Collections;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
@@ -93,6 +94,7 @@ namespace UnityEngine.UI.Extensions
         {
             base.OnValidate();
 
+            RecreateSprites(sides);
             if (separator)
                 LayoutSides();
 
@@ -103,21 +105,30 @@ namespace UnityEngine.UI.Extensions
         }
 #endif
 
+        protected override void Start()
+        {
+            if (isActiveAndEnabled)
+                StartCoroutine(DelayedInit());
+        }
+
+        protected override void OnEnable()
+        {
+            StartCoroutine(DelayedInit());
+        }
+
+        IEnumerator DelayedInit()
+        {
+            yield return null;
+
+            RecreateSprites(sides);
+        }
+
         private Selectable[] GetSides()
         {
             var buttons = GetComponentsInChildren<Selectable>();
             if (buttons.Length != 2)
             {
                 throw new InvalidOperationException("A stepper must have two Button children");
-            }
-
-            for (int i = 0; i < 2; i++)
-            {
-                var side = buttons[i].GetComponent<StepperSide>();
-                if (side == null)
-                {
-                    side = buttons[i].gameObject.AddComponent<StepperSide>();
-                }
             }
 
             if (!wrap)
@@ -172,26 +183,36 @@ namespace UnityEngine.UI.Extensions
                 if (sides[i].image == null)
                     continue;
 
-                var sprite = sides[i].image.sprite;
-                if (sprite.border.x == 0 || sprite.border.z == 0)
-                    continue;
-
-                var rect = sprite.rect;
-                var border = sprite.border;
-
-                if (i == 0)
+                var sprite = CutSprite(sides[i].image.sprite, i == 0);
+                var side = sides[i].GetComponent<StepperSide>();
+                if (side)
                 {
-                    rect.xMax = border.z;
-                    border.z = 0;
+                    side.cutSprite = sprite;
                 }
-                else
-                {
-                    rect.xMin = border.x;
-                    border.x = 0;
-                }
-
-                sides[i].image.sprite = Sprite.Create(sprite.texture, rect, sprite.pivot, sprite.pixelsPerUnit, 0, SpriteMeshType.FullRect, border);
+                sides[i].image.overrideSprite = sprite;
             }
+        }
+
+        static internal Sprite CutSprite(Sprite sprite, bool leftmost)
+        {
+            if (sprite.border.x == 0 || sprite.border.z == 0)
+                return sprite;
+
+            var rect = sprite.rect;
+            var border = sprite.border;
+
+            if (leftmost)
+            {
+                rect.xMax = border.z;
+                border.z = 0;
+            }
+            else
+            {
+                rect.xMin = border.x;
+                border.x = 0;
+            }
+
+            return Sprite.Create(sprite.texture, rect, sprite.pivot, sprite.pixelsPerUnit, 0, SpriteMeshType.FullRect, border);
         }
 
         public void LayoutSides(Selectable[] sides = null)
@@ -227,47 +248,6 @@ namespace UnityEngine.UI.Extensions
                 sep.rectTransform.anchorMax = Vector2.zero;
                 sep.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, width, separatorWidth);
                 sep.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, transform.rect.height);
-            }
-        }
-    }
-
-    [RequireComponent(typeof(Selectable))]
-    public class StepperSide : UIBehaviour, IPointerClickHandler, ISubmitHandler
-    {
-        Selectable button { get { return GetComponent<Selectable>(); } }
-
-        Stepper stepper { get { return GetComponentInParent<Stepper>(); } }
-
-        bool leftmost { get { return button == stepper.sides[0]; } }
-
-        protected StepperSide()
-        { }
-
-        public virtual void OnPointerClick(PointerEventData eventData)
-        {
-            if (eventData.button != PointerEventData.InputButton.Left)
-                return;
-
-            Press();
-        }
-
-        public virtual void OnSubmit(BaseEventData eventData)
-        {
-            Press();
-        }
-
-        private void Press()
-        {
-            if (!button.IsActive() || !button.IsInteractable())
-                return;
-
-            if (leftmost)
-            {
-                stepper.StepDown();
-            }
-            else
-            {
-                stepper.StepUp();
             }
         }
     }
