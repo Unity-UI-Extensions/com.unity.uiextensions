@@ -126,8 +126,8 @@ namespace UnityEngine.UI.Extensions
                         }
 
                         float width = 1f / w / Zoom;
-                        float zoomOffset = ((w * Zoom) - w) * width * 0.5f;
-                        float offset = Offset - zoomOffset;
+                        float zoomOffset = (1 - (1 / Zoom)) * 0.5f;
+                        float offset = (Offset * (1 - zoomOffset)) - zoomOffset;
 
                         if (ModifyVertices)
                         {
@@ -428,20 +428,23 @@ namespace UnityEngine.UI.Extensions
         List<float> FindStops(float zoomOffset, Rect bounds)
         {
             List<float> stops = new List<float>();
-            var scaledOffset = Offset * Zoom;
+            var offset = Offset * (1 - zoomOffset);
+            var startBoundary = zoomOffset - offset;
+            var endBoundary = (1 - zoomOffset) - offset;
+
             foreach (var color in EffectGradient.colorKeys)
             {
-                if (color.time >= (1 - (zoomOffset + scaledOffset)))
+                if (color.time >= endBoundary)
                     break;
-                if (color.time > (zoomOffset - scaledOffset))
-                    stops.Add(((color.time - 0.5f) * Zoom) + 0.5f + scaledOffset);
+                if (color.time > startBoundary)
+                    stops.Add((color.time - startBoundary) * Zoom);
             }
             foreach (var alpha in EffectGradient.alphaKeys)
             {
-                if (alpha.time >= (1 - (zoomOffset + scaledOffset)))
+                if (alpha.time >= endBoundary)
                     break;
-                if (alpha.time > (zoomOffset - scaledOffset))
-                    stops.Add(((alpha.time - 0.5f) * Zoom) + 0.5f + scaledOffset);
+                if (alpha.time > startBoundary)
+                    stops.Add((alpha.time - startBoundary) * Zoom);
             }
 
             float min = bounds.xMin;
