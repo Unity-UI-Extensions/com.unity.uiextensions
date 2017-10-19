@@ -31,7 +31,10 @@ namespace UnityEngine.UI.Extensions
         internal int _previousPage;
         internal int _halfNoVisibleItems;
         internal bool _moveStarted;
-        private int _bottomItem, _topItem;
+        internal bool _isInfinate; // Is a UI Infinate scroller attached to the control
+        internal int _infiniteWindow; // The infinite window the control is in
+        internal float _infiniteOffset; // How much to offset a repositioning
+         private int _bottomItem, _topItem;
 
         [Serializable]
         public class SelectionChangeStartEvent : UnityEvent { }
@@ -85,6 +88,25 @@ namespace UnityEngine.UI.Extensions
 
             internal set
             {
+                if (_isInfinate)
+                {
+                    //Work out which infinate window we are in
+                    _infiniteWindow = value / _screensContainer.childCount;
+                    //Invert the value if negative and differentiate from Window 0
+                    _infiniteWindow = value < 0 ? (-_infiniteWindow) + 1 : _infiniteWindow;
+                    //Multiplying values by zero doesn't help, so start at Window 1
+                    //_infiniteWindow += 1;
+                    //Calculate the page within the child count range
+                    value = value % _screensContainer.childCount;
+                    if (value < 0)
+                    {
+                        value = _screensContainer.childCount + value;
+                    }
+                    else if (value > _screensContainer.childCount - 1)
+                    {
+                        value = value - _screensContainer.childCount;
+                    }
+                }
                 if ((value != _currentPage && value >= 0 && value < _screensContainer.childCount) || (value == 0 && _screensContainer.childCount == 0))
                 {
                     _previousPage = _currentPage;
@@ -156,6 +178,8 @@ namespace UnityEngine.UI.Extensions
 
             if (PrevButton)
                 PrevButton.GetComponent<Button>().onClick.AddListener(() => { PreviousScreen(); });
+
+            _isInfinate = GetComponent<UI_InfiniteScroll>() != null;
         }
 
         internal void InitialiseChildObjects()
@@ -263,7 +287,7 @@ namespace UnityEngine.UI.Extensions
         //Function for switching screens with buttons
         public void NextScreen()
         {
-            if (_currentPage < _screens - 1)
+            if (_currentPage < _screens - 1 || _isInfinate)
             {
                 if (!_lerp) StartScreenChange();
 
@@ -272,12 +296,13 @@ namespace UnityEngine.UI.Extensions
                 GetPositionforPage(_currentPage, ref _lerp_target);
                 ScreenChange();
             }
+
         }
 
         //Function for switching screens with buttons
         public void PreviousScreen()
         {
-            if (_currentPage > 0)
+            if (_currentPage > 0 || _isInfinate)
             {
                 if (!_lerp) StartScreenChange();
 
@@ -340,11 +365,14 @@ namespace UnityEngine.UI.Extensions
             _childPos = -_childSize * page;
             if (_isVertical)
             {
-                target.y = _childPos + _scrollStartPosition;
+                _infiniteOffset = _screensContainer.localPosition.y < 0 ? -_screensContainer.sizeDelta.y * _infiniteWindow : _screensContainer.sizeDelta.y * _infiniteWindow;
+                target.y = _childPos + _scrollStartPosition + _infiniteOffset;
             }
             else
             {
-                target.x = _childPos + _scrollStartPosition;
+                _infiniteOffset = _screensContainer.localPosition.x < 0 ? -_screensContainer.sizeDelta.x * _infiniteWindow : _screensContainer.sizeDelta.x * _infiniteWindow;
+                _infiniteOffset = _infiniteOffset == 0 ? 0 : _infiniteOffset < 0 ? _infiniteOffset - _childSize * _infiniteWindow : _infiniteOffset + _childSize * _infiniteWindow; 
+                target.x = _childPos + _scrollStartPosition + _infiniteOffset;
             }
         }
 
@@ -389,14 +417,18 @@ namespace UnityEngine.UI.Extensions
         /// <param name="targetScreen"></param>
         private void ToggleNavigationButtons(int targetScreen)
         {
-            if (PrevButton)
+            //Ifthis is using an Infinate Scoll, then don't disable
+            if (!_isInfinate)
             {
-                PrevButton.GetComponent<Button>().interactable = targetScreen > 0;
-            }
+                if (PrevButton)
+                {
+                    PrevButton.GetComponent<Button>().interactable = targetScreen > 0;
+                }
 
-            if (NextButton)
-            {
-                NextButton.GetComponent<Button>().interactable = targetScreen < _screensContainer.transform.childCount - 1;
+                if (NextButton)
+                {
+                    NextButton.GetComponent<Button>().interactable = targetScreen < _screensContainer.transform.childCount - 1;
+                }
             }
         }
 
