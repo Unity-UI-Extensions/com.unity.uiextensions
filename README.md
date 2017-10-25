@@ -1,6 +1,7 @@
 # README
 
 This is an extension project for the new Unity UI system which can be found at: [Unity UI Source](https://bitbucket.org/Unity-Technologies/ui)
+> ## [Check out the control demos on our Tumblr page](https://www.tumblr.com/blog/unityuiextensions)
 
 
 # [Intro](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/GettingStarted)
@@ -137,6 +138,8 @@ For the full release history, follow the below link to the full release notes pa
 # [Controls and extensions listed in this project](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls):
 
 There are almost 70+ extension controls / effect and other utilities in the project which are listed on the following page:
+
+> ## [Check out the control demos on our Tumblr page](https://www.tumblr.com/blog/unityuiextensions)
 
 ## [UI Extensions controls list](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls)
 
