@@ -128,23 +128,17 @@ namespace UnityEngine.UI.Extensions {
 #endif
             m_OutputText = GetOutputText();
 
-            m_ImagesVertexIndex.Clear();
-
 			MatchCollection matches = s_Regex.Matches(m_OutputText);
 
 			if (matches != null && matches.Count > 0) {
-				foreach (Match match in matches) {
-					var picIndex = match.Index;
-					var endIndex = picIndex * 4 + 3;
-					m_ImagesVertexIndex.Add(endIndex);
-
+				for (int i = 0; i < matches.Count; i++) {
 					m_ImagesPool.RemoveAll(image => image == null);
 
 					if (m_ImagesPool.Count == 0) {
 						GetComponentsInChildren<Image>(true, m_ImagesPool);
 					}
 
-					if (m_ImagesVertexIndex.Count > m_ImagesPool.Count) {
+					if (matches.Count > m_ImagesPool.Count) {
 						var resources = new DefaultControls.Resources();
 						var go = DefaultControls.CreateImage(resources);
 						go.layer = gameObject.layer;
@@ -160,9 +154,9 @@ namespace UnityEngine.UI.Extensions {
 						m_ImagesPool.Add(go.GetComponent<Image>());
 					}
 
-					var spriteName = match.Groups[1].Value;
+					var spriteName = matches[i].Groups[1].Value;
 
-					var img = m_ImagesPool[m_ImagesVertexIndex.Count - 1];
+					var img = m_ImagesPool[i];
 
 					Vector2 imgoffset = Vector2.zero;
 
@@ -182,8 +176,8 @@ namespace UnityEngine.UI.Extensions {
 
 					img.enabled = true;
 
-					if (positions.Count == m_ImagesPool.Count) {
-						img.rectTransform.anchoredPosition = positions[m_ImagesVertexIndex.Count - 1] += imgoffset;
+					if (positions.Count > 0 && i < positions.Count) {
+						img.rectTransform.anchoredPosition = positions[i] += imgoffset;
 					}
 				}
 			}
@@ -200,7 +194,7 @@ namespace UnityEngine.UI.Extensions {
 			}
 
 			// Remove any images that are not being used
-			for (var i = m_ImagesVertexIndex.Count; i < m_ImagesPool.Count; i++) {
+			for (var i = matches.Count; i < m_ImagesPool.Count; i++) {
 				if (m_ImagesPool[i]) {
 					if (!culled_ImagesPool.Contains(m_ImagesPool[i].gameObject)) {
 						culled_ImagesPool.Add(m_ImagesPool[i].gameObject);
@@ -227,30 +221,20 @@ namespace UnityEngine.UI.Extensions {
             for (var i = 0; i < m_ImagesVertexIndex.Count; i++) {
                 var endIndex = m_ImagesVertexIndex[i];
 
-				if (m_ImagesPool[i] != null) {
-					var rt = m_ImagesPool[i].rectTransform;
+				if (endIndex < toFill.currentVertCount) {
+					toFill.PopulateUIVertex(ref vert, endIndex);
+					positions.Add(new Vector2((vert.position.x + fontSize / 2), (vert.position.y + fontSize / 2)) + imageOffset);
 
-					var size = rt.sizeDelta;
+					// Erase the lower left corner of the black specks
+					toFill.PopulateUIVertex(ref vert, endIndex - 3);
+					var pos = vert.position;
 
-					if (endIndex < toFill.currentVertCount) {
+					for (int j = endIndex, m = endIndex - 3; j > m; j--) {
 						toFill.PopulateUIVertex(ref vert, endIndex);
-						positions.Add(new Vector2((vert.position.x + fontSize / 2), (vert.position.y + fontSize / 2)) + imageOffset);
-
-						// Erase the lower left corner of the black specks
-						toFill.PopulateUIVertex(ref vert, endIndex - 3);
-						var pos = vert.position;
-
-						for (int j = endIndex, m = endIndex - 3; j > m; j--) {
-							toFill.PopulateUIVertex(ref vert, endIndex);
-							vert.position = pos;
-							toFill.SetUIVertex(vert, j);
-						}
+						vert.position = pos;
+						toFill.SetUIVertex(vert, j);
 					}
 				}
-            }
-
-            if (m_ImagesVertexIndex.Count != 0) {
-                m_ImagesVertexIndex.Clear();
             }
 
             // Hyperlinks surround processing box
@@ -377,7 +361,21 @@ namespace UnityEngine.UI.Extensions {
                 
             s_TextBuilder.Append(fixedString.Substring(indexText, fixedString.Length - indexText));
 
-            return s_TextBuilder.ToString();
+			m_OutputText = s_TextBuilder.ToString();
+
+            m_ImagesVertexIndex.Clear();
+
+			MatchCollection matches = s_Regex.Matches(m_OutputText);
+
+			if (matches != null && matches.Count > 0) {
+				foreach (Match match in matches) {
+					var picIndex = match.Index;
+					var endIndex = picIndex * 4 + 3;
+					m_ImagesVertexIndex.Add(endIndex);
+				}
+			}
+
+            return m_OutputText;
         }
 
         /// <summary>
