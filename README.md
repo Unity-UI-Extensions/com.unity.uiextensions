@@ -212,7 +212,7 @@ Just ensure
 
 # [License ](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/License)
 
-All scripts conform to the MIT license and are free to use / distribute.  See the [LICENSE](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/License) file for more information 
+All scripts conform to the BSD license and are free to use / distribute.  See the [LICENSE](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/License) file for more information 
 
 # [Like what you see? ](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/FurtherInfo)
 
