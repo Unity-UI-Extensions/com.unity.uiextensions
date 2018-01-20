@@ -9,27 +9,21 @@ namespace UnityEngine.UI.Extensions
     public class CylinderText : BaseMeshEffect
     {
         public float radius;
-        private RectTransform rectTrans;
-
 
 #if UNITY_EDITOR
         protected override void OnValidate()
         {
             base.OnValidate();
-            if (rectTrans == null)
-                rectTrans = GetComponent<RectTransform>();
         }
 #endif
         protected override void Awake()
         {
             base.Awake();
-            rectTrans = GetComponent<RectTransform>();
             OnRectTransformDimensionsChange();
         }
         protected override void OnEnable()
         {
             base.OnEnable();
-            rectTrans = GetComponent<RectTransform>();
             OnRectTransformDimensionsChange();
         }
         public override void ModifyMesh(VertexHelper vh)

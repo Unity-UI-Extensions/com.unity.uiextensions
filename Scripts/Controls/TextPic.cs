@@ -99,9 +99,6 @@ namespace UnityEngine.UI.Extensions {
 
         private Button button;
 
-        //Commented out as private and not used.. Yet?
-        private bool selected = false;
-
         private List<Vector2> positions = new List<Vector2>();
         
         /**
@@ -399,8 +396,6 @@ namespace UnityEngine.UI.Extensions {
         }
 
         public void OnPointerEnter(PointerEventData eventData) {
-            //do your stuff when highlighted
-            selected = true;
 
             if (m_ImagesPool.Count >= 1) {
                 foreach (Image img in m_ImagesPool) {
@@ -412,8 +407,6 @@ namespace UnityEngine.UI.Extensions {
         }
 
         public void OnPointerExit(PointerEventData eventData) {
-            //do your stuff when highlighted
-            selected = false;
 
             if (m_ImagesPool.Count >= 1) {
                 foreach (Image img in m_ImagesPool) {
@@ -428,8 +421,6 @@ namespace UnityEngine.UI.Extensions {
         }
 
         public void OnSelect(BaseEventData eventData) {
-            //do your stuff when selected
-            selected = true;
 
             if (m_ImagesPool.Count >= 1) {
                 foreach (Image img in m_ImagesPool) {
@@ -441,8 +432,6 @@ namespace UnityEngine.UI.Extensions {
         }
 
         public void OnDeselect(BaseEventData eventData) {
-            //do your stuff when selected
-            selected = false;
 
             if (m_ImagesPool.Count >= 1) {
                 foreach (Image img in m_ImagesPool) {

@@ -11,8 +11,8 @@ namespace UnityEngine.UI.Extensions
         public bool clamp = true;
 
         [SerializeField]
-        ScrollRect controllingScrollRect;
-        ScrollRect scrollRect;
+        ScrollRect controllingScrollRect = null;
+        ScrollRect scrollRect = null;
 
         void Awake()
         {

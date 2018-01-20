@@ -104,7 +104,6 @@ namespace UnityEngine.UI.Extensions
         private float totalScrollableWidth;
         private DrivenRectTransformTracker tracker;
         private bool lerp;
-        private bool pointerDown;
         private float mLerpTime;
         private int _closestItem;
         private bool lerpToContentRunning;
@@ -469,12 +468,10 @@ namespace UnityEngine.UI.Extensions
             {
                 startMovementEvent.Invoke();
             }
-            pointerDown = true;
         }
 
         public void OnEndDrag(PointerEventData ped)
         {
-            pointerDown = false;
             StartCoroutine("SlideAndLerp");
         }
 

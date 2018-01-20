@@ -4,13 +4,13 @@
         : FancyScrollViewCell<Example02CellDto, Example02ScrollViewContext>
     {
         [SerializeField]
-        Animator animator;
+        Animator animator = null;
         [SerializeField]
-        Text message;
+        Text message = null;
         [SerializeField]
-        Image image;
+        Image image = null;
         [SerializeField]
-        Button button;
+        Button button = null;
 
         readonly int scrollTriggerHash = Animator.StringToHash("scroll");
         Example02ScrollViewContext context;

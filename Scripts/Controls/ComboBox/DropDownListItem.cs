@@ -76,9 +76,9 @@ namespace UnityEngine.UI.Extensions
             set { _id = value; }
         }
 
-        public Action OnSelect; //action to be called when this item is selected
+        public Action OnSelect = null; //action to be called when this item is selected
 
-        internal Action OnUpdate; //action to be called when something changes.  
+        internal Action OnUpdate = null; //action to be called when something changes.  
 
         /// <summary>
         /// Constructor for Drop Down List panelItems

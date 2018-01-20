@@ -40,7 +40,7 @@ namespace UnityEngine.UI.Extensions
 		}
 
 		[SerializeField]
-		RectTransform viewport;
+		RectTransform viewport = null;
 		[SerializeField]
 		ScrollDirection directionOfRecognize = ScrollDirection.Vertical;
 		[SerializeField]

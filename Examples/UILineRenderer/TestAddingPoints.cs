@@ -20,6 +20,7 @@ namespace UnityEngine.UI.Extensions.Examples
         public void ClearPoints()
         {
             LineRenderer.Points = new Vector2[0];
+            LineRenderer.SetAllDirty();
         }
     }
 }

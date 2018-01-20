@@ -5,7 +5,7 @@ namespace UnityEngine.UI.Extensions.Examples
     public class Example03Scene : MonoBehaviour
     {
         [SerializeField]
-        Example03ScrollView scrollView;
+        Example03ScrollView scrollView = null;
 
         void Start()
         {
