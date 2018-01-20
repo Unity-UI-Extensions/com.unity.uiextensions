@@ -2072,6 +2072,7 @@ Camera:
   m_TargetEye: 3
   m_HDR: 0
   m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -2246,8 +2247,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -358, y: -224}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -444.5, y: -333}
+  m_SizeDelta: {x: 272.9, y: 318}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1625078207
 MonoBehaviour:
@@ -2836,10 +2837,10 @@ MonoBehaviour:
   m_Resolution: 0
   m_useNativeSize: 0
   m_points:
-  - {x: -260, y: -92.5}
-  - {x: -187, y: -233.5}
-  - {x: -48, y: -120.5}
-  - {x: 72, y: -213.5}
+  - {x: -654.5, y: -217}
+  - {x: -581.5, y: -358}
+  - {x: -442.5, y: -245}
+  - {x: -322.5, y: -338}
   lineThickness: 7.41
   relativeSize: 0
   lineList: 0

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -2535,7 +2535,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1366142442}
   - component: {fileID: 1366142441}
-  - component: {fileID: 1366142440}
   - component: {fileID: 1366142439}
   - component: {fileID: 1366142438}
   m_Layer: 0
@@ -2553,13 +2552,6 @@ AudioListener:
   m_GameObject: {fileID: 1366142437}
   m_Enabled: 1
 --- !u!124 &1366142439
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1366142437}
-  m_Enabled: 1
---- !u!92 &1366142440
 Behaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -2597,6 +2589,7 @@ Camera:
   m_TargetEye: 3
   m_HDR: 1
   m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
