@@ -49,7 +49,7 @@ namespace UnityEngine.UI.Extensions
             //If the container is moving check if it needs to settle on a page
             if (!_pointerDown)
             {
-                if (_scroll_rect.velocity.x > 0.01 || _scroll_rect.velocity.x < 0.01)
+                if (_scroll_rect.velocity.x > 0.01 || _scroll_rect.velocity.x < -0.01)
                 {
                     //if the pointer is released and is moving slower than the threshold, then just land on a page
                     if (IsRectMovingSlowerThanThreshold(0))
