@@ -82,7 +82,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 				try
 				{
 					var jsonColors = JsonUtility.FromJson<JsonColor>(jsonData);
-					presets.AddRange(jsonColors.colors);
+					presets.AddRange(jsonColors.GetColors());
 				}
 				catch (System.Exception e)
 				{
@@ -105,9 +105,8 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 				return;
 			}
 
-			var jsonColor = new JsonColor() {
-				colors = presets.ToArray()
-			};
+			var jsonColor = new JsonColor();
+			jsonColor.SetColors(presets.ToArray());
 
 
 			string jsonData = JsonUtility.ToJson(jsonColor);
@@ -122,7 +121,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 					break;
 				case SaveType.JsonFile:
 					System.IO.File.WriteAllText(JsonFilePath, jsonData);
-					Application.OpenURL(JsonFilePath);
+					//Application.OpenURL(JsonFilePath);
 					break;
 				default:
 					throw new System.NotImplementedException(saveType.ToString());
@@ -131,7 +130,25 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 
 		protected class JsonColor
 		{
-			public Color[] colors;
+			public Color32[] colors;
+			public void SetColors(Color[] colorsIn)
+			{
+				this.colors = new Color32[colorsIn.Length];
+				for (int i = 0; i < colorsIn.Length; i++)
+				{
+					this.colors[i] = colorsIn[i];
+				}
+			}
+
+			public Color[] GetColors()
+			{
+				Color[] colorsOut = new Color[colors.Length];
+				for (int i = 0; i < colors.Length; i++)
+				{
+					colorsOut[i] = colors[i];
+				}
+				return colorsOut;
+			}
 		}
 
 		public virtual void CreatePreset(Color color, bool loading)
