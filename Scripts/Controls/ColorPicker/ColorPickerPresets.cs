@@ -23,12 +23,12 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 
 		public enum SaveType { None, PlayerPrefs, JsonFile }
 		[SerializeField]
-		protected SaveType saveMode = SaveType.None;
+		public SaveType saveMode = SaveType.None;
 
 		[SerializeField]
 		protected string playerPrefsKey;
 
-		protected virtual string JsonFilePath
+		public virtual string JsonFilePath
 		{
 			get { return Application.persistentDataPath + "/" + playerPrefsKey + ".json"; }
 		}
