@@ -239,16 +239,30 @@ namespace UnityEngine.UI.Extensions
             if (_scroll_rect.vertical)
             {
                 var distance = Vector3.Distance(_startPosition, _screensContainer.localPosition);
-                if (UseFastSwipe && distance < panelDimensions.height + FastSwipeThreshold && distance >=1f)
+                if ((UseFastSwipe && distance < panelDimensions.height + FastSwipeThreshold && distance >=1f) || UseHardSwipe)
                 {
                     _scroll_rect.velocity = Vector3.zero;
                     if (_startPosition.y - _screensContainer.localPosition.y > 0)
                     {
-                        NextScreen();
+                        if (_startPosition.y - _screensContainer.localPosition.y > _childSize / 3)
+                        {
+                            ScrollToClosestElement();
+                        }
+                        else
+                        {
+                            NextScreen();
+                        }
                     }
                     else
                     {
-                        PreviousScreen();
+                        if (_startPosition.y - _screensContainer.localPosition.y > -_childSize / 3)
+                        {
+                            ScrollToClosestElement();
+                        }
+                        else
+                        {
+                            PreviousScreen();
+                        }
                     }
                 }
             }

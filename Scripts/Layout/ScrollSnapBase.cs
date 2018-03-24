@@ -31,7 +31,7 @@ namespace UnityEngine.UI.Extensions
         internal int _previousPage;
         internal int _halfNoVisibleItems;
         internal bool _moveStarted;
-        internal bool _isInfinate; // Is a UI Infinate scroller attached to the control
+        internal bool _isInfinate; // Is a UI Infinite scroller attached to the control
         internal int _infiniteWindow; // The infinite window the control is in
         internal float _infiniteOffset; // How much to offset a repositioning
          private int _bottomItem, _topItem;
@@ -64,6 +64,9 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Transition speed between pages. (optional)")]
         public float transitionSpeed = 7.5f;
 
+        [Tooltip("Hard Swipe forces to swiping to the next / previous page (optional)")]
+        public Boolean UseHardSwipe = false;
+
         [Tooltip("Fast Swipe makes swiping page next / previous (optional)")]
         public Boolean UseFastSwipe = false;
 
@@ -76,7 +79,7 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("The visible bounds area, controls which items are visible/enabled. *Note Should use a RectMask. (optional)")]
         public RectTransform MaskArea;
 
-        [Tooltip("Pixel size to buffer arround Mask Area. (optional)")]
+        [Tooltip("Pixel size to buffer around Mask Area. (optional)")]
         public float MaskBuffer = 1;
 
         public int CurrentPage
@@ -90,7 +93,7 @@ namespace UnityEngine.UI.Extensions
             {
                 if (_isInfinate)
                 {
-                    //Work out which infinate window we are in
+                    //Work out which infinite window we are in
                     _infiniteWindow = value / _screensContainer.childCount;
                     //Invert the value if negative and differentiate from Window 0
                     _infiniteWindow = value < 0 ? (-_infiniteWindow) + 1 : _infiniteWindow;
@@ -417,7 +420,7 @@ namespace UnityEngine.UI.Extensions
         /// <param name="targetScreen"></param>
         private void ToggleNavigationButtons(int targetScreen)
         {
-            //Ifthis is using an Infinate Scoll, then don't disable
+            //If this is using an Infinite Scroll, then don't disable
             if (!_isInfinate)
             {
                 if (PrevButton)
@@ -509,7 +512,7 @@ namespace UnityEngine.UI.Extensions
         }
 
         /// <summary>
-        /// Returns the Transform of the Currentpage
+        /// Returns the Transform of the Current page
         /// </summary>
         /// <returns>Currently selected Page Transform</returns>
         public Transform CurrentPageObject()
@@ -518,7 +521,7 @@ namespace UnityEngine.UI.Extensions
         }
 
         /// <summary>
-        /// Returns the Transform of the Currentpage in an out param for performance
+        /// Returns the Transform of the Current page in an out parameter for performance
         /// </summary>
         /// <param name="returnObject">Currently selected Page Transform</param>
         public void CurrentPageObject(out Transform returnObject)
