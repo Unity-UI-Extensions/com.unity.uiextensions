@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 namespace UnityEngine.UI.Extensions
 {
 
-    [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(RectTransform), typeof(LayoutElement))]
     public class ReorderableListElement : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
     {
         [Tooltip("Can this element be dragged?")]
