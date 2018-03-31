@@ -226,6 +226,10 @@ namespace UnityEngine.UI.Extensions
                     _draggingObject.SetSiblingIndex(_fakeElement.GetSiblingIndex());
 
                     _reorderableList.OnElementAdded.Invoke(args);
+                    
+                    // Force refreshing both lists because otherwise we get inappropriate FromList in ReorderableListEventStruct 
+                    _reorderableList.Refresh();
+                    _currentReorderableListRaycasted.Refresh();
 
                     if(!isValid) throw new Exception("It's too late to cancel the Transfer! Do so in OnElementDropped!");
 
@@ -251,7 +255,7 @@ namespace UnityEngine.UI.Extensions
                     }
                 }
             }
-
+            
             //Delete fake element
             if (_fakeElement != null)
                 Destroy(_fakeElement.gameObject);
