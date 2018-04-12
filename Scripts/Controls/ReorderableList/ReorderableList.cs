@@ -66,6 +66,15 @@ namespace UnityEngine.UI.Extensions
             }
             return canvas;
         }
+        
+        /// <summary>
+        /// Refresh related list content
+        /// </summary>
+        public void Refresh()
+        {
+            _listContent = ContentLayout.gameObject.AddComponent<ReorderableListContent>();
+            _listContent.Init(this);
+        }
 
         private void Awake()
         {
@@ -85,8 +94,7 @@ namespace UnityEngine.UI.Extensions
                 return;
             }
 
-            _listContent = ContentLayout.gameObject.AddComponent<ReorderableListContent>();
-            _listContent.Init(this);
+            Refresh();
         }
 
         #region Nested type: ReorderableListEventStruct
