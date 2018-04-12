@@ -10,10 +10,10 @@ namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/Radial Slider")]
     [RequireComponent(typeof(Image))]
-    public class RadialSlider : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler, IPointerUpHandler
+    public class RadialSlider : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler, IPointerUpHandler, IDragHandler
     {
         private bool isPointerDown, isPointerReleased, lerpInProgress;
-        private Vector2 m_localPos; 
+        private Vector2 m_localPos, m_screenPos; 
         private float m_targetAngle, m_lerpTargetAngle, m_startAngle, m_currentLerpTime, m_lerpTime;
         private Camera m_eventCamera;
         private Image m_image;
@@ -196,7 +196,7 @@ namespace UnityEngine.UI.Extensions
 
         private float GetAngleFromMousePoint()
         {
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform, Input.mousePosition, m_eventCamera, out m_localPos);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform, m_screenPos, m_eventCamera, out m_localPos);
 
             // radial pos of the mouse position.
             return (Mathf.Atan2(-m_localPos.y, m_localPos.x) * 180f / Mathf.PI + 180f) / 360f;
@@ -232,19 +232,27 @@ namespace UnityEngine.UI.Extensions
         // Start tracking the mouse
         public void OnPointerEnter(PointerEventData eventData)
         {
+            m_screenPos = eventData.position;
             m_eventCamera = eventData.enterEventCamera;
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            m_screenPos = eventData.position;
             m_eventCamera = eventData.enterEventCamera;
             isPointerDown = true;
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            m_screenPos = Vector2.zero;
             isPointerDown = false;
             isPointerReleased = true;
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            m_screenPos = eventData.position;
         }
         #endregion
     }
