@@ -2,6 +2,7 @@
 /// Credit Danny Goodayle 
 /// Sourced from - http://www.justapixel.co.uk/radial-layouts-nice-and-simple-in-unity3ds-ui-system/
 /// Updated by ddreaper - removed dependency on a custom ScrollRect script. Now implements drag interfaces and standard Scroll Rect.
+/// Chid Layout fix by John Hattan - enables an options 
 
 /*
 Radial Layout Group by Just a Pixel (Danny Goodayle) - http://www.justapixel.co.uk
@@ -31,6 +32,7 @@ namespace UnityEngine.UI.Extensions
         public float fDistance;
         [Range(0f, 360f)]
         public float MinAngle, MaxAngle, StartAngle;
+        public bool OnlyLayoutVisible = false;
         protected override void OnEnable() { base.OnEnable(); CalculateRadial(); }
         public override void SetLayoutHorizontal()
         {
@@ -58,15 +60,31 @@ namespace UnityEngine.UI.Extensions
             m_Tracker.Clear();
             if (transform.childCount == 0)
                 return;
-            float fOffsetAngle = ((MaxAngle - MinAngle)) / (transform.childCount);
+
+            int ChildrenToFormat = 0;
+            if (OnlyLayoutVisible)
+            {
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    RectTransform child = (RectTransform)transform.GetChild(i);
+                    if ((child != null) && child.gameObject.activeSelf)
+                        ++ChildrenToFormat;
+                }
+            }
+            else
+            {
+                ChildrenToFormat = transform.childCount;
+            }
+
+            float fOffsetAngle = (MaxAngle - MinAngle) / ChildrenToFormat;
 
             float fAngle = StartAngle;
             for (int i = 0; i < transform.childCount; i++)
             {
                 RectTransform child = (RectTransform)transform.GetChild(i);
-                if (child != null)
+                if ((child != null) && (!OnlyLayoutVisible || child.gameObject.activeSelf))
                 {
-                    //Adding the elements to the tracker stops the user from modifiying their positions via the editor.
+                    //Adding the elements to the tracker stops the user from modifying their positions via the editor.
                     m_Tracker.Add(this, child,
                     DrivenTransformProperties.Anchors |
                     DrivenTransformProperties.AnchoredPosition |
@@ -78,7 +96,6 @@ namespace UnityEngine.UI.Extensions
                     fAngle += fOffsetAngle;
                 }
             }
-
         }
     }
 }
