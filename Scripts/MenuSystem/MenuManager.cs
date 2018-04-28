@@ -1,6 +1,7 @@
 ﻿/// Credit Adam Kapos (Nezz) - http://www.songarc.net
 /// Sourced from - https://github.com/YousicianGit/UnityMenuSystem
 /// Updated by SimonDarksideJ - Refactored to be a more generic component
+/// Updated by SionDarksideJ - Fixed implementation as it assumed GO's we automatically assigned to instances
 
 using System.Collections.Generic;
 using System.Reflection;
@@ -11,19 +12,35 @@ namespace UnityEngine.UI.Extensions
     [DisallowMultipleComponent]
     public class MenuManager : MonoBehaviour
     {
-        public Menu[] MenuScreens;
-        public int StartScreen = 0;
+        [SerializeField]
+        private Menu[] menuScreens;
+
+        public Menu[] MenuScreens
+        {
+            get { return menuScreens; }
+            set { menuScreens = value; }
+        }
+
+        [SerializeField]
+        private int startScreen = 0;
+
+        public int StartScreen
+        {
+            get { return startScreen; }
+            set { startScreen = value; }
+        }
+
         private Stack<Menu> menuStack = new Stack<Menu>();
 
         public static MenuManager Instance { get; set; }
 
-        private void Awake()
+        private void Start()
         {
             Instance = this;
             if (MenuScreens.Length > 0 + StartScreen)
             {
-                CreateInstance(MenuScreens[StartScreen].name);
-                OpenMenu(MenuScreens[StartScreen]);
+                var startMenu = CreateInstance(MenuScreens[StartScreen].name);
+                OpenMenu(startMenu.GetMenu());
             }
             else
             {
@@ -36,26 +53,26 @@ namespace UnityEngine.UI.Extensions
             Instance = null;
         }
 
-        public void CreateInstance<T>() where T : Menu
-        {
-            var prefab = GetPrefab<T>();
-
-            Instantiate(prefab, transform);
-        }
-
-        public void CreateInstance(string MenuName) 
+        public GameObject CreateInstance(string MenuName)
         {
             var prefab = GetPrefab(MenuName);
 
-            Instantiate(prefab, transform);
+            return Instantiate(prefab, transform);
         }
 
-        public void OpenMenu(Menu instance)
+        public void CreateInstance(string MenuName, out GameObject menuInstance)
+        {
+            var prefab = GetPrefab(MenuName);
+
+            menuInstance = Instantiate(prefab, transform);
+        }
+
+        public void OpenMenu(Menu menuInstance)
         {
             // De-activate top menu
             if (menuStack.Count > 0)
             {
-                if (instance.DisableMenusUnderneath)
+                if (menuInstance.DisableMenusUnderneath)
                 {
                     foreach (var menu in menuStack)
                     {
@@ -66,12 +83,12 @@ namespace UnityEngine.UI.Extensions
                     }
                 }
 
-                var topCanvas = instance.GetComponent<Canvas>();
+                var topCanvas = menuInstance.GetComponent<Canvas>();
                 var previousCanvas = menuStack.Peek().GetComponent<Canvas>();
                 topCanvas.sortingOrder = previousCanvas.sortingOrder + 1;
             }
 
-            menuStack.Push(instance);
+            menuStack.Push(menuInstance);
         }
 
         private GameObject GetPrefab(string PrefabName)
@@ -84,23 +101,6 @@ namespace UnityEngine.UI.Extensions
                 }
             }
             throw new MissingReferenceException("Prefab not found for " + PrefabName);
-        }
-
-        private T GetPrefab<T>() where T : Menu
-        {
-            // Get prefab dynamically, based on public fields set from Unity
-            // You can use private fields with SerializeField attribute too
-            var fields = this.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-            foreach (var field in fields)
-            {
-                var prefab = field.GetValue(this) as T;
-                if (prefab != null)
-                {
-                    return prefab;
-                }
-            }
-
-            throw new MissingReferenceException("Prefab not found for type " + typeof(T));
         }
 
         public void CloseMenu(Menu menu)
@@ -122,12 +122,12 @@ namespace UnityEngine.UI.Extensions
 
         public void CloseTopMenu()
         {
-            var instance = menuStack.Pop();
+            var menuInstance = menuStack.Pop();
 
-            if (instance.DestroyWhenClosed)
-                Destroy(instance.gameObject);
+            if (menuInstance.DestroyWhenClosed)
+                Destroy(menuInstance.gameObject);
             else
-                instance.gameObject.SetActive(false);
+                menuInstance.gameObject.SetActive(false);
 
             // Re-activate top menu
             // If a re-activated menu is an overlay we need to activate the menu under it
@@ -147,6 +147,14 @@ namespace UnityEngine.UI.Extensions
             {
                 menuStack.Peek().OnBackPressed();
             }
+        }
+    }
+
+    public static class MenuExtensions
+    {
+        public static Menu GetMenu(this GameObject go)
+        {
+            return go.GetComponent<Menu>();
         }
     }
 

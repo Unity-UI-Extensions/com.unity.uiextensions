@@ -9,6 +9,7 @@ namespace UnityEngine.UI.Extensions
     {
         public static T Instance { get; private set; }
 
+
         protected virtual void Awake()
         {
             Instance = (T)this;
@@ -21,13 +22,17 @@ namespace UnityEngine.UI.Extensions
 
         protected static void Open()
         {
+            GameObject clonedGameObject = null;
             if (Instance == null)
-                MenuManager.Instance.CreateInstance(typeof(T).Name);
-                //MenuManager.Instance.CreateInstance<T>();
+            {
+                MenuManager.Instance.CreateInstance(typeof(T).Name, out clonedGameObject);
+                MenuManager.Instance.OpenMenu(clonedGameObject.GetMenu());
+            }
             else
+            {
                 Instance.gameObject.SetActive(true);
-
-            MenuManager.Instance.OpenMenu(Instance);
+                MenuManager.Instance.OpenMenu(Instance);
+            }
         }
 
         protected static void Close()

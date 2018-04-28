@@ -187,6 +187,11 @@ Prefab:
       propertyPath: MenuScreens.Array.size
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 114785289659472098, guid: f0f89c3fccbfa4bddbac45ae1effe466,
+        type: 2}
+      propertyPath: menuScreens.Array.size
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 4108131592329822, guid: f0f89c3fccbfa4bddbac45ae1effe466, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -252,6 +257,41 @@ Prefab:
     - target: {fileID: 114785289659472098, guid: f0f89c3fccbfa4bddbac45ae1effe466,
         type: 2}
       propertyPath: StartScreen
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114785289659472098, guid: f0f89c3fccbfa4bddbac45ae1effe466,
+        type: 2}
+      propertyPath: menuScreens.Array.data[0]
+      value: 
+      objectReference: {fileID: 114026954515301400, guid: e9be8b59801ec4bbe829f57f7b2b9d88,
+        type: 2}
+    - target: {fileID: 114785289659472098, guid: f0f89c3fccbfa4bddbac45ae1effe466,
+        type: 2}
+      propertyPath: menuScreens.Array.data[1]
+      value: 
+      objectReference: {fileID: 114359196589700260, guid: 5617592ee912047459b98264a09ddb8a,
+        type: 2}
+    - target: {fileID: 114785289659472098, guid: f0f89c3fccbfa4bddbac45ae1effe466,
+        type: 2}
+      propertyPath: menuScreens.Array.data[2]
+      value: 
+      objectReference: {fileID: 114412859951304140, guid: 85d45cc7dbcc7490b91c0aa61f4e73c2,
+        type: 2}
+    - target: {fileID: 114785289659472098, guid: f0f89c3fccbfa4bddbac45ae1effe466,
+        type: 2}
+      propertyPath: menuScreens.Array.data[3]
+      value: 
+      objectReference: {fileID: 114109697501719388, guid: 11104fd9ff8884a49b96b0d3d0accb5c,
+        type: 2}
+    - target: {fileID: 114785289659472098, guid: f0f89c3fccbfa4bddbac45ae1effe466,
+        type: 2}
+      propertyPath: menuScreens.Array.data[4]
+      value: 
+      objectReference: {fileID: 114030211315693384, guid: 5f7dc93bebf1e41e280baafd8eaa59ec,
+        type: 2}
+    - target: {fileID: 114785289659472098, guid: f0f89c3fccbfa4bddbac45ae1effe466,
+        type: 2}
+      propertyPath: startScreen
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
