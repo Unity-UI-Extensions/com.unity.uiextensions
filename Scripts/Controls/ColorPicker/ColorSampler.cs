@@ -1,3 +1,9 @@
+/// Credit judah4
+/// Sourced from - http://forum.unity3d.com/threads/color-picker.267043/
+/// Updated by SimonDarksideJ - Updated to use touch position rather than mouse for multi-touch
+
+using UnityEngine.EventSystems;
+
 namespace UnityEngine.UI.Extensions.ColorPicker
 {
 	/// <summary>
@@ -8,10 +14,13 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 	/// 
 	/// This does not work well with a world space UI as positioning is working with screen space.
 	/// </summary>
-	public class ColorSampler : MonoBehaviour
-	{
-		[SerializeField]
+	public class ColorSampler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
+    {
+        private Vector2 m_screenPos;
+
+        [SerializeField]
 		protected Button sampler;
+        private RectTransform sampleRectTransform;
 
 		[SerializeField]
 		protected Outline samplerOutline;
@@ -25,7 +34,8 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 		protected virtual void OnEnable()
 		{
 			screenCapture = ScreenCapture.CaptureScreenshotAsTexture();
-			sampler.gameObject.SetActive(true);
+            sampleRectTransform = sampler.GetComponent<RectTransform>();
+            sampler.gameObject.SetActive(true);
 			sampler.onClick.AddListener(SelectColor);
 		}
 
@@ -41,8 +51,8 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 			if (screenCapture == null)
 				return;
 
-			sampler.transform.position = Input.mousePosition;
-			color = screenCapture.GetPixel((int)Input.mousePosition.x, (int)Input.mousePosition.y);
+            sampleRectTransform.position = m_screenPos;
+            color = screenCapture.GetPixel((int)m_screenPos.x, (int)m_screenPos.y);
 		
 			HandleSamplerColoring();
 		}
@@ -66,5 +76,20 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 
 			enabled = false;
 		}
-	}
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            m_screenPos = eventData.position;
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            m_screenPos = Vector2.zero;
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            m_screenPos = eventData.position;
+        }
+    }
 }

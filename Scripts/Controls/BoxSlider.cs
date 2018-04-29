@@ -137,7 +137,7 @@ namespace UnityEngine.UI.Extensions
             SetX(m_ValueX, false);
             SetY(m_ValueY, false);
             // Update rects since other things might affect them even if value didn't change.
-            UpdateVisuals();
+            if(!Application.isPlaying) UpdateVisuals();
 
             var prefabType = UnityEditor.PrefabUtility.GetPrefabType(this);
             if (prefabType != UnityEditor.PrefabType.Prefab && !Application.isPlaying)
