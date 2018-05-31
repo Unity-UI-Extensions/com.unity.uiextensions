@@ -51,15 +51,11 @@ namespace UnityEngine.UI.Extensions
         private Vector2 _currentVector;
         private Quaternion _initRotation;
         private bool _canDrag = false;
-        [SerializeField]
-        private bool experimental = false;
-
-        private RectTransform m_HandleRect;
-
+		private bool _screenSpaceOverlay;
 
         protected override void Awake()
         {
-            m_HandleRect = GetComponent<RectTransform>();
+			_screenSpaceOverlay = GetComponentInParent<Canvas>().rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay;
         }
 
         public override void OnPointerUp(PointerEventData eventData)
@@ -83,13 +79,13 @@ namespace UnityEngine.UI.Extensions
             base.OnPointerDown(eventData);
 
             _initRotation = transform.rotation;
-            if (experimental)
+			if (_screenSpaceOverlay)
             {
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(m_HandleRect, eventData.position, eventData.pressEventCamera, out _currentVector);
+				_currentVector = eventData.position - (Vector2)transform.position;
             }
             else
             {
-                _currentVector = eventData.position - (Vector2)transform.position;
+				_currentVector = eventData.position - (Vector2)Camera.main.WorldToScreenPoint(transform.position);
             }
             _initAngle = Mathf.Atan2(_currentVector.y, _currentVector.x) * Mathf.Rad2Deg;
         }
@@ -102,14 +98,14 @@ namespace UnityEngine.UI.Extensions
                 return;
             }
 
-            if (experimental)
-            {
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(m_HandleRect, eventData.position, eventData.pressEventCamera, out _currentVector);
-            }
-            else
-            {
-                _currentVector = eventData.position - (Vector2)transform.position;
-            }
+			if (_screenSpaceOverlay)
+			{
+				_currentVector = eventData.position - (Vector2)transform.position;
+			}
+			else
+			{
+				_currentVector = eventData.position - (Vector2)Camera.main.WorldToScreenPoint(transform.position);
+			}
             _currentAngle = Mathf.Atan2(_currentVector.y, _currentVector.x) * Mathf.Rad2Deg;
 
             Quaternion addRotation = Quaternion.AngleAxis(_currentAngle - _initAngle, this.transform.forward);

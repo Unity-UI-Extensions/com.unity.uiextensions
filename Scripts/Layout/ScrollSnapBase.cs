@@ -94,11 +94,19 @@ namespace UnityEngine.UI.Extensions
                 if (_isInfinate)
                 {
                     //Work out which infinite window we are in
-                    _infiniteWindow = value / _screensContainer.childCount;
+                    float infWindow = (float)value / (float)_screensContainer.childCount;
+
+                    if (infWindow < 0)
+                    {
+                        _infiniteWindow = (int)(Math.Floor(infWindow));
+                    }
+                    else
+                    {
+                        _infiniteWindow = value / _screensContainer.childCount;
+                    }
                     //Invert the value if negative and differentiate from Window 0
-                    _infiniteWindow = value < 0 ? (-_infiniteWindow) + 1 : _infiniteWindow;
-                    //Multiplying values by zero doesn't help, so start at Window 1
-                    //_infiniteWindow += 1;
+                    _infiniteWindow = value < 0 ? (-_infiniteWindow) : _infiniteWindow;
+
                     //Calculate the page within the child count range
                     value = value % _screensContainer.childCount;
                     if (value < 0)
@@ -369,6 +377,7 @@ namespace UnityEngine.UI.Extensions
             if (_isVertical)
             {
                 _infiniteOffset = _screensContainer.localPosition.y < 0 ? -_screensContainer.sizeDelta.y * _infiniteWindow : _screensContainer.sizeDelta.y * _infiniteWindow;
+                _infiniteOffset = _infiniteOffset == 0 ? 0 : _infiniteOffset < 0 ? _infiniteOffset - _childSize * _infiniteWindow : _infiniteOffset + _childSize * _infiniteWindow;
                 target.y = _childPos + _scrollStartPosition + _infiniteOffset;
             }
             else
@@ -449,19 +458,22 @@ namespace UnityEngine.UI.Extensions
             {
                 Debug.LogError("ScrollRect has to be unidirectional, only use either Horizontal or Vertical on the ScrollRect, NOT both.");
             }
-
-            var children = gameObject.GetComponent<ScrollRect>().content.childCount;
-            if (children != 0 || ChildObjects != null)
+            var ScrollRectContent = gameObject.GetComponent<ScrollRect>().content;
+            if (ScrollRectContent != null)
             {
-                var childCount = ChildObjects == null || ChildObjects.Length == 0 ? children : ChildObjects.Length;
-                if (StartingScreen > childCount - 1)
+                var children = ScrollRectContent.childCount;
+                if (children != 0 || ChildObjects != null)
                 {
-                    StartingScreen = childCount - 1;
-                }
+                    var childCount = ChildObjects == null || ChildObjects.Length == 0 ? children : ChildObjects.Length;
+                    if (StartingScreen > childCount - 1)
+                    {
+                        StartingScreen = childCount - 1;
+                    }
 
-                if (StartingScreen < 0)
-                {
-                    StartingScreen = 0;
+                    if (StartingScreen < 0)
+                    {
+                        StartingScreen = 0;
+                    }
                 }
             }
 
