@@ -3,6 +3,8 @@
 This is an extension project for the new Unity UI system which can be found at: [Unity UI Source](https://bitbucket.org/Unity-Technologies/ui)
 > ## [Check out the control demos on our Tumblr page](https://unityuiextensions.tumblr.com/)
 
+> ### We've disabled Anonymous issue for creation for now, as it's making it extreemely hard to provide feedback and help to users.  Please ensure you logon with your Bitbucket account when raising issues.  
+> If you don't want to do that, then reach out to us on Gitter
 
 # [Intro](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/GettingStarted)
 For more info, here's a little introduction video for the project:
