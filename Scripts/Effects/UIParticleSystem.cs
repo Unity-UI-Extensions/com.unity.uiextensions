@@ -13,6 +13,9 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Having this enabled run the system in LateUpdate rather than in Update making it faster but less precise (more clunky)")]
         public bool fixedTime = true;
 
+        [Tooltip("Enables 3d rotation for the particles")]
+        public bool use3dRotation = false;
+
         private Transform _transform;
         private ParticleSystem pSystem;
         private ParticleSystem.Particle[] particles;
@@ -277,14 +280,50 @@ namespace UnityEngine.UI.Extensions
                 }
                 else
                 {
-                    // apply rotation
-                    Vector2 right = new Vector2(Mathf.Cos(rotation), Mathf.Sin(rotation)) * size;
-                    Vector2 up = new Vector2(Mathf.Cos(rotation90), Mathf.Sin(rotation90)) * size;
+                    if (use3dRotation)
+                    {
+                        // get particle properties
+#if UNITY_5_5_OR_NEWER
+                        Vector3 pos3d = (mainModule.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
+#else
+                        Vector3 pos3d = (pSystem.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
+#endif
 
-                    _quad[0].position = position - right - up;
-                    _quad[1].position = position - right + up;
-                    _quad[2].position = position + right + up;
-                    _quad[3].position = position + right - up;
+                        // apply scale
+#if UNITY_5_5_OR_NEWER
+                        if (mainModule.scalingMode == ParticleSystemScalingMode.Shape)
+                            position /= canvas.scaleFactor;
+#else
+                        if (pSystem.scalingMode == ParticleSystemScalingMode.Shape)
+                            position /= canvas.scaleFactor;
+#endif
+
+                        Vector3[] verts = new Vector3[4]
+                        {
+                            new Vector3(-size, -size, 0),
+                            new Vector3(-size, size, 0),
+                            new Vector3(size, size, 0),
+                            new Vector3(size, -size, 0)
+                        };
+
+                        Quaternion particleRotation = Quaternion.Euler(particle.rotation3D);
+
+                        _quad[0].position = pos3d + particleRotation * verts[0];
+                        _quad[1].position = pos3d + particleRotation * verts[1];
+                        _quad[2].position = pos3d + particleRotation * verts[2];
+                        _quad[3].position = pos3d + particleRotation * verts[3];
+                    }
+                    else
+                    {
+                        // apply rotation
+                        Vector2 right = new Vector2(Mathf.Cos(rotation), Mathf.Sin(rotation)) * size;
+                        Vector2 up = new Vector2(Mathf.Cos(rotation90), Mathf.Sin(rotation90)) * size;
+
+                        _quad[0].position = position - right - up;
+                        _quad[1].position = position - right + up;
+                        _quad[2].position = position + right + up;
+                        _quad[3].position = position + right - up;
+                    }
                 }
 
                 vh.AddUIVertexQuad(_quad);
