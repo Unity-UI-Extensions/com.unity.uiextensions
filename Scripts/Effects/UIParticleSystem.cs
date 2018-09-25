@@ -371,6 +371,12 @@ namespace UnityEngine.UI.Extensions
             pSystem = null;
             Initialize();
         }
+        
+        void OnDestroy()
+        {
+            currentMaterial = null;
+            currentTexture = null;
+        }
     }
 #endif
 }
