@@ -1,14 +1,15 @@
-﻿using UnityEngine;
-
-public static class ExtentionMethods
+﻿namespace UnityEngine.UI.Extensions
 {
-    public static T GetOrAddComponent<T>(this GameObject child) where T : Component
+    public static class ExtentionMethods
     {
-        T result = child.GetComponent<T>();
-        if (result == null)
+        public static T GetOrAddComponent<T>(this GameObject child) where T : Component
         {
-            result = child.AddComponent<T>();
+            T result = child.GetComponent<T>();
+            if (result == null)
+            {
+                result = child.AddComponent<T>();
+            }
+            return result;
         }
-        return result;
     }
 }
