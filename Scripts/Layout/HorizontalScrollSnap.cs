@@ -239,29 +239,52 @@ namespace UnityEngine.UI.Extensions
             if (_scroll_rect.horizontal)
             {
                 var distance = Vector3.Distance(_startPosition, _screensContainer.localPosition);
-                if ((UseFastSwipe && distance < panelDimensions.width && distance >= FastSwipeThreshold) || UseHardSwipe)
-                {
+
+                if(UseHardSwipe){
                     _scroll_rect.velocity = Vector3.zero;
-                    if (_startPosition.x - _screensContainer.localPosition.x > 0)
+
+                    if (distance > FastSwipeThreshold)
                     {
-                        if (_startPosition.x - _screensContainer.localPosition.x > _childSize / 3)
-                        {
-                            ScrollToClosestElement();
-                        }
-                        else
+                        if (_startPosition.x - _screensContainer.localPosition.x > 0)
                         {
                             NextScreen();
-                        }
-                    }
-                    else
-                    {
-                        if (_startPosition.x - _screensContainer.localPosition.x > -_childSize / 3)
-                        {
-                            ScrollToClosestElement();
                         }
                         else
                         {
                             PreviousScreen();
+                        }
+                    }
+                    else
+                    {
+                        ScrollToClosestElement();
+                    }
+                }
+                else
+                {
+                    if (UseFastSwipe && distance < panelDimensions.width && distance >= FastSwipeThreshold )
+                    {
+                        _scroll_rect.velocity = Vector3.zero;
+                        if (_startPosition.x - _screensContainer.localPosition.x > 0)
+                        {
+                            if (_startPosition.x - _screensContainer.localPosition.x > _childSize / 3)
+                            {
+                                ScrollToClosestElement();
+                            }
+                            else
+                            {
+                                NextScreen();
+                            }
+                        }
+                        else
+                        {
+                            if (_startPosition.x - _screensContainer.localPosition.x > -_childSize / 3)
+                            {
+                                ScrollToClosestElement();
+                            }
+                            else
+                            {
+                                PreviousScreen();
+                            }
                         }
                     }
                 }
