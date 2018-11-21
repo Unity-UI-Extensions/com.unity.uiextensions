@@ -140,6 +140,16 @@ namespace UnityEngine.UI.Extensions
         }
 
         /// <summary>
+        /// Start a cooldown from outside
+        /// </summary>
+        public void StartCooldown()
+        {
+            if(OnCooldownStart != null) OnCooldownStart.Invoke(eventData.button);
+            cooldownTimeRemaining = cooldownTimeout;
+            cooldownActive = cooldownInEffect = true;
+        }
+
+        /// <summary>
         /// Stop a running Cooldown and reset all values
         /// </summary>
         public void StopCooldown()
