@@ -144,7 +144,6 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         public void StartCooldown()
         {
-            if(OnCooldownStart != null) OnCooldownStart.Invoke(eventData.button);
             cooldownTimeRemaining = cooldownTimeout;
             cooldownActive = cooldownInEffect = true;
         }
