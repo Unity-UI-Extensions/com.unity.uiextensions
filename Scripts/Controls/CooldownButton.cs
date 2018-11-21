@@ -144,9 +144,11 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         public void StartCooldown()
         {
-            OnCooldownStart.Invoke(new PointerEventData.InputButton());
+            PointerEventData emptySource = new PointerEventData(EventSystem.current);
+            buttonSource = emptySource;
+            OnCooldownStart.Invoke(emptySource.button);
             cooldownTimeRemaining = cooldownTimeout;
-            cooldownActive = cooldownInEffect = true;
+            CooldownActive = cooldownInEffect = true;
         }
 
         /// <summary>
