@@ -88,6 +88,10 @@ namespace UnityEngine.UI.Extensions
             _fakeElement = new GameObject("Fake").AddComponent<RectTransform>();
             _fakeElementLE = _fakeElement.gameObject.AddComponent<LayoutElement>();
 
+            //Set fake element initial size
+            _fakeElement.GetComponent<RectTransform>().sizeDelta = _draggingObjectOriginalSize;
+            _fakeElementLE.preferredHeight = _draggingObjectLE.preferredHeight;
+            _fakeElementLE.preferredWidth = _draggingObjectLE.preferredWidth;
 
             RefreshSizes();
 
