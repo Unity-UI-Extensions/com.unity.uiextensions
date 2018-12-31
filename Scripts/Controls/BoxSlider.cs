@@ -139,9 +139,15 @@ namespace UnityEngine.UI.Extensions
             // Update rects since other things might affect them even if value didn't change.
             if(!Application.isPlaying) UpdateVisuals();
 
+#if UNITY_2018_3_OR_NEWER
+            if (!Application.isPlaying)
+#else
             var prefabType = UnityEditor.PrefabUtility.GetPrefabType(this);
             if (prefabType != UnityEditor.PrefabType.Prefab && !Application.isPlaying)
+#endif
+            {
                 CanvasUpdateRegistry.RegisterCanvasElementForLayoutRebuild(this);
+            }
         }
 
 #endif // if UNITY_EDITOR

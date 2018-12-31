@@ -118,7 +118,7 @@ namespace UnityEngine.UI.Extensions {
         }
 
         protected void UpdateQuadImage() {
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !UNITY_2018_3_OR_NEWER
             if (UnityEditor.PrefabUtility.GetPrefabType(this) == UnityEditor.PrefabType.Prefab) {
                 return;
             }
