@@ -5,36 +5,32 @@ using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
-    public class FancyScrollView<TData, TContext> : MonoBehaviour where TContext : class
+    public abstract class FancyScrollView<TData, TContext> : MonoBehaviour where TContext : class
     {
         [SerializeField, Range(float.Epsilon, 1f)]
-        float cellInterval = 0;
+        float cellInterval;
         [SerializeField, Range(0f, 1f)]
-        float cellOffset = 0;
+        float cellOffset;
         [SerializeField]
-        bool loop = false;
+        bool loop;
         [SerializeField]
-        GameObject cellBase = null;
+        GameObject cellBase;
+        [SerializeField]
+        Transform cellContainer;
 
+        readonly List<FancyScrollViewCell<TData, TContext>> cells = new List<FancyScrollViewCell<TData, TContext>>();
         float currentPosition;
-        readonly List<FancyScrollViewCell<TData, TContext>> cells =
-            new List<FancyScrollViewCell<TData, TContext>>();
 
-        protected TContext context;
         protected List<TData> cellData = new List<TData>();
-
-        protected void Awake()
-        {
-            cellBase.SetActive(false);
-        }
+        protected TContext Context { get; private set; }
 
         /// <summary>
-        /// コンテキストを設定します
+        /// Sets the context.
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="context">Context.</param>
         protected void SetContext(TContext context)
         {
-            this.context = context;
+            Context = context;
 
             for (int i = 0; i < cells.Count; i++)
             {
@@ -43,120 +39,19 @@ namespace UnityEngine.UI.Extensions
         }
 
         /// <summary>
-        /// セルを生成して返します
-        /// </summary>
-        /// <returns></returns>
-        FancyScrollViewCell<TData, TContext> CreateCell()
-        {
-            var cellObject = Instantiate(cellBase);
-            cellObject.SetActive(true);
-            var cell = cellObject.GetComponent<FancyScrollViewCell<TData, TContext>>();
-
-            var cellRectTransform = cell.transform as RectTransform;
-
-            // 親要素の付け替えをおこなうとスケールやサイズが失われるため、変数に保持しておく
-            var scale = cell.transform.localScale;
-            var sizeDelta = Vector2.zero;
-            var offsetMin = Vector2.zero;
-            var offsetMax = Vector2.zero;
-
-            if (cellRectTransform)
-            {
-                sizeDelta = cellRectTransform.sizeDelta;
-                offsetMin = cellRectTransform.offsetMin;
-                offsetMax = cellRectTransform.offsetMax;
-            }
-
-            cell.transform.SetParent(cellBase.transform.parent);
-
-            cell.transform.localScale = scale;
-            if (cellRectTransform)
-            {
-                cellRectTransform.sizeDelta = sizeDelta;
-                cellRectTransform.offsetMin = offsetMin;
-                cellRectTransform.offsetMax = offsetMax;
-            }
-
-            cell.SetContext(context);
-            cell.SetVisible(false);
-
-            return cell;
-        }
-
-#if UNITY_EDITOR
-        float prevCellInterval, prevCellOffset;
-        bool prevLoop;
-
-        void LateUpdate()
-        {
-            if (prevLoop != loop ||
-                prevCellOffset != cellOffset ||
-                prevCellInterval != cellInterval)
-            {
-                UpdatePosition(currentPosition);
-
-                prevLoop = loop;
-                prevCellOffset = cellOffset;
-                prevCellInterval = cellInterval;
-            }
-        }
-#endif
-
-        /// <summary>
-        /// セルの内容を更新します
-        /// </summary>
-        /// <param name="cell"></param>
-        /// <param name="dataIndex"></param>
-        void UpdateCellForIndex(FancyScrollViewCell<TData, TContext> cell, int dataIndex)
-        {
-            if (loop)
-            {
-                dataIndex = GetLoopIndex(dataIndex, cellData.Count);
-            }
-            else if (dataIndex < 0 || dataIndex > cellData.Count - 1)
-            {
-                // セルに対応するデータが存在しなければセルを表示しない
-                cell.SetVisible(false);
-                return;
-            }
-
-            cell.SetVisible(true);
-            cell.DataIndex = dataIndex;
-            cell.UpdateContent(cellData[dataIndex]);
-        }
-
-        /// <summary>
-        /// 円環構造の index を取得します
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="length"></param>
-        /// <returns></returns>
-        int GetLoopIndex(int index, int length)
-        {
-            if (index < 0)
-            {
-                index = (length - 1) + (index + 1) % length;
-            }
-            else if (index > length - 1)
-            {
-                index = index % length;
-            }
-            return index;
-        }
-
-        /// <summary>
-        /// 表示内容を更新します
+        /// Updates the contents.
         /// </summary>
         protected void UpdateContents()
         {
-            UpdatePosition(currentPosition);
+            UpdatePosition(currentPosition, true);
         }
 
         /// <summary>
-        /// スクロール位置を更新します
+        /// Updates the scroll position.
         /// </summary>
-        /// <param name="position"></param>
-        protected void UpdatePosition(float position)
+        /// <param name="position">Position.</param>
+        /// <param name="forceUpdateContents">If set to <c>true</c> force update contents.</param>
+        protected void UpdatePosition(float position, bool forceUpdateContents = false)
         {
             currentPosition = position;
 
@@ -164,9 +59,8 @@ namespace UnityEngine.UI.Extensions
             var firstCellPosition = (Mathf.Ceil(visibleMinPosition) - visibleMinPosition) * cellInterval;
             var dataStartIndex = Mathf.CeilToInt(visibleMinPosition);
             var count = 0;
-            var cellIndex = 0;
 
-            for (float pos = firstCellPosition; pos <= 1f; pos += cellInterval, count++)
+            for (float p = firstCellPosition; p <= 1f; p += cellInterval, count++)
             {
                 if (count >= cells.Count)
                 {
@@ -176,33 +70,103 @@ namespace UnityEngine.UI.Extensions
 
             count = 0;
 
-            for (float pos = firstCellPosition; pos <= 1f; count++, pos += cellInterval)
+            for (float p = firstCellPosition; p <= 1f; p += cellInterval, count++)
             {
                 var dataIndex = dataStartIndex + count;
-                cellIndex = GetLoopIndex(dataIndex, cells.Count);
-                if (cells[cellIndex].gameObject.activeSelf)
+                var cell = cells[GetCircularIndex(dataIndex, cells.Count)];
+
+                UpdateCell(cell, dataIndex, forceUpdateContents);
+
+                if (cell.gameObject.activeSelf)
                 {
-                    cells[cellIndex].UpdatePosition(pos);
+                    cell.UpdatePosition(p);
                 }
-                UpdateCellForIndex(cells[cellIndex], dataIndex);
             }
 
-            cellIndex = GetLoopIndex(dataStartIndex + count, cells.Count);
-
-            for (; count < cells.Count; count++, cellIndex = GetLoopIndex(dataStartIndex + count, cells.Count))
+            while (count < cells.Count)
             {
-                cells[cellIndex].SetVisible(false);
+                cells[GetCircularIndex(dataStartIndex + count, cells.Count)].SetVisible(false);
+                count++;
             }
         }
+
+        /// <summary>
+        /// Updates the cell.
+        /// </summary>
+        /// <param name="cell">Cell.</param>
+        /// <param name="dataIndex">Data index.</param>
+        /// <param name="forceUpdateContents">If set to <c>true</c> force update contents.</param>
+        void UpdateCell(FancyScrollViewCell<TData, TContext> cell, int dataIndex, bool forceUpdateContents = false)
+        {
+            if (loop)
+            {
+                dataIndex = GetCircularIndex(dataIndex, cellData.Count);
+            }
+            else if (dataIndex < 0 || dataIndex > cellData.Count - 1)
+            {
+                // セルに対応するデータが存在しなければセルを表示しない
+                cell.SetVisible(false);
+                return;
+            }
+
+            if (forceUpdateContents || cell.DataIndex != dataIndex || !cell.IsVisible)
+            {
+                cell.DataIndex = dataIndex;
+                cell.SetVisible(true);
+                cell.UpdateContent(cellData[dataIndex]);
+            }
+        }
+
+        /// <summary>
+        /// Creates the cell.
+        /// </summary>
+        /// <returns>The cell.</returns>
+        FancyScrollViewCell<TData, TContext> CreateCell()
+        {
+            var cellObject = Instantiate(cellBase, cellContainer);
+            var cell = cellObject.GetComponent<FancyScrollViewCell<TData, TContext>>();
+
+            cell.SetContext(Context);
+            cell.SetVisible(false);
+            cell.DataIndex = -1;
+
+            return cell;
+        }
+
+        /// <summary>
+        /// Gets the circular index.
+        /// </summary>
+        /// <returns>The circular index.</returns>
+        /// <param name="index">Index.</param>
+        /// <param name="maxSize">Max size.</param>
+        int GetCircularIndex(int index, int maxSize)
+        {
+            return index < 0 ? maxSize - 1 + (index + 1) % maxSize : index % maxSize;
+        }
+
+#if UNITY_EDITOR
+        bool cachedLoop;
+        float cachedCellInterval, cachedCellOffset;
+
+        void LateUpdate()
+        {
+            if (cachedLoop != loop || cachedCellOffset != cellOffset || cachedCellInterval != cellInterval)
+            {
+                cachedLoop = loop;
+                cachedCellOffset = cellOffset;
+                cachedCellInterval = cellInterval;
+
+                UpdatePosition(currentPosition);
+            }
+        }
+#endif
     }
 
     public sealed class FancyScrollViewNullContext
     {
-
     }
 
-    public class FancyScrollView<TData> : FancyScrollView<TData, FancyScrollViewNullContext>
+    public abstract class FancyScrollView<TData> : FancyScrollView<TData, FancyScrollViewNullContext>
     {
-
     }
 }

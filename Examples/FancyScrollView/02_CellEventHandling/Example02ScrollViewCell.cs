@@ -1,51 +1,37 @@
-﻿namespace UnityEngine.UI.Extensions.Examples
+﻿using UnityEngine;
+using UnityEngine.UI;
+
+namespace UnityEngine.UI.Extensions.Examples
 {
-    public class Example02ScrollViewCell
-        : FancyScrollViewCell<Example02CellDto, Example02ScrollViewContext>
+    public class Example02ScrollViewCell : FancyScrollViewCell<Example02CellDto, Example02ScrollViewContext>
     {
         [SerializeField]
-        Animator animator = null;
+        Animator animator;
         [SerializeField]
-        Text message = null;
+        Text message;
         [SerializeField]
-        Image image = null;
+        Image image;
         [SerializeField]
-        Button button = null;
+        Button button;
 
-        readonly int scrollTriggerHash = Animator.StringToHash("scroll");
-        Example02ScrollViewContext context;
+        static readonly int scrollTriggerHash = Animator.StringToHash("scroll");
 
         void Start()
         {
-            var rectTransform = transform as RectTransform;
-            rectTransform.anchorMax = Vector2.one;
-            rectTransform.anchorMin = Vector2.zero;
-            rectTransform.anchoredPosition3D = Vector3.zero;
-            UpdatePosition(0);
-
             button.onClick.AddListener(OnPressedCell);
         }
 
         /// <summary>
-        /// コンテキストを設定します
+        /// Updates the content.
         /// </summary>
-        /// <param name="context"></param>
-        public override void SetContext(Example02ScrollViewContext context)
-        {
-            this.context = context;
-        }
-
-        /// <summary>
-        /// セルの内容を更新します
-        /// </summary>
-        /// <param name="itemData"></param>
+        /// <param name="itemData">Item data.</param>
         public override void UpdateContent(Example02CellDto itemData)
         {
             message.text = itemData.Message;
 
-            if (context != null)
+            if (Context != null)
             {
-                var isSelected = context.SelectedIndex == DataIndex;
+                var isSelected = Context.SelectedIndex == DataIndex;
                 image.color = isSelected
                     ? new Color32(0, 255, 255, 100)
                     : new Color32(255, 255, 255, 77);
@@ -53,21 +39,30 @@
         }
 
         /// <summary>
-        /// セルの位置を更新します
+        /// Updates the position.
         /// </summary>
-        /// <param name="position"></param>
+        /// <param name="position">Position.</param>
         public override void UpdatePosition(float position)
         {
+            currentPosition = position;
             animator.Play(scrollTriggerHash, -1, position);
             animator.speed = 0;
         }
 
-        public void OnPressedCell()
+        void OnPressedCell()
         {
-            if (context != null)
+            if (Context != null)
             {
-                context.OnPressedCell(this);
+                Context.OnPressedCell(this);
             }
+        }
+
+        // GameObject が非アクティブになると Animator がリセットされてしまうため
+        // 現在位置を保持しておいて OnEnable のタイミングで現在位置を再設定します
+        float currentPosition = 0;
+        void OnEnable()
+        {
+            UpdatePosition(currentPosition);
         }
     }
 }

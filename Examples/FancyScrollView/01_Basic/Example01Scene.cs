@@ -1,11 +1,12 @@
 ﻿using System.Linq;
+using UnityEngine;
 
 namespace UnityEngine.UI.Extensions.Examples
 {
     public class Example01Scene : MonoBehaviour
     {
         [SerializeField]
-        Example01ScrollView scrollView = null;
+        Example01ScrollView scrollView;
 
         void Start()
         {
