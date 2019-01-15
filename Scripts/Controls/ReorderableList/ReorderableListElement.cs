@@ -129,7 +129,7 @@ namespace UnityEngine.UI.Extensions
             var canvas = _draggingObject.GetComponentInParent<Canvas>();
             Vector3 worldPoint;
             RectTransformUtility.ScreenPointToWorldPointInRectangle(canvas.GetComponent<RectTransform>(), eventData.position,
-                canvas.worldCamera, out worldPoint);
+                canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera, out worldPoint);
             _draggingObject.position = worldPoint;
 
             //Check everything under the cursor to find a ReorderableList
