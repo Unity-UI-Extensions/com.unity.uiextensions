@@ -76,6 +76,9 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Speed at which the ScrollRect will keep scrolling before slowing down and stopping (optional)")]
         public int SwipeVelocityThreshold = 100;
 
+	[Tooltip("Use time scale instead of unscaled time (optional)")]
+	public Boolean UseTimeScale = true;
+
         [Tooltip("The visible bounds area, controls which items are visible/enabled. *Note Should use a RectMask. (optional)")]
         public RectTransform MaskArea;
 
