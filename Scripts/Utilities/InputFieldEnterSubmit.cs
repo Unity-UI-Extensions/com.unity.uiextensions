@@ -13,9 +13,13 @@ namespace UnityEngine.UI.Extensions
     public class InputFieldEnterSubmit : MonoBehaviour
     {
         [System.Serializable]
-        public class EnterSubmitEvent : UnityEvent<string> { }
+        public class EnterSubmitEvent : UnityEvent<string>
+        {
+
+        }
 
         public EnterSubmitEvent EnterSubmit;
+        public bool defocusInput = true;
         private InputField _input;
 
         void Awake()
@@ -26,8 +30,13 @@ namespace UnityEngine.UI.Extensions
 
         public void OnEndEdit(string txt)
         {
-            if (!Input.GetKeyDown(KeyCode.Return) && !Input.GetKeyDown(KeyCode.KeypadEnter)) return;
+            if (!Input.GetKeyDown(KeyCode.Return) && !Input.GetKeyDown(KeyCode.KeypadEnter))
+                return;
             EnterSubmit.Invoke(txt);
+            if (defocusInput)
+            {
+                UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
+            }
         }
     }
 }
