@@ -607,7 +607,7 @@ namespace UnityEditor.UI
 			rectTransformCenter.anchorMax = new Vector2(1f, 0.6f);
 			rectTransformCenter.sizeDelta = Vector2.zero;
 
-			uiscr._center = uiScrollerCenter.GetComponent<RectTransform>();
+			uiscr.center = uiScrollerCenter.GetComponent<RectTransform>();
 
 			//Setup Content container
 			RectTransform rectTransformContent = childContent.GetComponent<RectTransform>();
