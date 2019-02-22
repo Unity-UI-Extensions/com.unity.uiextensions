@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.3731193, g: 0.38073996, b: 0.35872692, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -189,6 +189,8 @@ MonoBehaviour:
   IsDraggable: 1
   CloneDraggedObject: 1
   IsDropable: 0
+  IsDisplacable: 0
+  maxItems: 2147483647
   OnElementDropped:
     m_PersistentCalls:
       m_Calls: []
@@ -205,6 +207,26 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   OnElementAdded:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFrom:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedTo:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFromReturned:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedToReturned:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
@@ -321,7 +343,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0000127977155}
+  m_AnchoredPosition: {x: 0, y: 0.000008085421}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &32192511
@@ -520,9 +542,11 @@ MonoBehaviour:
 
     Is Draggable = true
 
-    Clone Dragged Object = false
+    IsDroppable = true
 
-    Is Droppable = false'
+    MaxItems = 4, IsDisplacable = True
+
+    Clone Dragged Object = false'
 --- !u!222 &177188057
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -544,7 +568,7 @@ MonoBehaviour:
   m_MinWidth: -1
   m_MinHeight: -1
   m_PreferredWidth: -1
-  m_PreferredHeight: 88.49
+  m_PreferredHeight: 180
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -584,7 +608,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0000127977155}
+  m_AnchoredPosition: {x: 0, y: 0.000015258789}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &178427160
@@ -909,7 +933,7 @@ MonoBehaviour:
   m_MinWidth: -1
   m_MinHeight: -1
   m_PreferredWidth: -1
-  m_PreferredHeight: 88.49
+  m_PreferredHeight: 180
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -1230,7 +1254,7 @@ MonoBehaviour:
   m_MinWidth: -1
   m_MinHeight: -1
   m_PreferredWidth: -1
-  m_PreferredHeight: 88.49
+  m_PreferredHeight: 180
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -1472,6 +1496,8 @@ MonoBehaviour:
   IsDraggable: 1
   CloneDraggedObject: 0
   IsDropable: 1
+  IsDisplacable: 0
+  maxItems: 4
   OnElementDropped:
     m_PersistentCalls:
       m_Calls: []
@@ -1488,6 +1514,26 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   OnElementAdded:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFrom:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedTo:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFromReturned:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedToReturned:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
@@ -1750,6 +1796,8 @@ MonoBehaviour:
   IsDraggable: 1
   CloneDraggedObject: 0
   IsDropable: 1
+  IsDisplacable: 0
+  maxItems: 2147483647
   OnElementDropped:
     m_PersistentCalls:
       m_Calls: []
@@ -1766,6 +1814,26 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   OnElementAdded:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFrom:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedTo:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFromReturned:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedToReturned:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
@@ -1970,7 +2038,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.0000076293945}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &622440035
@@ -2220,7 +2288,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.0000069301664}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &670178503
@@ -2330,6 +2398,10 @@ MonoBehaviour:
 
     Is Draggable = true
 
+    IsDroppable = true
+
+    MaxItems = 4, IsDisplacable = False
+
     Clone Dragged Object = false
 
     Is Droppable = true'
@@ -2354,7 +2426,7 @@ MonoBehaviour:
   m_MinWidth: -1
   m_MinHeight: -1
   m_PreferredWidth: -1
-  m_PreferredHeight: 88.49
+  m_PreferredHeight: 180
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -2542,7 +2614,7 @@ MonoBehaviour:
   m_MinWidth: -1
   m_MinHeight: -1
   m_PreferredWidth: -1
-  m_PreferredHeight: 88.49
+  m_PreferredHeight: 180
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -2760,7 +2832,7 @@ MonoBehaviour:
   m_MinWidth: -1
   m_MinHeight: -1
   m_PreferredWidth: -1
-  m_PreferredHeight: 88.49
+  m_PreferredHeight: 180
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -2972,6 +3044,8 @@ MonoBehaviour:
   IsDraggable: 1
   CloneDraggedObject: 0
   IsDropable: 1
+  IsDisplacable: 0
+  maxItems: 2147483647
   OnElementDropped:
     m_PersistentCalls:
       m_Calls: []
@@ -2988,6 +3062,26 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   OnElementAdded:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFrom:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedTo:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFromReturned:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedToReturned:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
@@ -3206,7 +3300,7 @@ MonoBehaviour:
   m_MinWidth: -1
   m_MinHeight: -1
   m_PreferredWidth: -1
-  m_PreferredHeight: 88.49
+  m_PreferredHeight: 180
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -3266,6 +3360,8 @@ MonoBehaviour:
   IsDraggable: 0
   CloneDraggedObject: 0
   IsDropable: 1
+  IsDisplacable: 0
+  maxItems: 2147483647
   OnElementDropped:
     m_PersistentCalls:
       m_Calls: []
@@ -3282,6 +3378,26 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   OnElementAdded:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFrom:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedTo:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFromReturned:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedToReturned:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
@@ -3564,8 +3680,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 75}
-  m_SizeDelta: {x: 0, y: -150}
+  m_AnchoredPosition: {x: 0, y: 35.6}
+  m_SizeDelta: {x: 0, y: -111.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1036076373
 MonoBehaviour:
@@ -3584,7 +3700,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 50
+  m_Spacing: 40
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
@@ -3685,7 +3801,7 @@ MonoBehaviour:
   m_MinWidth: -1
   m_MinHeight: -1
   m_PreferredWidth: -1
-  m_PreferredHeight: 88.49
+  m_PreferredHeight: 180
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -4482,7 +4598,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.0000076293945}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1527828930
@@ -5203,7 +5319,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 138}
+  m_SizeDelta: {x: 0, y: 91.2}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1739629088
 MonoBehaviour:
@@ -5228,9 +5344,9 @@ MonoBehaviour:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 20
     m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
+    m_BestFit: 1
+    m_MinSize: 1
+    m_MaxSize: 300
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -5292,7 +5408,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0000127977155}
+  m_AnchoredPosition: {x: 0, y: 0.000038146973}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1789326610
@@ -5561,7 +5677,9 @@ MonoBehaviour:
   DraggableArea: {fileID: 853621234}
   IsDraggable: 1
   CloneDraggedObject: 0
-  IsDropable: 0
+  IsDropable: 1
+  IsDisplacable: 0
+  maxItems: 4
   OnElementDropped:
     m_PersistentCalls:
       m_Calls: []
@@ -5578,6 +5696,26 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   OnElementAdded:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFrom:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedTo:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFromReturned:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedToReturned:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
@@ -6016,6 +6154,8 @@ MonoBehaviour:
   IsDraggable: 1
   CloneDraggedObject: 1
   IsDropable: 0
+  IsDisplacable: 0
+  maxItems: 2147483647
   OnElementDropped:
     m_PersistentCalls:
       m_Calls: []
@@ -6032,6 +6172,26 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   OnElementAdded:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFrom:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedTo:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFromReturned:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedToReturned:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
@@ -6256,6 +6416,8 @@ MonoBehaviour:
   IsDraggable: 1
   CloneDraggedObject: 1
   IsDropable: 0
+  IsDisplacable: 0
+  maxItems: 2147483647
   OnElementDropped:
     m_PersistentCalls:
       m_Calls: []
@@ -6272,6 +6434,26 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   OnElementAdded:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFrom:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedTo:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedFromReturned:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  OnElementDisplacedToReturned:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Extensions.ReorderableList+ReorderableListHandler,
