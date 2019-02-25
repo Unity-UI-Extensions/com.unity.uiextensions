@@ -13,6 +13,10 @@ namespace UnityEngine.UI.Extensions.Examples
         public RectTransform yearsScrollingPanel;
         public RectTransform daysScrollingPanel;
 
+        public ScrollRect monthsScrollRect;
+        public ScrollRect yearsScrollRect;
+        public ScrollRect daysScrollRect;
+
         public GameObject yearsButtonPrefab;
         public GameObject monthsButtonPrefab;
         public GameObject daysButtonPrefab;
@@ -51,8 +55,7 @@ namespace UnityEngine.UI.Extensions.Examples
             {
                 arrayYears[i] = 1900 + i;
 
-                GameObject clone = (GameObject)Instantiate(yearsButtonPrefab, new Vector3(0, i * 80, 0), Quaternion.Euler(new Vector3(0, 0, 0))) as GameObject;
-                clone.transform.SetParent(yearsScrollingPanel, false);
+                GameObject clone = Instantiate(yearsButtonPrefab, yearsScrollingPanel);
                 clone.transform.localScale = new Vector3(1, 1, 1);
                 clone.GetComponentInChildren<Text>().text = "" + arrayYears[i];
                 clone.name = "Year_" + arrayYears[i];
@@ -74,8 +77,7 @@ namespace UnityEngine.UI.Extensions.Examples
                 string month = "";
                 months[i] = i;
 
-                GameObject clone = (GameObject)Instantiate(monthsButtonPrefab, new Vector3(0, i * 80, 0), Quaternion.Euler(new Vector3(0, 0, 0))) as GameObject;
-                clone.transform.SetParent(monthsScrollingPanel, false);
+                GameObject clone = Instantiate(monthsButtonPrefab, monthsScrollingPanel);
                 clone.transform.localScale = new Vector3(1, 1, 1);
 
                 switch (i)
@@ -133,9 +135,7 @@ namespace UnityEngine.UI.Extensions.Examples
             for (var i = 0; i < days.Length; i++)
             {
                 days[i] = i + 1;
-                GameObject clone = (GameObject)Instantiate(daysButtonPrefab, new Vector3(0, i * 80, 0), Quaternion.Euler(new Vector3(0, 0, 0))) as GameObject;
-                clone.transform.SetParent(daysScrollingPanel, false);
-                clone.transform.localScale = new Vector3(1, 1, 1);
+                GameObject clone = Instantiate(daysButtonPrefab, daysScrollingPanel);
                 clone.GetComponentInChildren<Text>().text = "" + days[i];
                 clone.name = "Day_" + days[i];
                 clone.AddComponent<CanvasGroup>();
@@ -151,9 +151,9 @@ namespace UnityEngine.UI.Extensions.Examples
             InitializeDays();
 
             //Yes Unity complains about this but it doesn't matter in this case.
-            monthsVerticalScroller = new UIVerticalScroller(monthsScrollingPanel, monthsButtons, monthCenter);
-            yearsVerticalScroller = new UIVerticalScroller(yearsScrollingPanel, yearsButtons, yearsCenter);
-            daysVerticalScroller = new UIVerticalScroller(daysScrollingPanel, daysButtons, daysCenter);
+            monthsVerticalScroller = new UIVerticalScroller(monthCenter, monthCenter, monthsScrollRect, monthsButtons);
+            yearsVerticalScroller = new UIVerticalScroller(yearsCenter, yearsCenter, yearsScrollRect, yearsButtons);
+            daysVerticalScroller = new UIVerticalScroller(daysCenter, daysCenter, daysScrollRect, daysButtons);
 
             monthsVerticalScroller.Start();
             yearsVerticalScroller.Start();
@@ -177,9 +177,9 @@ namespace UnityEngine.UI.Extensions.Examples
             yearsVerticalScroller.Update();
             daysVerticalScroller.Update();
 
-            string dayString = daysVerticalScroller.GetResults();
-            string monthString = monthsVerticalScroller.GetResults();
-            string yearsString = yearsVerticalScroller.GetResults();
+            string dayString = daysVerticalScroller.result;
+            string monthString = monthsVerticalScroller.result;
+            string yearsString = yearsVerticalScroller.result;
 
             if (dayString.EndsWith("1") && dayString != "11")
                 dayString = dayString + "st";
