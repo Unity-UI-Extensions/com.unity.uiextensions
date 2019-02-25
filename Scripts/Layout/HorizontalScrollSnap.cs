@@ -111,7 +111,8 @@ namespace UnityEngine.UI.Extensions
             GO.transform.SetParent(_screensContainer, WorldPositionStays);
             InitialiseChildObjectsFromScene();
             DistributePages();
-            if (MaskArea) UpdateVisible();
+            if (MaskArea)
+                UpdateVisible();
 
             SetScrollContainerPosition();
         }
@@ -148,7 +149,8 @@ namespace UnityEngine.UI.Extensions
             ChildRemoved = child.gameObject;
             InitialiseChildObjectsFromScene();
             DistributePages();
-            if (MaskArea) UpdateVisible();
+            if (MaskArea)
+                UpdateVisible();
 
             if (_currentPage > _screens - 1)
             {
@@ -187,7 +189,8 @@ namespace UnityEngine.UI.Extensions
             CurrentPage = 0;
             InitialiseChildObjectsFromScene();
             DistributePages();
-            if (MaskArea) UpdateVisible();
+            if (MaskArea)
+                UpdateVisible();
         }
 
         private void SetScrollContainerPosition()
@@ -204,7 +207,8 @@ namespace UnityEngine.UI.Extensions
         {
             _lerp = false;
             DistributePages();
-            if (MaskArea) UpdateVisible();
+            if (MaskArea)
+                UpdateVisible();
             SetScrollContainerPosition();
             OnCurrentScreenChange(_currentPage);
         }
@@ -221,13 +225,17 @@ namespace UnityEngine.UI.Extensions
         {
             InitialiseChildObjectsFromScene();
             DistributePages();
-            if (MaskArea) UpdateVisible();
+            if (MaskArea)
+                UpdateVisible();
 
-            if (JumpOnEnable || !RestartOnEnable) SetScrollContainerPosition();
-            if (RestartOnEnable) GoToScreen(StartingScreen);
+            if (JumpOnEnable || !RestartOnEnable)
+                SetScrollContainerPosition();
+            if (RestartOnEnable)
+                GoToScreen(StartingScreen);
         }
 
         #region Interfaces
+
         /// <summary>
         /// Release screen to swipe
         /// </summary>
@@ -240,7 +248,8 @@ namespace UnityEngine.UI.Extensions
             {
                 var distance = Vector3.Distance(_startPosition, _screensContainer.localPosition);
 
-                if(UseHardSwipe){
+                if (UseHardSwipe)
+                {
                     _scroll_rect.velocity = Vector3.zero;
 
                     if (distance > FastSwipeThreshold)
@@ -261,7 +270,7 @@ namespace UnityEngine.UI.Extensions
                 }
                 else
                 {
-                    if (UseFastSwipe && distance < panelDimensions.width && distance >= FastSwipeThreshold )
+                    if (UseFastSwipe && distance < panelDimensions.width && distance >= FastSwipeThreshold)
                     {
                         _scroll_rect.velocity = Vector3.zero;
                         if (_startPosition.x - _screensContainer.localPosition.x > 0)
@@ -277,7 +286,7 @@ namespace UnityEngine.UI.Extensions
                         }
                         else
                         {
-                            if (_startPosition.x - _screensContainer.localPosition.x > -_childSize / 3)
+                            if (_startPosition.x - _screensContainer.localPosition.x < -_childSize / 3)
                             {
                                 ScrollToClosestElement();
                             }
@@ -290,6 +299,7 @@ namespace UnityEngine.UI.Extensions
                 }
             }
         }
+
         #endregion
     }
 }
