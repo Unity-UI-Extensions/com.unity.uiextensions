@@ -180,7 +180,7 @@ namespace UnityEngine.UI.Extensions {
 			}
 			else {
 				// If there are no matches, remove the images from the pool
-				for (int i = 0; i < m_ImagesPool.Count; i++) {
+				for (int i = m_ImagesPool.Count - 1; i > 0; i--) {
 					if (m_ImagesPool[i]) {
 						if (!culled_ImagesPool.Contains(m_ImagesPool[i].gameObject)) {
 							culled_ImagesPool.Add(m_ImagesPool[i].gameObject);
@@ -191,11 +191,13 @@ namespace UnityEngine.UI.Extensions {
 			}
 
 			// Remove any images that are not being used
-			for (var i = matches.Count; i < m_ImagesPool.Count; i++) {
-				if (m_ImagesPool[i]) {
-					if (!culled_ImagesPool.Contains(m_ImagesPool[i].gameObject)) {
-						culled_ImagesPool.Add(m_ImagesPool[i].gameObject);
-						m_ImagesPool.Remove(m_ImagesPool[i]);
+			for (int i = m_ImagesPool.Count - 1; i >= matches.Count; i--) {
+				if (i >= 0 && m_ImagesPool.Count > 0) {
+					if (m_ImagesPool[i]) {
+						if (!culled_ImagesPool.Contains(m_ImagesPool[i].gameObject)) {
+							culled_ImagesPool.Add(m_ImagesPool[i].gameObject);
+							m_ImagesPool.Remove(m_ImagesPool[i]);
+						}
 					}
 				}
 			}
@@ -514,7 +516,7 @@ namespace UnityEngine.UI.Extensions {
 			// Disable images on TextPic disable
             if (m_ImagesPool.Count >= 1) {
                 for (int i = 0; i < m_ImagesPool.Count; i++) {
-                    if(m_ImagesPool[i] != null) {
+                    if (m_ImagesPool[i] != null) {
 						m_ImagesPool[i].enabled = false;
 					}
                 }
