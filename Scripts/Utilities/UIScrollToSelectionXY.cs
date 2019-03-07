@@ -29,9 +29,8 @@ namespace UnityEngine.UI.Extensions
         private bool scrollToSelection = true;
 
         // references
-        private RectTransform scrollWindow;
-        private RectTransform currentCanvas;
-        private ScrollRect targetScrollRect;
+        private RectTransform scrollWindow = null;
+        private ScrollRect targetScrollRect = null;
         #endregion
 
         // Use this for initialization
@@ -85,8 +84,6 @@ namespace UnityEngine.UI.Extensions
 				// move the current scroll rect to correct position
 				float selectionPos = -selection.anchoredPosition.y;
 
-				//float elementHeight = layoutListGroup.sizeDelta.y / layoutListGroup.transform.childCount;
-				//float maskHeight = currentCanvas.sizeDelta.y + scrollWindow.sizeDelta.y;
 				float listPixelAnchor = layoutListGroup.anchoredPosition.y;
 
 				// get the element offset value depending on the cursor move direction
@@ -104,8 +101,6 @@ namespace UnityEngine.UI.Extensions
 				// move the current scroll rect to correct position
 				float selectionPos = -selection.anchoredPosition.x;
 
-				//float elementWidth = layoutListGroup.sizeDelta.x / layoutListGroup.transform.childCount;
-				//float maskWidth = currentCanvas.sizeDelta.y + scrollWindow.sizeDelta.y;
 				float listPixelAnchor = layoutListGroup.anchoredPosition.x;
 				
 				// get the element offset value depending on the cursor move direction

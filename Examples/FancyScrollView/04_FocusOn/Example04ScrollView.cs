@@ -7,7 +7,7 @@ namespace UnityEngine.UI.Extensions.Examples
     public class Example04ScrollView : FancyScrollView<Example04CellDto, Example04ScrollViewContext>
     {
         [SerializeField]
-        ScrollPositionController scrollPositionController;
+        ScrollPositionController scrollPositionController = null;
 
         Action<int> onSelectedIndexChanged;
 

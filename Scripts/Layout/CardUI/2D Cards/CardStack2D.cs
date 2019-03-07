@@ -25,7 +25,7 @@ public class CardStack2D : MonoBehaviour
     [SerializeField]
     private int usedCardXPos = 1280;
     [SerializeField]
-    private Transform[] cards;
+    private Transform[] cards = null;
 
     private int cardArrayOffset;
     private Vector3[] cardPositions;

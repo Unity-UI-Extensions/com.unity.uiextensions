@@ -18,7 +18,7 @@ public class CardPopup2D : MonoBehaviour
     [SerializeField]
     private float centeringSpeed = 4f;
     [SerializeField]
-    private bool singleScene;
+    private bool singleScene = false;
 
     private Rigidbody rbody;
     private bool isFalling;

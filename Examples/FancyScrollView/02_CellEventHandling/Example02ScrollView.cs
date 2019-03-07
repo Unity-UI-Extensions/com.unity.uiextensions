@@ -6,7 +6,7 @@ namespace UnityEngine.UI.Extensions.Examples
     public class Example02ScrollView : FancyScrollView<Example02CellDto, Example02ScrollViewContext>
     {
         [SerializeField]
-        ScrollPositionController scrollPositionController;
+        ScrollPositionController scrollPositionController = null;
 
         void Awake()
         {

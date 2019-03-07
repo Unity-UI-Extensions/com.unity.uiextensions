@@ -33,7 +33,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 		List<GameObject> rgbSliders = new List<GameObject>();
 
 		[SerializeField]
-		GameObject alphaSlider;
+		GameObject alphaSlider = null;
 
 		public void SetHSVSlidersOn(bool value)
 		{

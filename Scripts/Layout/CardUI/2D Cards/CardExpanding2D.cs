@@ -17,22 +17,22 @@ public class CardExpanding2D : MonoBehaviour
     private float lerpSpeed = 8f;
 
     [SerializeField]
-    private RectTransform buttonRect;
-    private Vector2 closeButtonMin;
-    private Vector2 closeButtonMax;
+    private RectTransform buttonRect = null;
+    private Vector2 closeButtonMin = Vector2.zero;
+    private Vector2 closeButtonMax = Vector2.zero;
 
     [SerializeField]
-    private Vector2 cardSize;
+    private Vector2 cardSize = Vector2.zero;
     [SerializeField]
-    private Vector2 pageSize;
+    private Vector2 pageSize = Vector2.zero;
 
-    private Vector2 cardCenter;
+    private Vector2 cardCenter = Vector2.zero;
     private Vector2 pageCenter = Vector2.zero;
 
-    private Vector2 cardMin;
-    private Vector2 cardMax;
-    private Vector2 pageMin;
-    private Vector2 pageMax;
+    private Vector2 cardMin = Vector2.zero;
+    private Vector2 cardMax = Vector2.zero;
+    private Vector2 pageMin = Vector2.zero;
+    private Vector2 pageMax = Vector2.zero;
 
     private RectTransform rectTrans;
     ///I wouldn't recommend changing animationActive's value here unless you want the card to start as a page.

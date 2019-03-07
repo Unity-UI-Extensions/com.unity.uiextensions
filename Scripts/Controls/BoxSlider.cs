@@ -298,8 +298,12 @@ namespace UnityEngine.UI.Extensions
                 anchorMin[0] = anchorMax[0] = (NormalizedValueX);
                 anchorMin[1] = anchorMax[1] = (NormalizedValueY);
 
-                m_HandleRect.anchorMin = anchorMin;
-                m_HandleRect.anchorMax = anchorMax;
+                if (Application.isPlaying)
+                {
+                    m_HandleRect.anchorMin = anchorMin;
+                    m_HandleRect.anchorMax = anchorMax;
+                }
+
             }
         }
 

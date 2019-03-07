@@ -10,7 +10,7 @@ namespace UnityEngine.UI.Extensions
     public class ScrollPositionController : UIBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         [SerializeField]
-        RectTransform viewport;
+        RectTransform viewport = null;
         [SerializeField]
         ScrollDirection directionOfRecognize = ScrollDirection.Vertical;
         [SerializeField]

@@ -8,13 +8,13 @@ namespace UnityEngine.UI.Extensions.Examples
     public class Example04Scene : MonoBehaviour
     {
         [SerializeField]
-        Example04ScrollView scrollView;
+        Example04ScrollView scrollView = null;
         [SerializeField]
-        Button prevCellButton;
+        Button prevCellButton = null;
         [SerializeField]
-        Button nextCellButton;
+        Button nextCellButton = null;
         [SerializeField]
-        Text selectedItemInfo;
+        Text selectedItemInfo = null;
 
         void Start()
         {

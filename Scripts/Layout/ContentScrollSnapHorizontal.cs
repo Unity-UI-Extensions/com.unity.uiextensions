@@ -39,7 +39,7 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         [Tooltip("Event is triggered whenever the scroll rect starts to move, even when triggered programatically")]
         private StartMovementEvent m_StartMovementEvent = new StartMovementEvent();
-        public StartMovementEvent startMovementEvent
+        public StartMovementEvent MovementStarted
         {
             get
             {
@@ -54,7 +54,7 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         [Tooltip("Event is triggered whenever the closest item to the center of the scrollrect changes")]
         private CurrentItemChangeEvent m_CurrentItemChangeEvent = new CurrentItemChangeEvent();
-        public CurrentItemChangeEvent currentItemChangeEvent
+        public CurrentItemChangeEvent CurrentItemChanged
         {
             get
             {
@@ -69,7 +69,7 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         [Tooltip("Event is triggered when the ContentSnapScroll decides which item it is going to snap to. Returns the index of the closest position.")]
         private FoundItemToSnapToEvent m_FoundItemToSnapToEvent = new FoundItemToSnapToEvent();
-        public FoundItemToSnapToEvent foundItemToSnapToEvent
+        public FoundItemToSnapToEvent ItemFoundToSnap
         {
             get
             {
@@ -84,7 +84,7 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         [Tooltip("Event is triggered when we finally settle on an element. Returns the index of the item's position.")]
         private SnappedToItemEvent m_SnappedToItemEvent = new SnappedToItemEvent();
-        public SnappedToItemEvent snappedToItemEvent
+        public SnappedToItemEvent ItemSnappedTo
         {
             get
             {
@@ -96,20 +96,18 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        private ScrollRect scrollRect;
-        private RectTransform scrollRectTransform;
-        private RectTransform contentTransform;
-        private List<Vector3> contentPositions;
-        private Vector3 lerpTarget;
-        private float totalScrollableWidth;
-        private DrivenRectTransformTracker tracker;
-        private bool lerp;
-        private float mLerpTime;
-        private int _closestItem;
-        private bool lerpToContentRunning;
-        private bool mSliding;
-        private bool mLerping;
-        private bool contentIsHorizonalLayoutGroup
+        private ScrollRect scrollRect = null;
+        private RectTransform scrollRectTransform = null;
+        private RectTransform contentTransform = null;
+        private List<Vector3> contentPositions = null;
+        private Vector3 lerpTarget = Vector3.zero;
+        private float totalScrollableWidth = 0;
+        private DrivenRectTransformTracker tracker ;
+        private float mLerpTime = 0;
+        private int _closestItem = 0;
+        private bool mSliding = false;
+        private bool mLerping = false;
+        private bool ContentIsHorizonalLayoutGroup
         {
             get
             {
@@ -121,18 +119,18 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// Returns if the SnapScroll is moving
         /// </summary>
-        public bool moving
+        public bool Moving
         {
             get
             {
-                return sliding || lerping;
+                return Sliding || Lerping;
             }
         }
 
         /// <summary>
         /// Returns if the SnapScroll is moving because of a touch
         /// </summary>
-        public bool sliding
+        public bool Sliding
         {
             get
             {
@@ -142,7 +140,7 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// Returns if the SnapScroll is moving programmatically
         /// </summary>
-        public bool lerping
+        public bool Lerping
         {
             get
             {
@@ -154,7 +152,7 @@ namespace UnityEngine.UI.Extensions
         /// Returns the closest item's index
         /// *Note this is zero based, and based on position not child order
         /// </summary>
-        public int closestItemIndex
+        public int ClosestItemIndex
         {
             get
             {
@@ -165,7 +163,7 @@ namespace UnityEngine.UI.Extensions
         /// Returns the lerpTarget's index
         /// *Note this is zero-based, and based on position not child order
         /// </summary>
-        public int lerpTargetIndex
+        public int LerpTargetIndex
         {
             get
             {
@@ -216,7 +214,7 @@ namespace UnityEngine.UI.Extensions
 
         private void SetupSnapScroll()
         {
-            if (contentIsHorizonalLayoutGroup)
+            if (ContentIsHorizonalLayoutGroup)
             {
                 //because you can't get the anchored positions of UI elements
                 //when they are in a layout group (as far as I could tell)
@@ -320,9 +318,9 @@ namespace UnityEngine.UI.Extensions
         /// <param name="info">All of the info about how you want it to move</param>
         public void GoTo(MoveInfo info)
         {
-            if (!moving && info.index != closestItemIndex)
+            if (!Moving && info.index != ClosestItemIndex)
             {
-                startMovementEvent.Invoke();
+                MovementStarted.Invoke();
             }
 
             if (info.indexType == MoveInfo.IndexType.childIndex)
@@ -341,7 +339,7 @@ namespace UnityEngine.UI.Extensions
         {
             int clampedIndex = Mathf.Clamp(index, 0, contentPositions.Count - 1); //contentPositions amount == the amount of available children
 
-            if (contentIsHorizonalLayoutGroup) //the contentPositions are in child order
+            if (ContentIsHorizonalLayoutGroup) //the contentPositions are in child order
             {
                 lerpTarget = contentPositions[clampedIndex];
                 if (jump)
@@ -408,13 +406,13 @@ namespace UnityEngine.UI.Extensions
         public void NextItem()
         {
             int index;
-            if (sliding)
+            if (Sliding)
             {
-                index = closestItemIndex + 1;
+                index = ClosestItemIndex + 1;
             }
             else
             {
-                index = lerpTargetIndex + 1;
+                index = LerpTargetIndex + 1;
             }
             MoveInfo info = new MoveInfo(MoveInfo.IndexType.positionIndex, index, jumpToItem, lerpTime);
             GoTo(info);
@@ -427,13 +425,13 @@ namespace UnityEngine.UI.Extensions
         public void PreviousItem()
         {
             int index;
-            if (sliding)
+            if (Sliding)
             {
-                index = closestItemIndex - 1;
+                index = ClosestItemIndex - 1;
             }
             else
             {
-                index = lerpTargetIndex - 1;
+                index = LerpTargetIndex - 1;
             }
             MoveInfo info = new MoveInfo(MoveInfo.IndexType.positionIndex, index, jumpToItem, lerpTime);
             GoTo(info);
@@ -464,9 +462,9 @@ namespace UnityEngine.UI.Extensions
         public void OnBeginDrag(PointerEventData ped)
         {
             StopMovement();
-            if (!moving)
+            if (!Moving)
             {
-                startMovementEvent.Invoke();
+                MovementStarted.Invoke();
             }
         }
 
@@ -477,11 +475,11 @@ namespace UnityEngine.UI.Extensions
 
         private void Update()
         {
-            if (_closestItem != closestItemIndex)
+            if (_closestItem != ClosestItemIndex)
             {
-                currentItemChangeEvent.Invoke(closestItemIndex);
-                ChangePaginationInfo(closestItemIndex);
-                _closestItem = closestItemIndex;
+                CurrentItemChanged.Invoke(ClosestItemIndex);
+                ChangePaginationInfo(ClosestItemIndex);
+                _closestItem = ClosestItemIndex;
             }
         }
 
@@ -494,7 +492,7 @@ namespace UnityEngine.UI.Extensions
             }
 
             lerpTarget = FindClosestFrom(contentTransform.localPosition);
-            foundItemToSnapToEvent.Invoke(lerpTargetIndex);
+            ItemFoundToSnap.Invoke(LerpTargetIndex);
 
             while (Vector3.Distance(contentTransform.localPosition, lerpTarget) > 1)
             {
@@ -504,12 +502,12 @@ namespace UnityEngine.UI.Extensions
             mSliding = false;
             scrollRect.velocity = Vector2.zero;
             contentTransform.localPosition = lerpTarget;
-            snappedToItemEvent.Invoke(lerpTargetIndex);
+            ItemSnappedTo.Invoke(LerpTargetIndex);
         }
 
         private IEnumerator LerpToContent()
         {
-            foundItemToSnapToEvent.Invoke(lerpTargetIndex);
+            ItemFoundToSnap.Invoke(LerpTargetIndex);
             mLerping = true;
             Vector3 originalContentPos = contentTransform.localPosition;
             float elapsedTime = 0;
@@ -519,7 +517,7 @@ namespace UnityEngine.UI.Extensions
                 contentTransform.localPosition = Vector3.Lerp(originalContentPos, lerpTarget, (elapsedTime / mLerpTime));
                 yield return null;
             }
-            snappedToItemEvent.Invoke(lerpTargetIndex);
+            ItemSnappedTo.Invoke(LerpTargetIndex);
             mLerping = false;
         }
         #endregion

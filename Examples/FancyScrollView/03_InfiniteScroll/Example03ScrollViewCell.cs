@@ -6,13 +6,13 @@ namespace UnityEngine.UI.Extensions.Examples
     public class Example03ScrollViewCell : FancyScrollViewCell<Example03CellDto, Example03ScrollViewContext>
     {
         [SerializeField]
-        Animator animator;
+        Animator animator = null;
         [SerializeField]
-        Text message;
+        Text message = null;
         [SerializeField]
-        Image image;
+        Image image = null;
         [SerializeField]
-        Button button;
+        Button button = null;
 
         static readonly int scrollTriggerHash = Animator.StringToHash("scroll");
 

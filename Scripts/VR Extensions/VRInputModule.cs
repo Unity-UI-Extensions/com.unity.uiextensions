@@ -12,8 +12,6 @@ namespace UnityEngine.UI.Extensions
 
         static VRInputModule _singleton;
 
-        private int counter;
-
         private static bool mouseClicked;
         public static Vector3 cursorPosition;
 
@@ -38,8 +36,10 @@ namespace UnityEngine.UI.Extensions
             if (mouseClicked)
             {
                 //BaseEventData data = GetBaseEventData(); //Original from Process().  Can't be called here so is replaced by the next line:
-                BaseEventData data = new BaseEventData(_singleton.eventSystem);
-                data.selectedObject = targetObject;
+                BaseEventData data = new BaseEventData(_singleton.eventSystem)
+                {
+                    selectedObject = targetObject
+                };
                 ExecuteEvents.Execute(targetObject, data, ExecuteEvents.submitHandler);
                 print("clicked " + targetObject.name);
                 mouseClicked = false;
@@ -57,8 +57,10 @@ namespace UnityEngine.UI.Extensions
         public static void PointerEnter(GameObject obj)
         {
             print("PointerEnter " + obj.name);
-            PointerEventData pEvent = new PointerEventData(_singleton.eventSystem);
-            pEvent.pointerEnter = obj;
+            PointerEventData pEvent = new PointerEventData(_singleton.eventSystem)
+            {
+                pointerEnter = obj
+            };
             RaycastResult rcr = new RaycastResult() { worldPosition = cursorPosition };
             pEvent.pointerCurrentRaycast = rcr;
             ExecuteEvents.Execute(obj, pEvent, ExecuteEvents.pointerEnterHandler);
