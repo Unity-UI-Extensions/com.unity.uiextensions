@@ -505,7 +505,10 @@ namespace UnityEngine.UI.Extensions
         {
             Vector2 size = _draggingObjectOriginalSize;
 
-            if (_currentReorderableListRaycasted != null && _currentReorderableListRaycasted.IsDropable && _currentReorderableListRaycasted.Content.childCount > 0)
+            if (_currentReorderableListRaycasted != null
+                && _currentReorderableListRaycasted.IsDropable
+                && _currentReorderableListRaycasted.Content.childCount > 0
+                && _currentReorderableListRaycasted.EqualizeSizesOnDrag)
             {
                 var firstChild = _currentReorderableListRaycasted.Content.GetChild(0);
                 if (firstChild != null)

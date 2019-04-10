@@ -28,6 +28,10 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Should dropped items displace a current item if the list is full?\n " +
             "Depending on the dropped items origin list, the displaced item may be added, dropped in space or deleted.")]
         public bool IsDisplacable = false;
+        
+        // This sets every item size (when being dragged over this list) to the current size of the first element of this list
+        [Tooltip("Should items being dragged over this list have their sizes equalized?")]
+        public bool EqualizeSizesOnDrag = false; 
 
         public int maxItems = int.MaxValue;
 
