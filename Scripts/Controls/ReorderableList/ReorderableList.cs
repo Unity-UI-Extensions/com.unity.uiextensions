@@ -41,6 +41,7 @@ namespace UnityEngine.UI.Extensions
         public ReorderableListHandler OnElementDisplacedTo = new ReorderableListHandler();
         public ReorderableListHandler OnElementDisplacedFromReturned = new ReorderableListHandler();
         public ReorderableListHandler OnElementDisplacedToReturned = new ReorderableListHandler();
+        public ReorderableListHandler OnElementDroppedWithMaxItems = new ReorderableListHandler();
 
         private RectTransform _content;
         private ReorderableListContent _listContent;

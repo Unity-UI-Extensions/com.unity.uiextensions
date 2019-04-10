@@ -392,12 +392,11 @@ namespace UnityEngine.UI.Extensions
 
                     if (!isValid)
                         throw new Exception("It's too late to cancel the Transfer! Do so in OnElementDropped!");
-
-
                 }
-                //We don't have an ReorderableList
+                
                 else
                 {
+                    //We don't have an ReorderableList
                     if (this.isDroppableInSpace)
                     {
                         _reorderableList.OnElementDropped.Invoke(new ReorderableList.ReorderableListEventStruct
@@ -414,6 +413,29 @@ namespace UnityEngine.UI.Extensions
                     {
                         CancelDrag();
                     }
+                    
+                    //If there is no more room for the element in the target list, notify it (OnElementDroppedWithMaxItems event) 
+                    if (_currentReorderableListRaycasted != null)
+                    {
+                        if ((_currentReorderableListRaycasted.Content.childCount >=
+                             _currentReorderableListRaycasted.maxItems &&
+                             !_currentReorderableListRaycasted.IsDisplacable)
+                            || _currentReorderableListRaycasted.maxItems <= 0)
+                        {
+                            GameObject o = _draggingObject.gameObject;
+                            _reorderableList.OnElementDroppedWithMaxItems.Invoke(
+                                new ReorderableList.ReorderableListEventStruct
+                                {
+                                    DroppedObject = o,
+                                    IsAClone = _reorderableList.CloneDraggedObject,
+                                    SourceObject = _reorderableList.CloneDraggedObject ? gameObject : o,
+                                    FromList = _reorderableList,
+                                    ToList = _currentReorderableListRaycasted,
+                                    FromIndex = _fromIndex
+                                });
+                        } 
+                    }
+                    
                 }
             }
 
