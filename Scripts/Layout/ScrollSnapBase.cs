@@ -69,12 +69,18 @@ namespace UnityEngine.UI.Extensions
 
         [Tooltip("Fast Swipe makes swiping page next / previous (optional)")]
         public Boolean UseFastSwipe = false;
+        
+        [Tooltip("Swipe Delta Threshold looks at the speed of input to decide if a swipe will be initiated (optional)")]
+        public Boolean UseSwipeDeltaThreshold = false;
 
         [Tooltip("Offset for how far a swipe has to travel to initiate a page change (optional)")]
         public int FastSwipeThreshold = 100;
 
         [Tooltip("Speed at which the ScrollRect will keep scrolling before slowing down and stopping (optional)")]
         public int SwipeVelocityThreshold = 100;
+        
+        [Tooltip("Threshold for swipe speed to initiate a swipe, below threshold will return to closest page (optional)")]
+        public float SwipeDeltaThreshold = 5.0f;
 
 	[Tooltip("Use time scale instead of unscaled time (optional)")]
 	public Boolean UseTimeScale = true;
