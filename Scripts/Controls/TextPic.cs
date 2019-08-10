@@ -339,7 +339,7 @@ namespace UnityEngine.UI.Extensions {
 						m_HrefInfos.Add(hrefInfo);
 					}
 					else {
-						if (m_HrefInfos.Count > 0) {
+						if (count <= m_HrefInfos.Count - 1) {
 							// Hyperlinks in text starting index
 							m_HrefInfos[count].startIndex = (usesNewRendering ? s_TextBuilder.Length : s_TextBuilder.Length * 4); 
 							m_HrefInfos[count].endIndex = (usesNewRendering ? (s_TextBuilder.Length + href_matches[i].Groups[2].Length - 1) : (s_TextBuilder.Length + href_matches[i].Groups[2].Length - 1) * 4 + 3);
@@ -623,10 +623,12 @@ namespace UnityEngine.UI.Extensions {
 
 			// Update the quad images
             updateQuad = true;
-
-			for (int i = 0; i < inspectorIconList.Length; i++) {
-                if (inspectorIconList[i].scale == Vector2.zero) {
-                    inspectorIconList[i].scale = Vector2.one;
+            
+            if (inspectorIconList != null) {
+                for (int i = 0; i < inspectorIconList.Length; i++) {
+                    if (inspectorIconList[i].scale == Vector2.zero) {
+                        inspectorIconList[i].scale = Vector2.one;
+                    }
                 }
             }
         }
