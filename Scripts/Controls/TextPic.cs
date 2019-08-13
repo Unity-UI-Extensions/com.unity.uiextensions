@@ -640,9 +640,14 @@ namespace UnityEngine.UI.Extensions {
 			usesNewRendering = false;
 
 			if (Application.unityVersion.StartsWith("2019.1.")) { 
-				int number = Convert.ToInt32(Application.unityVersion[7].ToString());
+				if (!Char.IsDigit(Application.unityVersion[8])) {
+					int number = Convert.ToInt32(Application.unityVersion[7].ToString());
 
-				if (number > 4) {
+					if (number > 4) {
+						usesNewRendering = true;
+					}
+				}
+				else {
 					usesNewRendering = true;
 				}
 			}
