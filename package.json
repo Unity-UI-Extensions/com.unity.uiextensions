@@ -1,18 +1,19 @@
 {
-  "name": "unity-ui-extensions",
-  "version": "2.0.1",
+  "name": "com.unity.uiextensions",
+  "version": "2.1.0",
   "description": "An extension project for the Unity3D UI system, all crafted and contributed by the awesome Unity community",
   "author": "Simon darkside Jackson <@SimonDarksideJ>",
   "contributors": [{
   "name": "SimonDarksideJ",
   "twitter": "@SimonDarksideJ"
 }],
+  "unity": "2019.1",
   "repository": {
   "type": "hg",
-  "url": "https://ddreaper@bitbucket.org/ddreaper/unity-ui-extensions"
+  "url": "https://ddreaper@bitbucket.org/UnityUIExtensions/unity-ui-extensions"
 },
   "bugs": {
-  "url": "https://bitbucket.org/ddreaper/unity-ui-extensions/issues"
+  "url": "https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/issues"
 },
   "keywords": [
   "Unity3D",
@@ -20,5 +21,5 @@
   "Unity UI",
   "UI Extensions"
 ], 
-  "license": "BSD"
+  "license": "BSD3"
 }
