@@ -1,9 +1,9 @@
 {
-    "name": "unityuiextensions.editor",
+    "name": "UnityUIExtensions.editor",
     "references": [
         "GUID:343deaaf83e0cee4ca978e7df0b80d21",
         "GUID:2bafac87e7f4b9b418d9448d219b01ab",
-        "GUID:823c070c567f2ad4084861fb6af005a7"
+        "GUID:cf414061cae3a954baf92763590f3127"
     ],
     "includePlatforms": [
         "Editor"
