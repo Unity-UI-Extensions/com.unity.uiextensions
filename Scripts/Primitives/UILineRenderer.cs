@@ -188,8 +188,9 @@ namespace UnityEngine.UI.Extensions
 						segments.Add (CreateLineCap (start, end, SegmentType.Start));
 					}
 
+					segments.Add(CreateLineSegment(start, end, SegmentType.Middle, segments.Count > 1 ? segments[segments.Count - 2] : null));
 					//segments.Add(CreateLineSegment(start, end, SegmentType.Full));
-					segments.Add (CreateLineSegment (start, end, SegmentType.Middle));
+					//segments.Add (CreateLineSegment (start, end, SegmentType.Middle));
 
 					if (lineCaps) {
 						segments.Add (CreateLineCap (start, end, SegmentType.End));
@@ -308,12 +309,22 @@ namespace UnityEngine.UI.Extensions
 			return null;
 		}
 
-		private UIVertex[] CreateLineSegment(Vector2 start, Vector2 end, SegmentType type)
+		private UIVertex[] CreateLineSegment(Vector2 start, Vector2 end, SegmentType type, UIVertex[] previousVert = null)
 		{
 			Vector2 offset = new Vector2((start.y - end.y), end.x - start.x).normalized * lineThickness / 2;
 
-			var v1 = start - offset;
-			var v2 = start + offset;
+			Vector2 v1 = Vector2.zero;
+			Vector2 v2 = Vector2.zero;
+			if (previousVert != null) {
+				v1 = new Vector2(previousVert[3].position.x, previousVert[3].position.y);
+				v2 = new Vector2(previousVert[2].position.x, previousVert[2].position.y);
+			} else {
+				v1 = start - offset;
+				v2 = start + offset;
+			}
+
+			//var v1 = start - offset;
+			//var v2 = start + offset;
 			var v3 = end + offset;
 			var v4 = end - offset;
             //Return the VDO with the correct uvs
