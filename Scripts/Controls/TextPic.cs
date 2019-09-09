@@ -98,7 +98,13 @@ namespace UnityEngine.UI.Extensions {
         // Used for custom selection as a variable for other scripts
         private bool selected = false;
 
-		// Positions of images for icon placement
+        public bool Selected
+        {
+            get { return selected; }
+            set { selected = value; }
+        }
+
+        // Positions of images for icon placement
         private List<Vector2> positions = new List<Vector2>();
         
         // Little hack to support multiple hrefs with same name
