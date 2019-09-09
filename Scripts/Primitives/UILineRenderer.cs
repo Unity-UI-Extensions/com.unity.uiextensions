@@ -189,8 +189,6 @@ namespace UnityEngine.UI.Extensions
 					}
 
 					segments.Add(CreateLineSegment(start, end, SegmentType.Middle, segments.Count > 1 ? segments[segments.Count - 2] : null));
-					//segments.Add(CreateLineSegment(start, end, SegmentType.Full));
-					//segments.Add (CreateLineSegment (start, end, SegmentType.Middle));
 
 					if (lineCaps) {
 						segments.Add (CreateLineCap (start, end, SegmentType.End));
@@ -208,7 +206,6 @@ namespace UnityEngine.UI.Extensions
 					}
 
 					segments.Add (CreateLineSegment (start, end, SegmentType.Middle));
-					//segments.Add(CreateLineSegment(start, end, SegmentType.Full));
 
 					if (lineCaps && i == pointsToDraw.Length - 1) {
 						segments.Add (CreateLineCap (start, end, SegmentType.End));
@@ -323,8 +320,6 @@ namespace UnityEngine.UI.Extensions
 				v2 = start + offset;
 			}
 
-			//var v1 = start - offset;
-			//var v2 = start + offset;
 			var v3 = end + offset;
 			var v4 = end - offset;
             //Return the VDO with the correct uvs
