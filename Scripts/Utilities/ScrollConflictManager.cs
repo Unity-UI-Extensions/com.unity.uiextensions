@@ -1,5 +1,6 @@
 /// Credit srinivas sunil 
 /// sourced from: https://bitbucket.org/ddreaper/unity-ui-extensions/pull-requests/21/develop_53/diff
+/// Updated by Hiep Eldest : https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/issues/300/scrollconflictmanager-not-working-if
 
 using UnityEngine.EventSystems;
 
@@ -14,8 +15,10 @@ namespace UnityEngine.UI.Extensions
     public class ScrollConflictManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         public ScrollRect ParentScrollRect;
-		public ScrollSnap ParentScrollSnap;
         private ScrollRect _myScrollRect;
+        private IBeginDragHandler[] _beginDragHandlers;
+        private IEndDragHandler[] _endDragHandlers;
+        private IDragHandler[] _dragHandlers;
         //This tracks if the other one should be scrolling instead of the current one.
         private bool scrollOther;
         //This tracks wether the other one should scroll horizontally or vertically.
@@ -41,6 +44,13 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        void Start()
+        {
+            _beginDragHandlers = ParentScrollRect.GetComponents<IBeginDragHandler>();
+            _dragHandlers = ParentScrollRect.GetComponents<IDragHandler>();
+            _endDragHandlers = ParentScrollRect.GetComponents<IEndDragHandler>();
+        }
+
         //IBeginDragHandler
         public void OnBeginDrag(PointerEventData eventData)
         {
@@ -54,8 +64,10 @@ namespace UnityEngine.UI.Extensions
                     scrollOther = true;
                     //disable the current scroll rect so it doesnt move.
                     _myScrollRect.enabled = false;
-                    ParentScrollRect.OnBeginDrag(eventData);
-					ParentScrollSnap.OnBeginDrag(eventData);
+                    for (int i = 0, length = _beginDragHandlers.Length; i < length; i++)
+                    {
+                        _beginDragHandlers[i].OnBeginDrag(eventData);
+                    }
                 }
             }
             else if (vertical > horizontal)
@@ -63,8 +75,10 @@ namespace UnityEngine.UI.Extensions
                 scrollOther = true;
                 //disable the current scroll rect so it doesnt move.
                 _myScrollRect.enabled = false;
-                ParentScrollRect.OnBeginDrag(eventData);
-				ParentScrollSnap.OnBeginDrag(eventData);
+                for (int i = 0, length = _beginDragHandlers.Length; i < length; i++)
+                {
+                    _beginDragHandlers[i].OnBeginDrag(eventData);
+                }
             }
         }
 
@@ -73,10 +87,12 @@ namespace UnityEngine.UI.Extensions
         {
             if (scrollOther)
             {
-                scrollOther = false;
                 _myScrollRect.enabled = true;
-                ParentScrollRect.OnEndDrag(eventData);
-				ParentScrollSnap.OnEndDrag(eventData);
+                scrollOther = false;
+                for (int i = 0, length = _endDragHandlers.Length; i < length; i++)
+                {
+                    _endDragHandlers[i].OnEndDrag(eventData);
+                }
             }
         }
 
@@ -85,8 +101,10 @@ namespace UnityEngine.UI.Extensions
         {
             if (scrollOther)
             {
-                ParentScrollRect.OnDrag(eventData);
-				ParentScrollSnap.OnDrag(eventData);
+                for (int i = 0, length = _endDragHandlers.Length; i < length; i++)
+                {
+                    _dragHandlers[i].OnDrag(eventData);
+                }
             }
         }
     }
