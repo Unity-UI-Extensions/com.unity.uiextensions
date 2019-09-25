@@ -11,7 +11,7 @@
   "unity": "2019.1",
   "repository": {
   "type": "git",
-  "url": "git+https://ddreaper@bitbucket.org/UnityUIExtensions/unity-ui-extensions.git"
+  "url": "git+https://bitbucket.org/UnityUIExtensions/unity-ui-extensions.git"
 },
   "bugs": {
   "url": "https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/issues"
