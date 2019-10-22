@@ -18,6 +18,7 @@ Category {
 	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "PreviewType"="Plane" "CanUseSpriteAtlas"="True"  }
 	Blend Zero SrcColor
 	Cull Off Lighting Off ZWrite Off
+	ZTest [unity_GUIZTestMode]
 	
 	SubShader {
 

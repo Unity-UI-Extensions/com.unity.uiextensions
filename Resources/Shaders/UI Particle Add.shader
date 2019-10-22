@@ -20,6 +20,7 @@ Category {
 	Blend SrcAlpha One
 	ColorMask RGB
 	Cull Off Lighting Off ZWrite Off
+	ZTest [unity_GUIZTestMode]
 	
 	SubShader {
 
