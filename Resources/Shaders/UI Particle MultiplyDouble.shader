@@ -19,6 +19,7 @@ Category {
 	Blend DstColor SrcColor
 	ColorMask RGB
 	Cull Off Lighting Off ZWrite Off
+	ZTest [unity_GUIZTestMode]
 	
 	SubShader {
 
