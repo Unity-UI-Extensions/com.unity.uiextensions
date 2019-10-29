@@ -125,7 +125,7 @@ namespace UnityEngine.UI.Extensions
                             GetPosition = v => v.position.y;
                         }
 
-                        float width = 1f / w / Zoom;
+                        float width = w == 0f ? 0f : 1f / w / Zoom;
                         float zoomOffset = (1 - (1 / Zoom)) * 0.5f;
                         float offset = (Offset * (1 - zoomOffset)) - zoomOffset;
 
