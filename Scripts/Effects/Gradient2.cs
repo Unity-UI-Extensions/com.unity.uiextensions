@@ -82,7 +82,7 @@ namespace UnityEngine.UI.Extensions
             get { return _offset; }
             set
             {
-                _offset = value;
+                _offset = Mathf.Clamp(value, -1f, 1f);
                 graphic.SetVerticesDirty();
             }
         }
@@ -92,7 +92,7 @@ namespace UnityEngine.UI.Extensions
             get { return _zoom; }
             set
             {
-                _zoom = value;
+                _zoom = Mathf.Clamp(value, 0.1f, 10f);
                 graphic.SetVerticesDirty();
             }
         }
@@ -125,7 +125,7 @@ namespace UnityEngine.UI.Extensions
                             GetPosition = v => v.position.y;
                         }
 
-                        float width = 1f / w / Zoom;
+                        float width = w == 0f ? 0f : 1f / w / Zoom;
                         float zoomOffset = (1 - (1 / Zoom)) * 0.5f;
                         float offset = (Offset * (1 - zoomOffset)) - zoomOffset;
 
@@ -148,7 +148,7 @@ namespace UnityEngine.UI.Extensions
                     {
                         Rect bounds = GetBounds(_vertexList);
 
-                        float height = 1f / bounds.height / Zoom;
+                        float height = bounds.height == 0f ? 0f : 1f / bounds.height / Zoom;
                         float radius = bounds.center.y / 2f;
                         Vector3 center = (Vector3.right + Vector3.up) * radius + Vector3.forward * _vertexList[0].position.z;
 
@@ -186,8 +186,8 @@ namespace UnityEngine.UI.Extensions
                     {
                         Rect bounds = GetBounds(_vertexList);
 
-                        float width = 1f / bounds.width / Zoom;
-                        float height = 1f / bounds.height / Zoom;
+                        float width = bounds.width == 0f ? 0f : 1f / bounds.width / Zoom;
+                        float height = bounds.height == 0f ? 0f : 1f / bounds.height / Zoom;
 
                         if (ModifyVertices)
                         {
