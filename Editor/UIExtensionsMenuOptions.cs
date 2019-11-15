@@ -1927,6 +1927,74 @@ namespace UnityEditor.UI
         }
         #endregion
 
+        #region RangeSlider
+        [MenuItem("GameObject/UI/Extensions/RangeSlider", false)]
+        static public void AddRangeSlider(MenuCommand menuCommand)
+        {
+            GameObject rangeSliderRoot = CreateUIElementRoot("Range Slider", menuCommand, new Vector2(160, 20));
+
+            GameObject background = CreateUIObject("Background", rangeSliderRoot);
+
+            GameObject fillArea = CreateUIObject("Fill Area", rangeSliderRoot);
+            GameObject fill = CreateUIObject("Fill", fillArea);
+
+            GameObject handleSlideArea = CreateUIObject("Handle Slide Area", rangeSliderRoot);
+            GameObject lowHandle = CreateUIObject("Low Handle", handleSlideArea);
+            GameObject highHandle = CreateUIObject("High Handle", handleSlideArea);
+
+            SetAnchorsAndStretch(rangeSliderRoot);
+            Image backgroundImage = background.AddComponent<Image>();
+            backgroundImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath);
+            backgroundImage.type = Image.Type.Sliced;
+            backgroundImage.fillCenter = false;
+
+            RectTransform backgroundRect = backgroundImage.rectTransform;
+            backgroundRect.anchorMin = new Vector2(0, 0.25f);
+            backgroundRect.anchorMax = new Vector2(1, 0.75f);
+            backgroundRect.sizeDelta = Vector2.zero;
+
+            RectTransform fillAreaRect = SetAnchorsAndStretch(fillArea);
+            fillAreaRect.anchorMin = new Vector2(0, 0.25f);
+            fillAreaRect.anchorMax = new Vector2(1, 0.75f);
+            fillAreaRect.offsetMin = new Vector2(5, 0);
+            fillAreaRect.offsetMax = new Vector2(-5, 0);
+
+            RectTransform fillRect = SetAnchorsAndStretch(fill);
+            Image fillImage = fill.AddComponent<Image>();
+            fillImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+            fillImage.type = Image.Type.Sliced;
+            fillImage.fillCenter = true;
+            fillRect.offsetMin = new Vector2(-5, 0);
+            fillRect.offsetMax = new Vector2(5, 0);
+
+            RectTransform handleSlideRect = SetAnchorsAndStretch(handleSlideArea);
+            handleSlideRect.anchorMin = new Vector2(0, 0.5f);
+            handleSlideRect.anchorMax = new Vector2(1, 0.5f);
+            handleSlideRect.offsetMin = new Vector2(10, -10);
+            handleSlideRect.offsetMax = new Vector2(-10, 10);
+
+            RectTransform lowHandleRect = SetAnchorsAndStretch(lowHandle);
+            Image lowHandleImage = lowHandle.AddComponent<Image>();
+            lowHandleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kKnobPath);
+            lowHandleRect.sizeDelta = new Vector2(20, 0);
+
+            RectTransform highHandleRect = SetAnchorsAndStretch(highHandle);
+            Image highHandleImage = highHandle.AddComponent<Image>();
+            highHandleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kKnobPath);
+            highHandleRect.sizeDelta = new Vector2(20, 0);
+
+            RangeSlider rangeSlider = rangeSliderRoot.AddComponent<RangeSlider>();
+            rangeSlider.FillRect = fillRect;
+            rangeSlider.LowHandleRect = lowHandleRect;
+            rangeSlider.HighHandleRect = highHandleRect;
+            rangeSlider.LowValue = rangeSlider.MinValue;
+            rangeSlider.HighValue = rangeSlider.MaxValue;
+            rangeSlider.targetGraphic = fillImage;
+
+            Selection.activeGameObject = rangeSliderRoot;
+        }
+        #endregion
+
         #region Menu Manager GO
         [MenuItem("GameObject/UI/Extensions/Menu Manager", false)]
         static public void AddMenuManager(MenuCommand menuCommand)
