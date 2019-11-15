@@ -1890,7 +1890,7 @@ namespace UnityEditor.UI
         #endregion
 
         #region Radial Slider
-        [MenuItem("GameObject/UI/Extensions/RadialSlider", false)]
+        [MenuItem("GameObject/UI/Extensions/Radial Slider", false)]
         static public void AddRadialSlider(MenuCommand menuCommand)
         {
             GameObject sliderRoot = CreateUIElementRoot("Radial Slider", menuCommand, s_ThickGUIElementSize);
@@ -1928,7 +1928,7 @@ namespace UnityEditor.UI
         #endregion
 
         #region RangeSlider
-        [MenuItem("GameObject/UI/Extensions/RangeSlider", false)]
+        [MenuItem("GameObject/UI/Extensions/Range Slider", false)]
         static public void AddRangeSlider(MenuCommand menuCommand)
         {
             GameObject rangeSliderRoot = CreateUIElementRoot("Range Slider", menuCommand, new Vector2(160, 20));
