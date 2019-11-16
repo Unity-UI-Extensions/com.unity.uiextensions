@@ -10,46 +10,82 @@ namespace UnityEngine.UI.Extensions
     public class Scroller : UIBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         [SerializeField] RectTransform viewport = default;
-        [SerializeField] ScrollDirection directionOfRecognize = ScrollDirection.Vertical;
+        [SerializeField] ScrollDirection scrollDirection = ScrollDirection.Vertical;
         [SerializeField] MovementType movementType = MovementType.Elastic;
         [SerializeField] float elasticity = 0.1f;
         [SerializeField] float scrollSensitivity = 1f;
         [SerializeField] bool inertia = true;
         [SerializeField] float decelerationRate = 0.03f;
-        [SerializeField] Snap snap = new Snap {
+        [SerializeField]
+        Snap snap = new Snap
+        {
             Enable = true,
             VelocityThreshold = 0.5f,
             Duration = 0.3f,
             Easing = Ease.InOutCubic
         };
+        [SerializeField] bool draggable = true;
+        [SerializeField] Scrollbar scrollbar = default;
+
+        public ScrollDirection ScrollDirection => scrollDirection;
+
+        public MovementType MovementType
+        {
+            get => movementType;
+            set => movementType = value;
+        }
+
+        public float ViewportSize => scrollDirection == ScrollDirection.Horizontal
+            ? viewport.rect.size.x
+            : viewport.rect.size.y;
+
+        public bool SnapEnabled
+        {
+            get => snap.Enable;
+            set => snap.Enable = value;
+        }
+
+        public float ScrollSensitivity
+        {
+            get => scrollSensitivity;
+            set => scrollSensitivity = value;
+        }
+
+        public bool Draggable
+        {
+            get => draggable;
+            set => draggable = value;
+        }
+
+        public Scrollbar Scrollbar => scrollbar;
+
+        public float Position
+        {
+            get => currentPosition;
+            set
+            {
+                autoScrollState.Reset();
+                velocity = 0f;
+                dragging = false;
+
+                UpdatePosition(value);
+            }
+        }
 
         readonly AutoScrollState autoScrollState = new AutoScrollState();
 
         Action<float> onValueChanged;
         Action<int> onSelectionChanged;
 
-        Vector2 pointerStartLocalPosition;
-        float dragStartScrollPosition;
-        float prevScrollPosition;
-        float currentScrollPosition;
+        Vector2 beginDragPointerPosition;
+        float scrollStartPosition;
+        float prevPosition;
+        float currentPosition;
 
         int totalCount;
 
         bool dragging;
         float velocity;
-
-        enum ScrollDirection
-        {
-            Vertical,
-            Horizontal,
-        }
-
-        public enum MovementType
-        {
-            Unrestricted = ScrollRect.MovementType.Unrestricted,
-            Elastic = ScrollRect.MovementType.Elastic,
-            Clamped = ScrollRect.MovementType.Clamped
-        }
 
         [Serializable]
         class Snap
@@ -69,7 +105,7 @@ namespace UnityEngine.UI.Extensions
             public float Duration;
             public Func<float, float> EasingFunction;
             public float StartTime;
-            public float EndScrollPosition;
+            public float EndPosition;
 
             public Action OnComplete;
 
@@ -80,7 +116,7 @@ namespace UnityEngine.UI.Extensions
                 Duration = 0f;
                 StartTime = 0f;
                 EasingFunction = DefaultEasingFunction;
-                EndScrollPosition = 0f;
+                EndPosition = 0f;
                 OnComplete = null;
             }
 
@@ -91,21 +127,32 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        protected override void Start()
+        {
+            base.Start();
+
+            if (scrollbar)
+            {
+                scrollbar.onValueChanged.AddListener(x => UpdatePosition(x * (totalCount - 1f), false));
+            }
+        }
+
         public void OnValueChanged(Action<float> callback) => onValueChanged = callback;
 
         public void OnSelectionChanged(Action<int> callback) => onSelectionChanged = callback;
 
         public void SetTotalCount(int totalCount) => this.totalCount = totalCount;
 
-        public void ScrollTo(int index, float duration, Action onComplete = null) => ScrollTo(index, duration, Ease.OutCubic, onComplete);
+        public void ScrollTo(float position, float duration, Action onComplete = null) => ScrollTo(position, duration, Ease.OutCubic, onComplete);
 
-        public void ScrollTo(int index, float duration, Ease easing, Action onComplete = null) => ScrollTo(index, duration, EasingFunction.Get(easing), onComplete);
+        public void ScrollTo(float position, float duration, Ease easing, Action onComplete = null) => ScrollTo(position, duration, EasingFunction.Get(easing), onComplete);
 
-        public void ScrollTo(int index, float duration, Func<float, float> easingFunction, Action onComplete = null)
+        public void ScrollTo(float position, float duration, Func<float, float> easingFunction, Action onComplete = null)
         {
             if (duration <= 0f)
             {
-                JumpTo(index);
+                Position = CircularPosition(position, totalCount);
+                onComplete?.Invoke();
                 return;
             }
 
@@ -114,55 +161,64 @@ namespace UnityEngine.UI.Extensions
             autoScrollState.Duration = duration;
             autoScrollState.EasingFunction = easingFunction ?? DefaultEasingFunction;
             autoScrollState.StartTime = Time.unscaledTime;
-            autoScrollState.EndScrollPosition = CalculateDestinationIndex(index);
+            autoScrollState.EndPosition = currentPosition + CalculateMovementAmount(currentPosition, position);
             autoScrollState.OnComplete = onComplete;
 
             velocity = 0f;
-            dragStartScrollPosition = currentScrollPosition;
+            scrollStartPosition = currentPosition;
 
-            UpdateSelection(Mathf.RoundToInt(CircularPosition(autoScrollState.EndScrollPosition, totalCount)));
+            UpdateSelection(Mathf.RoundToInt(CircularPosition(autoScrollState.EndPosition, totalCount)));
         }
 
         public void JumpTo(int index)
         {
+            if (index < 0 || index > totalCount - 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
             autoScrollState.Reset();
 
             velocity = 0f;
             dragging = false;
 
-            index = CalculateDestinationIndex(index);
-
             UpdateSelection(index);
             UpdatePosition(index);
         }
 
+        public MovementDirection GetMovementDirection(int sourceIndex, int destIndex)
+        {
+            var movementAmount = CalculateMovementAmount(sourceIndex, destIndex);
+            return scrollDirection == ScrollDirection.Horizontal
+                ? movementAmount > 0
+                    ? MovementDirection.Left
+                    : MovementDirection.Right
+                : movementAmount > 0
+                    ? MovementDirection.Up
+                    : MovementDirection.Down;
+        }
+
         void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
         {
-            if (eventData.button != PointerEventData.InputButton.Left)
+            if (!draggable || eventData.button != PointerEventData.InputButton.Left)
             {
                 return;
             }
 
-            pointerStartLocalPosition = Vector2.zero;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 viewport,
                 eventData.position,
                 eventData.pressEventCamera,
-                out pointerStartLocalPosition);
+                out beginDragPointerPosition);
 
-            dragStartScrollPosition = currentScrollPosition;
+            scrollStartPosition = currentPosition;
             dragging = true;
             autoScrollState.Reset();
         }
 
         void IDragHandler.OnDrag(PointerEventData eventData)
         {
-            if (eventData.button != PointerEventData.InputButton.Left)
-            {
-                return;
-            }
-
-            if (!dragging)
+            if (!draggable || eventData.button != PointerEventData.InputButton.Left || !dragging)
             {
                 return;
             }
@@ -171,16 +227,16 @@ namespace UnityEngine.UI.Extensions
                 viewport,
                 eventData.position,
                 eventData.pressEventCamera,
-                out var localCursor))
+                out var dragPointerPosition))
             {
                 return;
             }
 
-            var pointerDelta = localCursor - pointerStartLocalPosition;
-            var position = (directionOfRecognize == ScrollDirection.Horizontal ? -pointerDelta.x : pointerDelta.y)
+            var pointerDelta = dragPointerPosition - beginDragPointerPosition;
+            var position = (scrollDirection == ScrollDirection.Horizontal ? -pointerDelta.x : pointerDelta.y)
                            / ViewportSize
                            * scrollSensitivity
-                           + dragStartScrollPosition;
+                           + scrollStartPosition;
 
             var offset = CalculateOffset(position);
             position += offset;
@@ -198,17 +254,13 @@ namespace UnityEngine.UI.Extensions
 
         void IEndDragHandler.OnEndDrag(PointerEventData eventData)
         {
-            if (eventData.button != PointerEventData.InputButton.Left)
+            if (!draggable || eventData.button != PointerEventData.InputButton.Left)
             {
                 return;
             }
 
             dragging = false;
         }
-
-        float ViewportSize => directionOfRecognize == ScrollDirection.Horizontal
-            ? viewport.rect.size.x
-            : viewport.rect.size.y;
 
         float CalculateOffset(float position)
         {
@@ -230,10 +282,14 @@ namespace UnityEngine.UI.Extensions
             return 0f;
         }
 
-        void UpdatePosition(float position)
+        void UpdatePosition(float position, bool updateScrollbar = true)
         {
-            currentScrollPosition = position;
-            onValueChanged?.Invoke(currentScrollPosition);
+            onValueChanged?.Invoke(currentPosition = position);
+
+            if (scrollbar && updateScrollbar)
+            {
+                scrollbar.value = Mathf.Clamp01(position / Mathf.Max(totalCount - 1f, 1e-4f));
+            }
         }
 
         void UpdateSelection(int index) => onSelectionChanged?.Invoke(index);
@@ -244,7 +300,7 @@ namespace UnityEngine.UI.Extensions
         void Update()
         {
             var deltaTime = Time.unscaledDeltaTime;
-            var offset = CalculateOffset(currentScrollPosition);
+            var offset = CalculateOffset(currentPosition);
 
             if (autoScrollState.Enable)
             {
@@ -252,7 +308,7 @@ namespace UnityEngine.UI.Extensions
 
                 if (autoScrollState.Elastic)
                 {
-                    position = Mathf.SmoothDamp(currentScrollPosition, currentScrollPosition + offset, ref velocity,
+                    position = Mathf.SmoothDamp(currentPosition, currentPosition + offset, ref velocity,
                         elasticity, Mathf.Infinity, deltaTime);
 
                     if (Mathf.Abs(velocity) < 0.01f)
@@ -265,8 +321,8 @@ namespace UnityEngine.UI.Extensions
                 else
                 {
                     var alpha = Mathf.Clamp01((Time.unscaledTime - autoScrollState.StartTime) /
-                                              Mathf.Max(autoScrollState.Duration, float.Epsilon));
-                    position = Mathf.LerpUnclamped(dragStartScrollPosition, autoScrollState.EndScrollPosition,
+                                               Mathf.Max(autoScrollState.Duration, float.Epsilon));
+                    position = Mathf.LerpUnclamped(scrollStartPosition, autoScrollState.EndPosition,
                         autoScrollState.EasingFunction(alpha));
 
                     if (Mathf.Approximately(alpha, 1f))
@@ -279,7 +335,7 @@ namespace UnityEngine.UI.Extensions
             }
             else if (!dragging && (!Mathf.Approximately(offset, 0f) || !Mathf.Approximately(velocity, 0f)))
             {
-                var position = currentScrollPosition;
+                var position = currentPosition;
 
                 if (movementType == MovementType.Elastic && !Mathf.Approximately(offset, 0f))
                 {
@@ -302,7 +358,7 @@ namespace UnityEngine.UI.Extensions
 
                     if (snap.Enable && Mathf.Abs(velocity) < snap.VelocityThreshold)
                     {
-                        ScrollTo(Mathf.RoundToInt(currentScrollPosition), snap.Duration, snap.Easing);
+                        ScrollTo(Mathf.RoundToInt(currentPosition), snap.Duration, snap.Easing);
                     }
                 }
                 else
@@ -330,28 +386,28 @@ namespace UnityEngine.UI.Extensions
 
             if (!autoScrollState.Enable && dragging && inertia)
             {
-                var newVelocity = (currentScrollPosition - prevScrollPosition) / deltaTime;
+                var newVelocity = (currentPosition - prevPosition) / deltaTime;
                 velocity = Mathf.Lerp(velocity, newVelocity, deltaTime * 10f);
             }
 
-            prevScrollPosition = currentScrollPosition;
+            prevPosition = currentPosition;
         }
 
-        int CalculateDestinationIndex(int index) => movementType == MovementType.Unrestricted
-            ? CalculateClosestIndex(index)
-            : Mathf.Clamp(index, 0, totalCount - 1);
-
-        int CalculateClosestIndex(int index)
+        float CalculateMovementAmount(float sourcePosition, float destPosition)
         {
-            var diff = CircularPosition(index, totalCount)
-                       - CircularPosition(currentScrollPosition, totalCount);
-
-            if (Mathf.Abs(diff) > totalCount * 0.5f)
+            if (movementType != MovementType.Unrestricted)
             {
-                diff = Mathf.Sign(-diff) * (totalCount - Mathf.Abs(diff));
+                return Mathf.Clamp(destPosition, 0, totalCount - 1) - sourcePosition;
             }
 
-            return Mathf.RoundToInt(diff + currentScrollPosition);
+            var movementAmount = CircularPosition(destPosition, totalCount) - CircularPosition(sourcePosition, totalCount);
+
+            if (Mathf.Abs(movementAmount) > totalCount * 0.5f)
+            {
+                movementAmount = Mathf.Sign(-movementAmount) * (totalCount - Mathf.Abs(movementAmount));
+            }
+
+            return movementAmount;
         }
 
         float CircularPosition(float p, int size) => size < 1 ? 0 : p < 0 ? size - 1 + (p + 1) % size : p % size;

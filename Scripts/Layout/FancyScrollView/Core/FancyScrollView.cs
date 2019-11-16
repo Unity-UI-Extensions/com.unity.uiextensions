@@ -1,15 +1,13 @@
 ﻿/// Credit setchi (https://github.com/setchi)
 /// Sourced from - https://github.com/setchi/FancyScrollView
 
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace UnityEngine.UI.Extensions
 {
     public abstract class FancyScrollView<TItemData, TContext> : MonoBehaviour where TContext : class, new()
     {
-        [SerializeField, Range(float.Epsilon, 1f)] protected float cellInterval = 0.2f;
+        [SerializeField, Range(1e-2f, 1f)] protected float cellInterval = 0.2f;
         [SerializeField, Range(0f, 1f)] protected float scrollOffset = 0.5f;
         [SerializeField] protected bool loop = false;
         [SerializeField] protected Transform cellContainer = default;
@@ -17,7 +15,7 @@ namespace UnityEngine.UI.Extensions
         readonly IList<FancyScrollViewCell<TItemData, TContext>> pool =
             new List<FancyScrollViewCell<TItemData, TContext>>();
 
-        float currentPosition;
+        protected float currentPosition;
 
         protected abstract GameObject CellPrefab { get; }
         protected IList<TItemData> ItemsSource { get; set; } = new List<TItemData>();
@@ -27,7 +25,7 @@ namespace UnityEngine.UI.Extensions
         /// Updates the contents.
         /// </summary>
         /// <param name="itemsSource">Items source.</param>
-        protected void UpdateContents(IList<TItemData> itemsSource)
+        protected virtual void UpdateContents(IList<TItemData> itemsSource)
         {
             ItemsSource = itemsSource;
             Refresh();
@@ -36,15 +34,15 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// Refreshes the cells.
         /// </summary>
-        protected void Refresh() => UpdatePosition(currentPosition, true);
+        protected virtual void Refresh() => UpdatePosition(currentPosition, true);
 
         /// <summary>
         /// Updates the scroll position.
         /// </summary>
         /// <param name="position">Position.</param>
-        protected void UpdatePosition(float position) => UpdatePosition(position, false);
+        protected virtual void UpdatePosition(float position) => UpdatePosition(position, false);
 
-        void UpdatePosition(float position, bool forceRefresh)
+        protected void UpdatePosition(float position, bool forceRefresh)
         {
             currentPosition = position;
 
@@ -62,15 +60,8 @@ namespace UnityEngine.UI.Extensions
 
         void ResizePool(float firstPosition)
         {
-            if (CellPrefab == null)
-            {
-                throw new NullReferenceException(nameof(CellPrefab));
-            }
-
-            if (cellContainer == null)
-            {
-                throw new MissingComponentException(nameof(cellContainer));
-            }
+            Debug.Assert(CellPrefab != null);
+            Debug.Assert(cellContainer != null);
 
             var addCount = Mathf.CeilToInt((1f - firstPosition) / cellInterval) - pool.Count;
             for (var i = 0; i < addCount; i++)
@@ -139,11 +130,7 @@ namespace UnityEngine.UI.Extensions
 #endif
     }
 
-    public sealed class FancyScrollViewNullContext
-    {
-    }
+    public sealed class FancyScrollViewNullContext { }
 
-    public abstract class FancyScrollView<TItemData> : FancyScrollView<TItemData, FancyScrollViewNullContext>
-    {
-    }
+    public abstract class FancyScrollView<TItemData> : FancyScrollView<TItemData, FancyScrollViewNullContext> { }
 }
