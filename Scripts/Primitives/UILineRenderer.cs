@@ -378,5 +378,86 @@ namespace UnityEngine.UI.Extensions
                 lineThickness = activeSprite.rect.height / pixelsPerUnit;
             }
         }
+
+        private int GetSegmentPointCount()
+        {
+            if (Segments?.Count > 0)
+            {
+                int pointCount = 0;
+                foreach (var segment in Segments)
+                {
+                    pointCount += segment.Length;
+                }
+                return pointCount;
+            }
+            return Points.Length;
+        }
+
+        /// <summary>
+        /// Get the Vector2 position of a line index
+        /// </summary>
+        /// <remarks>
+        /// Positive numbers should be used to specify Index and Segment
+        /// </remarks>
+        /// <param name="index">Requied Index of the point, starting from point 1</param>
+        /// <param name="segmentIndex">(optional) Required Segment the point is held in, Starting from Segment 1</param>
+        /// <returns>Vector2 position of the point within UI Space</returns>
+        public Vector2 GetPosition(int index, int segmentIndex = 0)
+        {
+            if (segmentIndex > 0)
+            {
+                return Segments[segmentIndex - 1][index - 1];
+            }
+            else if (Segments.Count > 0)
+            {
+                var segmentIndexCount = 0;
+                var indexCount = index;
+                foreach (var segment in Segments)
+                {
+                    if (indexCount - segment.Length > 0)
+                    {
+                        indexCount -= segment.Length;
+                        segmentIndexCount += 1;
+                    }
+                    else
+                    {
+                        break;    
+                    }
+                }
+                return Segments[segmentIndexCount][indexCount - 1];
+            }
+            else
+            {
+                return Points[index - 1];
+            }
+        }
+
+        /// <summary>
+        /// Get the Vector2 position of a line within a specific segment
+        /// </summary>
+        /// <param name="index">Requied Index of the point, starting from point 1</param>
+        /// <param name="segmentIndex"> Required Segment the point is held in, Starting from Segment 1</param>
+        /// <returns>Vector2 position of the point within UI Space</returns>
+        public Vector2 GetPositionBySegment(int index, int segment)
+        {
+            return Segments[segment][index - 1];
+        }
+
+        /// <summary>
+        /// Get the closest point between two given Vector2s from a given Vector2 point
+        /// </summary>
+        /// <param name="p1">Starting postion</param>
+        /// <param name="p2">End position</param>
+        /// <param name="p3">Desired / Selected point</param>
+        /// <returns>Closest Vector2 position of the target within UI Space</returns>
+        public Vector2 GetClosestPoint(Vector2 p1, Vector2 p2, Vector2 p3)
+        {
+            Vector2 from_p1_to_p3 = p3 - p1;
+            Vector2 from_p1_to_p2 = p2 - p1;
+            float dot = Vector2.Dot(from_p1_to_p3, from_p1_to_p2.normalized);
+            dot /= from_p1_to_p2.magnitude;
+            float t = Mathf.Clamp01(dot);
+            return p1 + from_p1_to_p2 * t;
+        }
     }
 }
