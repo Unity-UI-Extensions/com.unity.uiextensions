@@ -6,9 +6,9 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
+    [DisallowMultipleComponent]
     public class ScrollSnapScrollbarHelper : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
-
         internal IScrollSnap ss;
 
         public void OnBeginDrag(PointerEventData eventData)
