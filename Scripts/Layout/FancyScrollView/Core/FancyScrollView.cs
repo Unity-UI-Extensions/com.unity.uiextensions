@@ -5,26 +5,84 @@ using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
+    /// <summary>
+    /// スクロールビューを実装するための抽象基底クラス.
+    /// 無限スクロールおよびスナップに対応しています.
+    /// <see cref="FancyScrollView{TItemData, TContext}.Context"/> が不要な場合は
+    /// 代わりに <see cref="FancyScrollView{TItemData}"/> を使用します.
+    /// </summary>
+    /// <typeparam name="TItemData">アイテムのデータ型.</typeparam>
+    /// <typeparam name="TContext"><see cref="Context"/> の型.</typeparam>
     public abstract class FancyScrollView<TItemData, TContext> : MonoBehaviour where TContext : class, new()
     {
+        /// <summary>
+        /// セル同士の間隔.
+        /// </summary>
         [SerializeField, Range(1e-2f, 1f)] protected float cellInterval = 0.2f;
+
+        /// <summary>
+        /// スクロール位置の基準.
+        /// </summary>
+        /// <remarks>
+        /// たとえば、 <c>0.5</c> を指定してスクロール位置が <c>0</c> の場合, 中央に最初のセルが配置されます.
+        /// </remarks>
         [SerializeField, Range(0f, 1f)] protected float scrollOffset = 0.5f;
+
+        /// <summary>
+        /// セルを循環して配置させるどうか.
+        /// </summary>
+        /// <remarks>
+        /// <c>true</c> にすると最後のセルの後に最初のセル, 最初のセルの前に最後のセルが並ぶようになります.
+        /// 無限スクロールを実装する場合は <c>true</c> を指定します.
+        /// </remarks>
         [SerializeField] protected bool loop = false;
+
+        /// <summary>
+        /// セルの親要素となる <c>Transform</c>.
+        /// </summary>
         [SerializeField] protected Transform cellContainer = default;
 
         readonly IList<FancyScrollViewCell<TItemData, TContext>> pool =
             new List<FancyScrollViewCell<TItemData, TContext>>();
 
+        /// <summary>
+        /// 初期化済みかどうか.
+        /// </summary>
+        protected bool initialized;
+
+        /// <summary>
+        /// 現在のスクロール位置.
+        /// </summary>
         protected float currentPosition;
 
+        /// <summary>
+        /// セルの Prefab.
+        /// </summary>
         protected abstract GameObject CellPrefab { get; }
+
+        /// <summary>
+        /// アイテム一覧のデータ.
+        /// </summary>
         protected IList<TItemData> ItemsSource { get; set; } = new List<TItemData>();
+
+        /// <summary>
+        /// <typeparamref name="TContext"/> のインスタンス.
+        /// セルとスクロールビュー間で同じインスタンスが共有されます. 情報の受け渡しや状態の保持に使用します.
+        /// </summary>
         protected TContext Context { get; } = new TContext();
 
         /// <summary>
-        /// Updates the contents.
+        /// 初期化を行います.
         /// </summary>
-        /// <param name="itemsSource">Items source.</param>
+        /// <remarks>
+        /// 最初にセルが生成される直前に呼び出されます.
+        /// </remarks>
+        protected virtual void Initialize() { }
+
+        /// <summary>
+        /// 渡されたアイテム一覧に基づいて表示内容を更新します.
+        /// </summary>
+        /// <param name="itemsSource">アイテム一覧.</param>
         protected virtual void UpdateContents(IList<TItemData> itemsSource)
         {
             ItemsSource = itemsSource;
@@ -32,18 +90,24 @@ namespace UnityEngine.UI.Extensions
         }
 
         /// <summary>
-        /// Refreshes the cells.
+        /// セルの表示内容を更新します.
         /// </summary>
         protected virtual void Refresh() => UpdatePosition(currentPosition, true);
 
         /// <summary>
-        /// Updates the scroll position.
+        /// スクロール位置を更新します.
         /// </summary>
-        /// <param name="position">Position.</param>
+        /// <param name="position">スクロール位置.</param>
         protected virtual void UpdatePosition(float position) => UpdatePosition(position, false);
 
-        protected void UpdatePosition(float position, bool forceRefresh)
+        void UpdatePosition(float position, bool forceRefresh)
         {
+            if (!initialized)
+            {
+                Initialize();
+                initialized = true;
+            }
+
             currentPosition = position;
 
             var p = position - scrollOffset / cellInterval;
@@ -66,7 +130,8 @@ namespace UnityEngine.UI.Extensions
             var addCount = Mathf.CeilToInt((1f - firstPosition) / cellInterval) - pool.Count;
             for (var i = 0; i < addCount; i++)
             {
-                var cell = Instantiate(CellPrefab, cellContainer).GetComponent<FancyScrollViewCell<TItemData, TContext>>();
+                var cell = Instantiate(CellPrefab, cellContainer)
+                    .GetComponent<FancyScrollViewCell<TItemData, TContext>>();
                 if (cell == null)
                 {
                     throw new MissingComponentException(
@@ -118,7 +183,9 @@ namespace UnityEngine.UI.Extensions
 
         void LateUpdate()
         {
-            if (cachedLoop != loop || cachedCellInterval != cellInterval || cachedScrollOffset != scrollOffset)
+            if (cachedLoop != loop ||
+                cachedCellInterval != cellInterval ||
+                cachedScrollOffset != scrollOffset)
             {
                 cachedLoop = loop;
                 cachedCellInterval = cellInterval;
@@ -130,7 +197,16 @@ namespace UnityEngine.UI.Extensions
 #endif
     }
 
+    /// <summary>
+    /// <see cref="FancyScrollView{TItemData}"/> のコンテキストクラス.
+    /// </summary>
     public sealed class FancyScrollViewNullContext { }
 
+    /// <summary>
+    /// スクロールビューを実装するための抽象基底クラス.
+    /// 無限スクロールおよびスナップに対応しています.
+    /// </summary>
+    /// <typeparam name="TItemData"></typeparam>
+    /// <seealso cref="FancyScrollView{TItemData, TContext}"/>
     public abstract class FancyScrollView<TItemData> : FancyScrollView<TItemData, FancyScrollViewNullContext> { }
 }

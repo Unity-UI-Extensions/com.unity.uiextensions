@@ -7,15 +7,82 @@ using UnityEngine.UI.Extensions.EasingCore;
 
 namespace UnityEngine.UI.Extensions
 {
+    /// <summary>
+    /// スクロール位置の制御を行うコンポーネント.
+    /// </summary>
     public class Scroller : UIBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         [SerializeField] RectTransform viewport = default;
+
+        /// <summary>
+        /// ビューポートのサイズ.
+        /// </summary>
+        public float ViewportSize => scrollDirection == ScrollDirection.Horizontal
+            ? viewport.rect.size.x
+            : viewport.rect.size.y;
+
         [SerializeField] ScrollDirection scrollDirection = ScrollDirection.Vertical;
+
+        /// <summary>
+        /// スクロール方向.
+        /// </summary>
+        public ScrollDirection ScrollDirection => scrollDirection;
+
         [SerializeField] MovementType movementType = MovementType.Elastic;
+
+        /// <summary>
+        /// コンテンツがスクロール範囲を越えて移動するときに使用する挙動.
+        /// </summary>
+        public MovementType MovementType
+        {
+            get => movementType;
+            set => movementType = value;
+        }
+
         [SerializeField] float elasticity = 0.1f;
+
+        /// <summary>
+        /// コンテンツがスクロール範囲を越えて移動するときに使用する弾力性の量.
+        /// </summary>
+        public float Elasticity
+        {
+            get => elasticity;
+            set => elasticity = value;
+        }
+
         [SerializeField] float scrollSensitivity = 1f;
+
+        /// <summary>
+        /// <see cref="ViewportSize"/> の端から端まで Drag したときのスクロール位置の変化量.
+        /// </summary>
+        public float ScrollSensitivity
+        {
+            get => scrollSensitivity;
+            set => scrollSensitivity = value;
+        }
+
         [SerializeField] bool inertia = true;
+
+        /// <summary>
+        /// 慣性を使用するかどうか. <c>true</c> を指定すると慣性が有効に, <c>false</c> を指定すると慣性が無効になります.
+        /// </summary>
+        public bool Inertia
+        {
+            get => inertia;
+            set => inertia = value;
+        }
+
         [SerializeField] float decelerationRate = 0.03f;
+
+        /// <summary>
+        /// スクロールの減速率. <see cref="Inertia"/> が <c>true</c> の場合のみ有効です.
+        /// </summary>
+        public float DecelerationRate
+        {
+            get => decelerationRate;
+            set => decelerationRate = value;
+        }
+
         [SerializeField]
         Snap snap = new Snap
         {
@@ -24,41 +91,41 @@ namespace UnityEngine.UI.Extensions
             Duration = 0.3f,
             Easing = Ease.InOutCubic
         };
-        [SerializeField] bool draggable = true;
-        [SerializeField] Scrollbar scrollbar = default;
 
-        public ScrollDirection ScrollDirection => scrollDirection;
-
-        public MovementType MovementType
-        {
-            get => movementType;
-            set => movementType = value;
-        }
-
-        public float ViewportSize => scrollDirection == ScrollDirection.Horizontal
-            ? viewport.rect.size.x
-            : viewport.rect.size.y;
-
+        /// <summary>
+        /// <c>true</c> ならスナップし, <c>false</c>ならスナップしません.
+        /// </summary>
+        /// <remarks>
+        /// スナップを有効にすると, 慣性でスクロールが止まる直前に最寄りのセルへ移動します.
+        /// </remarks>
         public bool SnapEnabled
         {
             get => snap.Enable;
             set => snap.Enable = value;
         }
 
-        public float ScrollSensitivity
-        {
-            get => scrollSensitivity;
-            set => scrollSensitivity = value;
-        }
+        [SerializeField] bool draggable = true;
 
+        /// <summary>
+        /// Drag 入力を受付けるかどうか.
+        /// </summary>
         public bool Draggable
         {
             get => draggable;
             set => draggable = value;
         }
 
+        [SerializeField] Scrollbar scrollbar = default;
+
+        /// <summary>
+        /// スクロールバーのオブジェクト.
+        /// </summary>
         public Scrollbar Scrollbar => scrollbar;
 
+        /// <summary>
+        /// 現在のスクロール位置.
+        /// </summary>
+        /// <value></value>
         public float Position
         {
             get => currentPosition;
@@ -137,16 +204,51 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        /// <summary>
+        /// スクロール位置が変化したときのコールバックを設定します.
+        /// </summary>
+        /// <param name="callback">スクロール位置が変化したときのコールバック.</param>
         public void OnValueChanged(Action<float> callback) => onValueChanged = callback;
 
+        /// <summary>
+        /// 選択位置が変化したときのコールバックを設定します.
+        /// </summary>
+        /// <param name="callback">選択位置が変化したときのコールバック.</param>
         public void OnSelectionChanged(Action<int> callback) => onSelectionChanged = callback;
 
+        /// <summary>
+        /// アイテムの総数を設定します.
+        /// </summary>
+        /// <remarks>
+        /// <paramref name="totalCount"/> を元に最大スクロール位置を計算します.
+        /// </remarks>
+        /// <param name="totalCount">アイテムの総数.</param>
         public void SetTotalCount(int totalCount) => this.totalCount = totalCount;
 
+        /// <summary>
+        /// 指定した位置まで移動します.
+        /// </summary>
+        /// <param name="position">スクロール位置. <c>0f</c> ~ <c>totalCount - 1f</c> の範囲.</param>
+        /// <param name="duration">移動にかける秒数.</param>
+        /// <param name="onComplete">移動が完了した際に呼び出されるコールバック.</param>
         public void ScrollTo(float position, float duration, Action onComplete = null) => ScrollTo(position, duration, Ease.OutCubic, onComplete);
 
+        /// <summary>
+        /// 指定した位置まで移動します.
+        /// </summary>
+        /// <param name="position">スクロール位置. <c>0f</c> ~ <c>totalCount - 1f</c> の範囲.</param>
+        /// <param name="duration">移動にかける秒数.</param>
+        /// <param name="easing">移動に使用するイージング.</param>
+        /// <param name="onComplete">移動が完了した際に呼び出されるコールバック.</param>
         public void ScrollTo(float position, float duration, Ease easing, Action onComplete = null) => ScrollTo(position, duration, EasingFunction.Get(easing), onComplete);
 
+        /// <summary>
+        /// 指定した位置まで移動します.
+        /// </summary>
+        /// <param name="position">スクロール位置. <c>0f</c> ~ <c>totalCount - 1f</c> の範囲.</param>
+        /// <param name="duration">移動にかける秒数.</param>
+        /// <param name="easingFunction">移動に使用するイージング関数.</param>
+        /// <param name="onComplete">移動が完了した際に呼び出されるコールバック.</param>
         public void ScrollTo(float position, float duration, Func<float, float> easingFunction, Action onComplete = null)
         {
             if (duration <= 0f)
@@ -170,6 +272,10 @@ namespace UnityEngine.UI.Extensions
             UpdateSelection(Mathf.RoundToInt(CircularPosition(autoScrollState.EndPosition, totalCount)));
         }
 
+        /// <summary>
+        /// 指定したインデックスの位置までジャンプします.
+        /// </summary>
+        /// <param name="index">アイテムのインデックス.</param>
         public void JumpTo(int index)
         {
             if (index < 0 || index > totalCount - 1)
@@ -186,6 +292,13 @@ namespace UnityEngine.UI.Extensions
             UpdatePosition(index);
         }
 
+        /// <summary>
+        /// <paramref name="sourceIndex"/> から <paramref name="destIndex"/> に移動する際の移動方向を返します.
+        /// スクロール範囲が無制限に設定されている場合は, 最短距離の移動方向を返します.
+        /// </summary>
+        /// <param name="sourceIndex">移動元のインデックス.</param>
+        /// <param name="destIndex">移動先のインデックス.</param>
+        /// <returns></returns>
         public MovementDirection GetMovementDirection(int sourceIndex, int destIndex)
         {
             var movementAmount = CalculateMovementAmount(sourceIndex, destIndex);
@@ -198,6 +311,7 @@ namespace UnityEngine.UI.Extensions
                     : MovementDirection.Down;
         }
 
+        /// <inheritdoc/>
         void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
         {
             if (!draggable || eventData.button != PointerEventData.InputButton.Left)
@@ -216,6 +330,7 @@ namespace UnityEngine.UI.Extensions
             autoScrollState.Reset();
         }
 
+        /// <inheritdoc/>
         void IDragHandler.OnDrag(PointerEventData eventData)
         {
             if (!draggable || eventData.button != PointerEventData.InputButton.Left || !dragging)
@@ -252,6 +367,7 @@ namespace UnityEngine.UI.Extensions
             UpdatePosition(position);
         }
 
+        /// <inheritdoc/>
         void IEndDragHandler.OnEndDrag(PointerEventData eventData)
         {
             if (!draggable || eventData.button != PointerEventData.InputButton.Left)
@@ -400,14 +516,14 @@ namespace UnityEngine.UI.Extensions
                 return Mathf.Clamp(destPosition, 0, totalCount - 1) - sourcePosition;
             }
 
-            var movementAmount = CircularPosition(destPosition, totalCount) - CircularPosition(sourcePosition, totalCount);
+            var amount = CircularPosition(destPosition, totalCount) - CircularPosition(sourcePosition, totalCount);
 
-            if (Mathf.Abs(movementAmount) > totalCount * 0.5f)
+            if (Mathf.Abs(amount) > totalCount * 0.5f)
             {
-                movementAmount = Mathf.Sign(-movementAmount) * (totalCount - Mathf.Abs(movementAmount));
+                amount = Mathf.Sign(-amount) * (totalCount - Mathf.Abs(amount));
             }
 
-            return movementAmount;
+            return amount;
         }
 
         float CircularPosition(float p, int size) => size < 1 ? 0 : p < 0 ? size - 1 + (p + 1) % size : p % size;

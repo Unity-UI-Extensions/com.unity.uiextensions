@@ -3,53 +3,64 @@
 
 namespace UnityEngine.UI.Extensions
 {
+    /// <summary>
+    /// <see cref="FancyScrollView{TItemData, TContext}"/> のセルを実装するための抽象基底クラス.
+    /// <see cref="FancyScrollViewCell{TItemData, TContext}.Context"/> が不要な場合は
+    /// 代わりに <see cref="FancyScrollViewCell{TItemData}"/> を使用します.
+    /// </summary>
+    /// <typeparam name="TItemData">アイテムのデータ型.</typeparam>
+    /// <typeparam name="TContext"><see cref="Context"/> の型.</typeparam>
     public abstract class FancyScrollViewCell<TItemData, TContext> : MonoBehaviour where TContext : class, new()
     {
         /// <summary>
-        /// Gets or sets the index of the data.
+        /// このセルで表示しているデータのインデックス.
         /// </summary>
-        /// <value>The index of the data.</value>
         public int Index { get; set; } = -1;
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="T:FancyScrollView.FancyScrollViewCell`2"/> is visible.
+        /// このセルの可視状態.
         /// </summary>
-        /// <value><c>true</c> if is visible; otherwise, <c>false</c>.</value>
         public virtual bool IsVisible => gameObject.activeSelf;
 
         /// <summary>
-        /// Gets the context.
+        /// <see cref="FancyScrollView{TItemData, TContext}.Context"/> の参照.
+        /// セルとスクロールビュー間で同じインスタンスが共有されます. 情報の受け渡しや状態の保持に使用します.
         /// </summary>
-        /// <value>The context.</value>
         protected TContext Context { get; private set; }
 
         /// <summary>
-        /// Setup the context.
+        /// <see cref="Context"/> のセットアップを行います.
         /// </summary>
-        /// <param name="context">Context.</param>
+        /// <param name="context">コンテキスト.</param>
         public virtual void SetupContext(TContext context) => Context = context;
 
         /// <summary>
-        /// Sets the visible.
+        /// このセルの可視状態を設定します.
         /// </summary>
-        /// <param name="visible">If set to <c>true</c> visible.</param>
+        /// <param name="visible">可視状態なら <c>true</c>, 非可視状態なら <c>false</c>.</param>
         public virtual void SetVisible(bool visible) => gameObject.SetActive(visible);
 
         /// <summary>
-        /// Updates the content.
+        /// アイテムデータに基づいてこのセルの表示内容を更新します.
         /// </summary>
-        /// <param name="itemData">Item data.</param>
+        /// <param name="itemData">アイテムデータ.</param>
         public abstract void UpdateContent(TItemData itemData);
 
         /// <summary>
-        /// Updates the position.
+        /// <c>0.0f</c> ~ <c>1.0f</c> の値に基づいてこのセルのスクロール位置を更新します.
         /// </summary>
-        /// <param name="position">Position.</param>
+        /// <param name="position">ビューポート範囲の正規化されたスクロール位置.</param>
         public abstract void UpdatePosition(float position);
     }
 
+    /// <summary>
+    /// <see cref="FancyScrollView{TItemData}"/> のセルを実装するための抽象基底クラス.
+    /// </summary>
+    /// <typeparam name="TItemData">アイテムのデータ型.</typeparam>
+    /// <seealso cref="FancyScrollViewCell{TItemData, TContext}"/>
     public abstract class FancyScrollViewCell<TItemData> : FancyScrollViewCell<TItemData, FancyScrollViewNullContext>
     {
+        /// <inheritdoc/>
         public sealed override void SetupContext(FancyScrollViewNullContext context) => base.SetupContext(context);
     }
 }
