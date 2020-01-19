@@ -97,12 +97,20 @@ namespace UnityEngine.UI.Extensions
         {
             if (_isVertical)
             {
-                _recordOffsetY = items[0].GetComponent<RectTransform>().anchoredPosition.y - items[1].GetComponent<RectTransform>().anchoredPosition.y;
+                _recordOffsetY = items[1].GetComponent<RectTransform>().anchoredPosition.y - items[0].GetComponent<RectTransform>().anchoredPosition.y;
+                if (_recordOffsetY < 0)
+                {
+                    _recordOffsetY *= -1;
+                }
                 _disableMarginY = _recordOffsetY * _itemCount / 2;// _scrollRect.GetComponent<RectTransform>().rect.height/2 + items[0].sizeDelta.y;
             }
             if (_isHorizontal)
             {
                 _recordOffsetX = items[1].GetComponent<RectTransform>().anchoredPosition.x - items[0].GetComponent<RectTransform>().anchoredPosition.x;
+                if (_recordOffsetX < 0)
+                {
+                    _recordOffsetX *= -1;
+                }
                 _disableMarginX = _recordOffsetX * _itemCount / 2;//_scrollRect.GetComponent<RectTransform>().rect.width/2 + items[0].sizeDelta.x;
             }
 

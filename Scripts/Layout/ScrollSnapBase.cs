@@ -31,7 +31,7 @@ namespace UnityEngine.UI.Extensions
         internal int _previousPage;
         internal int _halfNoVisibleItems;
         internal bool _moveStarted;
-        internal bool _isInfinate; // Is a UI Infinite scroller attached to the control
+        internal bool _isInfinite; // Is a UI Infinite scroller attached to the control
         internal int _infiniteWindow; // The infinite window the control is in
         internal float _infiniteOffset; // How much to offset a repositioning
          private int _bottomItem, _topItem;
@@ -82,8 +82,8 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Threshold for swipe speed to initiate a swipe, below threshold will return to closest page (optional)")]
         public float SwipeDeltaThreshold = 5.0f;
 
-	[Tooltip("Use time scale instead of unscaled time (optional)")]
-	public Boolean UseTimeScale = true;
+	    [Tooltip("Use time scale instead of unscaled time (optional)")]
+	    public Boolean UseTimeScale = true;
 
         [Tooltip("The visible bounds area, controls which items are visible/enabled. *Note Should use a RectMask. (optional)")]
         public RectTransform MaskArea;
@@ -100,7 +100,7 @@ namespace UnityEngine.UI.Extensions
 
             internal set
             {
-                if (_isInfinate)
+                if (_isInfinite)
                 {
                     //Work out which infinite window we are in
                     float infWindow = (float)value / (float)_screensContainer.childCount;
@@ -199,7 +199,7 @@ namespace UnityEngine.UI.Extensions
             if (PrevButton)
                 PrevButton.GetComponent<Button>().onClick.AddListener(() => { PreviousScreen(); });
 
-            _isInfinate = GetComponent<UI_InfiniteScroll>() != null;
+            _isInfinite = GetComponent<UI_InfiniteScroll>() != null;
         }
 
         internal void InitialiseChildObjects()
@@ -213,6 +213,11 @@ namespace UnityEngine.UI.Extensions
                 }
 
                 InitialiseChildObjectsFromArray();
+
+                if (GetComponent<UI_InfiniteScroll>() != null)
+                {
+                    GetComponent<UI_InfiniteScroll>().Init();
+                }
             }
             else
             {
@@ -307,7 +312,7 @@ namespace UnityEngine.UI.Extensions
         //Function for switching screens with buttons
         public void NextScreen()
         {
-            if (_currentPage < _screens - 1 || _isInfinate)
+            if (_currentPage < _screens - 1 || _isInfinite)
             {
                 if (!_lerp) StartScreenChange();
 
@@ -322,7 +327,7 @@ namespace UnityEngine.UI.Extensions
         //Function for switching screens with buttons
         public void PreviousScreen()
         {
-            if (_currentPage > 0 || _isInfinate)
+            if (_currentPage > 0 || _isInfinite)
             {
                 if (!_lerp) StartScreenChange();
 
@@ -439,7 +444,7 @@ namespace UnityEngine.UI.Extensions
         private void ToggleNavigationButtons(int targetScreen)
         {
             //If this is using an Infinite Scroll, then don't disable
-            if (!_isInfinate)
+            if (!_isInfinite)
             {
                 if (PrevButton)
                 {
@@ -499,6 +504,11 @@ namespace UnityEngine.UI.Extensions
             if (PageStep > 8)
             {
                 PageStep = 9;
+            }
+            var infiniteScroll = GetComponent<UI_InfiniteScroll>();
+            if (ChildObjects != null && ChildObjects.Length > 0 && infiniteScroll != null && !infiniteScroll.InitByUser)
+            {
+                Debug.LogError("When using procedural children with a ScrollSnap (Adding Prefab ChildObjects) and the Infinite Scroll component\nYou must set the 'InitByUser' option to true, to enable late initialising");
             }
         }
 
