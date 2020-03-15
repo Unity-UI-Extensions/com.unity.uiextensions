@@ -112,7 +112,6 @@ namespace UnityEngine.UI.Extensions
                     m_image = GetComponent<Image>();
                     m_image.type = Image.Type.Filled;
                     m_image.fillMethod = Image.FillMethod.Radial360;
-                    m_image.fillOrigin = 3;
                     m_image.fillAmount = 0;
                 }
                 return m_image;
