@@ -10,7 +10,7 @@ namespace UnityEngine.UI.Extensions
 
     [RequireComponent(typeof(ScrollRect))]
     [AddComponentMenu("Layout/Extensions/Horizontal Scroll Snap")]
-    public class HorizontalScrollSnap : ScrollSnapBase, IEndDragHandler
+    public class HorizontalScrollSnap : ScrollSnapBase
     {
         void Start()
         {
@@ -235,13 +235,11 @@ namespace UnityEngine.UI.Extensions
                 GoToScreen(StartingScreen);
         }
 
-        #region Interfaces
-
         /// <summary>
         /// Release screen to swipe
         /// </summary>
         /// <param name="eventData"></param>
-        public void OnEndDrag(PointerEventData eventData)
+        public override void OnEndDrag(PointerEventData eventData)
         {
             _pointerDown = false;
 
@@ -307,7 +305,5 @@ namespace UnityEngine.UI.Extensions
                 }
             }
         }
-
-        #endregion
     }
 }
