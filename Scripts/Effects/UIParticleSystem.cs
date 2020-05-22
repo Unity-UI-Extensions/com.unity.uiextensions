@@ -25,6 +25,7 @@ namespace UnityEngine.UI.Extensions
         private int textureSheetAnimationFrames;
         private Vector2 textureSheetAnimationFrameSize;
         private ParticleSystemRenderer pRenderer;
+        private bool isInitialised = false;
 
         private Material currentMaterial;
 
@@ -147,6 +148,12 @@ namespace UnityEngine.UI.Extensions
             if (!gameObject.activeInHierarchy)
             {
                 return;
+            }
+
+            if (!isInitialised && !pSystem.main.playOnAwake)
+            {
+                pSystem.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+                isInitialised = true;
             }
 
             Vector2 temp = Vector2.zero;
@@ -330,7 +337,7 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        void Update()
+        private void Update()
         {
             if (!fixedTime && Application.isPlaying)
             {
@@ -346,7 +353,7 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        void LateUpdate()
+        private void LateUpdate()
         {
             if (!Application.isPlaying)
             {
@@ -376,6 +383,21 @@ namespace UnityEngine.UI.Extensions
         {
             currentMaterial = null;
             currentTexture = null;
+        }
+
+        public void StartParticleEmission()
+        {
+            pSystem.Play();
+        }
+
+        public void StopParticleEmission()
+        {
+            pSystem.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+
+        public void PauseParticleEmission()
+        {
+            pSystem.Stop(false, ParticleSystemStopBehavior.StopEmitting);
         }
     }
 #endif
