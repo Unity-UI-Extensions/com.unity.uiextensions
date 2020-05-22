@@ -17,19 +17,27 @@ namespace UnityEngine.UI.Extensions
     [AddComponentMenu("UI/Extensions/UI Window Base")]
     public class UIWindowBase : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
-        RectTransform m_transform = null;
         private bool _isDragging = false;
         public static bool ResetCoords = false;
         private Vector3 m_originalCoods = Vector3.zero;
         private Canvas m_canvas;
         private RectTransform m_canvasRectTransform;
-        public int KeepWindowInCanvas = 5;            // # of pixels of the window that must stay inside the canvas view.
+
+        [Tooltip("Number of pixels of the window that must stay inside the canvas view.")]
+        public int KeepWindowInCanvas = 5;
+
+        [Tooltip("The transform that is moved when dragging, can be left empty in which case its own transform is used.")]
+        public RectTransform RootTransform = null;
 
         // Use this for initialization
         void Start()
         {
-            m_transform = GetComponent<RectTransform>();
-            m_originalCoods = m_transform.position;
+            if (RootTransform == null)
+            {
+                RootTransform = GetComponent<RectTransform>();
+            }
+
+            m_originalCoods = RootTransform.position;
             m_canvas = GetComponentInParent<Canvas>();
             m_canvasRectTransform = m_canvas.GetComponent<RectTransform>();
         }
@@ -45,7 +53,7 @@ namespace UnityEngine.UI.Extensions
             if (_isDragging)
             {
                 var delta = ScreenToCanvas(eventData.position) - ScreenToCanvas(eventData.position - eventData.delta);
-                m_transform.localPosition += delta;
+                RootTransform.localPosition += delta;
             }
         }
 
@@ -69,7 +77,7 @@ namespace UnityEngine.UI.Extensions
 
         void resetCoordinatePosition()
         {
-            m_transform.position = m_originalCoods;
+            RootTransform.position = m_originalCoods;
             ResetCoords = false;
         }
 
