@@ -9,9 +9,18 @@ namespace UnityEngine.UI.Extensions
         [MenuItem("uGUI/Anchors to Corners %[")]
         static void AnchorsToCorners()
         {
+            if (Selection.transforms == null || Selection.transforms.Length == 0)
+            {
+                return;
+            }
+            Undo.IncrementCurrentGroup();
+            Undo.SetCurrentGroupName("AnchorsToCorners");
+            var undoGroup = Undo.GetCurrentGroup();
+
             foreach (Transform transform in Selection.transforms)
             {
                 RectTransform t = transform as RectTransform;
+                Undo.RecordObject( t, "AnchorsToCorners" );
                 RectTransform pt = Selection.activeTransform.parent as RectTransform;
 
                 if (t == null || pt == null) return;
@@ -25,19 +34,30 @@ namespace UnityEngine.UI.Extensions
                 t.anchorMax = newAnchorsMax;
                 t.offsetMin = t.offsetMax = new Vector2(0, 0);
             }
+            Undo.CollapseUndoOperations(undoGroup);
         }
 
         [MenuItem("uGUI/Corners to Anchors %]")]
         static void CornersToAnchors()
         {
+            if (Selection.transforms == null || Selection.transforms.Length == 0)
+            {
+                return;
+            }
+            Undo.IncrementCurrentGroup();
+            Undo.SetCurrentGroupName("CornersToAnchors");
+            var undoGroup = Undo.GetCurrentGroup();
+
             foreach (Transform transform in Selection.transforms)
             {
                 RectTransform t = transform as RectTransform;
+                Undo.RecordObject( t, "CornersToAnchors" );
 
                 if (t == null) return;
 
                 t.offsetMin = t.offsetMax = new Vector2(0, 0);
             }
+            Undo.CollapseUndoOperations(undoGroup);
         }
 
         [MenuItem("uGUI/Mirror Horizontally Around Anchors %;")]
