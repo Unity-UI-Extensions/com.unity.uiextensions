@@ -14,8 +14,12 @@ namespace UnityEngine.UI.Extensions
     [AddComponentMenu("UI/Extensions/Scrollrect Conflict Manager")]
     public class ScrollConflictManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
+        [Tooltip("The parent ScrollRect control hosting this ScrollSnap")]
         public ScrollRect ParentScrollRect;
-        public HorizontalScrollSnap ParentScrollSnapHorizontal;
+
+        [Tooltip("The parent ScrollSnap control hosting this Scroll Snap.\nIf left empty, it will use the ScrollSnap of the ParentScrollRect")]
+        public ScrollSnapBase ParentScrollSnap;
+
         private ScrollRect _myScrollRect;
         private IBeginDragHandler[] _beginDragHandlers;
         private IEndDragHandler[] _endDragHandlers;
@@ -35,13 +39,18 @@ namespace UnityEngine.UI.Extensions
             if (scrollOtherHorizontally)
             {
                 if (_myScrollRect.horizontal)
-                    Debug.Log("You have added the SecondScrollRect to a scroll view that already has both directions selected");
+                    Debug.LogError("You have added the SecondScrollRect to a scroll view that already has both directions selected");
                 if (!ParentScrollRect.horizontal)
-                    Debug.Log("The other scroll rect doesnt support scrolling horizontally");
+                    Debug.LogError("The other scroll rect doesnt support scrolling horizontally");
             }
             else if (!ParentScrollRect.vertical)
             {
-                Debug.Log("The other scroll rect doesnt support scrolling vertically");
+                Debug.LogError("The other scroll rect doesnt support scrolling vertically");
+            }
+
+            if (ParentScrollRect && !ParentScrollSnap)
+            {
+                ParentScrollSnap = ParentScrollRect.GetComponent<ScrollSnapBase>();
             }
         }
 
@@ -52,7 +61,8 @@ namespace UnityEngine.UI.Extensions
             _endDragHandlers = ParentScrollRect.GetComponents<IEndDragHandler>();
         }
 
-        //IBeginDragHandler
+        #region DragHandler
+
         public void OnBeginDrag(PointerEventData eventData)
         {
             //Get the absolute values of the x and y differences so we can see which one is bigger and scroll the other scroll rect accordingly
@@ -68,7 +78,7 @@ namespace UnityEngine.UI.Extensions
                     for (int i = 0, length = _beginDragHandlers.Length; i < length; i++)
                     {
                         _beginDragHandlers[i].OnBeginDrag(eventData);
-                        ParentScrollSnapHorizontal.OnBeginDrag(eventData);
+                        if(ParentScrollSnap) ParentScrollSnap.OnBeginDrag(eventData);
                     }
                 }
             }
@@ -80,12 +90,11 @@ namespace UnityEngine.UI.Extensions
                 for (int i = 0, length = _beginDragHandlers.Length; i < length; i++)
                 {
                     _beginDragHandlers[i].OnBeginDrag(eventData);
-                    ParentScrollSnapHorizontal.OnBeginDrag(eventData);
+                    if (ParentScrollSnap) ParentScrollSnap.OnBeginDrag(eventData);
                 }
             }
         }
 
-        //IEndDragHandler
         public void OnEndDrag(PointerEventData eventData)
         {
             if (scrollOther)
@@ -95,12 +104,11 @@ namespace UnityEngine.UI.Extensions
                 for (int i = 0, length = _endDragHandlers.Length; i < length; i++)
                 {
                     _endDragHandlers[i].OnEndDrag(eventData);
-                    ParentScrollSnapHorizontal.OnEndDrag(eventData);
+                    if (ParentScrollSnap) ParentScrollSnap.OnEndDrag(eventData);
                 }
             }
         }
 
-        //IDragHandler
         public void OnDrag(PointerEventData eventData)
         {
             if (scrollOther)
@@ -108,9 +116,11 @@ namespace UnityEngine.UI.Extensions
                 for (int i = 0, length = _endDragHandlers.Length; i < length; i++)
                 {
                     _dragHandlers[i].OnDrag(eventData);
-                    ParentScrollSnapHorizontal.OnDrag(eventData);
+                    if (ParentScrollSnap) ParentScrollSnap.OnDrag(eventData);
                 }
             }
         }
+
+        #endregion DragHandler
     }
 }
