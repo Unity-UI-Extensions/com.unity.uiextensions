@@ -10,7 +10,7 @@ namespace UnityEngine.UI.Extensions
 {
     [RequireComponent(typeof(ScrollRect))]
     [AddComponentMenu("Layout/Extensions/Vertical Scroll Snap")]
-    public class VerticalScrollSnap : ScrollSnapBase, IEndDragHandler
+    public class VerticalScrollSnap : ScrollSnapBase
     {
         void Start()
         {
@@ -228,12 +228,11 @@ namespace UnityEngine.UI.Extensions
             if(RestartOnEnable) GoToScreen(StartingScreen);
         }
 
-        #region Interfaces
         /// <summary>
         /// Release screen to swipe
         /// </summary>
         /// <param name="eventData"></param>
-        public void OnEndDrag(PointerEventData eventData)
+        public override void OnEndDrag(PointerEventData eventData)
         {
             _pointerDown = false;
 
@@ -298,6 +297,5 @@ namespace UnityEngine.UI.Extensions
                 }
             }
         }
-        #endregion
     }
 }

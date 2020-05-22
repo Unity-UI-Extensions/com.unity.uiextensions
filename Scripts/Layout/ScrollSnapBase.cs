@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-    public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler, IScrollSnap
+    public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollSnap
     {
         internal Rect panelDimensions;
         internal RectTransform _screensContainer;
@@ -582,6 +582,8 @@ namespace UnityEngine.UI.Extensions
             _lerp = false;
         }
 
+        public virtual void OnEndDrag(PointerEventData eventData) { }
+
         #endregion
 
         #region IScrollSnap Interface
@@ -609,6 +611,7 @@ namespace UnityEngine.UI.Extensions
         {
             GoToScreen(page);
         }
+
         #endregion
     }
 }
