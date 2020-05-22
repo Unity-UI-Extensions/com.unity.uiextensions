@@ -15,6 +15,7 @@ namespace UnityEngine.UI.Extensions
     public class ScrollConflictManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         public ScrollRect ParentScrollRect;
+        public HorizontalScrollSnap ParentScrollSnapHorizontal;
         private ScrollRect _myScrollRect;
         private IBeginDragHandler[] _beginDragHandlers;
         private IEndDragHandler[] _endDragHandlers;
@@ -67,6 +68,7 @@ namespace UnityEngine.UI.Extensions
                     for (int i = 0, length = _beginDragHandlers.Length; i < length; i++)
                     {
                         _beginDragHandlers[i].OnBeginDrag(eventData);
+                        ParentScrollSnapHorizontal.OnBeginDrag(eventData);
                     }
                 }
             }
@@ -78,6 +80,7 @@ namespace UnityEngine.UI.Extensions
                 for (int i = 0, length = _beginDragHandlers.Length; i < length; i++)
                 {
                     _beginDragHandlers[i].OnBeginDrag(eventData);
+                    ParentScrollSnapHorizontal.OnBeginDrag(eventData);
                 }
             }
         }
@@ -92,6 +95,7 @@ namespace UnityEngine.UI.Extensions
                 for (int i = 0, length = _endDragHandlers.Length; i < length; i++)
                 {
                     _endDragHandlers[i].OnEndDrag(eventData);
+                    ParentScrollSnapHorizontal.OnEndDrag(eventData);
                 }
             }
         }
@@ -104,6 +108,7 @@ namespace UnityEngine.UI.Extensions
                 for (int i = 0, length = _endDragHandlers.Length; i < length; i++)
                 {
                     _dragHandlers[i].OnDrag(eventData);
+                    ParentScrollSnapHorizontal.OnDrag(eventData);
                 }
             }
         }
