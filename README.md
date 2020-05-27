@@ -1,10 +1,7 @@
 # README
 
 This is an extension project for the new Unity UI system which can be found at: [Unity UI Source](https://bitbucket.org/Unity-Technologies/ui)
-> ## [Check out the control demos on our Tumblr page](https://unityuiextensions.tumblr.com/)
-
-> ### We've disabled Anonymous issue for creation for now, as it's making it extreemely hard to provide feedback and help to users.  Please ensure you logon with your Bitbucket account when raising issues.  
-> If you don't want to do that, then reach out to us on Gitter
+## [  Check out the control demos on our Tumblr page](https://unityuiextensions.tumblr.com/)
 
 # [Intro](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/GettingStarted)
 For more info, here's a little introduction video for the project:
@@ -14,7 +11,7 @@ For more info, here's a little introduction video for the project:
 You can follow the UI Extensions team for updates and news on:
 ## [Twitter](https://twitter.com/hashtag/UnityUIExtensions?src=hash) / [Facebook](https://www.facebook.com/UnityUIExtensions/) / [YouTube](https://www.youtube.com/channel/UCG3gZOkmL-2rmZat4ufv28Q)
 
-> ## Also, come chat live with the Unity UI Extensions community on Gitter here: [UI Extensions Live Chat](https://gitter.im/Unity-UI-Extensions/Lobby) 
+> ## Chat live with the Unity UI Extensions community on Gitter here: [UI Extensions Live Chat](https://gitter.im/Unity-UI-Extensions/Lobby) 
 
 -----
 
@@ -44,12 +41,15 @@ To view previous releases, visit the [release archive](https://bitbucket.org/Uni
 
 # [Supporting the UI Extensions project](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=89L8T9N6BR7LJ)
 
-If you wish to further support the Unity UI Extensions project itself, then you can either subsidise your downloads above, or contribute direct using the PayPal link below.
-All funds go to support the project, no matter the amount, donations in code are also extremely welcome :D
+If you wish to further support the Unity UI Extensions project itself, then you can either subsidise your downloads above, or using the links below.
+
+All funds go to support the project, no matter the amount. Donations in code are also extremely welcome.
+
+| | |
+|---|---|
+| [![Donate via PayPal](https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-150px.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=89L8T9N6BR7LJ "Donating via Paypal") | [![Buy us a Coffee](https://uploads-ssl.webflow.com/5c14e387dab576fe667689cf/5cbed8a4ae2b88347c06c923_BuyMeACoffee_blue-p-500.png)](https://ko-fi.com/uiextensions "Buy us a Coffee") |
 
 > (PayPal account not required and you can remain anonymous if you wish)
-
-## [>> Donate via PayPal <<](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=89L8T9N6BR7LJ)
 
 -----
 
