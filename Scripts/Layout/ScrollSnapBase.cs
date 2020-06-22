@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-    public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollSnap
+    public class ScrollSnapBase : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollSnap, IPointerClickHandler
     {
         internal Rect panelDimensions;
         internal RectTransform _screensContainer;
@@ -390,13 +390,13 @@ namespace UnityEngine.UI.Extensions
             _childPos = -_childSize * page;
             if (_isVertical)
             {
-                _infiniteOffset = _screensContainer.localPosition.y < 0 ? -_screensContainer.sizeDelta.y * _infiniteWindow : _screensContainer.sizeDelta.y * _infiniteWindow;
+                _infiniteOffset = _screensContainer.anchoredPosition.y < 0 ? -_screensContainer.sizeDelta.y * _infiniteWindow : _screensContainer.sizeDelta.y * _infiniteWindow;
                 _infiniteOffset = _infiniteOffset == 0 ? 0 : _infiniteOffset < 0 ? _infiniteOffset - _childSize * _infiniteWindow : _infiniteOffset + _childSize * _infiniteWindow;
                 target.y = _childPos + _scrollStartPosition + _infiniteOffset;
             }
             else
             {
-                _infiniteOffset = _screensContainer.localPosition.x < 0 ? -_screensContainer.sizeDelta.x * _infiniteWindow : _screensContainer.sizeDelta.x * _infiniteWindow;
+                _infiniteOffset = _screensContainer.anchoredPosition.x < 0 ? -_screensContainer.sizeDelta.x * _infiniteWindow : _screensContainer.sizeDelta.x * _infiniteWindow;
                 _infiniteOffset = _infiniteOffset == 0 ? 0 : _infiniteOffset < 0 ? _infiniteOffset - _childSize * _infiniteWindow : _infiniteOffset + _childSize * _infiniteWindow; 
                 target.x = _childPos + _scrollStartPosition + _infiniteOffset;
             }
@@ -408,7 +408,7 @@ namespace UnityEngine.UI.Extensions
         internal void ScrollToClosestElement()
         {
             _lerp = true;
-            CurrentPage = GetPageforPosition(_screensContainer.localPosition);
+            CurrentPage = GetPageforPosition(_screensContainer.anchoredPosition);
             GetPositionforPage(_currentPage, ref _lerp_target);
             OnCurrentScreenChange(_currentPage);
         }
@@ -570,7 +570,7 @@ namespace UnityEngine.UI.Extensions
             _pointerDown = true;
             _settled = false;
             StartScreenChange();
-            _startPosition = _screensContainer.localPosition;
+            _startPosition = _screensContainer.anchoredPosition;
         }
 
         /// <summary>
@@ -593,7 +593,7 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         int IScrollSnap.CurrentPage()
         {
-            return CurrentPage = GetPageforPosition(_screensContainer.localPosition);
+            return CurrentPage = GetPageforPosition(_screensContainer.anchoredPosition);
         }
 
         /// <summary>
@@ -610,6 +610,11 @@ namespace UnityEngine.UI.Extensions
         public void ChangePage(int page)
         {
             GoToScreen(page);
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            var position = _screensContainer.anchoredPosition;
         }
 
         #endregion
