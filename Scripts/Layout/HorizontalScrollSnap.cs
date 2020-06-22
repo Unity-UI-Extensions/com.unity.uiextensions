@@ -27,7 +27,7 @@ namespace UnityEngine.UI.Extensions
             {
                 if (!_settled && !_pointerDown)
                 {
-                    if (!IsRectSettledOnaPage(_screensContainer.localPosition))
+                    if (!IsRectSettledOnaPage(_screensContainer.anchoredPosition))
                     {
                         ScrollToClosestElement();
                     }
@@ -36,16 +36,16 @@ namespace UnityEngine.UI.Extensions
             }
             else if (_lerp)
             {
-                _screensContainer.localPosition = Vector3.Lerp(_screensContainer.localPosition, _lerp_target, transitionSpeed * (UseTimeScale ? Time.deltaTime : Time.unscaledDeltaTime));
-                if (Vector3.Distance(_screensContainer.localPosition, _lerp_target) < 0.1f)
+                _screensContainer.anchoredPosition = Vector3.Lerp(_screensContainer.anchoredPosition, _lerp_target, transitionSpeed * (UseTimeScale ? Time.deltaTime : Time.unscaledDeltaTime));
+                if (Vector3.Distance(_screensContainer.anchoredPosition, _lerp_target) < 0.1f)
                 {
-                    _screensContainer.localPosition = _lerp_target;
+                    _screensContainer.anchoredPosition = _lerp_target;
                     _lerp = false;
                     EndScreenChange();
                 }
             }
 
-            CurrentPage = GetPageforPosition(_screensContainer.localPosition);
+            CurrentPage = GetPageforPosition(_screensContainer.anchoredPosition);
 
             //If the container is moving check if it needs to settle on a page
             if (!_pointerDown)
@@ -196,7 +196,7 @@ namespace UnityEngine.UI.Extensions
 
         private void SetScrollContainerPosition()
         {
-            _scrollStartPosition = _screensContainer.localPosition.x;
+            _scrollStartPosition = _screensContainer.anchoredPosition.x;
             _scroll_rect.horizontalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
             OnCurrentScreenChange(_currentPage);
         }
@@ -251,7 +251,7 @@ namespace UnityEngine.UI.Extensions
                 }
                 else
                 {
-                    var distance = Vector3.Distance(_startPosition, _screensContainer.localPosition);
+                    var distance = Vector3.Distance(_startPosition, _screensContainer.anchoredPosition);
 
                     if (UseHardSwipe)
                     {
@@ -259,7 +259,7 @@ namespace UnityEngine.UI.Extensions
 
                         if (distance > FastSwipeThreshold)
                         {
-                            if (_startPosition.x - _screensContainer.localPosition.x > 0)
+                            if (_startPosition.x - _screensContainer.anchoredPosition.x > 0)
                             {
                                 NextScreen();
                             }
@@ -278,9 +278,9 @@ namespace UnityEngine.UI.Extensions
                         if (UseFastSwipe && distance < panelDimensions.width && distance >= FastSwipeThreshold)
                         {
                             _scroll_rect.velocity = Vector3.zero;
-                            if (_startPosition.x - _screensContainer.localPosition.x > 0)
+                            if (_startPosition.x - _screensContainer.anchoredPosition.x > 0)
                             {
-                                if (_startPosition.x - _screensContainer.localPosition.x > _childSize / 3)
+                                if (_startPosition.x - _screensContainer.anchoredPosition.x > _childSize / 3)
                                 {
                                     ScrollToClosestElement();
                                 }
@@ -291,7 +291,7 @@ namespace UnityEngine.UI.Extensions
                             }
                             else
                             {
-                                if (_startPosition.x - _screensContainer.localPosition.x < -_childSize / 3)
+                                if (_startPosition.x - _screensContainer.anchoredPosition.x < -_childSize / 3)
                                 {
                                     ScrollToClosestElement();
                                 }
