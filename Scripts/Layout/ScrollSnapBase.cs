@@ -317,7 +317,14 @@ namespace UnityEngine.UI.Extensions
                 if (!_lerp) StartScreenChange();
 
                 _lerp = true;
-                CurrentPage = _currentPage + 1;
+                if (_isInfinite)
+                {
+                    CurrentPage = GetPageforPosition(_screensContainer.anchoredPosition) + 1;
+                }
+                else
+                {
+                    CurrentPage = _currentPage + 1;
+                }
                 GetPositionforPage(_currentPage, ref _lerp_target);
                 ScreenChange();
             }
@@ -332,7 +339,14 @@ namespace UnityEngine.UI.Extensions
                 if (!_lerp) StartScreenChange();
 
                 _lerp = true;
-                CurrentPage = _currentPage - 1;
+                if (_isInfinite)
+                {
+                    CurrentPage = GetPageforPosition(_screensContainer.anchoredPosition) - 1;
+                }
+                else
+                {
+                    CurrentPage = _currentPage - 1;
+                }
                 GetPositionforPage(_currentPage, ref _lerp_target);
                 ScreenChange();
             }
@@ -508,7 +522,7 @@ namespace UnityEngine.UI.Extensions
             var infiniteScroll = GetComponent<UI_InfiniteScroll>();
             if (ChildObjects != null && ChildObjects.Length > 0 && infiniteScroll != null && !infiniteScroll.InitByUser)
             {
-                Debug.LogError("When using procedural children with a ScrollSnap (Adding Prefab ChildObjects) and the Infinite Scroll component\nYou must set the 'InitByUser' option to true, to enable late initialising");
+                Debug.LogError($"[{gameObject.name}]When using procedural children with a ScrollSnap (Adding Prefab ChildObjects) and the Infinite Scroll component\nYou must set the 'InitByUser' option to true, to enable late initialising");
             }
         }
 
