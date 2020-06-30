@@ -11,77 +11,106 @@ namespace UnityEngine.UI.Extensions
     /// <summary>
     /// グリッドレイアウトのスクロールビューを実装するための抽象基底クラス.
     /// 無限スクロールおよびスナップには対応していません.
+    /// <see cref="FancyScrollView{TItemData, TContext}.Context"/> が不要な場合は
+    /// 代わりに <see cref="FancyGridView{TItemData}"/> を使用します.
     /// </summary>
     /// <typeparam name="TItemData">アイテムのデータ型.</typeparam>
     /// <typeparam name="TContext"><see cref="FancyScrollView{TItemData, TContext}.Context"/> の型.</typeparam>
     public abstract class FancyGridView<TItemData, TContext> : FancyScrollRect<TItemData[], TContext>
-        where TContext : class, IFancyScrollRectContext, IFancyGridViewContext, new()
+        where TContext : class, IFancyGridViewContext, new()
     {
         /// <summary>
-        /// カラム同士の余白.
+        /// デフォルトのセルグループクラス.
         /// </summary>
-        [SerializeField] protected float columnSpacing = 0f;
-
-        GameObject cachedRowPrefab;
+        protected abstract class DefaultCellGroup : FancyCellGroup<TItemData, TContext> { }
 
         /// <summary>
-        /// 行の Prefab.
+        /// 最初にセルを配置する軸方向のセル同士の余白.
+        /// </summary>
+        [SerializeField] protected float startAxisSpacing = 0f;
+
+        /// <summary>
+        /// 最初にセルを配置する軸方向のセル数.
+        /// </summary>
+        [SerializeField] protected int startAxisCellCount = 4;
+
+        /// <summary>
+        /// セルのサイズ.
+        /// </summary>
+        [SerializeField] protected Vector2 cellSize = new Vector2(100f, 100f);
+
+        /// <summary>
+        /// セルのグループ Prefab.
         /// </summary>
         /// <remarks>
         /// <see cref="FancyGridView{TItemData, TContext}"/> では,
-        /// <see cref="FancyScrollView{TItemData, TContext}.CellPrefab"/> を行オブジェクトとして使用します.
+        /// <see cref="FancyScrollView{TItemData, TContext}.CellPrefab"/> を最初にセルを配置する軸方向のセルコンテナとして使用します.
         /// </remarks>
-        protected sealed override GameObject CellPrefab => cachedRowPrefab ?? (cachedRowPrefab = SetupRowTemplate());
+        protected sealed override GameObject CellPrefab => cellGroupTemplate;
 
-        /// <summary>
-        /// 一行あたりの要素数.
-        /// </summary>
-        protected abstract int ColumnCount { get; }
-
-        /// <summary>
-        /// セルのテンプレート.
-        /// </summary>
-        protected abstract FancyScrollViewCell<TItemData, TContext> CellTemplate { get; }
-
-        /// <summary>
-        /// 行オブジェクトのテンプレート.
-        /// </summary>
-        protected abstract FancyGridViewRow<TItemData, TContext> RowTemplate { get; }
+        /// <inheritdoc/>
+        protected override float CellSize => Scroller.ScrollDirection == ScrollDirection.Horizontal
+            ? cellSize.x
+            : cellSize.y;
 
         /// <summary>
         /// アイテムの総数.
         /// </summary>
         public int DataCount { get; private set; }
 
+        GameObject cellGroupTemplate;
+
         /// <inheritdoc/>
         protected override void Initialize()
         {
             base.Initialize();
 
-            Debug.Assert(RowTemplate != null);
-            Debug.Assert(CellTemplate != null);
-            Debug.Assert(ColumnCount > 0);
+            Debug.Assert(startAxisCellCount > 0);
 
-            Context.CellTemplate = CellTemplate.gameObject;
             Context.ScrollDirection = Scroller.ScrollDirection;
-            Context.GetColumnCount = () => ColumnCount;
-            Context.GetColumnSpacing = () => columnSpacing;
+            Context.GetGroupCount = () => startAxisCellCount;
+            Context.GetStartAxisSpacing = () => startAxisSpacing;
+            Context.GetCellSize = () => Scroller.ScrollDirection == ScrollDirection.Horizontal
+                ? cellSize.y
+                : cellSize.x;
+
+            SetupCellTemplate();
         }
 
         /// <summary>
-        /// 行オブジェクトのセットアップを行います.
+        /// 最初にセルが生成される直前に呼び出されます.
+        /// <see cref="Setup{TGroup}(FancyCell{TItemData, TContext})"/> メソッドを使用してセルテンプレートのセットアップを行ってください.
         /// </summary>
-        /// <returns>行を構成する <c>GameObject</c>.</returns>
-        protected virtual GameObject SetupRowTemplate()
+        /// <example>
+        /// <code><![CDATA[
+        /// using UnityEngine;
+        /// using FancyScrollView;
+        /// 
+        /// public class MyGridView : FancyGridView<ItemData, Context>
+        /// {
+        ///     class CellGroup : DefaultCellGroup { }
+        /// 
+        ///     [SerializeField] Cell cellPrefab = default;
+        /// 
+        ///     protected override void SetupCellTemplate() => Setup<CellGroup>(cellPrefab);
+        /// }
+        /// ]]></code>
+        /// </example>
+        protected abstract void SetupCellTemplate();
+
+        /// <summary>
+        /// セルテンプレートのセットアップを行います.
+        /// </summary>
+        /// <param name="cellTemplate">セルのテンプレート.</param>
+        /// <typeparam name="TGroup">セルグループの型.</typeparam>
+        protected virtual void Setup<TGroup>(FancyCell<TItemData, TContext> cellTemplate)
+            where TGroup : FancyCell<TItemData[], TContext>
         {
-            var cell = CellTemplate.GetComponent<RectTransform>();
-            var row = RowTemplate.GetComponent<RectTransform>();
+            Context.CellTemplate = cellTemplate.gameObject;
 
-            row.sizeDelta = Scroller.ScrollDirection == ScrollDirection.Horizontal
-                ? new Vector2(cell.rect.width, row.sizeDelta.y)
-                : new Vector2(row.sizeDelta.x, cell.rect.height);
-
-            return row.gameObject;
+            cellGroupTemplate = new GameObject("Group").AddComponent<TGroup>().gameObject;
+            cellGroupTemplate.transform.SetParent(cellContainer, false);
+            cellGroupTemplate.SetActive(false);
         }
 
         /// <summary>
@@ -92,15 +121,26 @@ namespace UnityEngine.UI.Extensions
         {
             DataCount = items.Count;
 
-            var rows = items
+            var itemGroups = items
                 .Select((item, index) => (item, index))
                 .GroupBy(
-                    x => x.index / ColumnCount,
+                    x => x.index / startAxisCellCount,
                     x => x.item)
                 .Select(group => group.ToArray())
                 .ToArray();
 
-            UpdateContents(rows);
+            UpdateContents(itemGroups);
+        }
+
+        /// <summary>
+        /// 指定したアイテムの位置までジャンプします.
+        /// </summary>
+        /// <param name="itemIndex">アイテムのインデックス.</param>
+        /// <param name="alignment">ビューポート内におけるセル位置の基準. 0f(先頭) ~ 1f(末尾).</param>
+        protected override void JumpTo(int itemIndex, float alignment = 0.5f)
+        {
+            var groupIndex = itemIndex / startAxisCellCount;
+            base.JumpTo(groupIndex, alignment);
         }
 
         /// <summary>
@@ -108,12 +148,12 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         /// <param name="itemIndex">アイテムのインデックス.</param>
         /// <param name="duration">移動にかける秒数.</param>
-        /// <param name="alignment"><see cref="Alignment"/>.</param>
+        /// <param name="alignment">ビューポート内におけるセル位置の基準. 0f(先頭) ~ 1f(末尾).</param>
         /// <param name="onComplete">移動が完了した際に呼び出されるコールバック.</param>
-        public override void ScrollTo(int itemIndex, float duration, Alignment alignment = Alignment.Center, Action onComplete = null)
+        protected override void ScrollTo(int itemIndex, float duration, float alignment = 0.5f, Action onComplete = null)
         {
-            var rowIndex = itemIndex / Context.GetColumnCount();
-            base.ScrollTo(rowIndex, duration, alignment, onComplete);
+            var groupIndex = itemIndex / startAxisCellCount;
+            base.ScrollTo(groupIndex, duration, alignment, onComplete);
         }
 
         /// <summary>
@@ -122,23 +162,20 @@ namespace UnityEngine.UI.Extensions
         /// <param name="itemIndex">アイテムのインデックス.</param>
         /// <param name="duration">移動にかける秒数.</param>
         /// <param name="easing">移動に使用するイージング.</param>
-        /// <param name="alignment"><see cref="Alignment"/>.</param>
+        /// <param name="alignment">ビューポート内におけるセル位置の基準. 0f(先頭) ~ 1f(末尾).</param>
         /// <param name="onComplete">移動が完了した際に呼び出されるコールバック.</param>
-        public override void ScrollTo(int itemIndex, float duration, Ease easing, Alignment alignment = Alignment.Center, Action onComplete = null)
+        protected override void ScrollTo(int itemIndex, float duration, Ease easing, float alignment = 0.5f, Action onComplete = null)
         {
-            var rowIndex = itemIndex / Context.GetColumnCount();
-            base.ScrollTo(rowIndex, duration, easing, alignment, onComplete);
-        }
-
-        /// <summary>
-        /// 指定したアイテムの位置までジャンプします.
-        /// </summary>
-        /// <param name="itemIndex">アイテムのインデックス.</param>
-        /// <param name="alignment"><see cref="Alignment"/>.</param>
-        public virtual void JumpTo(int itemIndex, Alignment alignment = Alignment.Center)
-        {
-            var rowIndex = itemIndex / Context.GetColumnCount();
-            UpdatePosition(rowIndex, alignment);
+            var groupIndex = itemIndex / startAxisCellCount;
+            base.ScrollTo(groupIndex, duration, easing, alignment, onComplete);
         }
     }
+
+    /// <summary>
+    /// グリッドレイアウトのスクロールビューを実装するための抽象基底クラス.
+    /// 無限スクロールおよびスナップには対応していません.
+    /// </summary>
+    /// <typeparam name="TItemData">アイテムのデータ型.</typeparam>
+    /// <seealso cref="FancyGridView{TItemData, TContext}"/>
+    public abstract class FancyGridView<TItemData> : FancyGridView<TItemData, FancyGridViewContext> { }
 }

@@ -39,9 +39,14 @@ namespace UnityEngine.UI.Extensions
         [SerializeField] protected float paddingTail = 0f;
 
         /// <summary>
-        /// セル同士の余白.
+        /// スクロール軸方向のセル同士の余白.
         /// </summary>
         [SerializeField] protected float spacing = 0f;
+
+        /// <summary>
+        /// セルのサイズ.
+        /// </summary>
+        protected abstract float CellSize { get; }
 
         /// <summary>
         /// スクロール可能かどうか.
@@ -50,13 +55,6 @@ namespace UnityEngine.UI.Extensions
         /// アイテム数が十分少なくビューポート内に全てのセルが収まっている場合は <c>false</c>, それ以外は <c>true</c> になります.
         /// </remarks>
         protected virtual bool Scrollable => MaxScrollPosition > 0f;
-
-        /// <summary>
-        /// セルのサイズ.
-        /// </summary>
-        protected virtual float CellSize => Scroller.ScrollDirection == ScrollDirection.Horizontal
-            ? CellRectTransform.rect.width
-            : CellRectTransform.rect.height;
 
         Scroller cachedScroller;
 
@@ -67,9 +65,6 @@ namespace UnityEngine.UI.Extensions
         /// <see cref="Scroller"/> のスクロール位置を変更する際は必ず <see cref="ToScrollerPosition(float)"/> を使用して変換した位置を使用してください.
         /// </remarks>
         protected Scroller Scroller => cachedScroller ?? (cachedScroller = GetComponent<Scroller>());
-
-        RectTransform cachedCellRect;
-        RectTransform CellRectTransform => cachedCellRect ?? (cachedCellRect = CellPrefab.transform as RectTransform);
 
         float ScrollLength => 1f / Mathf.Max(cellInterval, 1e-2f) - 1f;
 
@@ -87,6 +82,7 @@ namespace UnityEngine.UI.Extensions
         {
             base.Initialize();
 
+            Context.ScrollDirection = Scroller.ScrollDirection;
             Context.CalculateScrollSize = () =>
             {
                 var interval = CellSize + spacing;
@@ -138,6 +134,14 @@ namespace UnityEngine.UI.Extensions
             base.Refresh();
         }
 
+        /// <inheritdoc/>
+        protected override void Relayout()
+        {
+            AdjustCellIntervalAndScrollOffset();
+            RefreshScroller();
+            base.Relayout();
+        }
+
         /// <summary>
         /// <see cref="Scroller"/> の各種状態を更新します.
         /// </summary>
@@ -172,17 +176,17 @@ namespace UnityEngine.UI.Extensions
         /// <param name="position">スクロール位置.</param>
         protected new void UpdatePosition(float position)
         {
-            UpdatePosition(position, Alignment.Center);
+            Scroller.Position = ToScrollerPosition(position, 0.5f);
         }
 
         /// <summary>
-        /// スクロール位置を更新します.
+        /// 指定したアイテムの位置までジャンプします.
         /// </summary>
-        /// <param name="position">スクロール位置.</param>
-        /// <param name="alignment"><see cref="Alignment"/>.</param>
-        protected virtual void UpdatePosition(float position, Alignment alignment)
+        /// <param name="itemIndex">アイテムのインデックス.</param>
+        /// <param name="alignment">ビューポート内におけるセル位置の基準. 0f(先頭) ~ 1f(末尾).</param>
+        protected virtual void JumpTo(int itemIndex, float alignment = 0.5f)
         {
-            Scroller.Position = ToScrollerPosition(position, alignment);
+            Scroller.Position = ToScrollerPosition(itemIndex, alignment);
         }
 
         /// <summary>
@@ -190,9 +194,9 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         /// <param name="index">アイテムのインデックス.</param>
         /// <param name="duration">移動にかける秒数.</param>
-        /// <param name="alignment"><see cref="Alignment"/>.</param>
+        /// <param name="alignment">ビューポート内におけるセル位置の基準. 0f(先頭) ~ 1f(末尾).</param>
         /// <param name="onComplete">移動が完了した際に呼び出されるコールバック.</param>
-        public virtual void ScrollTo(int index, float duration, Alignment alignment = Alignment.Center, Action onComplete = null)
+        protected virtual void ScrollTo(int index, float duration, float alignment = 0.5f, Action onComplete = null)
         {
             Scroller.ScrollTo(ToScrollerPosition(index, alignment), duration, onComplete);
         }
@@ -203,9 +207,9 @@ namespace UnityEngine.UI.Extensions
         /// <param name="index">アイテムのインデックス.</param>
         /// <param name="duration">移動にかける秒数.</param>
         /// <param name="easing">移動に使用するイージング.</param>
-        /// <param name="alignment"><see cref="Alignment"/>.</param>
+        /// <param name="alignment">ビューポート内におけるセル位置の基準. 0f(先頭) ~ 1f(末尾).</param>
         /// <param name="onComplete">移動が完了した際に呼び出されるコールバック.</param>
-        public virtual void ScrollTo(int index, float duration, Ease easing, Alignment alignment = Alignment.Center, Action onComplete = null)
+        protected virtual void ScrollTo(int index, float duration, Ease easing, float alignment = 0.5f, Action onComplete = null)
         {
             Scroller.ScrollTo(ToScrollerPosition(index, alignment), duration, easing, onComplete);
         }
@@ -244,23 +248,13 @@ namespace UnityEngine.UI.Extensions
         /// <see cref="FancyScrollRect{TItemData, TContext}"/> が扱うスクロール位置を <see cref="Scroller"/> が扱うスクロール位置に変換します.
         /// </summary>
         /// <param name="position"><see cref="FancyScrollRect{TItemData, TContext}"/> が扱うスクロール位置.</param>
-        /// <param name="alignment"><see cref="Alignment"/>.</param>
+        /// <param name="alignment">ビューポート内におけるセル位置の基準. 0f(先頭) ~ 1f(末尾).</param>
         /// <returns><see cref="Scroller"/> が扱うスクロール位置.</returns>
-        protected float ToScrollerPosition(float position, Alignment alignment = Alignment.Center)
+        protected float ToScrollerPosition(float position, float alignment = 0.5f)
         {
-            var offset = (ScrollLength - (1f + reuseCellMarginCount * 2f)) * GetAnchore(alignment);
+            var offset = alignment * (ScrollLength - (1f + reuseCellMarginCount * 2f))
+                + (1f - alignment - 0.5f) * spacing / (CellSize + spacing);
             return ToScrollerPosition(Mathf.Clamp(position - offset, 0f, MaxScrollPosition));
-        }
-
-        float GetAnchore(Alignment alignment)
-        {
-            switch (alignment)
-            {
-                case Alignment.Head: return 0.0f;
-                case Alignment.Center: return 0.5f;
-                case Alignment.Tail: return 1.0f;
-                default: return GetAnchore(Alignment.Center);
-            }
         }
 
         /// <summary>
@@ -277,10 +271,7 @@ namespace UnityEngine.UI.Extensions
 
         protected virtual void OnValidate()
         {
-            if (CellPrefab)
-            {
-                AdjustCellIntervalAndScrollOffset();
-            }
+            AdjustCellIntervalAndScrollOffset();
 
             if (loop)
             {
