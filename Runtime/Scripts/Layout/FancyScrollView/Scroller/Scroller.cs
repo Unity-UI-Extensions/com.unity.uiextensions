@@ -10,7 +10,7 @@ namespace UnityEngine.UI.Extensions
     /// <summary>
     /// スクロール位置の制御を行うコンポーネント.
     /// </summary>
-    public class Scroller : UIBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
+    public class Scroller : UIBehaviour, IPointerUpHandler, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IScrollHandler
     {
         [SerializeField] RectTransform viewport = default;
 
@@ -83,9 +83,7 @@ namespace UnityEngine.UI.Extensions
             set => decelerationRate = value;
         }
 
-        [SerializeField]
-        Snap snap = new Snap
-        {
+        [SerializeField] Snap snap = new Snap {
             Enable = true,
             VelocityThreshold = 0.5f,
             Duration = 0.3f,
@@ -151,6 +149,8 @@ namespace UnityEngine.UI.Extensions
 
         int totalCount;
 
+        bool hold;
+        bool scrolling;
         bool dragging;
         float velocity;
 
@@ -163,14 +163,14 @@ namespace UnityEngine.UI.Extensions
             public Ease Easing;
         }
 
-        static readonly Func<float, float> DefaultEasingFunction = EasingFunction.Get(Ease.OutCubic);
+        static readonly EasingFunction DefaultEasingFunction = Easing.Get(Ease.OutCubic);
 
         class AutoScrollState
         {
             public bool Enable;
             public bool Elastic;
             public float Duration;
-            public Func<float, float> EasingFunction;
+            public EasingFunction EasingFunction;
             public float StartTime;
             public float EndPosition;
 
@@ -240,7 +240,7 @@ namespace UnityEngine.UI.Extensions
         /// <param name="duration">移動にかける秒数.</param>
         /// <param name="easing">移動に使用するイージング.</param>
         /// <param name="onComplete">移動が完了した際に呼び出されるコールバック.</param>
-        public void ScrollTo(float position, float duration, Ease easing, Action onComplete = null) => ScrollTo(position, duration, EasingFunction.Get(easing), onComplete);
+        public void ScrollTo(float position, float duration, Ease easing, Action onComplete = null) => ScrollTo(position, duration, Easing.Get(easing), onComplete);
 
         /// <summary>
         /// 指定した位置まで移動します.
@@ -249,7 +249,7 @@ namespace UnityEngine.UI.Extensions
         /// <param name="duration">移動にかける秒数.</param>
         /// <param name="easingFunction">移動に使用するイージング関数.</param>
         /// <param name="onComplete">移動が完了した際に呼び出されるコールバック.</param>
-        public void ScrollTo(float position, float duration, Func<float, float> easingFunction, Action onComplete = null)
+        public void ScrollTo(float position, float duration, EasingFunction easingFunction, Action onComplete = null)
         {
             if (duration <= 0f)
             {
@@ -283,13 +283,8 @@ namespace UnityEngine.UI.Extensions
                 throw new ArgumentOutOfRangeException(nameof(index));
             }
 
-            autoScrollState.Reset();
-
-            velocity = 0f;
-            dragging = false;
-
             UpdateSelection(index);
-            UpdatePosition(index);
+            Position = index;
         }
 
         /// <summary>
@@ -312,6 +307,75 @@ namespace UnityEngine.UI.Extensions
         }
 
         /// <inheritdoc/>
+        void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
+        {
+            if (!draggable || eventData.button != PointerEventData.InputButton.Left)
+            {
+                return;
+            }
+
+            hold = true;
+            velocity = 0f;
+            autoScrollState.Reset();
+        }
+
+        /// <inheritdoc/>
+        void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
+        {
+            if (!draggable || eventData.button != PointerEventData.InputButton.Left)
+            {
+                return;
+            }
+
+            if (hold && snap.Enable)
+            {
+                UpdateSelection(Mathf.Clamp(Mathf.RoundToInt(currentPosition), 0, totalCount - 1));
+                ScrollTo(Mathf.RoundToInt(currentPosition), snap.Duration, snap.Easing);
+            }
+
+            hold = false;
+        }
+
+        /// <inheritdoc/>
+        void IScrollHandler.OnScroll(PointerEventData eventData)
+        {
+            if (!draggable)
+            {
+                return;
+            }
+
+            var delta = eventData.scrollDelta;
+
+            // Down is positive for scroll events, while in UI system up is positive.
+            delta.y *= -1;
+            var scrollDelta = scrollDirection == ScrollDirection.Horizontal
+                ? Mathf.Abs(delta.y) > Mathf.Abs(delta.x)
+                        ? delta.y
+                        : delta.x
+                : Mathf.Abs(delta.x) > Mathf.Abs(delta.y)
+                        ? delta.x
+                        : delta.y;
+
+            if (eventData.IsScrolling())
+            {
+                scrolling = true;
+            }
+
+            var position = currentPosition + scrollDelta / ViewportSize * scrollSensitivity;
+            if (movementType == MovementType.Clamped)
+            {
+                position += CalculateOffset(position);
+            }
+
+            if (autoScrollState.Enable)
+            {
+                autoScrollState.Reset();
+            }
+
+            UpdatePosition(position);
+        }
+
+        /// <inheritdoc/>
         void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
         {
             if (!draggable || eventData.button != PointerEventData.InputButton.Left)
@@ -319,6 +383,7 @@ namespace UnityEngine.UI.Extensions
                 return;
             }
 
+            hold = false;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 viewport,
                 eventData.position,
@@ -449,7 +514,7 @@ namespace UnityEngine.UI.Extensions
 
                 UpdatePosition(position);
             }
-            else if (!dragging && (!Mathf.Approximately(offset, 0f) || !Mathf.Approximately(velocity, 0f)))
+            else if (!(dragging || scrolling) && (!Mathf.Approximately(offset, 0f) || !Mathf.Approximately(velocity, 0f)))
             {
                 var position = currentPosition;
 
@@ -500,13 +565,14 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
-            if (!autoScrollState.Enable && dragging && inertia)
+            if (!autoScrollState.Enable && (dragging || scrolling) && inertia)
             {
                 var newVelocity = (currentPosition - prevPosition) / deltaTime;
                 velocity = Mathf.Lerp(velocity, newVelocity, deltaTime * 10f);
             }
 
             prevPosition = currentPosition;
+            scrolling = false;
         }
 
         float CalculateMovementAmount(float sourcePosition, float destPosition)

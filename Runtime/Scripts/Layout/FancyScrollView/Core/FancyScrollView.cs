@@ -42,8 +42,7 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         [SerializeField] protected Transform cellContainer = default;
 
-        readonly IList<FancyScrollViewCell<TItemData, TContext>> pool =
-            new List<FancyScrollViewCell<TItemData, TContext>>();
+        readonly IList<FancyCell<TItemData, TContext>> pool = new List<FancyCell<TItemData, TContext>>();
 
         /// <summary>
         /// 初期化済みかどうか.
@@ -90,7 +89,12 @@ namespace UnityEngine.UI.Extensions
         }
 
         /// <summary>
-        /// セルの表示内容を更新します.
+        /// セルのレイアウトを強制的に更新します.
+        /// </summary>
+        protected virtual void Relayout() => UpdatePosition(currentPosition, false);
+
+        /// <summary>
+        /// セルのレイアウトと表示内容を強制的に更新します.
         /// </summary>
         protected virtual void Refresh() => UpdatePosition(currentPosition, true);
 
@@ -130,16 +134,16 @@ namespace UnityEngine.UI.Extensions
             var addCount = Mathf.CeilToInt((1f - firstPosition) / cellInterval) - pool.Count;
             for (var i = 0; i < addCount; i++)
             {
-                var cell = Instantiate(CellPrefab, cellContainer)
-                    .GetComponent<FancyScrollViewCell<TItemData, TContext>>();
+                var cell = Instantiate(CellPrefab, cellContainer).GetComponent<FancyCell<TItemData, TContext>>();
                 if (cell == null)
                 {
-                    throw new MissingComponentException(
-                        $"FancyScrollViewCell<{typeof(TItemData).FullName}, {typeof(TContext).FullName}> " +
-                        $"component not found in {CellPrefab.name}.");
+                    throw new MissingComponentException(string.Format(
+                        "FancyCell<{0}, {1}> component not found in {2}.",
+                        typeof(TItemData).FullName, typeof(TContext).FullName, CellPrefab.name));
                 }
 
-                cell.SetupContext(Context);
+                cell.SetContext(Context);
+                cell.Initialize();
                 cell.SetVisible(false);
                 pool.Add(cell);
             }
@@ -200,7 +204,7 @@ namespace UnityEngine.UI.Extensions
     /// <summary>
     /// <see cref="FancyScrollView{TItemData}"/> のコンテキストクラス.
     /// </summary>
-    public sealed class FancyScrollViewNullContext { }
+    public sealed class NullContext { }
 
     /// <summary>
     /// スクロールビューを実装するための抽象基底クラス.
@@ -208,5 +212,5 @@ namespace UnityEngine.UI.Extensions
     /// </summary>
     /// <typeparam name="TItemData"></typeparam>
     /// <seealso cref="FancyScrollView{TItemData, TContext}"/>
-    public abstract class FancyScrollView<TItemData> : FancyScrollView<TItemData, FancyScrollViewNullContext> { }
+    public abstract class FancyScrollView<TItemData> : FancyScrollView<TItemData, NullContext> { }
 }

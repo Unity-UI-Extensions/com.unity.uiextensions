@@ -1,16 +1,17 @@
 ﻿/// Credit setchi (https://github.com/setchi)
 /// Sourced from - https://github.com/setchi/FancyScrollView
 
+
 namespace UnityEngine.UI.Extensions
 {
     /// <summary>
     /// <see cref="FancyScrollView{TItemData, TContext}"/> のセルを実装するための抽象基底クラス.
-    /// <see cref="FancyScrollViewCell{TItemData, TContext}.Context"/> が不要な場合は
-    /// 代わりに <see cref="FancyScrollViewCell{TItemData}"/> を使用します.
+    /// <see cref="FancyCell{TItemData, TContext}.Context"/> が不要な場合は
+    /// 代わりに <see cref="FancyCell{TItemData}"/> を使用します.
     /// </summary>
     /// <typeparam name="TItemData">アイテムのデータ型.</typeparam>
     /// <typeparam name="TContext"><see cref="Context"/> の型.</typeparam>
-    public abstract class FancyScrollViewCell<TItemData, TContext> : MonoBehaviour where TContext : class, new()
+    public abstract class FancyCell<TItemData, TContext> : MonoBehaviour where TContext : class, new()
     {
         /// <summary>
         /// このセルで表示しているデータのインデックス.
@@ -29,10 +30,15 @@ namespace UnityEngine.UI.Extensions
         protected TContext Context { get; private set; }
 
         /// <summary>
-        /// <see cref="Context"/> のセットアップを行います.
+        /// <see cref="Context"/> をセットします.
         /// </summary>
         /// <param name="context">コンテキスト.</param>
-        public virtual void SetupContext(TContext context) => Context = context;
+        public virtual void SetContext(TContext context) => Context = context;
+
+        /// <summary>
+        /// 初期化を行います.
+        /// </summary>
+        public virtual void Initialize() { }
 
         /// <summary>
         /// このセルの可視状態を設定します.
@@ -57,10 +63,10 @@ namespace UnityEngine.UI.Extensions
     /// <see cref="FancyScrollView{TItemData}"/> のセルを実装するための抽象基底クラス.
     /// </summary>
     /// <typeparam name="TItemData">アイテムのデータ型.</typeparam>
-    /// <seealso cref="FancyScrollViewCell{TItemData, TContext}"/>
-    public abstract class FancyScrollViewCell<TItemData> : FancyScrollViewCell<TItemData, FancyScrollViewNullContext>
+    /// <seealso cref="FancyCell{TItemData, TContext}"/>
+    public abstract class FancyCell<TItemData> : FancyCell<TItemData, NullContext>
     {
         /// <inheritdoc/>
-        public sealed override void SetupContext(FancyScrollViewNullContext context) => base.SetupContext(context);
+        public sealed override void SetContext(NullContext context) => base.SetContext(context);
     }
 }

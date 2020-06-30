@@ -1,30 +1,8 @@
-﻿// 
-// EasingCore - https://github.com/setchi/EasingCore
-// 
-// The MIT License (MIT)
-// 
-// Copyright (c) 2019 setchi
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-using System;
-using UnityEngine;
+﻿/*
+ * EasingCore (https://github.com/setchi/EasingCore)
+ * Copyright (c) 2020 setchi
+ * Licensed under MIT (https://github.com/setchi/EasingCore/blob/master/LICENSE)
+ */
 
 namespace UnityEngine.UI.Extensions.EasingCore
 {
@@ -63,14 +41,16 @@ namespace UnityEngine.UI.Extensions.EasingCore
         InOutSine,
     }
 
-    public static class EasingFunction
+    public delegate float EasingFunction(float t);
+
+    public static class Easing
     {
         /// <summary>
         /// Gets the easing function
         /// </summary>
         /// <param name="type">Ease type</param>
         /// <returns>Easing function</returns>
-        public static Func<float, float> Get(Ease type)
+        public static EasingFunction Get(Ease type)
         {
             switch (type)
             {
@@ -170,7 +150,7 @@ namespace UnityEngine.UI.Extensions.EasingCore
                 Mathf.Approximately(0.0f, v) || Mathf.Approximately(1.0f, v)
                     ? v
                     : v < 0.5f
-                        ? 0.5f * Mathf.Pow(2f, (20f * v) - 10f)
+                        ?  0.5f * Mathf.Pow(2f, (20f * v) - 10f)
                         : -0.5f * Mathf.Pow(2f, (-20f * v) + 10f) + 1f;
 
             float inQuad(float t) => t * t;
@@ -179,7 +159,7 @@ namespace UnityEngine.UI.Extensions.EasingCore
 
             float inOutQuad(float t) =>
                 t < 0.5f
-                    ? 2f * t * t
+                    ?  2f * t * t
                     : -2f * t * t + 4f * t - 1f;
 
             float inQuart(float t) => t * t * t * t;
