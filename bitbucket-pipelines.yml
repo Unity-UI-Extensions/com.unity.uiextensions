@@ -6,7 +6,8 @@
 image: atlassian/default-image:2
 
 pipelines:
-  default:
+  custom:
+   npmpublish:
     - step:
         script:
           - echo "Publishing Unity UI Extensions to NPM"
