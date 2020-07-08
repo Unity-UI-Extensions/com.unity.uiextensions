@@ -49,7 +49,7 @@ namespace UnityEngine.UI.Extensions
 
         private ScrollRect _scrollRect;
 
-        private List<string> _panelItems; //items that will get shown in the dropdown
+        private List<string> _panelItems; //items that will get shown in the drop-down
 
         private Dictionary<string, GameObject> panelObjects;
         
@@ -119,7 +119,7 @@ namespace UnityEngine.UI.Extensions
             catch (System.NullReferenceException ex)
             {
                 Debug.LogException(ex);
-                Debug.LogError("Something is setup incorrectly with the dropdownlist component causing a Null Refernece Exception");
+                Debug.LogError("Something is setup incorrectly with the dropdownlist component causing a Null Reference Exception");
                 success = false;
             }
             panelObjects = new Dictionary<string, GameObject>();

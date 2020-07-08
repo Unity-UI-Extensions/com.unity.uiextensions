@@ -1,5 +1,5 @@
 ﻿/// Credit Tomasz Schelenz 
-/// Sourced from - https://bitbucket.org/ddreaper/unity-ui-extensions/issues/46/feature-uiknob#comment-29243988
+/// Sourced from - https://bitbucket.org/SimonDarksideJ/unity-ui-extensions/issues/46/feature-uiknob#comment-29243988
 
 using UnityEngine.Events;
 using UnityEngine.EventSystems;

@@ -36,7 +36,7 @@ namespace UnityEngine.UI.Extensions
                 return;
             }
 
-            // dont want the scroll snap pagination
+            // do not want the scroll snap pagination
             if (scrollSnap.Pagination)
                 scrollSnap.Pagination = null;
 
@@ -63,7 +63,7 @@ namespace UnityEngine.UI.Extensions
 
 
         /// <summary>
-        /// Calling from other scripts if you need to change screens progamatically
+        /// Calling from other scripts if you need to change screens programmatically
         /// </summary>
         /// <param name="pageNo"></param>
         public void GoToScreen(int pageNo)

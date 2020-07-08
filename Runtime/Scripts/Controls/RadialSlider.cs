@@ -1,6 +1,6 @@
 ﻿/// Credit mgear, SimonDarksideJ
 /// Sourced from - https://forum.unity3d.com/threads/radial-slider-circle-slider.326392/#post-3143582
-/// Updated to include lerping features and programatic access to angle/value
+/// Updated to include lerping features and programmatic access to angle/value
 
 using System;
 using UnityEngine.Events;

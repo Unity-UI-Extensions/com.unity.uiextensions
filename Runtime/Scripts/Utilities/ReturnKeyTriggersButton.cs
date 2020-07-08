@@ -1,6 +1,6 @@
 ﻿/// Credit Melang 
 /// Sourced from - http://forum.unity3d.com/members/melang.593409/
-/// Updated ddreaper - reworked to 4.6.1 standards
+/// Updated SimonDarksideJ - reworked to 4.6.1 standards
 
 using UnityEngine.EventSystems;
 namespace UnityEngine.UI

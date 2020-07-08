@@ -1,4 +1,4 @@
-/// Credit Simon (darkside) Jackson
+/// Credit Simon (simonDarksideJ) Jackson
 /// Sourced from - UI SIM source and My Brain
 
 namespace UnityEngine.EventSystems
@@ -193,7 +193,7 @@ namespace UnityEngine.EventSystems
             if (!allow)
             {
                 // Otherwise, user held down key or axis.
-                // If direction didn't change at least 90 degrees, wait for delay before allowing consequtive event.
+                // If direction didn't change at least 90 degrees, wait for delay before allowing consecutive event.
                 if (similarDir && m_ConsecutiveMoveCount == 1)
                     allow = (time > m_PrevActionTime + m_RepeatDelay);
                 // If direction changed at least 90 degree, or we already had the delay, repeat at repeat rate.

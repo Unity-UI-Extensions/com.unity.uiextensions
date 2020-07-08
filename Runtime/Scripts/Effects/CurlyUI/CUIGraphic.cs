@@ -58,7 +58,7 @@ namespace UnityEngine.UI.Extensions
         #endregion
 
         /// <summary>
-        /// Refernce to other objects that are needed by this object.
+        /// Reference to other objects that are needed by this object.
         /// </summary>
         #region Links
 
@@ -273,7 +273,7 @@ namespace UnityEngine.UI.Extensions
 
         #endregion
 
-        // Events are for handling reoccuring function calls that react to the changes of the environment.
+        // Events are for handling reoccurring function calls that react to the changes of the environment.
         #region Events
 
         protected override void OnRectTransformDimensionsChange()

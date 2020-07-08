@@ -3,7 +3,7 @@
 /// sourced from: http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/page-2#post-2011648
 
 /*USAGE:
-Simply place the script on the ScrollRect that contains the selectable children we'll be scroling to
+Simply place the script on the ScrollRect that contains the selectable children we'll be scrolling to
 and drag'n'drop the RectTransform of the options "container" that we'll be scrolling.*/
 
 using System;

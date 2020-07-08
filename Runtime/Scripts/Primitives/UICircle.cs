@@ -1,6 +1,6 @@
 /// Credit zge, jeremie sellam
 /// Sourced from - http://forum.unity3d.com/threads/draw-circles-or-primitives-on-the-new-ui-canvas.272488/#post-2293224
-/// Updated from - https://bitbucket.org/ddreaper/unity-ui-extensions/issues/65/a-better-uicircle
+/// Updated from - https://bitbucket.org/SimonDarksideJ/unity-ui-extensions/issues/65/a-better-uicircle
 
 /// Update 10.9.2017 (tswalker, https://bitbucket.org/tswalker/)
 /// 

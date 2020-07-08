@@ -88,7 +88,7 @@ namespace UnityEngine.UI.Extensions
 {
     /// <summary>
     /// Improved C# LZF Compressor, a very small data compression library. The compression algorithm is extremely fast.
-    /// Note for strings, ensure you only use Unicode else specaial characters may get corrupted.
+    /// Note for strings, ensure you only use Unicode else special characters may get corrupted.
     public static class CLZF2
     {
         private static readonly uint HLOG = 14;

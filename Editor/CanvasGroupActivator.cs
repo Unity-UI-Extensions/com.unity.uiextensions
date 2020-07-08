@@ -1,7 +1,7 @@
 /// Credit dakka
 /// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1752415
 /// Notes - Mod from Yilmaz Kiymaz's editor scripts presentation at Unite 2013
-/// Updated ddreaper - removed Linq use, not required.
+/// Updated simonDarksideJ - removed Linq use, not required.
 
 using UnityEditor;
 
@@ -61,7 +61,7 @@ namespace UnityEngine.UI.Extensions
                         canvasGroups[i].interactable = false;
                         canvasGroups[i].blocksRaycasts = false;
                     }
-                    //If activated and initially deactive
+                    //If activated and initially deactivate
                     else if (active && !initialActive)
                     {
                         //Deactivate all others and activate this

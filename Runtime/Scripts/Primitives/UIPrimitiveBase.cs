@@ -34,7 +34,7 @@ namespace UnityEngine.UI.Extensions
 
         [SerializeField]
         protected float m_Resolution;
-        public float Resoloution { get { return m_Resolution; } set { m_Resolution = value; SetAllDirty(); } }
+        public float Resolution { get { return m_Resolution; } set { m_Resolution = value; SetAllDirty(); } }
 
         [SerializeField]
         private bool m_useNativeSize;
@@ -287,7 +287,7 @@ namespace UnityEngine.UI.Extensions
 
         /// <summary>
         /// Return image adjusted position
-        /// **Copied from Unity's Image component for now and simplified for UI Extensions primatives
+        /// **Copied from Unity's Image component for now and simplified for UI Extensions primitives
         /// </summary>
         /// <param name="local"></param>
         /// <param name="rect"></param>
@@ -335,7 +335,7 @@ namespace UnityEngine.UI.Extensions
             for (int axis = 0; axis <= 1; axis++)
             {
                 // If the rect is smaller than the combined borders, then there's not room for the borders at their normal size.
-                // In order to avoid artefacts with overlapping borders, we scale the borders down to fit.
+                // In order to avoid artefact's with overlapping borders, we scale the borders down to fit.
                 float combinedBorders = border[axis] + border[axis + 2];
                 if (rect.size[axis] < combinedBorders && combinedBorders != 0)
                 {

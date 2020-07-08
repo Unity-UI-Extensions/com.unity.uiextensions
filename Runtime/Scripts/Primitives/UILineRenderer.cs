@@ -160,7 +160,7 @@ namespace UnityEngine.UI.Extensions
 			}
 			if (BezierMode == BezierType.Catenary && pointsToDraw.Length == 2) {
 				CableCurve cable = new CableCurve (pointsToDraw);
-				cable.slack = Resoloution;
+				cable.slack = Resolution;
 				cable.steps = BezierSegmentsPerCurve;
 				pointsToDraw = cable.Points ();
 			}
@@ -260,7 +260,7 @@ namespace UnityEngine.UI.Extensions
 				vh.AddUIVertexQuad (segments [i]);
 			}
 			if (vh.currentVertCount > 64000) {
-				Debug.LogError ("Max Verticies size is 64000, current mesh vertcies count is [" + vh.currentVertCount + "] - Cannot Draw");
+				Debug.LogError ("Max Verticies size is 64000, current mesh verticies count is [" + vh.currentVertCount + "] - Cannot Draw");
 				vh.Clear ();
 				return;
 			}
@@ -399,7 +399,7 @@ namespace UnityEngine.UI.Extensions
         /// <remarks>
         /// Positive numbers should be used to specify Index and Segment
         /// </remarks>
-        /// <param name="index">Requied Index of the point, starting from point 1</param>
+        /// <param name="index">Required Index of the point, starting from point 1</param>
         /// <param name="segmentIndex">(optional) Required Segment the point is held in, Starting from Segment 1</param>
         /// <returns>Vector2 position of the point within UI Space</returns>
         public Vector2 GetPosition(int index, int segmentIndex = 0)
@@ -435,7 +435,7 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// Get the Vector2 position of a line within a specific segment
         /// </summary>
-        /// <param name="index">Requied Index of the point, starting from point 1</param>
+        /// <param name="index">Required Index of the point, starting from point 1</param>
         /// <param name="segmentIndex"> Required Segment the point is held in, Starting from Segment 1</param>
         /// <returns>Vector2 position of the point within UI Space</returns>
         public Vector2 GetPositionBySegment(int index, int segment)
@@ -446,7 +446,7 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// Get the closest point between two given Vector2s from a given Vector2 point
         /// </summary>
-        /// <param name="p1">Starting postion</param>
+        /// <param name="p1">Starting position</param>
         /// <param name="p2">End position</param>
         /// <param name="p3">Desired / Selected point</param>
         /// <returns>Closest Vector2 position of the target within UI Space</returns>

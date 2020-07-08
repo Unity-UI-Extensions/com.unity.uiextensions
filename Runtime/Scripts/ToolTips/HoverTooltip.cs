@@ -118,9 +118,7 @@ namespace UnityEngine.UI.Extensions
             OnScreenSpaceCamera();
         }
 
-
-
-        //temporary call to don't fuck up old code, will be removed
+        //temporary call to not mess up old code, will be removed
         public void SetTooltip(string text, bool test)
         {
             NewTooltip();
@@ -136,7 +134,7 @@ namespace UnityEngine.UI.Extensions
         //position function, currently not working correctly due to the use of pivots and not manual offsets, soon to be fixed
         public void OnScreenSpaceCamera()
         {
-            //get the dynamic position of the pous in viewport coordinates
+            //get the dynamic position of the pos in viewport coordinates
             Vector3 newPos = GUICamera.ScreenToViewportPoint(Input.mousePosition);
 
             // store in val the updated position (x or y) of the tooltip edge of interest
