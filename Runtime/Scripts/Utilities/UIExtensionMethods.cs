@@ -1,4 +1,4 @@
-﻿/// Credit Simon (darkside) Jackson
+﻿/// Credit Simon (simonDarksideJ) Jackson
 /// Sourced from - My head
 namespace UnityEngine.UI.Extensions
 {

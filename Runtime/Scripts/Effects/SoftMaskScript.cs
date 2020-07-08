@@ -1,6 +1,6 @@
 ﻿/// Credit NemoKrad (aka Charles Humphrey) / valtain
 /// Sourced from - http://www.randomchaos.co.uk/SoftAlphaUIMask.aspx
-/// Updated by valtain - https://bitbucket.org/ddreaper/unity-ui-extensions/pull-requests/33
+/// Updated by valtain - https://bitbucket.org/SimonDarksideJ/unity-ui-extensions/pull-requests/33
 
 namespace UnityEngine.UI.Extensions
 {

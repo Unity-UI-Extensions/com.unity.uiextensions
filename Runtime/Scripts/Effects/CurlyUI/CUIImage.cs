@@ -95,7 +95,7 @@ namespace UnityEngine.UI.Extensions
 
                 }
 
-                // constraing the corner ratio 
+                // constraining the corner ratio 
                 if (cornerPosRatio.x < 0)
                 {
                     cornerPosRatio.x = 0;

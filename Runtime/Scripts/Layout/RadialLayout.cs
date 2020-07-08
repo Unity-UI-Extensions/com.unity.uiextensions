@@ -1,8 +1,8 @@
 
 /// Credit Danny Goodayle 
 /// Sourced from - http://www.justapixel.co.uk/radial-layouts-nice-and-simple-in-unity3ds-ui-system/
-/// Updated by ddreaper - removed dependency on a custom ScrollRect script. Now implements drag interfaces and standard Scroll Rect.
-/// Chid Layout fix by John Hattan - enables an options 
+/// Updated by SimonDarksideJ - removed dependency on a custom ScrollRect script. Now implements drag interfaces and standard Scroll Rect.
+/// Child Layout fix by John Hattan - enables an options 
 
 /*
 Radial Layout Group by Just a Pixel (Danny Goodayle) - http://www.justapixel.co.uk

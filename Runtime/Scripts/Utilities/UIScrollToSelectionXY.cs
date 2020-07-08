@@ -4,7 +4,7 @@
 ///		you can restrict movement by locking axis on ScrollRect component
 
 /*USAGE:
-Simply place the script on the ScrollRect that contains the selectable children we'll be scroling to
+Simply place the script on the ScrollRect that contains the selectable children we'll be scrolling to
 and drag'n'drop the RectTransform of the options "container" that we'll be scrolling.*/
 
 using UnityEngine.EventSystems;
@@ -48,7 +48,7 @@ namespace UnityEngine.UI.Extensions
 
         private void ScrollRectToLevelSelection()
         {
-			// FIX: if you dont do that here events can have null value
+			// FIX: if you do not do that here events can have null value
 			var events = EventSystem.current;
 
             // check main references

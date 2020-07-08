@@ -16,7 +16,7 @@ namespace UnityEngine.UI.Extensions
         public RectTransform center;
         [Tooltip("Size / spacing of elements")]
         public RectTransform elementSize;
-        [Tooltip("Scale = 1/ (1+distance fom center * shrinkage)")]
+        [Tooltip("Scale = 1/ (1+distance from center * shrinkage)")]
         public Vector2 elementShrinkage = new Vector2(1f / 200, 1f / 200);
         [Tooltip("Minimum element scale (furthest from center)")]
         public Vector2 minScale = new Vector2(0.7f, 0.7f);

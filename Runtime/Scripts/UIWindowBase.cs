@@ -57,7 +57,7 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        //Note, the begin drag and end drag aren't actually needed to control the drag.  However, I'd recommend keeping it in case you want to do somethind else when draggging starts and stops
+        //Note, the begin drag and end drag aren't actually needed to control the drag.  However, I'd recommend keeping it in case you want to do something else when dragging starts and stops
         public void OnBeginDrag(PointerEventData eventData)
         {
 

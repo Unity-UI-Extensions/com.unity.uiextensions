@@ -23,17 +23,17 @@ In this repository is a collection of extension scripts / effects and controls t
 
 You can either download / fork this project to access the scripts, or you can also download these pre-compiled Unity Assets, chock full of goodness for each release:
 
-# [Download](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Downloads) - 2019.1 (aka 2.1)
+# [Download - 2019.4 (aka 2.2)](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Downloads)
 
 We have expanded where you can download the UnityPackage asset and widened the options to contribute to the project.
 
-> I will still stress however, ***contribution is optional***. **The asset / code will always remain FREE**
+> I will still stress however, ***contribution is optional***. **The assets / code will always remain FREE**
 
 | [![Download from Itch.IO](https://bytebucket.org/UnityUIExtensions/unity-ui-extensions/wiki/SiteImages/itchio.png)](https://unityuiextensions.itch.io/uiextensions2-0 "Download from Itch.IO") | [![Download from Itch.IO](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/SiteImages/unionassets.png)](https://unionassets.com/unity-ui-extensions "Download from Union Assets") | [![Download from Itch.IO](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/SiteImages/patreon.jpg)](https://www.patreon.com/UnityUIExtensions "Support Unity UI Extensions on Patreon & download")| 
 | :--- | :--- | :--- |
 | [Grab from Itchio](https://unityuiextensions.itch.io/uiextensions2-0) | [Obtain via Union Assets](https://unionassets.com/unity-ui-extensions) |[Support through Patreon](https://www.patreon.com/UnityUIExtensions) | 
 
-> Still available on the [BitBucket site](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/downloads/UnityUIExtensions-2019-1.unitypackage) if you prefer
+> Still available to download on the [BitBucket site](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/downloads) if you prefer
 
 To view previous releases, visit the [release archive](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Downloads)
 
@@ -43,7 +43,7 @@ To view previous releases, visit the [release archive](https://bitbucket.org/Uni
 
 If you wish to further support the Unity UI Extensions project itself, then you can either subsidise your downloads above, or using the links below.
 
-All funds go to support the project, no matter the amount. Donations in code are also extremely welcome.
+All funds go to support the project, no matter the amount. **Donations in code are also extremely welcome**
 
 | | |
 |---|---|
@@ -62,12 +62,11 @@ To get started with the project, here's a little guide:
 
 # [Updates:](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/ReleaseNotes/RELEASENOTES)
 
-## Update 2019.1 - formally 2.1  - Going with the times
+## Release 2019.4 - (v2.2)  - Back from the future
 
-Given that it's been a while since the last release and a fair few number of fixes have been introduced since the last update, it's only fair I get this point release out for the masses.
-This is only a point release and we are still working hard on the next full update
+It's been a long year since the last official release of the Unity UI Extensions project and WOW, have there been a lot of ups and downs.  Big thanks to the community for their support of the project whether that was funds, code or even just testing and helping to iron out some pesky bugs.
 
-> Be sure to logon to the new Gitter Chat site for the UI Extensions project, if you have any questions, queries or suggestions
+> Be sure to logon to the new [Gitter Chat](https://gitter.im/Unity-UI-Extensions/Lobby) site for the UI Extensions project, if you have any questions, queries or suggestions
 > 
 > Much easier that posting a question / issue on YouTube, Twitter or Facebook :D
 > 
@@ -75,35 +74,42 @@ This is only a point release and we are still working hard on the next full upda
 
 ### New / updated features
 
-* Updated and tested with Unity 2018 / 2019
-* FancyScrollView updated with newer version (note breaking change)
-* Added test version of a LineRender control using a List instead of an array
-* New CardUI layout control, for a snazzy flip card system
-* New UI Circle Progress indicator control
+* New UPM deployment for Unity 2019, 2018 will still need to use the asset packages due to Unity compatibility issues.
+* Updated the project to the new Unity packaging guidelines, including separating out the examples to a separate package.
+* Many line drawing updates, including the ability to draw using a mouse (check the examples)
+* Scroll Snaps (HSS/VSS) now have a "Hard Swipe" feature to restrict movement to a single page for each swipe
+* Scroll Snaps have also been udpated to work better with the UIInfiniteScroll control
+* New Uniy Card UI controls thanks to @RyanslikeSoCool
+* Update to the Fancy Scoll controls with even more added fanciness
+* Several updates to adopt newer Unity standards in the controls to ensure full forwards and backwards compatibility
 
 ### Examples / Examples / Examples
-(All examples can be deleted without affecting the extensions)
+Examples now have their own package, this simplifies their use and deployment. Especially in 2019 with the UPM deployment.
 
-* Added example for CardUI
-* Added example for the LineRendererList experiment
-* FancyScrollView examples updated to the new version
-* Example for new UICircle progress control
+* Refreshed all examples for Unity 2019
+* New Card UI Examples to supplement the new controls
+* New Infinite Scroll Snap example
+* Fancy Scroll view updated with 2 new examples
+* New particle system example, demonstrating programmatic control of the particle system
 
 ### Fixes
 
-* General clean up of build warnings
-* Refactored primitive controls to be cleaner
-* Various HSS / VSS updates, mostly from the community
-* ScrollConflictManager updated to work better with nested HSS/VSS
-* UI Knob resolved to with screen space camera
-* Fix for the menu system, which was disabling prefabs instead of the scene instance
-* Fixed shader in UIParticle System
-* TextPic updated to support culling properly
-* Reorderable List updated with additional options
-* Screenspace overlay support added to the Tooltip control
-* UIParticle system now supports 3D rotation
-* UIVerticalScroller updated
-* Radial slider updated with
+* Mouse position use updated in
+    - RadialSlider
+    - ColorSampler
+    - TiltWindow
+* Check compiler warnings (#197)
+* Line Renderer click to add lines (#183)
+* ScrollSnap Swiping options - hard fast swipe (#176)
+* Shader Loading issue / UIParticleSystem (#229)
+* Issue where Menu Prefabs would be disabled instead of their Clones (#210)
+* Check ScrollSnapBase update (#265)
+* UIInfiniteScroller support for VSS updated and fixes
+* Fix to allow radial slider to start from positions other than left
+* Fix UI Particles: Texture sheet animation + Random row(#256)
+* Fix for wandering ScrollSnap controls due to Local Positioning drift
+* Divide By Zero fix for Gradient (#58)
+
 
 ### Known issues
 No new issues in this release, but check the issues list for things we are currently working on:
@@ -111,7 +117,9 @@ No new issues in this release, but check the issues list for things we are curre
 * [UI Extensions Issue log](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/issues?status=new&status=open)
 
 ## Upgrade Notes
-No significant concerns, should be able to update over the 2.1 package.  If upgrading prior to 2.1, we still recommend removing the UnityUIExtensions folder and then re-importing
+Due to the restructure of the package to meet Unity's new package guidelines, we recomment **Deleting the current Unity UI Extensions** folder prior to importing the new package
+
+For Unity 2019 users using the new UPM deployment, be sure to delete the existing folder in your assets folder before adding the new package to avoid conflict
 
 ----------------
 ## Release History
@@ -134,10 +142,10 @@ There are almost 70+ extension controls / effect and other utilities in the proj
 
 [Controls](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#markdown-header-controls)|||||
 ------|------|------|------|
-Accordion|ColorPicker|SelectionBox|UIFlippable|ComboBox
-AutoCompleteComboBox|DropDownList|BoundToolTip|UIWindowBase|UI_Knob
-TextPic|InputFocus|Box Slider|CooldownButton|Segmented Control
-Stepper|Range Slider|||
+Accordion|ColorPicker|Selection Box|UI Flippable|ComboBox
+AutoComplete ComboBox|DropDown List|BoundToolTip|UIWindowBase|UI Knob
+TextPic|Input Focus|Box Slider|Cooldown Button|Segmented Control
+Stepper|Range Slider|Radial Slider|MultiTouch Scroll Rect|
 ||||
 
 [Primitives](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#markdown-header-primitives)|||||
@@ -150,14 +158,14 @@ UIPolygon||||
 ------|------|------|------|
 Horizontal Scroll Snap|Vertical Scroll Snap|Flow Layout Group|Radial Layout|Tile Size Fitter
 Scroll Snap (alt implementation)|Reorderable List|UI Vertical Scroller|Curved Layout|Table Layout
-FancyScrollView||||
+FancyScrollView|Card UI|Scroll Position Controller||
 ||||
 
 [Effects](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#markdown-header-effect_components)|||||
 ------|------|------|------|
 Best Fit Outline|Curved Text|Gradient|Gradient2|Letter Spacing
 NicerOutline|RaycastMask|UIFlippable|UIImageCrop|SoftAlphaMask
-CylinderText|UIParticleSystem|CurlyUI||
+CylinderText|UIParticleSystem|CurlyUI|Shine Effect|Shader Effects
 ||||
 
 [VR Components](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Controls#markdown-header-vr_components)|||||
@@ -184,21 +192,32 @@ UIHighlightable|Menu Manager|Pagination Manager||
 ---
 
 
-# [How do I get set up? ](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/GettingStarted)
+# [How do I get set up?](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/GettingStarted)
 
+As of Unity 2019, there are now two paths for getting access to the Unity UI Extensions project:
+
+- Unity 2019 or higher
+The recommended way to add the Unity UI Extensions project to your solution is to use the Unity package Manager. Simply use the [Unity Package Manager](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/UPMInstallation) to reference the project and install it.
+
+Alternatively, you can also use the pre-compiled Unity packages if you wish, however, UPM offers full versioning support to allow you to switch versions as you wish.
+
+- Unity 2018 or lower
+The pre-compiled Unity assets are the only solution for Unity 2018 or earlier due to the changes in the Unity UI framework in Unity made for 2019.
 Either clone / download this repository to your machine and then copy the scripts in, or use the pre-packaged .UnityPackage for your version of Unity and import it as a custom package in to your project.
 
 # [Contribution guidelines ](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/ContributionGuidelines)
 
 Got a script you want added? Then just fork the bitbucket repository and submit a PR.  All contributions accepted (including fixes)
-Just ensure 
-* The header of the script matches the standard used in all scripts
+
+Just ensure:
+
+* The header of the script should match the standard used in all scripts
 * The script uses the **Unity.UI.Extensions** namespace so they do not affect any other developments
 * (optional) Add Component and Editor options where possible (editor options are in the Editor\UIExtensionsMenuOptions.cs file)
 
 # [License ](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/License)
 
-All scripts conform to the BSD license and are free to use / distribute.  See the [LICENSE](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/License) file for more information 
+All scripts conform to the BSD3 license and are free to use / distribute.  See the [LICENSE](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/License) file for more information 
 
 # [Like what you see? ](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/FurtherInfo)
 
@@ -213,17 +232,4 @@ I will add more sample scenes for the UI examples in this repository and detail 
 
 # [Previous Releases](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Downloads)
 
-* [Unity UI Extensions Unity 4.x Asset](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/downloads/UnityUIExtensions-4.x.unitypackage)
-
-* [Unity UI Extensions Unity 5.1 Asset](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/downloads/UnityUIExtensions-5.1.unitypackage)
-
-* [Unity UI Extensions Unity 5.2 Asset](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/downloads/UnityUIExtensions-5.2.unitypackage) <- 5.2.0 - 5.2.1 base releases ONLY
-
-* [Unity UI Extensions Unity 5.3 (5.2.1P+) Asset](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/downloads/UnityUIExtensions-5.3.unitypackage) <- use this for 5.2.1P+ releases
-
-> **Note** To retain 5.2 compatibility in the 5.3 package, you will see two warnings related to:
-> ```
-> `UnityEngine.UI.InputField.onValueChange' is obsolete.  
-> ```
-> This has no effect on the package working in 5.4 plus and is only there to maintain backwards compatibility.  We will look to update/remove this in a future release, likely after 5.4.  
-If you have any concerns, feel free to update your code in your project to add the missing "d".  Unity have ensured it still works as they have mapped the API change for now.
+Please see the [full downloads list](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Downloads) for all previous releases and their corresponding download links.

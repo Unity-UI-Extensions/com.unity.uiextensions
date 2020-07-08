@@ -56,7 +56,7 @@ namespace UnityEngine.EventSystems.Extensions
             PointerEventData pointerData;
 
             //Not certain on the use of this.
-            //I know that -1 is the mouse and anything positive would be a finger/touch, 0 being the first finger, 1 beign the second and so one till the system limit is reached.
+            //I know that -1 is the mouse and anything positive would be a finger/touch, 0 being the first finger, 1 being the second and so one till the system limit is reached.
             //So that is the reason I choose -2.
             GetPointerData(-2, out pointerData, true);
 
@@ -89,7 +89,7 @@ namespace UnityEngine.EventSystems.Extensions
                 // handler to be what would receive a click.
                 var newPressed = ExecuteEvents.ExecuteHierarchy(currentOverGo, pointer, ExecuteEvents.submitHandler);
 
-                // didnt find a press handler... search for a click handler
+                // didn't find a press handler... search for a click handler
                 if (newPressed == null)
                 {
                     newPressed = ExecuteEvents.ExecuteHierarchy(currentOverGo, pointer, ExecuteEvents.pointerDownHandler);

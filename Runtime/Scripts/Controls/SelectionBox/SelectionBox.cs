@@ -41,13 +41,13 @@ namespace UnityEngine.UI.Extensions
 		
 		// An optional parameter, but you can add a sprite to the selection box to give it a border or a stylized look.
 		// It's suggested you use a monochrome sprite so that the selection
-		// Box color is still relevent.
+		// Box color is still relevant.
 		public Sprite art;
 		
 		// Will store the location of wherever we first click before dragging.
 		private Vector2 origin;
 		
-		// A rectTransform set by the User that can limit which part of the screen is eligable for drag selection
+		// A rectTransform set by the User that can limit which part of the screen is eligible for drag selection
 		public RectTransform selectionMask;
 		
 		//Stores the rectTransform connected to the generated gameObject being used for the selection box visuals
@@ -199,7 +199,7 @@ namespace UnityEngine.UI.Extensions
 		}
 		
 		bool PointIsValidAgainstSelectionMask(Vector2 screenPoint){
-			//If there is no seleciton mask, any point is valid
+			//If there is no selection mask, any point is valid
 			if (!selectionMask) {
 				return true;
 			}
@@ -215,14 +215,14 @@ namespace UnityEngine.UI.Extensions
 				return null;
 			}
 			
-			//This gets a bit tricky, because we have to make considerations depending on the heirarchy of the selectable's gameObject
+			//This gets a bit tricky, because we have to make considerations depending on the hierarchy of the selectable's gameObject
 			foreach (var selectable in selectables) {
 				
 				//First we check to see if the selectable has a rectTransform
 				var rectTransform = (selectable.transform as RectTransform);
 				
 				if (rectTransform) {
-					//Because if it does, the camera we use to calulate it's screen point will vary
+					//Because if it does, the camera we use to calculate it's screen point will vary
 					var screenCamera = GetScreenPointCamera(rectTransform);
 					
 					//Once we've found the rendering camera, we check if the selectables rectTransform contains the click. That way we
@@ -290,7 +290,7 @@ namespace UnityEngine.UI.Extensions
 				
 				Vector3 screenPoint = GetScreenPointOfSelectable(selectable);
 				
-				//If the box Rect contains the selectabels screen point and that point is inside a valid selection mask, it's being preselected, otherwise it is not.
+				//If the box Rect contains the selectables screen point and that point is inside a valid selection mask, it's being preselected, otherwise it is not.
 				selectable.preSelected = RectTransformUtility.RectangleContainsScreenPoint(boxRect, screenPoint, null) && PointIsValidAgainstSelectionMask(screenPoint);
 				
 			}
@@ -331,12 +331,12 @@ namespace UnityEngine.UI.Extensions
 		}
 		
 		Vector2 GetScreenPointOfSelectable(IBoxSelectable selectable) {
-			//Getting the screen point requires it's own function, because we have to take into consideration the selectables heirarchy.
+			//Getting the screen point requires it's own function, because we have to take into consideration the selectables hierarchy.
 			
 			//Cast the transform as a rectTransform
 			var rectTransform = selectable.transform as RectTransform;
 			
-			//If it has a rectTransform component, it must be in the heirarchy of a canvas, somewhere.
+			//If it has a rectTransform component, it must be in the hierarchy of a canvas, somewhere.
 			if (rectTransform) {
 				
 				//And the camera used to calculate it's screen point will vary.
@@ -345,7 +345,7 @@ namespace UnityEngine.UI.Extensions
 				return RectTransformUtility.WorldToScreenPoint(renderingCamera, selectable.transform.position);
 			}
 			
-			//If it's no in the heirarchy of a canvas, the regular Camera.main.WorldToScreenPoint will do.
+			//If it's no in the hierarchy of a canvas, the regular Camera.main.WorldToScreenPoint will do.
 			return Camera.main.WorldToScreenPoint(selectable.transform.position);				                                         
 			
 		}
@@ -363,7 +363,7 @@ namespace UnityEngine.UI.Extensions
 			Canvas rootCanvas = null;
 			RectTransform rectCheck = rectTransform;
 			
-			//We're going to check all the canvases in the heirarchy of this rectTransform until we find the root.
+			//We're going to check all the canvases in the hierarchy of this rectTransform until we find the root.
 			do {
 				rootCanvas = rectCheck.GetComponent<Canvas>();
 				

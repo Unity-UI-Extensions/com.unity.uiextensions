@@ -1,6 +1,6 @@
 /// Credit BinaryX 
 /// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/page-2#post-1945602
-/// Updated by ddreaper - removed dependency on a custom ScrollRect script. Now implements drag interfaces and standard Scroll Rect.
+/// Updated by simonDarksideJ - removed dependency on a custom ScrollRect script. Now implements drag interfaces and standard Scroll Rect.
 /// Update by xesenix - rewrote almost the entire code 
 /// - configuration for direction move instead of 2 concurrent class (easier to change direction in editor)
 /// - supports list layout with horizontal or vertical layout need to match direction with type of layout used
@@ -39,7 +39,7 @@ namespace UnityEngine.UI.Extensions
 
         private int _startingPage = 0;
 
-        // anchor points to lerp to to see child on certain indexes
+        // anchor points to lerp to see child on certain indexes
         private Vector3[] _pageAnchorPositions;
 
         private Vector3 _lerpTarget;

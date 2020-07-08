@@ -15,7 +15,7 @@ rather primitive, but I can't see any better way at the moment. It means that
 all sorts of things can break the effect...
 
 This component should be placed higher in component list than any other vertex
-modifiers that alter the total number of vertices. Eg, place this above Shadow
+modifiers that alter the total number of vertices. EG, place this above Shadow
 or Outline effects. If you don't, the outline/shadow won't match the position
 of the letters properly. If you place the outline/shadow effect second however,
 it will just work on the altered vertices from this component, and function

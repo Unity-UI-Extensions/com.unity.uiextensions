@@ -1,7 +1,7 @@
 ﻿/// Credit setchi (https://github.com/setchi)
 /// Sourced from - https://github.com/setchi/FancyScrollView
 
-// For manteinance, every new [SerializeField] variable in ScrollPositionController must be declared here
+// For maintenance, every new [SerializeField] variable in ScrollPositionController must be declared here
 
 using UnityEditor;
 

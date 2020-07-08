@@ -37,7 +37,7 @@ namespace UnityEngine.UI.Extensions
 
         private IEnumerator RefreshChildren()
         {
-            //Handle new chilren
+            //Handle new children
             for (int i = 0; i < _rect.childCount; i++)
             {
                 if (_cachedChildren.Contains(_rect.GetChild(i)))

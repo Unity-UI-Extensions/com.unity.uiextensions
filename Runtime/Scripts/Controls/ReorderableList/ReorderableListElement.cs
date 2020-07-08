@@ -1,6 +1,6 @@
 ﻿/// Credit Ziboo, Andrew Quesenberry 
 /// Sourced from - http://forum.unity3d.com/threads/free-reorderable-list.364600/
-/// Last Child Fix - https://bitbucket.org/ddreaper/unity-ui-extensions/issues/70/all-re-orderable-lists-cause-a-transform
+/// Last Child Fix - https://bitbucket.org/SimonDarksideJ/unity-ui-extensions/issues/70/all-re-orderable-lists-cause-a-transform
 
 using System;
 using System.Collections.Generic;
@@ -160,7 +160,7 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
-            //If nothing found or the list is not dropable, put the fake element outsite
+            //If nothing found or the list is not dropable, put the fake element outside
             if (_currentReorderableListRaycasted == null || _currentReorderableListRaycasted.IsDropable == false
                 || (_oldReorderableListRaycasted != _reorderableList && !IsTransferable)
                 || ((_fakeElement.parent == _currentReorderableListRaycasted.Content 
@@ -484,7 +484,7 @@ namespace UnityEngine.UI.Extensions
                 _reorderableList.OnElementAdded.Invoke(args);
 
                 if (!isValid)
-                    throw new Exception("Transfer is already Cancelled.");
+                    throw new Exception("Transfer is already Canceled.");
 
             }
 

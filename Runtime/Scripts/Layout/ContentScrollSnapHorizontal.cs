@@ -37,7 +37,7 @@ namespace UnityEngine.UI.Extensions
 
         [Header("Events")]
         [SerializeField]
-        [Tooltip("Event is triggered whenever the scroll rect starts to move, even when triggered programatically")]
+        [Tooltip("Event is triggered whenever the scroll rect starts to move, even when triggered programmatically")]
         private StartMovementEvent m_StartMovementEvent = new StartMovementEvent();
         public StartMovementEvent MovementStarted
         {
@@ -564,9 +564,9 @@ namespace UnityEngine.UI.Extensions
         public struct MoveInfo
         {
             public enum IndexType { childIndex, positionIndex }
-            [Tooltip("Child Index means the Index coresponds to the content item at that index in the hierarchy.\n" +
+            [Tooltip("Child Index means the Index corresponds to the content item at that index in the hierarchy.\n" +
                 "Position Index means the Index corresponds to the content item in that snap position.\n" +
-                "A higher Position Index in a Horizonal Scroll Snap means it would be further to the right.")]
+                "A higher Position Index in a Horizontal Scroll Snap means it would be further to the right.")]
             public IndexType indexType;
             [Tooltip("Zero based")]
             public int index;

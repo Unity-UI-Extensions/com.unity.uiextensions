@@ -41,7 +41,7 @@ public class CardStack2D : MonoBehaviour
         ///I wouldn't really recommend changing it, but go ahead if you want to.		
         xPowerDifference = 9 - cards.Length;
 
-        ///This is optional, but makes it super easy to figure out the offscreen position for cards.
+        ///This is optional, but makes it super easy to figure out the off screen position for cards.
         ///Unfortunately, it's only really useful if the cards are the same width.
         if (useDefaultUsedXPos)
         {

@@ -25,7 +25,7 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("size of each item along the Normalized axis")]
         public float itemSize;
 
-        // the slope can be moved by altering this setting, it could be constrained to the 0-1 range, but other values are usefull for animations
+        // the slope can be moved by altering this setting, it could be constrained to the 0-1 range, but other values are useful for animations
         public float centerpoint = 0.5f;
 
         protected override void OnEnable() { base.OnEnable(); CalculateRadial(); }

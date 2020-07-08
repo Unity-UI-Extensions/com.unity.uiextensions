@@ -170,12 +170,12 @@ namespace UnityEngine.UI.Extensions
         }
 
         /**
-            Caluclates a point on the path.
+            Calculates a point on the path.
             
             @param curveIndex The index of the curve that the point is on. For example, 
-            the second curve (index 1) is the curve with controlpoints 3, 4, 5, and 6.
+            the second curve (index 1) is the curve with control points 3, 4, 5, and 6.
             
-            @param t The paramater indicating where on the curve the point is. 0 corresponds 
+            @param t The parameter indicating where on the curve the point is. 0 corresponds 
             to the "left" point, 1 corresponds to the "right" end point.
         */
         public Vector2 CalculateBezierPoint(int curveIndex, float t)
@@ -221,7 +221,7 @@ namespace UnityEngine.UI.Extensions
             Gets the drawing points. This implementation simply calculates a certain number
             of points per curve.
 
-            This is a lsightly different inplementation from the one above.
+            This is a slightly different implementation from the one above.
         */
         public List<Vector2> GetDrawingPoints1()
         {
@@ -327,7 +327,7 @@ namespace UnityEngine.UI.Extensions
 
 
         /**
-            Caluclates a point on the Bezier curve represented with the four controlpoints given.
+            Calculates a point on the Bezier curve represented with the four control points given.
         */
         private Vector2 CalculateBezierPoint(float t, Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
         {

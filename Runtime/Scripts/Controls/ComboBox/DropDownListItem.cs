@@ -68,7 +68,7 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         private string _id;
         ///<summary>
-        ///ID exists so that an item can have a caption and a value like in traditional windows forms. Ie. an item may be a student's name, and the ID can be the student's ID number
+        ///ID exists so that an item can have a caption and a value like in traditional windows forms. IE. an item may be a student's name, and the ID can be the student's ID number
         ///</summary>
         public string ID
         {

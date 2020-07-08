@@ -1,6 +1,6 @@
 /// Credit drHogan 
 /// Sourced from - http://forum.unity3d.com/threads/screenspace-camera-tooltip-controller-sweat-and-tears.293991/#post-1938929
-/// updated ddreaper - refactored code to be more performant.
+/// updated simonDarksideJ - refactored code to be more performant.
 /// updated lucasvinbr - mixed with BoundTooltip, should work with Screenspace Camera (non-rotated) and Overlay
 /// *Note - only works for non-rotated Screenspace Camera and Screenspace Overlay canvases at present, needs updating to include rotated Screenspace Camera and Worldspace!
 
@@ -34,7 +34,7 @@ namespace UnityEngine.UI.Extensions
         public Canvas canvas;
 
         [Tooltip("Sets if tooltip triggers will run ForceUpdateCanvases and refresh the tooltip's layout group " +
-            "(if any) when hovered, in order to prevent momentaneous misplacement sometimes caused by ContentSizeFitters")]
+            "(if any) when hovered, in order to prevent momentousness misplacement sometimes caused by ContentSizeFitters")]
         public bool tooltipTriggersCanForceCanvasUpdate = false;
 
         /// <summary>

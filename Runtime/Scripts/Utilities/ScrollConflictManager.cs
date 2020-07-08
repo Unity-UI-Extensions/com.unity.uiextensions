@@ -1,12 +1,12 @@
 /// Credit srinivas sunil 
-/// sourced from: https://bitbucket.org/ddreaper/unity-ui-extensions/pull-requests/21/develop_53/diff
+/// sourced from: https://bitbucket.org/SimonDarksideJ/unity-ui-extensions/pull-requests/21/develop_53/diff
 /// Updated by Hiep Eldest : https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/issues/300/scrollconflictmanager-not-working-if
 
 using UnityEngine.EventSystems;
 
 /// <summary>
 /// This is the most efficient way to handle scroll conflicts when there are multiple scroll rects, this is useful when there is a vertical scrollrect in/on a horizontal scrollrect or vice versa
-/// Attach the script to the  rect scroll and assign other rectscroll in the inspecter (one is verticle and other is horizontal) gathered and modified from unity answers(delta snipper)
+/// Attach the script to the  rect scroll and assign other rectscroll in the inspector (one is vertical and other is horizontal) gathered and modified from unity answers(delta snipper)
 /// </summary>
 namespace UnityEngine.UI.Extensions
 {
@@ -26,7 +26,7 @@ namespace UnityEngine.UI.Extensions
         private IDragHandler[] _dragHandlers;
         //This tracks if the other one should be scrolling instead of the current one.
         private bool scrollOther;
-        //This tracks wether the other one should scroll horizontally or vertically.
+        //This tracks whether the other one should scroll horizontally or vertically.
         private bool scrollOtherHorizontally;
 
         void Awake()
@@ -41,11 +41,11 @@ namespace UnityEngine.UI.Extensions
                 if (_myScrollRect.horizontal)
                     Debug.LogError("You have added the SecondScrollRect to a scroll view that already has both directions selected");
                 if (!ParentScrollRect.horizontal)
-                    Debug.LogError("The other scroll rect doesnt support scrolling horizontally");
+                    Debug.LogError("The other scroll rect does not support scrolling horizontally");
             }
             else if (!ParentScrollRect.vertical)
             {
-                Debug.LogError("The other scroll rect doesnt support scrolling vertically");
+                Debug.LogError("The other scroll rect does not support scrolling vertically");
             }
 
             if (ParentScrollRect && !ParentScrollSnap)
@@ -73,7 +73,7 @@ namespace UnityEngine.UI.Extensions
                 if (horizontal > vertical)
                 {
                     scrollOther = true;
-                    //disable the current scroll rect so it doesnt move.
+                    //disable the current scroll rect so it does not move.
                     _myScrollRect.enabled = false;
                     for (int i = 0, length = _beginDragHandlers.Length; i < length; i++)
                     {
@@ -85,7 +85,7 @@ namespace UnityEngine.UI.Extensions
             else if (vertical > horizontal)
             {
                 scrollOther = true;
-                //disable the current scroll rect so it doesnt move.
+                //disable the current scroll rect so it does not move.
                 _myScrollRect.enabled = false;
                 for (int i = 0, length = _beginDragHandlers.Length; i < length; i++)
                 {

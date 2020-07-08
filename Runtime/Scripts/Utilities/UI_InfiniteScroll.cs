@@ -1,5 +1,5 @@
 ﻿/// Credit Tomasz Schelenz 
-/// Sourced from - https://bitbucket.org/ddreaper/unity-ui-extensions/issues/81/infinite-scrollrect
+/// Sourced from - https://bitbucket.org/SimonDarksideJ/unity-ui-extensions/issues/81/infinite-scrollrect
 /// Demo - https://www.youtube.com/watch?v=uVTV7Udx78k  - configures automatically.  - works in both vertical and horizontal (but not both at the same time)  - drag and drop  - can be initialized by code (in case you populate your scrollview content from code)
 
 using System.Collections.Generic;
@@ -82,7 +82,7 @@ namespace UnityEngine.UI.Extensions
 
                 if (_isHorizontal && _isVertical)
                 {
-                    Debug.LogError("UI_InfiniteScroll doesn't support scrolling in both directions, plase choose one direction (horizontal or vertical)");
+                    Debug.LogError("UI_InfiniteScroll doesn't support scrolling in both directions, please choose one direction (horizontal or vertical)");
                 }
 
                 _itemCount = _scrollRect.content.childCount;

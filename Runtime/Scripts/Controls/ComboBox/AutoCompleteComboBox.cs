@@ -43,8 +43,8 @@ namespace UnityEngine.UI.Extensions
 
         private ScrollRect _scrollRect;
 
-        private List<string> _panelItems; //items that will get shown in the dropdown
-        private List<string> _prunedPanelItems; //items that used to show in the dropdown
+        private List<string> _panelItems; //items that will get shown in the drop-down
+        private List<string> _prunedPanelItems; //items that used to show in the drop-down
 
         private Dictionary<string, GameObject> panelObjects;
         
@@ -118,7 +118,7 @@ namespace UnityEngine.UI.Extensions
 
 		// fires when input text is changed;
 		public SelectionTextChangedEvent OnSelectionTextChanged;
-		// fires when when an Item gets selected / deselected (including when items are added/removed once this is possible)
+		// fires when an Item gets selected / deselected (including when items are added/removed once this is possible)
 		public SelectionValidityChangedEvent OnSelectionValidityChanged;
 		// fires in both cases
 		public SelectionChangedEvent OnSelectionChanged;
@@ -171,7 +171,7 @@ namespace UnityEngine.UI.Extensions
             catch (System.NullReferenceException ex)
             {
                 Debug.LogException(ex);
-                Debug.LogError("Something is setup incorrectly with the dropdownlist component causing a Null Refernece Exception");
+                Debug.LogError("Something is setup incorrectly with the dropdownlist component causing a Null Reference Exception");
                 success = false;
             }
             panelObjects = new Dictionary<string, GameObject>();

@@ -179,7 +179,7 @@ namespace UnityEngine.UI.Extensions
 			}
 			if (BezierMode == BezierType.Catenary && pointsToDraw.Count == 2) {
 				CableCurve cable = new CableCurve (pointsToDraw);
-				cable.slack = Resoloution;
+				cable.slack = Resolution;
 				cable.steps = BezierSegmentsPerCurve;
                 pointsToDraw.Clear();
 				pointsToDraw.AddRange(cable.Points());
@@ -282,7 +282,7 @@ namespace UnityEngine.UI.Extensions
 				vh.AddUIVertexQuad (segments [i]);
 			}
 			if (vh.currentVertCount > 64000) {
-				Debug.LogError ("Max Verticies size is 64000, current mesh vertcies count is [" + vh.currentVertCount + "] - Cannot Draw");
+				Debug.LogError ("Max Verticies size is 64000, current mesh verticies count is [" + vh.currentVertCount + "] - Cannot Draw");
 				vh.Clear ();
 				return;
 			}

@@ -439,7 +439,7 @@ namespace UnityEngine.UI.Extensions
         void UpdateDrag(PointerEventData eventData, Camera cam)
         {
             //this needs to differ from slider in that we have two handles, and need to move the right one. 
-            //and if it was neither handle, we will have a seperate case where both handles move uniformly 
+            //and if it was neither handle, we will have a separate case where both handles move uniformly 
             //moving the entire range
 
             //this is where we use our interationState
