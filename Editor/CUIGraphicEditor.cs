@@ -105,9 +105,9 @@ namespace UnityEngine.UI.Extensions
 
             if (GUILayout.Button("Reference CUI component for curves"))
             {
-                Undo.RecordObject(script, "Reference Reference CUI");
-                Undo.RecordObject(script.RefCurves[0], "Reference Reference CUI");
-                Undo.RecordObject(script.RefCurves[1], "Reference Reference CUI");
+                Undo.RecordObject(script, "Reference CUI");
+                Undo.RecordObject(script.RefCurves[0], "Reference CUI");
+                Undo.RecordObject(script.RefCurves[1], "Reference CUI");
                 EditorUtility.SetDirty(script);
 
                 script.ReferenceCUIForBCurves();
@@ -115,7 +115,7 @@ namespace UnityEngine.UI.Extensions
                 script.Refresh();
             }
 
-            EditorGUILayout.HelpBox("Auto set the curves' control points by refencing another CUI. You need to set Ref CUI Graphic (e.g. CUIImage) first.", MessageType.Info);
+            EditorGUILayout.HelpBox("Auto set the curves' control points by referencing another CUI. You need to set Ref CUI Graphic (e.g. CUIImage) first.", MessageType.Info);
 
             EditorGUI.EndDisabledGroup();
         }

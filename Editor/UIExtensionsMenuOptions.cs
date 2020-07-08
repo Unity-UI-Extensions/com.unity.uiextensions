@@ -710,7 +710,7 @@ namespace UnityEditor.UI
 		}
         #endregion
 
-        #region Accordian
+        #region Accordion
         [MenuItem("GameObject/UI/Extensions/Accordion/Accordion Group", false)]
 		static public void AddAccordionGroup(MenuCommand menuCommand)
 		{

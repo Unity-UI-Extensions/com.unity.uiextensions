@@ -4,7 +4,7 @@
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 
-// For manteinance, every new [SerializeField] variable in Scroller must be declared here
+// For maintenance, every new [SerializeField] variable in Scroller must be declared here
 
 namespace UnityEngine.UI.Extensions
 {

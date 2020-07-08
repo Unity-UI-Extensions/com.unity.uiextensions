@@ -2,6 +2,80 @@
 This file contains the up to date release notes for each release of the UI Extensions project including release videos where required.
 
 ----------------
+## Update 2019.4 - 2.2  - Back from the future
+
+It's been a long year since the last official release of the Unity UI Extensions project and WOW, have there been a lot of ups and downs.  Big thanks to the community for their support of the project whether that was funds, code or even just testing and helping to iron out some pesky bugs.
+
+> Be sure to logon to the new [Gitter Chat](https://gitter.im/Unity-UI-Extensions/Lobby) site for the UI Extensions project, if you have any questions, queries or suggestions
+> 
+> Much easier that posting a question / issue on YouTube, Twitter or Facebook :D
+> 
+> ## [UIExtensions Gitter Chanel](https://gitter.im/Unity-UI-Extensions/Lobby)
+
+### New / updated features
+
+* New UPM deployment for Unity 2019, 2018 will still need to use the asset packages due to Unity compatibility issues.
+* Updated the project to the new Unity packaging guidelines, including separating out the examples to a separate package.
+* Many line drawing updates, including the ability to draw using a mouse (check the examples)
+* Scroll Snaps (HSS/VSS) now have a "Hard Swipe" feature to restrict movement to a single page for each swipe
+* Scroll Snaps have also been udpated to work better with the UIInfiniteScroll control
+* New Uniy Card UI controls thanks to @RyanslikeSoCool
+* Update to the Fancy Scoll controls with even more added fanciness
+* Several updates to adopt newer Unity standards in the controls to ensure full forwards and backwards compatibility
+
+### Examples / Examples / Examples
+Examples now have their own package, this simplifies their use and deployment. Especially in 2019 with the UPM deployment.
+
+* Refreshed all examples for Unity 2019
+* New Card UI Examples to supplement the new controls
+* New Infinite Scroll Snap example
+* Fancy Scroll view updated with 2 new examples
+* New particle system example, demonstrating programmatic control of the particle system
+
+### Fixes
+
+* Mouse position use updated in
+    - RadialSlider
+    - ColorSampler
+    - TiltWindow
+* Check compiler warnings (#197)
+* Line Renderer click to add lines (#183)
+* ScrollSnap Swiping options - hard fast swipe (#176)
+* Shader Loading issue / UIParticleSystem (#229)
+* Issue where Menu Prefabs would be disabled instead of their Clones (#210)
+* Check ScrollSnapBase update (#265)
+* UIInfiniteScroller support for VSS updated and fixes
+* Fix to allow radial slider to start from positions other than left
+* Fix UI Particles: Texture sheet animation + Random row(#256)
+* Fix for wandering ScrollSnap controls due to Local Positioning drift
+* Divide By Zero fix for Gradient (#58)
+
+
+### Known issues
+No new issues in this release, but check the issues list for things we are currently working on:
+
+* [UI Extensions Issue log](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/issues?status=new&status=open)
+
+# [Installation Instructions](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/GettingStarted)
+
+As of Unity 2019, there are now two paths for getting access to the Unity UI Extensions project:
+
+- Unity 2019 or higher
+The recommended way to add the Unity UI Extensions project to your solution is to use the Unity package Manager. Simply use the Unity Package Manager to reference the project to install it
+
+Alternatively, you can also use the pre-compiled Unity packages if you wish, however, UPM offers full versioning support to allow you to switch versions as you wish.
+
+- Unity 2018 or lower
+The pre-compiled Unity assets are the only solution for Unity 2018 or earlier due to the changes in the Unity UI framework in Unity made for 2019.
+Either clone / download this repository to your machine and then copy the scripts in, or use the pre-packaged .UnityPackage for your version of Unity and import it as a custom package in to your project.
+
+## Upgrade Notes
+Due to the restructure of the package to meet Unity's new package guidelines, we recommend **Deleting the current Unity UI Extensions** folder prior to importing the new package.
+
+For Unity 2019 users using the new UPM deployment, be sure to delete the existing folder in your assets folder before adding the new package to avoid conflict.
+
+---
+
 ## Update 2019.1 - formally 2.1  - Going with the times
 
 Given that it's been a while since the last release and a fair few number of fixes have been introduced since the last update, it's only fair I get this point release out for the masses.
