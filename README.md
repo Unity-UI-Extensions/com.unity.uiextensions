@@ -78,9 +78,9 @@ It's been a long year since the last official release of the Unity UI Extensions
 * Updated the project to the new Unity packaging guidelines, including separating out the examples to a separate package.
 * Many line drawing updates, including the ability to draw using a mouse (check the examples)
 * Scroll Snaps (HSS/VSS) now have a "Hard Swipe" feature to restrict movement to a single page for each swipe
-* Scroll Snaps have also been udpated to work better with the UIInfiniteScroll control
-* New Uniy Card UI controls thanks to @RyanslikeSoCool
-* Update to the Fancy Scoll controls with even more added fanciness
+* Scroll Snaps have also been updated to work better with the UIInfiniteScroll control
+* New Unity Card UI controls thanks to @RyanslikeSoCool
+* Update to the Fancy Scroll controls with even more added fanciness
 * Several updates to adopt newer Unity standards in the controls to ensure full forwards and backwards compatibility
 
 ### Examples / Examples / Examples
