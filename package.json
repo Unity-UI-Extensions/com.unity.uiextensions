@@ -1,14 +1,14 @@
 {
   "name": "com.unity.uiextensions",
   "displayName": "Unity UI Extensions",
-  "version": "2.2.2-preview",
+  "version": "2.2.1",
   "description": "An extension project for the Unity3D UI system, all crafted and contributed by the awesome Unity community",
   "author": "Simon darkside Jackson <@SimonDarksideJ>",
   "contributors": [{
   "name": "SimonDarksideJ",
   "twitter": "@SimonDarksideJ"
 }],
-  "unity": "2019.1",
+  "unity": "2019.3",
   "repository": {
   "type": "git",
   "url": "git+https://bitbucket.org/UnityUIExtensions/unity-ui-extensions.git"
