@@ -28,6 +28,7 @@ For a full list of the controls and how they are used, please see the [online do
 # Technical details
 
 ## Requirements
+
 This version of the Unity UI Extensions is compatible with the following versions of the Unity Editor:
 
 * 2019 and above - the recommended path for 2019+ is to use the Unity Package Manager to get access to the package.  Full details for installing via UPM can be [found here](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/UPMInstallation).
