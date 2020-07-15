@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 /// Credit Brogan King (@BroganKing)
 /// Original Sourced from - https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/issues/158/pagination-script
 
@@ -44,7 +44,16 @@ namespace UnityEngine.UI.Extensions
             scrollSnap.OnSelectionPageChangedEvent.AddListener(SetToggleGraphics);
             scrollSnap.OnSelectionChangeEndEvent.AddListener(OnPageChangeEnd);
 
-            // add selectables to list
+            ResetPaginationChildren();
+        }
+
+        /// <summary>
+        /// Remake the internal list of child toggles (m_PaginationChildren).
+        /// Used after adding/removing a toggle.
+        /// </summary>
+        public void ResetPaginationChildren()
+        {
+             // add selectables to list
             m_PaginationChildren = GetComponentsInChildren<Toggle>().ToList<Toggle>();
             for (int i = 0; i < m_PaginationChildren.Count; i++)
             {
@@ -60,7 +69,6 @@ namespace UnityEngine.UI.Extensions
             if (m_PaginationChildren.Count != scrollSnap._scroll_rect.content.childCount)
                 Debug.LogWarning("Uneven pagination icon to page count");
         }
-
 
         /// <summary>
         /// Calling from other scripts if you need to change screens programmatically
