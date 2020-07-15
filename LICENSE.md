@@ -1,4 +1,4 @@
-Unity UI Extensions License (BSD)
+Unity UI Extensions License (BSD3)
 Copyright (c) 2019
 
 Redistribution and use in source and binary forms, with or without modification, 
