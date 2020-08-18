@@ -817,7 +817,6 @@ namespace UnityEditor.UI
 			overlayScrollPanelScrollbarRT.GetComponent<Scrollbar>().direction = Scrollbar.Direction.BottomToTop;
 			overlayScrollPanelScrollBar.transform.GetChild(0).name = "SlidingArea";
 
-
 			//Arrow Button
 			arrowButton.name = "ArrowBtn";
 			var arrowButtonRT = arrowButton.GetComponent<RectTransform>();
