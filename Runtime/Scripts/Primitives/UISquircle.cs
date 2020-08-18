@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿/// Credit Soprachev Andrei
+
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 
@@ -16,11 +18,11 @@ namespace UnityEngine.UI.Extensions
         }
 
         [Space]
-        public Type squircleType;
+        public Type squircleType = Type.Scaled;
         [Range(1, 40)]
         public float n = 4;
         [Min(0.1f)]
-        public float delta = 10f;
+        public float delta = 5f;
         public float quality = 0.1f;
         [Min(0)]
         public float radius = 1000;
@@ -30,13 +32,14 @@ namespace UnityEngine.UI.Extensions
         private List<Vector2> vert = new List<Vector2>();
 
 
-        float Func(float t, bool xByY)
+        private float SquircleFunc(float t, bool xByY)
         {
             if (xByY)
                 return (float)System.Math.Pow(C - System.Math.Pow(t / a, n), 1f / n) * b;
 
             return (float)System.Math.Pow(C - System.Math.Pow(t / b, n), 1f / n) * a;
         }
+
         protected override void OnPopulateMesh(VertexHelper vh)
         {
 
@@ -68,7 +71,7 @@ namespace UnityEngine.UI.Extensions
             vert.Add(new Vector2(0, height));
             while (x < y)
             {
-                y = Func(x, true);
+                y = SquircleFunc(x, true);
                 vert.Add(new Vector2(dx + x, dy + y));
                 x += delta;
             }
@@ -80,7 +83,7 @@ namespace UnityEngine.UI.Extensions
 
             while (y > 0)
             {
-                x = Func(y, false);
+                x = SquircleFunc(y, false);
                 vert.Add(new Vector2(dx + x, dy + y));
                 y -= delta;
             }
@@ -128,7 +131,7 @@ namespace UnityEngine.UI.Extensions
             public override void OnInspectorGUI()
             {
                 DrawDefaultInspector();
-                var script = (UISquircle)target;
+                UISquircle script = (UISquircle)target;
                 GUILayout.Label("Vertex count: " + script.vert.Count().ToString());
             }
         }
