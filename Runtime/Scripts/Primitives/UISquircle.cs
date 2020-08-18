@@ -125,6 +125,7 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+#if UNITY_EDITOR
         [CustomEditor(typeof(UISquircle))]
         public class UISquircleEditor : Editor
         {
@@ -135,6 +136,6 @@ namespace UnityEngine.UI.Extensions
                 GUILayout.Label("Vertex count: " + script.vert.Count().ToString());
             }
         }
-
+#endif
     }
 }
