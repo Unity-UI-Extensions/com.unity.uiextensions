@@ -1208,6 +1208,14 @@ namespace UnityEditor.UI
 			Selection.activeGameObject = go;
 		}
 
+        [MenuItem("GameObject/UI/Extensions/Primitives/UI Squircle", false)]
+		static public void AddUISquircle(MenuCommand menuCommand)
+		{
+			GameObject go = CreateUIElementRoot("UI Squircle", menuCommand, s_ImageGUIElementSize);
+			go.AddComponent<UISquircle>();
+			Selection.activeGameObject = go;
+		}
+
 		[MenuItem("GameObject/UI/Extensions/Primitives/UI Circle", false)]
 		static public void AddUICircle(MenuCommand menuCommand)
 		{
