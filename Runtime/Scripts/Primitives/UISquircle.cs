@@ -123,7 +123,7 @@ namespace UnityEngine.UI.Extensions
         }
 
         [CustomEditor(typeof(UISquircle))]
-        public class EditorFoo : Editor
+        public class UISquircleEditor : Editor
         {
             public override void OnInspectorGUI()
             {
