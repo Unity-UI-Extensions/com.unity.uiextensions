@@ -213,6 +213,43 @@ namespace UnityEngine.UI.Extensions
         }
         */
 
+        public void AddItem(string item)
+        {
+            AvailableOptions.Add(item);
+            RebuildPanel();
+        }
+
+        public void RemoveItem(string item)
+        {
+            AvailableOptions.Remove(item);
+            RebuildPanel();
+        }
+
+        public void SetAvailableOptions(List<string> newOptions)
+        {
+            AvailableOptions.Clear();
+            AvailableOptions = newOptions;
+            RebuildPanel();
+        }
+
+        public void SetAvailableOptions(string[] newOptions)
+        {
+            AvailableOptions.Clear();
+
+            for (int i = 0; i < newOptions.Length; i++)
+            {
+                AvailableOptions.Add(newOptions[i]);
+            }
+
+            RebuildPanel();
+        }
+
+        public void ResetItems()
+        {
+            AvailableOptions.Clear();
+            RebuildPanel();
+        }
+
         /// <summary>
         /// Rebuilds the contents of the panel in response to items being added.
         /// </summary>
