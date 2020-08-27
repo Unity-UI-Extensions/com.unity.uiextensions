@@ -131,34 +131,41 @@ namespace UnityEngine.UI.Extensions
             return success;
         }
 
-        /* currently just using items in the list instead of being able to add to it.
-        public void AddItems(params object[] list)
+        public void AddItem(string item)
         {
-            List<DropDownListItem> ddItems = new List<DropDownListItem>();
-            foreach (var obj in list)
-            {
-                if (obj is DropDownListItem)
-                {
-                    ddItems.Add((DropDownListItem)obj);
-                }
-                else if (obj is string)
-                {
-                    ddItems.Add(new DropDownListItem(caption: (string)obj));
-                }
-                else if (obj is Sprite)
-                {
-                    ddItems.Add(new DropDownListItem(image: (Sprite)obj));
-                }
-                else
-                {
-                    throw new System.Exception("Only ComboBoxItems, Strings, and Sprite types are allowed");
-                }
-            }
-            Items.AddRange(ddItems);
-            Items = Items.Distinct().ToList();//remove any duplicates
+            AvailableOptions.Add(item);
             RebuildPanel();
         }
-        */
+
+        public void RemoveItem(string item)
+        {
+            AvailableOptions.Remove(item);
+            RebuildPanel();
+        }
+
+        public void SetAvailableOptions(List<string> newOptions)
+        {
+            AvailableOptions.Clear();
+            AvailableOptions = newOptions;
+            RebuildPanel();
+        }
+
+        public void SetAvailableOptions(string[] newOptions)
+        {
+            AvailableOptions.Clear();
+
+            for (int i = 0; i < newOptions.Length; i++)
+            {
+                AvailableOptions.Add(newOptions[i]);
+            }
+            RebuildPanel();
+        }
+
+        public void ResetItems()
+        {
+            AvailableOptions.Clear();
+            RebuildPanel();
+        }
 
         /// <summary>
         /// Rebuilds the contents of the panel in response to items being added.
