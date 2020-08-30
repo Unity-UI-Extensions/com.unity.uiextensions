@@ -708,33 +708,78 @@ namespace UnityEditor.UI
 			go.AddComponent<Image>();
 			Selection.activeGameObject = go;
 		}
-        #endregion
-
-        #region Accordion
-        [MenuItem("GameObject/UI/Extensions/Accordion/Accordion Group", false)]
-		static public void AddAccordionGroup(MenuCommand menuCommand)
-		{
-			GameObject go = CreateUIElementRoot("Accordion Group", menuCommand, s_ThickGUIElementSize);
-			go.AddComponent<VerticalLayoutGroup>();
-			go.AddComponent<ContentSizeFitter>();
-			go.AddComponent<ToggleGroup>();
-			go.AddComponent<Accordion>();
-			Selection.activeGameObject = go;
-		}
-
-		[MenuItem("GameObject/UI/Extensions/Accordion/Accordion Element", false)]
-		static public void AddAccordionElement(MenuCommand menuCommand)
-		{
-			GameObject go = CreateUIElementRoot("Accordion Element", menuCommand, s_ThickGUIElementSize);
-			go.AddComponent<LayoutElement>();
-			go.AddComponent<AccordionElement>();
-			Selection.activeGameObject = go;
-
-		}
 		#endregion
 
-		#region Drop Down controls
-		[MenuItem("GameObject/UI/Extensions/AutoComplete ComboBox", false)]
+		#region Accordion
+		[MenuItem("GameObject/UI/Extensions/Accordion/Accordion", false)]
+		static public void AddAccordionVertical(MenuCommand menuCommand)
+		{
+			GameObject go = CreateUIElementRoot("Accordion Group", menuCommand, s_ThickGUIElementSize);
+			CreateAccordionGroup(go);
+            for (int i = 0; i < 3; i++)
+            {
+				GameObject child = CreateUIObject($"Accordion Element {i}", go);
+				CreateAccordionElement(child);
+			}
+			Selection.activeGameObject = go;
+		}
+
+		[MenuItem("GameObject/UI/Extensions/Accordion/Accordion Group", false)]
+		static public void AddAccordionGroup(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("Accordion Group", menuCommand, s_ThickGUIElementSize);
+            CreateAccordionGroup(go);
+            Selection.activeGameObject = go;
+        }
+
+        private static void CreateAccordionGroup(GameObject go)
+        {
+            var vlg = go.AddComponent<VerticalLayoutGroup>();
+            vlg.childControlHeight = true;
+            vlg.childControlWidth = true;
+            vlg.childForceExpandHeight = false;
+            vlg.childForceExpandHeight = true;
+            var csf = go.AddComponent<ContentSizeFitter>();
+            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            go.AddComponent<ToggleGroup>();
+            go.AddComponent<Accordion>();
+        }
+
+        [MenuItem("GameObject/UI/Extensions/Accordion/Accordion Element", false)]
+		static public void AddAccordionElement(MenuCommand menuCommand)
+        {
+            GameObject go = CreateUIElementRoot("Accordion Element", menuCommand, s_ThickGUIElementSize);
+            CreateAccordionElement(go);
+
+            Selection.activeGameObject = go;
+        }
+
+        private static void CreateAccordionElement(GameObject go)
+        {
+            var vlg = go.AddComponent<VerticalLayoutGroup>();
+            vlg.childControlHeight = true;
+            vlg.childControlWidth = true;
+            vlg.childForceExpandHeight = false;
+            vlg.childForceExpandHeight = true;
+            go.AddComponent<LayoutElement>();
+            var accordionElement = go.AddComponent<AccordionElement>();
+
+            // Header
+            GameObject headergo = CreateUIObject("Header", go);
+            var headerLayout = headergo.AddComponent<LayoutElement>();
+            headerLayout.minHeight = accordionElement.MinHeight;
+            var headerText = headergo.AddComponent<Text>();
+            headerText.text = "This is an Accordion header";
+
+            // Text
+            GameObject textgo = CreateUIObject("Text", go);
+            var textText = textgo.AddComponent<Text>();
+            textText.text = "This is an example of text in an accordion element\nLots of information can be put here for selection\nIf you like";
+        }
+        #endregion
+
+        #region Drop Down controls
+        [MenuItem("GameObject/UI/Extensions/AutoComplete ComboBox", false)]
 		static public void AddAutoCompleteComboBox(MenuCommand menuCommand)
 		{
 			GameObject autoCompleteComboBoxRoot = CreateUIElementRoot("AutoCompleteComboBox", menuCommand, s_ThickGUIElementSize);
