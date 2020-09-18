@@ -10,6 +10,7 @@ namespace UnityEngine.UI.Extensions
         PerLine
     }
 
+    [RequireComponent(typeof(CanvasRenderer))]
     public class UIPrimitiveBase : MaskableGraphic, ILayoutElement, ICanvasRaycastFilter
     {
         static protected Material s_ETC1DefaultUI = null;
