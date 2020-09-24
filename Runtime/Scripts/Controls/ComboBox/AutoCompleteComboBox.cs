@@ -95,8 +95,10 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 
-		//TODO design as foldout for Inspector
-		public Color ValidSelectionTextColor = Color.green;
+        public float DropdownOffset = 10f;
+
+        //TODO design as foldout for Inspector
+        public Color ValidSelectionTextColor = Color.green;
 		public Color MatchingItemsRemainingTextColor = Color.black;
 		public Color NoItemsRemainingTextColor = Color.red;
 
@@ -226,10 +228,18 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         private void RebuildPanel()
         {
+            if (_isPanelActive) ToggleDropdownPanel();
+
             //panel starts with all options
             _panelItems.Clear();
             _prunedPanelItems.Clear();
             panelObjects.Clear();
+
+            //clear Autocomplete children in scene
+            foreach (Transform child in _itemsPanelRT.transform)
+            {
+                Destroy(child.gameObject);
+            }
 
             foreach (string option in AvailableOptions)
             {
@@ -334,7 +344,7 @@ namespace UnityEngine.UI.Extensions
 
             if (_panelItems.Count < 1) return;
 
-            float dropdownHeight = _rectTransform.sizeDelta.y * Mathf.Min(_itemsToDisplay, _panelItems.Count);
+            float dropdownHeight = _rectTransform.sizeDelta.y * Mathf.Min(_itemsToDisplay, _panelItems.Count) + DropdownOffset;
 
             _scrollPanelRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, dropdownHeight);
             _scrollPanelRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _rectTransform.sizeDelta.x);
@@ -395,7 +405,7 @@ namespace UnityEngine.UI.Extensions
         /// Toggle the drop down list
         /// </summary>
         /// <param name="directClick"> whether an item was directly clicked on</param>
-        public void ToggleDropdownPanel(bool directClick)
+        public void ToggleDropdownPanel(bool directClick = false)
         {
             _isPanelActive = !_isPanelActive;
 
