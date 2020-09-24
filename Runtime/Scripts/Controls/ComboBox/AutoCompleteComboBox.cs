@@ -184,35 +184,6 @@ namespace UnityEngine.UI.Extensions
             return success;
         }
 
-        /* currently just using items in the list instead of being able to add to it.
-        public void AddItems(params object[] list)
-        {
-            List<DropDownListItem> ddItems = new List<DropDownListItem>();
-            foreach (var obj in list)
-            {
-                if (obj is DropDownListItem)
-                {
-                    ddItems.Add((DropDownListItem)obj);
-                }
-                else if (obj is string)
-                {
-                    ddItems.Add(new DropDownListItem(caption: (string)obj));
-                }
-                else if (obj is Sprite)
-                {
-                    ddItems.Add(new DropDownListItem(image: (Sprite)obj));
-                }
-                else
-                {
-                    throw new System.Exception("Only ComboBoxItems, Strings, and Sprite types are allowed");
-                }
-            }
-            Items.AddRange(ddItems);
-            Items = Items.Distinct().ToList();//remove any duplicates
-            RebuildPanel();
-        }
-        */
-
         public void AddItem(string item)
         {
             AvailableOptions.Add(item);

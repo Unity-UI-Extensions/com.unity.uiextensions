@@ -133,9 +133,17 @@ namespace UnityEngine.UI.Extensions
 			return success;
 		}
 
-		/* currently just using items in the list instead of being able to add to it.
-		public void AddItems(params object[] list)
+		// currently just using items in the list instead of being able to add to it.
+		/// <summary>
+		/// Rebuilds the list from a new collection.
+		/// </summary>
+		/// <remarks>
+		/// NOTE, this will clear all existing items
+		/// </remarks>
+		/// <param name="list"></param>
+		public void RefreshItems(params object[] list)
 		{
+			Items.Clear();
 			List<DropDownListItem> ddItems = new List<DropDownListItem>();
 			foreach (var obj in list)
 			{
@@ -157,10 +165,74 @@ namespace UnityEngine.UI.Extensions
 				}
 			}
 			Items.AddRange(ddItems);
-			Items = Items.Distinct().ToList();//remove any duplicates
 			RebuildPanel();
 		}
-		*/
+
+		/// <summary>
+		/// Adds an additional item to the drop down list (recommended)
+		/// </summary>
+		/// <param name="item">Item of type DropDownListItem</param>
+		public void AddItem(DropDownListItem item)
+        {
+			Items.Add(item);
+			RebuildPanel();
+		}
+
+		/// <summary>
+		/// Adds an additional drop down list item using a string name 
+		/// </summary>
+		/// <param name="item">Item of type String</param>
+		public void AddItem(string item)
+		{
+			Items.Add(new DropDownListItem(caption: (string)item));
+			RebuildPanel();
+		}
+
+		/// <summary>
+		/// Adds an additional drop down list item using a sprite image 
+		/// </summary>
+		/// <param name="item">Item of type UI Sprite</param>
+		public void AddItem(Sprite item)
+		{
+			Items.Add(new DropDownListItem(image: (Sprite)item));
+			RebuildPanel();
+		}
+
+		/// <summary>
+		/// Removes an item from the drop down list (recommended)
+		/// </summary>
+		/// <param name="item">Item of type DropDownListItem</param>
+		public void RemoveItem(DropDownListItem item)
+		{
+			Items.Remove(item);
+			RebuildPanel();
+		}
+
+		/// <summary>
+		/// Removes an item from the drop down list item using a string name 
+		/// </summary>
+		/// <param name="item">Item of type String</param>
+		public void RemoveItem(string item)
+		{
+			Items.Remove(new DropDownListItem(caption: (string)item));
+			RebuildPanel();
+		}
+
+		/// <summary>
+		/// Removes an item from the drop down list item using a sprite image 
+		/// </summary>
+		/// <param name="item">Item of type UI Sprite</param>
+		public void RemoveItem(Sprite item)
+		{
+			Items.Remove(new DropDownListItem(image: (Sprite)item));
+			RebuildPanel();
+		}
+
+		public void ResetItems()
+		{
+			Items.Clear();
+			RebuildPanel();
+		}
 
 		/// <summary>
 		/// Rebuilds the contents of the panel in response to items being added.
