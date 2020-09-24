@@ -1,0 +1,4 @@
+[submodule "Examples~"]
+	path = Examples~
+	url = https://SimonDarksideJ@bitbucket.org/UnityUIExtensions/unity-ui-extensions.git
+	branch = Examples
