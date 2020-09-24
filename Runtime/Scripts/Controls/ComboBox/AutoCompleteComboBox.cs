@@ -95,8 +95,10 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 
-		//TODO design as foldout for Inspector
-		public Color ValidSelectionTextColor = Color.green;
+        public float DropdownOffset = 10f;
+
+        //TODO design as foldout for Inspector
+        public Color ValidSelectionTextColor = Color.green;
 		public Color MatchingItemsRemainingTextColor = Color.black;
 		public Color NoItemsRemainingTextColor = Color.red;
 
@@ -184,35 +186,6 @@ namespace UnityEngine.UI.Extensions
             return success;
         }
 
-        /* currently just using items in the list instead of being able to add to it.
-        public void AddItems(params object[] list)
-        {
-            List<DropDownListItem> ddItems = new List<DropDownListItem>();
-            foreach (var obj in list)
-            {
-                if (obj is DropDownListItem)
-                {
-                    ddItems.Add((DropDownListItem)obj);
-                }
-                else if (obj is string)
-                {
-                    ddItems.Add(new DropDownListItem(caption: (string)obj));
-                }
-                else if (obj is Sprite)
-                {
-                    ddItems.Add(new DropDownListItem(image: (Sprite)obj));
-                }
-                else
-                {
-                    throw new System.Exception("Only ComboBoxItems, Strings, and Sprite types are allowed");
-                }
-            }
-            Items.AddRange(ddItems);
-            Items = Items.Distinct().ToList();//remove any duplicates
-            RebuildPanel();
-        }
-        */
-
         public void AddItem(string item)
         {
             AvailableOptions.Add(item);
@@ -255,10 +228,18 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         private void RebuildPanel()
         {
+            if (_isPanelActive) ToggleDropdownPanel();
+
             //panel starts with all options
             _panelItems.Clear();
             _prunedPanelItems.Clear();
             panelObjects.Clear();
+
+            //clear Autocomplete children in scene
+            foreach (Transform child in _itemsPanelRT.transform)
+            {
+                Destroy(child.gameObject);
+            }
 
             foreach (string option in AvailableOptions)
             {
@@ -363,7 +344,7 @@ namespace UnityEngine.UI.Extensions
 
             if (_panelItems.Count < 1) return;
 
-            float dropdownHeight = _rectTransform.sizeDelta.y * Mathf.Min(_itemsToDisplay, _panelItems.Count);
+            float dropdownHeight = _rectTransform.sizeDelta.y * Mathf.Min(_itemsToDisplay, _panelItems.Count) + DropdownOffset;
 
             _scrollPanelRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, dropdownHeight);
             _scrollPanelRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _rectTransform.sizeDelta.x);
@@ -424,7 +405,7 @@ namespace UnityEngine.UI.Extensions
         /// Toggle the drop down list
         /// </summary>
         /// <param name="directClick"> whether an item was directly clicked on</param>
-        public void ToggleDropdownPanel(bool directClick)
+        public void ToggleDropdownPanel(bool directClick = false)
         {
             _isPanelActive = !_isPanelActive;
 

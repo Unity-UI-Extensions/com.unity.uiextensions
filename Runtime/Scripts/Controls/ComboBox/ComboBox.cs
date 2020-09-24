@@ -21,6 +21,9 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         private int _itemsToDisplay;
 
+        [SerializeField]
+        private bool _sortItems = true;
+
         [System.Serializable]
         public class SelectionChangedEvent : UnityEngine.Events.UnityEvent<string>
         {
@@ -178,7 +181,7 @@ namespace UnityEngine.UI.Extensions
             {
                 _panelItems.Add(option.ToLower());
             }
-            _panelItems.Sort();
+            if(_sortItems) _panelItems.Sort();
 
             List<GameObject> itemObjs = new List<GameObject>(panelObjects.Values);
             panelObjects.Clear();
