@@ -45,6 +45,8 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
+            if (UseHardSwipe) return;
+
             CurrentPage = GetPageforPosition(_screensContainer.anchoredPosition);
 
             //If the container is moving check if it needs to settle on a page
