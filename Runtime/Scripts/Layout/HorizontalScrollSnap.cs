@@ -27,7 +27,7 @@ namespace UnityEngine.UI.Extensions
         {
             updated = false;
 
-            if (!_lerp && _scroll_rect.velocity == Vector2.zero)
+            if (!_lerp && (_scroll_rect.velocity == Vector2.zero && _scroll_rect.inertia))
             {
                 if (!_settled && !_pointerDown)
                 {
