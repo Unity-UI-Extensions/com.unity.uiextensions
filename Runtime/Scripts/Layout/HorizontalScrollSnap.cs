@@ -238,7 +238,7 @@ namespace UnityEngine.UI.Extensions
             if (JumpOnEnable || !RestartOnEnable)
                 SetScrollContainerPosition();
             if (RestartOnEnable)
-                GoToScreen(StartingScreen);
+                GoToScreen(StartingScreen, true);
         }
 
         /// <summary>

@@ -357,7 +357,7 @@ namespace UnityEngine.UI.Extensions
         /// *Note, this is based on a 0 starting index - 0 to x
         /// </summary>
         /// <param name="screenIndex">0 starting index of page to jump to</param>
-        public void GoToScreen(int screenIndex)
+        public void GoToScreen(int screenIndex, bool local = false)
         {
             if (screenIndex <= _screens - 1 && screenIndex >= 0)
             {
@@ -366,7 +366,7 @@ namespace UnityEngine.UI.Extensions
                 _lerp = true;
                 CurrentPage = screenIndex;
                 GetPositionforPage(_currentPage, ref _lerp_target);
-                ScreenChange();
+                if(local) ScreenChange();
             }
         }
 
@@ -623,7 +623,7 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         public void ChangePage(int page)
         {
-            GoToScreen(page);
+            GoToScreen(page, true);
         }
 
         public void OnPointerClick(PointerEventData eventData)
