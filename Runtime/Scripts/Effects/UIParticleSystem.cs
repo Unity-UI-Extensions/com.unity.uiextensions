@@ -387,6 +387,7 @@ namespace UnityEngine.UI.Extensions
 
         public void StartParticleEmission()
         {
+            pSystem.time = 0;
             pSystem.Play();
         }
 
