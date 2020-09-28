@@ -100,7 +100,7 @@ namespace UnityEngine.UI.Extensions
             {
                 for (int i = 0; i < m_PaginationChildren.Count; i++)
                 {
-                    if (m_PaginationChildren[i].isOn)
+                    if (m_PaginationChildren[i].isOn && !scrollSnap._suspendEvents)
                     {
                         GoToScreen(i);
                         break;

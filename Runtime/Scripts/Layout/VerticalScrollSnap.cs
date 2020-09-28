@@ -228,10 +228,13 @@ namespace UnityEngine.UI.Extensions
         {
             InitialiseChildObjectsFromScene();
             DistributePages();
-            if (MaskArea) UpdateVisible();
+            if (MaskArea)
+                UpdateVisible();
 
-            if (JumpOnEnable  || !RestartOnEnable) SetScrollContainerPosition();
-            if(RestartOnEnable) GoToScreen(StartingScreen);
+            if (JumpOnEnable || !RestartOnEnable)
+                SetScrollContainerPosition();
+            if (RestartOnEnable)
+                GoToScreen(StartingScreen);
         }
 
         /// <summary>

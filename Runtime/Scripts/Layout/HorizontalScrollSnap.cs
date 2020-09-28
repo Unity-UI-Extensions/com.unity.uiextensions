@@ -27,7 +27,7 @@ namespace UnityEngine.UI.Extensions
         {
             updated = false;
 
-            if (!_lerp && _scroll_rect.velocity == Vector2.zero)
+            if (!_lerp && (_scroll_rect.velocity == Vector2.zero && _scroll_rect.inertia))
             {
                 if (!_settled && !_pointerDown)
                 {
@@ -41,7 +41,7 @@ namespace UnityEngine.UI.Extensions
             else if (_lerp)
             {
                 _screensContainer.anchoredPosition = Vector3.Lerp(_screensContainer.anchoredPosition, _lerp_target, transitionSpeed * (UseTimeScale ? Time.deltaTime : Time.unscaledDeltaTime));
-                if (Vector3.Distance(_screensContainer.anchoredPosition, _lerp_target) < 0.1f)
+                if (Vector3.Distance(_screensContainer.anchoredPosition, _lerp_target) < 0.2f)
                 {
                     _screensContainer.anchoredPosition = _lerp_target;
                     _lerp = false;
