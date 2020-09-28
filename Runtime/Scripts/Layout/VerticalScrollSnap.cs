@@ -12,6 +12,8 @@ namespace UnityEngine.UI.Extensions
     [AddComponentMenu("Layout/Extensions/Vertical Scroll Snap")]
     public class VerticalScrollSnap : ScrollSnapBase
     {
+        private bool updated = true;
+
         void Start()
         {
             _isVertical = true;
@@ -23,6 +25,8 @@ namespace UnityEngine.UI.Extensions
 
         void Update()
         {
+            updated = false;
+
             if (!_lerp && _scroll_rect.velocity == Vector2.zero)
             {
                 if (!_settled && !_pointerDown)
@@ -236,6 +240,14 @@ namespace UnityEngine.UI.Extensions
         /// <param name="eventData"></param>
         public override void OnEndDrag(PointerEventData eventData)
         {
+            if (updated)
+            {
+                return;
+            }
+
+            // to prevent double dragging, only act on EndDrag once per frame
+            updated = true;
+
             _pointerDown = false;
 
             if (_scroll_rect.vertical)
