@@ -13,12 +13,28 @@ namespace UnityEngine.UI.Extensions
     public class ReorderableListElement : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
     {
         [Tooltip("Can this element be dragged?")]
-        public bool IsGrabbable = true;
-        [Tooltip("Can this element be transfered to another list")]
-        public bool IsTransferable = true;
-        [Tooltip("Can this element be dropped in space?")]
-        public bool isDroppableInSpace = false;
+        [SerializeField]
+        private bool IsGrabbable = true;
 
+        [Tooltip("Can this element be transfered to another list")]
+        [SerializeField]
+        private bool _isTransferable = true;
+
+        [Tooltip("Can this element be dropped in space?")]
+        [SerializeField]
+        private bool isDroppableInSpace = false;
+
+
+        public bool IsTransferable
+        {
+            get { return _isTransferable; }
+            set 
+            {
+                _canvasGroup = gameObject.GetOrAddComponent<CanvasGroup>();
+                _canvasGroup.blocksRaycasts = value;
+                _isTransferable = value; 
+            }
+        }
 
         private readonly List<RaycastResult> _raycastResults = new List<RaycastResult>();
         private ReorderableList _currentReorderableListRaycasted;
@@ -48,6 +64,7 @@ namespace UnityEngine.UI.Extensions
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (!_canvasGroup) { _canvasGroup = gameObject.GetOrAddComponent<CanvasGroup>(); }
             _canvasGroup.blocksRaycasts = false;
             isValid = true;
             if (_reorderableList == null)
@@ -162,7 +179,7 @@ namespace UnityEngine.UI.Extensions
 
             //If nothing found or the list is not dropable, put the fake element outside
             if (_currentReorderableListRaycasted == null || _currentReorderableListRaycasted.IsDropable == false
-                || (_oldReorderableListRaycasted != _reorderableList && !IsTransferable)
+//                || (_oldReorderableListRaycasted != _reorderableList && !IsTransferable)
                 || ((_fakeElement.parent == _currentReorderableListRaycasted.Content 
                     ? _currentReorderableListRaycasted.Content.childCount - 1 
                     : _currentReorderableListRaycasted.Content.childCount) >= _currentReorderableListRaycasted.maxItems && !_currentReorderableListRaycasted.IsDisplacable)
@@ -378,13 +395,19 @@ namespace UnityEngine.UI.Extensions
                     _draggingObject.SetParent(_currentReorderableListRaycasted.Content, false);
                     _draggingObject.rotation = _currentReorderableListRaycasted.transform.rotation;
                     _draggingObject.SetSiblingIndex(_fakeElement.GetSiblingIndex());
+
+                    //If the item is transferable, it can be dragged out again
+                    if (IsTransferable)
+                    {
+                        var cg = _draggingObject.GetComponent<CanvasGroup>();
+                        cg.blocksRaycasts = true;
+                    }
                     // Force refreshing both lists because otherwise we get inappropriate FromList in ReorderableListEventStruct 
                     _reorderableList.Refresh();
                     _currentReorderableListRaycasted.Refresh();
 
                     _reorderableList.OnElementAdded.Invoke(args);
-
-
+            
                     if (_displacedObject != null)
                     {
                         finishDisplacingElement();

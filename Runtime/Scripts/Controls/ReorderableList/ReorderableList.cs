@@ -89,14 +89,7 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         public void Refresh()
         {
-
-            _listContent = ContentLayout.gameObject.GetComponent<ReorderableListContent>();
-
-            if (!_listContent)
-            {
-                _listContent = ContentLayout.gameObject.AddComponent<ReorderableListContent>();
-            }
-
+            _listContent = ContentLayout.gameObject.GetOrAddComponent<ReorderableListContent>();
             _listContent.Init(this);
         }
 
