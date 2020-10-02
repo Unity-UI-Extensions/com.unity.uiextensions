@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
+    [DisallowMultipleComponent]
     public class ReorderableListContent : MonoBehaviour
     {
         private List<Transform> _cachedChildren;
@@ -13,6 +14,7 @@ namespace UnityEngine.UI.Extensions
         private ReorderableListElement _ele;
         private ReorderableList _extList;
         private RectTransform _rect;
+        private bool _started = false;
 
         private void OnEnable()
         {
@@ -27,12 +29,15 @@ namespace UnityEngine.UI.Extensions
 
         public void Init(ReorderableList extList)
         {
+            if (_started) { StopCoroutine(RefreshChildren()); }
+
             _extList = extList;
             _rect = GetComponent<RectTransform>();
             _cachedChildren = new List<Transform>();
             _cachedListElement = new List<ReorderableListElement>();
 
             StartCoroutine(RefreshChildren());
+            _started = true;
         }
 
         private IEnumerator RefreshChildren()
