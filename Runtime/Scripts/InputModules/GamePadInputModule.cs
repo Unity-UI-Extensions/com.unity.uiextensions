@@ -1,6 +1,8 @@
 /// Credit Simon (simonDarksideJ) Jackson
 /// Sourced from - UI SIM source and My Brain
 
+using UnityEngine.UI.Extensions;
+
 namespace UnityEngine.EventSystems
 {
     [AddComponentMenu("Event/Extensions/GamePad Input Module")]
@@ -88,10 +90,10 @@ namespace UnityEngine.EventSystems
                 return false;
 
             var shouldActivate = true;
-            shouldActivate |= Input.GetButtonDown(m_SubmitButton);
-            shouldActivate |= Input.GetButtonDown(m_CancelButton);
-            shouldActivate |= !Mathf.Approximately(Input.GetAxisRaw(m_HorizontalAxis), 0.0f);
-            shouldActivate |= !Mathf.Approximately(Input.GetAxisRaw(m_VerticalAxis), 0.0f);
+            shouldActivate |= UIExtensionsInputManager.GetButtonDown(m_SubmitButton);
+            shouldActivate |= UIExtensionsInputManager.GetButtonDown(m_CancelButton);
+            shouldActivate |= !Mathf.Approximately(UIExtensionsInputManager.GetAxisRaw(m_HorizontalAxis), 0.0f);
+            shouldActivate |= !Mathf.Approximately(UIExtensionsInputManager.GetAxisRaw(m_VerticalAxis), 0.0f);
             return shouldActivate;
         }
 
@@ -142,10 +144,10 @@ namespace UnityEngine.EventSystems
                 return false;
 
             var data = GetBaseEventData();
-            if (Input.GetButtonDown(m_SubmitButton))
+            if (UIExtensionsInputManager.GetButtonDown(m_SubmitButton))
                 ExecuteEvents.Execute(eventSystem.currentSelectedGameObject, data, ExecuteEvents.submitHandler);
 
-            if (Input.GetButtonDown(m_CancelButton))
+            if (UIExtensionsInputManager.GetButtonDown(m_CancelButton))
                 ExecuteEvents.Execute(eventSystem.currentSelectedGameObject, data, ExecuteEvents.cancelHandler);
             return data.used;
         }
@@ -153,17 +155,17 @@ namespace UnityEngine.EventSystems
         private Vector2 GetRawMoveVector()
         {
             Vector2 move = Vector2.zero;
-            move.x = Input.GetAxisRaw(m_HorizontalAxis);
-            move.y = Input.GetAxisRaw(m_VerticalAxis);
+            move.x = UIExtensionsInputManager.GetAxisRaw(m_HorizontalAxis);
+            move.y = UIExtensionsInputManager.GetAxisRaw(m_VerticalAxis);
 
-            if (Input.GetButtonDown(m_HorizontalAxis))
+            if (UIExtensionsInputManager.GetButtonDown(m_HorizontalAxis))
             {
                 if (move.x < 0)
                     move.x = -1f;
                 if (move.x > 0)
                     move.x = 1f;
             }
-            if (Input.GetButtonDown(m_VerticalAxis))
+            if (UIExtensionsInputManager.GetButtonDown(m_VerticalAxis))
             {
                 if (move.y < 0)
                     move.y = -1f;
@@ -188,7 +190,7 @@ namespace UnityEngine.EventSystems
             }
 
             // If user pressed key again, always allow event
-            bool allow = Input.GetButtonDown(m_HorizontalAxis) || Input.GetButtonDown(m_VerticalAxis);
+            bool allow = UIExtensionsInputManager.GetButtonDown(m_HorizontalAxis) || UIExtensionsInputManager.GetButtonDown(m_VerticalAxis);
             bool similarDir = (Vector2.Dot(movement, m_LastMoveVector) > 0);
             if (!allow)
             {

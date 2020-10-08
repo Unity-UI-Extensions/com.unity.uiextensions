@@ -76,12 +76,12 @@ public class CardStack2D : MonoBehaviour
         if (canUseHorizontalAxis)
         {
             ///Controls for the cards.		
-            if (Input.GetAxisRaw("Horizontal") < 0 && cardArrayOffset > 0)
+            if (UIExtensionsInputManager.GetAxisRaw("Horizontal") < 0 && cardArrayOffset > 0)
             {
                 cardArrayOffset--;
                 StartCoroutine(ButtonCooldown());
             }
-            else if (Input.GetAxisRaw("Horizontal") > 0 && cardArrayOffset < cards.Length - 1)
+            else if (UIExtensionsInputManager.GetAxisRaw("Horizontal") > 0 && cardArrayOffset < cards.Length - 1)
             {
                 cardArrayOffset++;
                 StartCoroutine(ButtonCooldown());

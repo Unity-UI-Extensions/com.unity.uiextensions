@@ -1,6 +1,8 @@
 /// Credit Chris Trueman
 /// Sourced from - http://forum.unity3d.com/threads/use-reticle-like-mouse-for-worldspace-uis.295271/
 
+using UnityEngine.UI.Extensions;
+
 namespace UnityEngine.EventSystems.Extensions
 {
     [RequireComponent(typeof(EventSystem))]
@@ -38,8 +40,8 @@ namespace UnityEngine.EventSystems.Extensions
 
         public override void Process()
         {
-            bool pressed = Input.GetButtonDown(activateAxis);
-            bool released = Input.GetButtonUp(activateAxis);
+            bool pressed = UIExtensionsInputManager.GetButtonDown(activateAxis);
+            bool released = UIExtensionsInputManager.GetButtonUp(activateAxis);
 
             PointerEventData pointer = GetAimerPointerEventData();
 
