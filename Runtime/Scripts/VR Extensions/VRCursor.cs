@@ -16,15 +16,15 @@ namespace UnityEngine.UI.Extensions
         {
             Vector3 thisPosition;
 
-            thisPosition.x = Input.mousePosition.x * xSens;
-            thisPosition.y = Input.mousePosition.y * ySens - 1;
+            thisPosition.x = UIExtensionsInputManager.MousePosition.x * xSens;
+            thisPosition.y = UIExtensionsInputManager.MousePosition.y * ySens - 1;
             thisPosition.z = transform.position.z;
 
             transform.position = thisPosition;
 
             VRInputModule.cursorPosition = transform.position;
 
-            if (Input.GetMouseButtonDown(0) && currentCollider)
+            if (UIExtensionsInputManager.GetMouseButtonDown(0) && currentCollider)
             {
                 VRInputModule.PointerSubmit(currentCollider.gameObject);
             }

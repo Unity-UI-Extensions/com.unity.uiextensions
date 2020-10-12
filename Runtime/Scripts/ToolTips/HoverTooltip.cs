@@ -135,7 +135,7 @@ namespace UnityEngine.UI.Extensions
         public void OnScreenSpaceCamera()
         {
             //get the dynamic position of the pos in viewport coordinates
-            Vector3 newPos = GUICamera.ScreenToViewportPoint(Input.mousePosition);
+            Vector3 newPos = GUICamera.ScreenToViewportPoint(UIExtensionsInputManager.MousePosition);
 
             // store in val the updated position (x or y) of the tooltip edge of interest
             float val;

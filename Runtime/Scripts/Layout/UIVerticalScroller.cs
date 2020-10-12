@@ -200,7 +200,7 @@ namespace UnityEngine.UI.Extensions
             }
 
 
-            if (!Input.GetMouseButton(0))
+            if (!UIExtensionsInputManager.GetMouseButton(0))
             {
                 // scroll slowly to nearest element when not dragged
                 ScrollingElements();

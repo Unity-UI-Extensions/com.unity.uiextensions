@@ -30,7 +30,7 @@ namespace UnityEngine.UI.Extensions
 
         public void OnEndEdit(string txt)
         {
-            if (!Input.GetKeyDown(KeyCode.Return) && !Input.GetKeyDown(KeyCode.KeypadEnter))
+            if (!UIExtensionsInputManager.GetKeyDown(KeyCode.Return) && !UIExtensionsInputManager.GetKeyDown(KeyCode.KeypadEnter))
                 return;
             EnterSubmit.Invoke(txt);
             if (defocusInput)

@@ -124,7 +124,7 @@ namespace UnityEngine.UI.Extensions
 
             for (int i = 0; i < CancelScrollKeycodes.Count; i++)
             {
-                if (Input.GetKeyDown(CancelScrollKeycodes[i]) == true)
+                if (UIExtensionsInputManager.GetKeyDown(CancelScrollKeycodes[i]) == true)
                 {
                     IsManualScrollingAvailable = true;
 

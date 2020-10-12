@@ -55,10 +55,10 @@ namespace UnityEngine.UI.Extensions
         {
             switch (tooltipPositioningType) {
                 case TooltipPositioningType.mousePosition:
-                    StartHover(Input.mousePosition + offset, true);
+                    StartHover(UIExtensionsInputManager.MousePosition + offset, true);
                     break;
                 case TooltipPositioningType.mousePositionAndFollow:
-                    StartHover(Input.mousePosition + offset, true);
+                    StartHover(UIExtensionsInputManager.MousePosition + offset, true);
                     hovered = true;
                     StartCoroutine(HoveredMouseFollowingLoop());
                     break;
@@ -72,7 +72,7 @@ namespace UnityEngine.UI.Extensions
 
         IEnumerator HoveredMouseFollowingLoop() {
             while (hovered) {
-                StartHover(Input.mousePosition + offset);
+                StartHover(UIExtensionsInputManager.MousePosition + offset);
                 yield return null;
             }
         }
