@@ -3,8 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+
+#if !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+#endif
 
 namespace UnityEngine.UI.Extensions
 {
@@ -87,6 +90,7 @@ namespace UnityEngine.UI.Extensions
 #endif
         }
 
+#if !ENABLE_LEGACY_INPUT_MANAGER
         private static ButtonControl GetButtonControlFromString(string input)
         {
             if (Gamepad.current == null)
@@ -104,6 +108,7 @@ namespace UnityEngine.UI.Extensions
                     return null;
             }
         }
+#endif
 
         public static bool GetButtonDown(string input)
         {
@@ -164,6 +169,7 @@ namespace UnityEngine.UI.Extensions
 #endif
         }
 
+#if !ENABLE_LEGACY_INPUT_MANAGER
         private static KeyControl GetKeyControlFromKeyCode(KeyCode key)
         {
             if (Keyboard.current == null)
@@ -193,6 +199,7 @@ namespace UnityEngine.UI.Extensions
                     return null;
             }
         }
+#endif
 
         public static bool GetKeyDown(KeyCode key)
         {
