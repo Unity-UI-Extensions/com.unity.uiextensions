@@ -1,6 +1,7 @@
 ﻿/// Credit Tomasz Schelenz 
 /// Sourced from - https://bitbucket.org/SimonDarksideJ/unity-ui-extensions/issues/46/feature-uiknob#comment-29243988
 
+using System;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
@@ -134,6 +135,16 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
+            UpdateKnobValue();
+
+            transform.rotation = finalRotation;
+            InvokeEvents(knobValue + _currentLoops);
+
+            _previousValue = knobValue;
+        }
+
+        private void UpdateKnobValue()
+        {
             //PREVENT OVERROTATION
             if (Mathf.Abs(knobValue - _previousValue) > 0.5f)
             {
@@ -176,12 +187,36 @@ namespace UnityEngine.UI.Extensions
                     return;
                 }
             }
+        }
 
-            transform.rotation = finalRotation;
+        public void SetKnobValue(float value, int loops = 0)
+        {
+            Quaternion newRoation = Quaternion.identity;
+            knobValue = value;
+            _currentLoops = loops;
+
+            if (snapToPosition)
+            {
+                SnapToPosition(ref knobValue);
+
+            }
+            if (direction == Direction.CW)
+            {
+                newRoation.eulerAngles = new Vector3(0, 0, 360 - 360 * knobValue);
+            }
+            else
+            {
+                newRoation.eulerAngles = new Vector3(0, 0, 360 * knobValue);
+            }
+
+            UpdateKnobValue();
+
+            transform.rotation = newRoation;
             InvokeEvents(knobValue + _currentLoops);
 
             _previousValue = knobValue;
         }
+
         private void SnapToPosition(ref float knobValue)
         {
             float snapStep = 1 / (float)snapStepsPerLoop;
