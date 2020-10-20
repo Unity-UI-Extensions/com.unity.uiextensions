@@ -5,42 +5,37 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/UI Magnetic Infinite Scroll")]
-    public class UI_MagneticInfiniteScroll : UI_InfiniteScroll
+    public class UI_MagneticInfiniteScroll : UI_InfiniteScroll, IDragHandler, IEndDragHandler, IScrollHandler
     {
         public event Action<GameObject> OnNewSelect;
 
         [Tooltip("The pointer to the pivot, the visual element for centering objects.")]
         [SerializeField]
         private RectTransform pivot = null;
-        [Tooltip("The pointer to the object container")]
-        [SerializeField]
-        private RectTransform content = null;
-        [Tooltip("the maximum speed that allows you to activate the magnet to center on the pivot")]
+        [Tooltip("The maximum speed that allows you to activate the magnet to center on the pivot")]
         [SerializeField]
         private float maxSpeedForMagnetic = 10f;
         [SerializeField]
-        [Tooltip("The initial index of the object which must be initially centered")]
+        [Tooltip("The index of the object which must be initially centered")]
         private int indexStart = 0;
         [SerializeField]
-        [Tooltip("The time to decelerate and aim for the pivot")]
+        [Tooltip("The time to decelerate and aim to the pivot")]
         private float timeForDeceleration = 0.05f;
 
-        [SerializeField]
-        private ScrollRect scrollRect = null;
-
         private float _pastPositionMouseSpeed;
-        private float initMovementDirection = 0;
+        private float _initMovementDirection = 0;
         private float _pastPosition = 0;
 
         private float _currentSpeed = 0.0f;
         private float _stopValue = 0.0f;
         private readonly float _waitForContentSet = 0.1f;
         private float _currentTime = 0;
-        private int nearestIndex = 0;
+        private int _nearestIndex = 0;
 
         private bool _useMagnetic = true;
         private bool _isStopping = false;
@@ -56,12 +51,12 @@ namespace UnityEngine.UI.Extensions
 
         private void Update()
         {
-            if (!content || !pivot || !_useMagnetic || !_isMovement || items == null || scrollRect == null)
+            if (_scrollRect == null || !_scrollRect.content || !pivot || !_useMagnetic || !_isMovement || items == null)
             {
                 return;
             }
 
-            float currentPosition = GetRightAxis(content.anchoredPosition);
+            float currentPosition = GetRightAxis(_scrollRect.content.anchoredPosition);
             _currentSpeed = Mathf.Abs(currentPosition - _pastPosition);
             _pastPosition = currentPosition;
             if (Mathf.Abs(_currentSpeed) > maxSpeedForMagnetic)
@@ -71,21 +66,21 @@ namespace UnityEngine.UI.Extensions
 
             if (_isStopping)
             {
-                Vector2 anchoredPosition = content.anchoredPosition;
+                Vector2 anchoredPosition = _scrollRect.content.anchoredPosition;
                 _currentTime += Time.deltaTime;
                 float valueLerp = _currentTime / timeForDeceleration;
 
                 float newPosition = Mathf.Lerp(GetRightAxis(anchoredPosition), _stopValue, valueLerp);
 
-                content.anchoredPosition = _isVertical ? new Vector2(anchoredPosition.x, newPosition) :
+                _scrollRect.content.anchoredPosition = _isVertical ? new Vector2(anchoredPosition.x, newPosition) :
                                 new Vector2(newPosition, anchoredPosition.y);
 
 
-                if (newPosition == GetRightAxis(anchoredPosition) && nearestIndex > 0 && nearestIndex < items.Count)
+                if (newPosition == GetRightAxis(anchoredPosition) && _nearestIndex > 0 && _nearestIndex < items.Count)
                 {
                     _isStopping = false;
                     _isMovement = false;
-                    var item = items[nearestIndex];
+                    var item = items[_nearestIndex];
                     if (item != null && OnNewSelect != null)
                     {
 
@@ -95,7 +90,7 @@ namespace UnityEngine.UI.Extensions
             }
             else
             {
-                float distance = Mathf.Infinity * (-initMovementDirection);
+                float distance = Mathf.Infinity * (-_initMovementDirection);
 
                 for (int i = 0; i < items.Count; i++)
                 {
@@ -107,33 +102,18 @@ namespace UnityEngine.UI.Extensions
 
                     var aux = GetRightAxis(item.position) - GetRightAxis(pivot.position);
 
-                    if ((initMovementDirection <= 0 && aux < distance && aux > 0) ||
-                        (initMovementDirection > 0 && aux > distance && aux < 0))
+                    if ((_initMovementDirection <= 0 && aux < distance && aux > 0) ||
+                        (_initMovementDirection > 0 && aux > distance && aux < 0))
                     {
                         distance = aux;
-                        nearestIndex = i;
+                        _nearestIndex = i;
                     }
                 }
 
                 _isStopping = true;
-                _stopValue = GetAnchoredPositionForPivot(nearestIndex);
-                scrollRect.StopMovement();
+                _stopValue = GetAnchoredPositionForPivot(_nearestIndex);
+                _scrollRect.StopMovement();
             }
-        }
-
-        public void Drag()
-        {
-            float currentPosition = GetRightAxis(UIExtensionsInputManager.MousePosition);
-
-            initMovementDirection = Mathf.Sign(currentPosition - _pastPositionMouseSpeed);
-            _pastPositionMouseSpeed = currentPosition;
-            _useMagnetic = false;
-            _isStopping = false;
-        }
-
-        public void EndDrag()
-        {
-            FinishPrepareMovement();
         }
 
         public override void SetNewItems(ref List<Transform> newItems)
@@ -149,22 +129,16 @@ namespace UnityEngine.UI.Extensions
             base.SetNewItems(ref newItems);
         }
 
-        public void Scroll()
-        {
-            initMovementDirection = -UIExtensionsInputManager.MouseScrollDelta.y;
-            FinishPrepareMovement();
-        }
-
         public void SetContentInPivot(int index)
         {
             float newPos = GetAnchoredPositionForPivot(index);
-            Vector2 anchoredPosition = content.anchoredPosition;
+            Vector2 anchoredPosition = _scrollRect.content.anchoredPosition;
 
-            if (content)
+            if (_scrollRect.content)
             {
-                content.anchoredPosition = _isVertical ? new Vector2(anchoredPosition.x, newPos) :
+                _scrollRect.content.anchoredPosition = _isVertical ? new Vector2(anchoredPosition.x, newPos) :
                                             new Vector2(newPos, anchoredPosition.y);
-                _pastPosition = GetRightAxis(content.anchoredPosition);
+                _pastPosition = GetRightAxis(_scrollRect.content.anchoredPosition);
             }
         }
 
@@ -199,6 +173,27 @@ namespace UnityEngine.UI.Extensions
         private float GetRightAxis(Vector2 vector)
         {
             return _isVertical ? vector.y : vector.x;
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            float currentPosition = GetRightAxis(UIExtensionsInputManager.MousePosition);
+
+            _initMovementDirection = Mathf.Sign(currentPosition - _pastPositionMouseSpeed);
+            _pastPositionMouseSpeed = currentPosition;
+            _useMagnetic = false;
+            _isStopping = false;
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            FinishPrepareMovement();
+        }
+
+        public void OnScroll(PointerEventData eventData)
+        {
+            _initMovementDirection = -UIExtensionsInputManager.MouseScrollDelta.y;
+            FinishPrepareMovement();
         }
     }
 }

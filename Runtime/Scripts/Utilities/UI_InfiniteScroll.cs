@@ -25,7 +25,7 @@ namespace UnityEngine.UI.Extensions
         //if true user will need to call Init() method manually (in case the contend of the scrollview is generated from code or requires special initialization)
         [Tooltip("If false, will Init automatically, otherwise you need to call Init() method")]
         public bool InitByUser = false;
-        private ScrollRect _scrollRect;
+        protected ScrollRect _scrollRect;
         private ContentSizeFitter _contentSizeFitter;
         private VerticalLayoutGroup _verticalLayoutGroup;
         private HorizontalLayoutGroup _horizontalLayoutGroup;
@@ -38,7 +38,7 @@ namespace UnityEngine.UI.Extensions
         protected List<RectTransform> items = new List<RectTransform>();
         private Vector2 _newAnchoredPosition = Vector2.zero;
         //TO DISABLE FLICKERING OBJECT WHEN SCROLL VIEW IS IDLE IN BETWEEN OBJECTS
-        private float _treshold = 100f;
+        private float _threshold = 100f;
         private int _itemCount = 0;
         private float _recordOffsetX = 0;
         private float _recordOffsetY = 0;
@@ -179,7 +179,7 @@ namespace UnityEngine.UI.Extensions
             {
                 if (_isHorizontal)
                 {
-                    if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).x > _disableMarginX + _treshold)
+                    if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).x > _disableMarginX + _threshold)
                     {
                         _newAnchoredPosition = items[i].anchoredPosition;
                         _newAnchoredPosition.x -= _itemCount * _recordOffsetX;
@@ -197,7 +197,7 @@ namespace UnityEngine.UI.Extensions
 
                 if (_isVertical)
                 {
-                    if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).y > _disableMarginY + _treshold)
+                    if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).y > _disableMarginY + _threshold)
                     {
                         _newAnchoredPosition = items[i].anchoredPosition;
                         _newAnchoredPosition.y -= _itemCount * _recordOffsetY;
