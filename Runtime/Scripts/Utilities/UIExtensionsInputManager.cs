@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-#if !ENABLE_LEGACY_INPUT_MANAGER
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 #endif
@@ -13,7 +13,7 @@ namespace UnityEngine.UI.Extensions
 {
     public static class UIExtensionsInputManager
     {
-#if !ENABLE_LEGACY_INPUT_MANAGER
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
         private static bool[] mouseButtons = new bool[3] { false, false, false };
         private static Dictionary<KeyCode, bool> keys = new Dictionary<KeyCode, bool>();
         private static Dictionary<String, bool> buttons = new Dictionary<String, bool>();
@@ -21,23 +21,21 @@ namespace UnityEngine.UI.Extensions
 
         public static bool GetMouseButton(int button)
         {
-#if ENABLE_LEGACY_INPUT_MANAGER
-            return Input.GetMouseButton(button);
-#else
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
             if (Mouse.current == null)
             {
                 return false;
             }
 
             return Mouse.current.leftButton.isPressed;
+#else
+            return Input.GetMouseButton(button);
 #endif
         }
 
         public static bool GetMouseButtonDown(int button)
         {
-#if ENABLE_LEGACY_INPUT_MANAGER
-            return Input.GetMouseButtonDown(button);
-#else
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
             if (Mouse.current == null)
             {
                 return false;
@@ -52,14 +50,14 @@ namespace UnityEngine.UI.Extensions
                 }
             }
             return false;
+#else
+            return Input.GetMouseButtonDown(button);
 #endif
         }
 
         public static bool GetMouseButtonUp(int button)
         {
-#if ENABLE_LEGACY_INPUT_MANAGER
-            return Input.GetMouseButtonUp(button);
-#else
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
             if (Mouse.current == null)
             {
                 return false;
@@ -71,14 +69,14 @@ namespace UnityEngine.UI.Extensions
                 return true;
             }
             return false;
+#else
+            return Input.GetMouseButtonUp(button);
 #endif
         }
 
         public static bool GetButton(string input)
         {
-#if ENABLE_LEGACY_INPUT_MANAGER
-            return Input.GetButton(input);
-#else
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
             ButtonControl buttonPressed = GetButtonControlFromString(input);
 
             if (!buttons.ContainsKey(input))
@@ -87,10 +85,12 @@ namespace UnityEngine.UI.Extensions
             }
 
             return buttonPressed != null ? buttonPressed.isPressed : false;
+#else
+            return Input.GetButton(input);
 #endif
         }
 
-#if !ENABLE_LEGACY_INPUT_MANAGER
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
         private static ButtonControl GetButtonControlFromString(string input)
         {
             if (Gamepad.current == null)
@@ -112,9 +112,7 @@ namespace UnityEngine.UI.Extensions
 
         public static bool GetButtonDown(string input)
         {
-#if ENABLE_LEGACY_INPUT_MANAGER
-            return Input.GetButtonDown(input);
-#else
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
             ButtonControl buttonPressed = GetButtonControlFromString(input);
 
             if (buttonPressed.isPressed)
@@ -135,14 +133,14 @@ namespace UnityEngine.UI.Extensions
                 buttons[input] = false;
             }
             return false;
+#else
+            return Input.GetButtonDown(input);
 #endif
         }
 
         public static bool GetButtonUp(string input)
         {
-#if ENABLE_LEGACY_INPUT_MANAGER
-            return Input.GetButtonUp(input);
-#else
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
             ButtonControl buttonPressed = GetButtonControlFromString(input);
 
             if (buttons[input] && !buttonPressed.isPressed)
@@ -151,14 +149,14 @@ namespace UnityEngine.UI.Extensions
                 return true;
             }
             return false;
+#else
+            return Input.GetButtonUp(input);
 #endif
         }
 
         public static bool GetKey(KeyCode key)
         {
-#if ENABLE_LEGACY_INPUT_MANAGER
-            return Input.GetKey(key);
-#else
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
             KeyControl keyPressed = GetKeyControlFromKeyCode(key);
             if (!keys.ContainsKey(key))
             {
@@ -166,10 +164,12 @@ namespace UnityEngine.UI.Extensions
             }
 
             return keyPressed != null ? keyPressed.isPressed : false;
+#else
+            return Input.GetKey(key);
 #endif
         }
 
-#if !ENABLE_LEGACY_INPUT_MANAGER
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
         private static KeyControl GetKeyControlFromKeyCode(KeyCode key)
         {
             if (Keyboard.current == null)
@@ -203,9 +203,7 @@ namespace UnityEngine.UI.Extensions
 
         public static bool GetKeyDown(KeyCode key)
         {
-#if ENABLE_LEGACY_INPUT_MANAGER
-            return Input.GetKeyDown(key);
-#else
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
             KeyControl keyPressed = GetKeyControlFromKeyCode(key);
             if (keyPressed.isPressed)
             {
@@ -225,14 +223,14 @@ namespace UnityEngine.UI.Extensions
                 keys[key] = false;
             }
             return false;
+#else
+            return Input.GetKeyDown(key);
 #endif
         }
 
         public static bool GetKeyUp(KeyCode key)
         {
-#if ENABLE_LEGACY_INPUT_MANAGER
-            return Input.GetKeyUp(key);
-#else
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
             KeyControl keyPressed = GetKeyControlFromKeyCode(key);
             if (keys[key] && !keyPressed.isPressed)
             {
@@ -240,14 +238,14 @@ namespace UnityEngine.UI.Extensions
                 return true;
             }
             return false;
+#else
+            return Input.GetKeyUp(key);
 #endif
         }
 
         public static float GetAxisRaw(string axis)
         {
-#if ENABLE_LEGACY_INPUT_MANAGER
-            return Input.GetAxisRaw(axis);
-#else
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
             if (Gamepad.current == null)
             {
                 return 0f;
@@ -262,6 +260,8 @@ namespace UnityEngine.UI.Extensions
 
             }
             return 0f;
+#else
+            return Input.GetAxisRaw(axis);
 #endif
         }
 
@@ -269,10 +269,10 @@ namespace UnityEngine.UI.Extensions
         {
             get
             {
-#if ENABLE_LEGACY_INPUT_MANAGER
-                return Input.mousePosition;
-#else
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
                 return Mouse.current.position.ReadValue();
+#else
+                return Input.mousePosition;
 #endif
             }
         }
@@ -281,10 +281,10 @@ namespace UnityEngine.UI.Extensions
         {
             get
             {
-#if ENABLE_LEGACY_INPUT_MANAGER
-                return Input.mouseScrollDelta;
-#else
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
                 return Mouse.current.position.ReadValue();
+#else
+                return Input.mouseScrollDelta;
 #endif
             }
         }
