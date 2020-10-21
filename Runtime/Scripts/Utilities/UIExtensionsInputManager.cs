@@ -276,5 +276,17 @@ namespace UnityEngine.UI.Extensions
 #endif
             }
         }
+
+        public static Vector3 MouseScrollDelta
+        {
+            get
+            {
+#if ENABLE_LEGACY_INPUT_MANAGER
+                return Input.mouseScrollDelta;
+#else
+                return Mouse.current.position.ReadValue();
+#endif
+            }
+        }
     }
 }
