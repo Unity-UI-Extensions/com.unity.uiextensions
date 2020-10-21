@@ -10,6 +10,7 @@ using UnityEngine.EventSystems;
 namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/UI Magnetic Infinite Scroll")]
+    [RequireComponent(typeof(ScrollRect))]
     public class UI_MagneticInfiniteScroll : UI_InfiniteScroll, IDragHandler, IEndDragHandler, IScrollHandler
     {
         public event Action<GameObject> OnNewSelect;
