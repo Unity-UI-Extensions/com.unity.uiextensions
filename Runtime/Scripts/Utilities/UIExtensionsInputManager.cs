@@ -13,7 +13,7 @@ namespace UnityEngine.UI.Extensions
 {
     public static class UIExtensionsInputManager
     {
-#if !ENABLE_LEGACY_INPUT_MANAGER
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
         private static bool[] mouseButtons = new bool[3] { false, false, false };
         private static Dictionary<KeyCode, bool> keys = new Dictionary<KeyCode, bool>();
         private static Dictionary<String, bool> buttons = new Dictionary<String, bool>();
