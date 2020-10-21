@@ -281,10 +281,10 @@ namespace UnityEngine.UI.Extensions
         {
             get
             {
-#if ENABLE_LEGACY_INPUT_MANAGER
-                return Input.mouseScrollDelta;
-#else
+#if UNITY_2019_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
                 return Mouse.current.position.ReadValue();
+#else
+                return Input.mouseScrollDelta;
 #endif
             }
         }
