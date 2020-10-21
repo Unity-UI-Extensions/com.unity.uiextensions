@@ -5,7 +5,6 @@
 using System;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
 
 namespace UnityEngine.UI.Extensions
 {
