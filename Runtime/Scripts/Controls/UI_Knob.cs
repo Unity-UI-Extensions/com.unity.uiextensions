@@ -32,18 +32,18 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Direction of rotation CW - clockwise, CCW - counterClockwise")]
         public Direction direction = Direction.CW;
         [HideInInspector]
-        public float knobValue;
+        public float KnobValue;
         [Tooltip("Max value of the knob, maximum RAW output value knob can reach, overrides snap step, IF set to 0 or higher than loops, max value will be set by loops")]
-        public float maxValue = 0;
+        public float MaxValue = 0;
         [Tooltip("How many rotations knob can do, if higher than max value, the latter will limit max value")]
-        public int loops = 1;
+        public int Loops = 0;
         [Tooltip("Clamp output value between 0 and 1, useful with loops > 1")]
-        public bool clampOutput01 = false;
+        public bool ClampOutput01 = false;
         [Tooltip("snap to position?")]
-        public bool snapToPosition = false;
+        public bool SnapToPosition = false;
         [Tooltip("Number of positions to snap")]
-        public int snapStepsPerLoop = 10;
-        [Tooltip("Parent touch area to extend the know touch radius")]
+        public int SnapStepsPerLoop = 10;
+        [Tooltip("Parent touch area to extend the touch radius")]
         public RectTransform ParentTouchMask;
         [Tooltip("Default background color of the touch mask. Defaults as transparent")]
         public Color MaskBackground = new Color(0, 0, 0, 0);
@@ -160,74 +160,74 @@ namespace UnityEngine.UI.Extensions
 
             if (direction == Direction.CW)
             {
-                knobValue = 1 - (finalRotation.eulerAngles.z / 360f);
+                KnobValue = 1 - (finalRotation.eulerAngles.z / 360f);
 
-                if (snapToPosition)
+                if (SnapToPosition)
                 {
-                    SnapToPosition(ref knobValue);
-                    finalRotation.eulerAngles = new Vector3(0, 0, 360 - 360 * knobValue);
+                    SnapToPositionValue(ref KnobValue);
+                    finalRotation.eulerAngles = new Vector3(0, 0, 360 - 360 * KnobValue);
                 }
             }
             else
             {
-                knobValue = (finalRotation.eulerAngles.z / 360f);
+                KnobValue = (finalRotation.eulerAngles.z / 360f);
 
-                if (snapToPosition)
+                if (SnapToPosition)
                 {
-                    SnapToPosition(ref knobValue);
-                    finalRotation.eulerAngles = new Vector3(0, 0, 360 * knobValue);
+                    SnapToPositionValue(ref KnobValue);
+                    finalRotation.eulerAngles = new Vector3(0, 0, 360 * KnobValue);
                 }
             }
 
             UpdateKnobValue();
 
             transform.rotation = finalRotation;
-            InvokeEvents(knobValue + _currentLoops);
+            InvokeEvents(KnobValue + _currentLoops);
 
-            _previousValue = knobValue;
+            _previousValue = KnobValue;
         }
 
         private void UpdateKnobValue()
         {
             //PREVENT OVERROTATION
-            if (Mathf.Abs(knobValue - _previousValue) > 0.5f)
+            if (Mathf.Abs(KnobValue - _previousValue) > 0.5f)
             {
-                if (knobValue < 0.5f && loops > 1 && _currentLoops < loops - 1)
+                if (KnobValue < 0.5f && Loops > 1 && _currentLoops < Loops - 1)
                 {
                     _currentLoops++;
                 }
-                else if (knobValue > 0.5f && _currentLoops >= 1)
+                else if (KnobValue > 0.5f && _currentLoops >= 1)
                 {
                     _currentLoops--;
                 }
                 else
                 {
-                    if (knobValue > 0.5f && _currentLoops == 0)
+                    if (KnobValue > 0.5f && _currentLoops == 0)
                     {
-                        knobValue = 0;
+                        KnobValue = 0;
                         transform.localEulerAngles = Vector3.zero;
-                        InvokeEvents(knobValue + _currentLoops);
+                        InvokeEvents(KnobValue + _currentLoops);
                         return;
                     }
-                    else if (knobValue < 0.5f && _currentLoops == loops - 1)
+                    else if (KnobValue < 0.5f && _currentLoops == Loops - 1)
                     {
-                        knobValue = 1;
+                        KnobValue = 1;
                         transform.localEulerAngles = Vector3.zero;
-                        InvokeEvents(knobValue + _currentLoops);
+                        InvokeEvents(KnobValue + _currentLoops);
                         return;
                     }
                 }
             }
 
             //CHECK MAX VALUE
-            if (maxValue > 0)
+            if (MaxValue > 0)
             {
-                if (knobValue + _currentLoops > maxValue)
+                if (KnobValue + _currentLoops > MaxValue)
                 {
-                    knobValue = maxValue;
-                    float maxAngle = direction == Direction.CW ? 360f - 360f * maxValue : 360f * maxValue;
+                    KnobValue = MaxValue;
+                    float maxAngle = direction == Direction.CW ? 360f - 360f * MaxValue : 360f * MaxValue;
                     transform.localEulerAngles = new Vector3(0, 0, maxAngle);
-                    InvokeEvents(knobValue);
+                    InvokeEvents(KnobValue);
                     return;
                 }
             }
@@ -236,41 +236,41 @@ namespace UnityEngine.UI.Extensions
         public void SetKnobValue(float value, int loops = 0)
         {
             Quaternion newRoation = Quaternion.identity;
-            knobValue = value;
+            KnobValue = value;
             _currentLoops = loops;
 
-            if (snapToPosition)
+            if (SnapToPosition)
             {
-                SnapToPosition(ref knobValue);
+                SnapToPositionValue(ref KnobValue);
 
             }
             if (direction == Direction.CW)
             {
-                newRoation.eulerAngles = new Vector3(0, 0, 360 - 360 * knobValue);
+                newRoation.eulerAngles = new Vector3(0, 0, 360 - 360 * KnobValue);
             }
             else
             {
-                newRoation.eulerAngles = new Vector3(0, 0, 360 * knobValue);
+                newRoation.eulerAngles = new Vector3(0, 0, 360 * KnobValue);
             }
 
             UpdateKnobValue();
 
             transform.rotation = newRoation;
-            InvokeEvents(knobValue + _currentLoops);
+            InvokeEvents(KnobValue + _currentLoops);
 
-            _previousValue = knobValue;
+            _previousValue = KnobValue;
         }
 
-        private void SnapToPosition(ref float knobValue)
+        private void SnapToPositionValue(ref float knobValue)
         {
-            float snapStep = 1 / (float)snapStepsPerLoop;
+            float snapStep = 1 / (float)SnapStepsPerLoop;
             float newValue = Mathf.Round(knobValue / snapStep) * snapStep;
             knobValue = newValue;
         }
         private void InvokeEvents(float value)
         {
-            if (clampOutput01)
-                value /= loops;
+            if (ClampOutput01)
+                value /= Loops;
             OnValueChanged.Invoke(value);
         }
 
