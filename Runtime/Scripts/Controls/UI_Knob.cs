@@ -43,6 +43,10 @@ namespace UnityEngine.UI.Extensions
         public bool snapToPosition = false;
         [Tooltip("Number of positions to snap")]
         public int snapStepsPerLoop = 10;
+        [Tooltip("Parent touch area to extend the know touch radius")]
+        public RectTransform ParentTouchMask;
+        [Tooltip("Default background color of the touch mask. Defaults as transparent")]
+        public Color MaskBackground = new Color(0, 0, 0, 0);
         [Space(30)]
         public KnobFloatValueEvent OnValueChanged;
         private float _currentLoops = 0;
@@ -56,7 +60,48 @@ namespace UnityEngine.UI.Extensions
 
         protected override void Awake()
         {
-			_screenSpaceOverlay = GetComponentInParent<Canvas>().rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay;
+            _screenSpaceOverlay = GetComponentInParent<Canvas>().rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay;
+        }
+
+        protected override void Start()
+        {
+            CheckForParentTouchMask();
+        }
+
+        private void CheckForParentTouchMask()
+        {
+            if (ParentTouchMask)
+            {
+                Image maskImage = ParentTouchMask.gameObject.GetOrAddComponent<Image>();
+                maskImage.color = MaskBackground;
+                EventTrigger trigger = ParentTouchMask.gameObject.GetOrAddComponent<EventTrigger>();
+                trigger.triggers.Clear();
+                //PointerDownEvent
+                EventTrigger.Entry pointerDownEntry = new EventTrigger.Entry();
+                pointerDownEntry.eventID = EventTriggerType.PointerDown;
+                pointerDownEntry.callback.AddListener((data) => { OnPointerDown((PointerEventData)data); });
+                trigger.triggers.Add(pointerDownEntry);
+                //PointerUpEvent
+                EventTrigger.Entry pointerUpEntry = new EventTrigger.Entry();
+                pointerUpEntry.eventID = EventTriggerType.PointerUp;
+                pointerUpEntry.callback.AddListener((data) => { OnPointerUp((PointerEventData)data); });
+                trigger.triggers.Add(pointerUpEntry);
+                //PointerEnterEvent
+                EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry();
+                pointerEnterEntry.eventID = EventTriggerType.PointerEnter;
+                pointerEnterEntry.callback.AddListener((data) => { OnPointerEnter((PointerEventData)data); });
+                trigger.triggers.Add(pointerEnterEntry);
+                //PointerExitEvent
+                EventTrigger.Entry pointerExitEntry = new EventTrigger.Entry();
+                pointerExitEntry.eventID = EventTriggerType.PointerExit;
+                pointerExitEntry.callback.AddListener((data) => { OnPointerExit((PointerEventData)data); });
+                trigger.triggers.Add(pointerExitEntry);
+                //DragEvent
+                EventTrigger.Entry dragEntry = new EventTrigger.Entry();
+                dragEntry.eventID = EventTriggerType.Drag;
+                dragEntry.callback.AddListener((data) => { OnDrag((PointerEventData)data); });
+                trigger.triggers.Add(dragEntry);
+            }
         }
 
         public override void OnPointerUp(PointerEventData eventData)
@@ -71,7 +116,6 @@ namespace UnityEngine.UI.Extensions
         {
             _canDrag = false;
         }
-
 
         public override void OnPointerDown(PointerEventData eventData)
         {
