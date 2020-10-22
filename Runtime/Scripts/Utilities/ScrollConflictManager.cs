@@ -18,7 +18,7 @@ namespace UnityEngine.UI.Extensions
         public ScrollRect ParentScrollRect;
 
         [Tooltip("The parent ScrollSnap control hosting this Scroll Snap.\nIf left empty, it will use the ScrollSnap of the ParentScrollRect")]
-        public ScrollSnapBase ParentScrollSnap;
+        private ScrollSnapBase ParentScrollSnap;
 
         private ScrollRect _myScrollRect;
         private IBeginDragHandler[] _beginDragHandlers;
@@ -30,6 +30,14 @@ namespace UnityEngine.UI.Extensions
         private bool scrollOtherHorizontally;
 
         void Awake()
+        {
+            if (ParentScrollRect)
+            {
+                InitialiseConflictManager();
+            }
+        }
+
+        private void InitialiseConflictManager()
         {
             //Get the current scroll rect so we can disable it if the other one is scrolling
             _myScrollRect = this.GetComponent<ScrollRect>();
@@ -56,9 +64,24 @@ namespace UnityEngine.UI.Extensions
 
         void Start()
         {
+            if (ParentScrollRect)
+            {
+                AssignScrollRectHandlers();
+            }
+        }
+
+        private void AssignScrollRectHandlers()
+        {
             _beginDragHandlers = ParentScrollRect.GetComponents<IBeginDragHandler>();
             _dragHandlers = ParentScrollRect.GetComponents<IDragHandler>();
             _endDragHandlers = ParentScrollRect.GetComponents<IEndDragHandler>();
+        }
+
+        public void SetParentScrollRect(ScrollRect parentScrollRect)
+        {
+            ParentScrollRect = parentScrollRect;
+            InitialiseConflictManager();
+            AssignScrollRectHandlers();
         }
 
         #region DragHandler
