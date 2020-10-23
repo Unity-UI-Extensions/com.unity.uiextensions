@@ -1,4 +1,8 @@
-﻿using System.Collections;
+﻿/// Credit Beka Westberg 
+/// Sourced from - https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/pull-requests/28
+/// Updated by SimonDarksideJ - Added some exception management and a SetNewItems to replace the content programmatically
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
