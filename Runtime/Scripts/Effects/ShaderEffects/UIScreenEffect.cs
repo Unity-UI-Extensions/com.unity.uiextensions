@@ -25,7 +25,7 @@ namespace UnityEngine.UI.Extensions
                 if (mGraphic.material == null || mGraphic.material.name == "Default UI Material")
                 {
                     //Applying default material with UI Image Crop shader
-                    mGraphic.material = new Material(Shader.Find("UI Extensions/UIScreen"));
+                    mGraphic.material = new Material(ShaderLibrary.GetShaderInstance("UI Extensions/UIScreen"));
                 }
             }
             else

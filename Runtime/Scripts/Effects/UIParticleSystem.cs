@@ -76,7 +76,7 @@ namespace UnityEngine.UI.Extensions
 
                 if (material == null)
                 {
-                    var foundShader = Shader.Find("UI Extensions/Particles/Additive");
+                    var foundShader = ShaderLibrary.GetShaderInstance("UI Extensions/Particles/Additive");
                     if (foundShader)
                     {
                         material = new Material(foundShader);
