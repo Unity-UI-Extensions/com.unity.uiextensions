@@ -185,11 +185,60 @@ namespace UnityEngine.UI.Extensions
             if (prevButton)
                 prevButton.GetComponent<Button>().onClick.AddListener(() => { PreviousItem(); });
 
-            SetupDrivenTransforms();
-            SetupSnapScroll();
-            scrollRect.horizontalNormalizedPosition = 0;
-            _closestItem = 0;
-            GoTo(startInfo);
+            if (IsScrollRectAvailable)
+            {
+                SetupDrivenTransforms();
+                SetupSnapScroll();
+                scrollRect.horizontalNormalizedPosition = 0;
+                _closestItem = 0;
+                GoTo(startInfo);
+            }
+        }
+
+        public void SetNewItems(ref List<Transform> newItems)
+        {
+            if (scrollRect && contentTransform)
+            {
+                for (int i = scrollRect.content.childCount - 1; i >= 0; i--)
+                {
+                    Transform child = contentTransform.GetChild(i);
+                    child.SetParent(null);
+                    GameObject.DestroyImmediate(child.gameObject);
+                }
+
+                foreach (Transform item in newItems)
+                {
+                    GameObject newItem = item.gameObject;
+                    if (newItem.IsPrefab())
+                    {
+                        newItem = Instantiate(item.gameObject, contentTransform);
+                    }
+                    else
+                    {
+                        newItem.transform.SetParent(contentTransform);
+                    }
+                }
+
+                SetupDrivenTransforms();
+                SetupSnapScroll();
+                scrollRect.horizontalNormalizedPosition = 0;
+                _closestItem = 0;
+                GoTo(startInfo);
+            }
+        }
+
+        private bool IsScrollRectAvailable
+        {
+            get
+            {
+                if (scrollRect &&
+                    contentTransform &&
+                    contentTransform.childCount > 0)
+                {
+                    return true;
+                }
+                return false;
+            }
         }
 
         private void OnDisable()
@@ -470,16 +519,22 @@ namespace UnityEngine.UI.Extensions
 
         public void OnEndDrag(PointerEventData ped)
         {
-            StartCoroutine("SlideAndLerp");
+            if (IsScrollRectAvailable)
+            {
+                StartCoroutine("SlideAndLerp");
+            }
         }
 
         private void Update()
         {
-            if (_closestItem != ClosestItemIndex)
+            if (IsScrollRectAvailable)
             {
-                CurrentItemChanged.Invoke(ClosestItemIndex);
-                ChangePaginationInfo(ClosestItemIndex);
-                _closestItem = ClosestItemIndex;
+                if (_closestItem != ClosestItemIndex)
+                {
+                    CurrentItemChanged.Invoke(ClosestItemIndex);
+                    ChangePaginationInfo(ClosestItemIndex);
+                    _closestItem = ClosestItemIndex;
+                }
             }
         }
 
