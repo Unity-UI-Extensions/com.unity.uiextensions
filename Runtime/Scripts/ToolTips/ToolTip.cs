@@ -121,6 +121,11 @@ namespace UnityEngine.UI.Extensions
             this.gameObject.SetActive(false);
         }
 
+        public void SetTooltip(string ttext)
+        {
+            SetTooltip(ttext, transform.position);
+        }
+
         //Call this function externally to set the text of the template and activate the tooltip
         public void SetTooltip(string ttext, Vector3 basePos, bool refreshCanvasesBeforeGetSize = false)
         {
