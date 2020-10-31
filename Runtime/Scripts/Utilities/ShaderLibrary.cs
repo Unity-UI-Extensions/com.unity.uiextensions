@@ -1,11 +1,9 @@
 ﻿/// Credit SimonDarksideJ
 
 using System.Collections.Generic;
-using UnityEditor;
 
 namespace UnityEngine.UI.Extensions
 {
-    [InitializeOnLoadAttribute]
     public static class ShaderLibrary
     {
         public static Dictionary<string, Shader> shaderInstances = new Dictionary<string, Shader>();
