@@ -14,7 +14,9 @@ You can follow the UI Extensions team for updates and news on:
 
 ### [Twitter](https://twitter.com/hashtag/UnityUIExtensions?src=hash) / [Facebook](https://www.facebook.com/UnityUIExtensions/) / [YouTube](https://www.youtube.com/channel/UCG3gZOkmL-2rmZat4ufv28Q)
 
-> ## Chat live with the Unity UI Extensions community on Gitter here: [UI Extensions Live Chat](https://gitter.im/Unity-UI-Extensions/Lobby)
+> ## Chat live with the Unity UI Extensions community on Gitter here:
+>
+> ## [UI Extensions Live Chat](https://gitter.im/Unity-UI-Extensions/Lobby)
 
 -----
 
@@ -44,7 +46,7 @@ To view previous releases, visit the [release archive](https://bitbucket.org/Uni
 
 ## [Supporting the UI Extensions project](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=89L8T9N6BR7LJ)
 
-If you wish to further support the Unity UI Extensions project itself, then you can either subsidise your downloads above, or using the links below.
+If you wish to further support the Unity UI Extensions project itself, then you can either subsidize your downloads above, or using the links below.
 
 All funds go to support the project, no matter the amount. **Donations in code are also extremely welcome**
 
