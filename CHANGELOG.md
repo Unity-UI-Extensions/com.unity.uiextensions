@@ -4,24 +4,34 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## 2019.4 (v2.2) - 2020-07-09
+## 2019.5 (v2.3) - 2020-10-31
 
-Here we write upgrading notes for brands. It's a team effort to make them as
-straightforward as possible.
+Since the move to UPM, the team have been able to react quicker and push out fixes a lot easier, without affecting previous installation (whilst still adhering to Unity's backwards compatibility pattern).  So it is with great news we announce this new release, faster that ever :D  (and thanks to UPM, easier to upgrade than ever).
+Be sure to also check out the "Examples" option in the Package Manager window to import the samples to your project.
 
 ### Added
 
-- New UPM deployment for Unity 2019, 2018 will still need to use the asset packages due to Unity compatibility issues.
-- Updated the project to the new Unity packaging guidelines, including separating out the examples to a separate package.
-- Many line drawing updates, including the ability to draw using a mouse (check the examples)
-- New Unity Card UI controls thanks to @RyanslikeSoCool
+- Add squircle primitive
+- Adding new magnetic scroll control
+- Added a static library to collate shaders on first use.
+- Finalized new InputManagerHelper, which translates input based on the operating input system, new or old Updated CardStack2D to have defined keyboard input or specific gamepad input over the older axisname for new input system.
+- Updated DropDown and Autocomplete controls based on feedback in #204
 
 ### Changed
 
-- Scroll Snaps (HSS/VSS) now have a "Hard Swipe" feature to restrict movement to a single page for each swipe
-- Scroll Snaps have also been updated to work better with the UIInfiniteScroll control
-- Update to the Fancy Scroll controls with even more added fanciness
-- Several updates to adopt newer Unity standards in the controls to ensure full forwards and backwards compatibility  
+- Examples now included with UPM delivery and available as a button on the UPM package manager window
+- Updated DropDown and Autocomplete controls based on feedback in #204
+- Updated Accordion to support both Vertical as well as Horizontal layout
+- Updated ComboBox controls to improve better programmatic controls
+- Updates to the Infinite scroll to support content of various sizes
+- Updated UI Knob control - enabled dragging outside the target area, added example scene
+- Minor update to MagneticInfinite Scroll
+- Refactored and extended the ContentScrollSnap control
+- Added protection against errors and empty scrollrect content
+- Added new SetNewItems function to add children programmatically to the control and reset accordingly
+- Patch supplied by a contributor to improve the texture sheet use with the UIParticlesystem
+- Added "SetKnobValue" function which allows the setting of Value and loops
+- Added the programmatic capability to change the parent scroll rect on the ScrollConflictManager at runtime.
 
 ### Deprecated
 
@@ -29,21 +39,20 @@ None
 
 ### Fixed
 
-- Mouse position use updated in
-    * RadialSlider
-    * ColorSampler
-    * TiltWindow
-- Check compiler warnings (#197)
-- Line Renderer click to add lines (#183)
-- ScrollSnap Swiping options - hard fast swipe (#176)
-- Shader Loading issue / UIParticleSystem (#229)
-- Issue where Menu Prefabs would be disabled instead of their Clones (#210)
-- Check ScrollSnapBase update (#265)
-- UIInfiniteScroller support for VSS updated and fixes
-- Fix to allow radial slider to start from positions other than left
-- Fix UI Particles: Texture sheet animation + Random row(#256)
-- Fix for wandering ScrollSnap controls due to Local Positioning drift
-- Divide By Zero fix for Gradient (#58)
+- Fix to add a "RequireComponent" to Primitives as Unity 2020 does not add them by default
+- Remove old Examples submodule
+- Updated submodules to hide Examples folder Additionally, updated Package manifest to allow importing of examples direct from UPM package.
+- Fixed hard swipe to ensure it only ever moves one page, no matter how far you swipe.
+- Fixed a conflict when using the ScrollConflictManager in child content of a HSS or VSS
+- Fix for UI Particle system looping
+- Fixed public GoToScreen call to only raise events internally (not multiple)
+- Final roll-up and fix. Resolved race condition for associated pagination controls.
+- Fixed issue with page events not being raised when inertia was disabled (velocity was always zero)
+- When cloned, reorderable list was creating a second List Content component that was not initialized. Refactored to ensure only one list content was present and is initialized correctly
+- Reorderable list items marked as transferable, remain transferable after being dropped
+- Patch to resolve issues without the new Input System installed
+- Refined magnetic scroll and dependencies while documenting Updated example
+- Patch Tooltip
 
 ### Removed
 
