@@ -76,7 +76,7 @@ namespace UnityEngine.UI.Extensions
 
                 if (material == null)
                 {
-                    var foundShader = Shader.Find("UI Extensions/Particles/Additive");
+                    var foundShader = ShaderLibrary.GetShaderInstance("UI Extensions/Particles/Additive");
                     if (foundShader)
                     {
                         material = new Material(foundShader);
@@ -223,9 +223,14 @@ namespace UnityEngine.UI.Extensions
                             frame = Mathf.FloorToInt(frameProgress * textureSheetAnimation.numTilesX);
 
                             int row = textureSheetAnimation.rowIndex;
-                            //                    if (textureSheetAnimation.useRandomRow) { // FIXME - is this handled internally by rowIndex?
-                            //                        row = Random.Range(0, textureSheetAnimation.numTilesY, using: particle.randomSeed);
-                            //                    }
+#if UNITY_2020 || UNITY_2019
+                            if (textureSheetAnimation.rowMode == ParticleSystemAnimationRowMode.Random)
+#else
+                            if (textureSheetAnimation.useRandomRow)
+#endif
+                            { // FIXME - is this handled internally by rowIndex?
+                                row = Mathf.Abs((int)particle.randomSeed % textureSheetAnimation.numTilesY);
+                            }
                             frame += row * textureSheetAnimation.numTilesX;
                             break;
 
@@ -234,7 +239,7 @@ namespace UnityEngine.UI.Extensions
                     frame %= textureSheetAnimationFrames;
 
                     particleUV.x = (frame % textureSheetAnimation.numTilesX) * textureSheetAnimationFrameSize.x;
-                    particleUV.y = 1.0f - Mathf.FloorToInt(frame / textureSheetAnimation.numTilesX) * textureSheetAnimationFrameSize.y;
+                    particleUV.y = 1.0f - ((frame / textureSheetAnimation.numTilesX) + 1) * textureSheetAnimationFrameSize.y;
                     particleUV.z = particleUV.x + textureSheetAnimationFrameSize.x;
                     particleUV.w = particleUV.y + textureSheetAnimationFrameSize.y;
                 }
@@ -387,6 +392,7 @@ namespace UnityEngine.UI.Extensions
 
         public void StartParticleEmission()
         {
+            pSystem.time = 0;
             pSystem.Play();
         }
 
@@ -401,4 +407,4 @@ namespace UnityEngine.UI.Extensions
         }
     }
 #endif
-}
+                    }

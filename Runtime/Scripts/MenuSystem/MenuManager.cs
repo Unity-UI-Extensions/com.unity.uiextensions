@@ -143,7 +143,7 @@ namespace UnityEngine.UI.Extensions
         private void Update()
         {
             // On Android the back button is sent as Esc
-            if (Input.GetKeyDown(KeyCode.Escape) && menuStack.Count > 0)
+            if (UIExtensionsInputManager.GetKeyDown(KeyCode.Escape) && menuStack.Count > 0)
             {
                 menuStack.Peek().OnBackPressed();
             }

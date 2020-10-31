@@ -23,7 +23,7 @@ namespace UnityEngine.UI.Extensions
             if (droppedStruct.IsAClone)
                 DebugLabel.text += "Source Object: " + droppedStruct.SourceObject.name + "\n";
             DebugLabel.text += string.Format("From {0} at Index {1} \n", droppedStruct.FromList.name, droppedStruct.FromIndex);
-            DebugLabel.text += string.Format("To {0} at Index {1} \n", droppedStruct.ToList.name, droppedStruct.ToIndex);
+            DebugLabel.text += string.Format("To {0} at Index {1} \n", droppedStruct.ToList == null ? "Empty space" : droppedStruct.ToList.name, droppedStruct.ToIndex);
         }
     }
 }

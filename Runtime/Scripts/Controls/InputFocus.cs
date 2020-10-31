@@ -26,7 +26,7 @@ namespace UnityEngine.UI.Extensions
         void Update()
         {
             // Check if the "Enter" key was just released with the chat input not focused
-            if (Input.GetKeyUp(KeyCode.Return) && !_inputField.isFocused)
+            if (UIExtensionsInputManager.GetKeyUp(KeyCode.Return) && !_inputField.isFocused)
             {
                 // If we need to ignore the keypress, do nothing - otherwise activate the input field
                 if (_ignoreNextActivation)
@@ -60,7 +60,7 @@ namespace UnityEngine.UI.Extensions
         public void OnEndEdit(string textString)
         {
             // If the edit ended because we clicked away, don't do anything extra
-            if (!Input.GetKeyDown(KeyCode.Return))
+            if (!UIExtensionsInputManager.GetKeyDown(KeyCode.Return))
             {
                 return;
             }

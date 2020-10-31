@@ -30,11 +30,13 @@ namespace UnityEngine.UI.Extensions
         internal int _currentPage;
         internal int _previousPage;
         internal int _halfNoVisibleItems;
-        internal bool _moveStarted;
         internal bool _isInfinite; // Is a UI Infinite scroller attached to the control
         internal int _infiniteWindow; // The infinite window the control is in
         internal float _infiniteOffset; // How much to offset a repositioning
-         private int _bottomItem, _topItem;
+        private int _bottomItem, _topItem;
+        internal bool _startEventCalled = false;
+        internal bool _endEventCalled = false;
+        internal bool _suspendEvents = false; 
 
         [Serializable]
         public class SelectionChangeStartEvent : UnityEvent { }
@@ -443,13 +445,15 @@ namespace UnityEngine.UI.Extensions
         private void ChangeBulletsInfo(int targetScreen)
         {
             if (Pagination)
+            {
                 for (int i = 0; i < Pagination.transform.childCount; i++)
                 {
-                    Pagination.transform.GetChild(i).GetComponent<Toggle>().isOn = (targetScreen == i)
-            ? true
-                        : false;
+                    Pagination.transform.GetChild(i).GetComponent<Toggle>().isOn = (targetScreen == i) ? true : false;
                 }
+            }
         }
+
+        // Make a lock function for pagination, to prevent event leaking
 
         /// <summary>
         /// disables the page navigation buttons when at the first or last screen
@@ -531,9 +535,12 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         public void StartScreenChange()
         {
-            if (!_moveStarted)
+            if (!_startEventCalled)
             {
-                _moveStarted = true;
+                _suspendEvents = true;
+
+                _startEventCalled = true;
+                _endEventCalled = false;
                 OnSelectionChangeStartEvent.Invoke();
             }
         }
@@ -551,9 +558,15 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         internal void EndScreenChange()
         {
-            OnSelectionChangeEndEvent.Invoke(_currentPage);
-            _settled = true;
-            _moveStarted = false;
+            if (!_endEventCalled)
+            {
+                _suspendEvents = false;
+
+                _endEventCalled = true;
+                _startEventCalled = false;
+                _settled = true;
+                OnSelectionChangeEndEvent.Invoke(_currentPage);
+            }
         }
 
         /// <summary>

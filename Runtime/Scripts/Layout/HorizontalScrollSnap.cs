@@ -12,6 +12,8 @@ namespace UnityEngine.UI.Extensions
     [AddComponentMenu("Layout/Extensions/Horizontal Scroll Snap")]
     public class HorizontalScrollSnap : ScrollSnapBase
     {
+        private bool updated = true;
+
         void Start()
         {
             _isVertical = false;
@@ -23,7 +25,9 @@ namespace UnityEngine.UI.Extensions
 
         void Update()
         {
-            if (!_lerp && _scroll_rect.velocity == Vector2.zero)
+            updated = false;
+
+            if (!_lerp && (_scroll_rect.velocity == Vector2.zero && _scroll_rect.inertia))
             {
                 if (!_settled && !_pointerDown)
                 {
@@ -37,13 +41,15 @@ namespace UnityEngine.UI.Extensions
             else if (_lerp)
             {
                 _screensContainer.anchoredPosition = Vector3.Lerp(_screensContainer.anchoredPosition, _lerp_target, transitionSpeed * (UseTimeScale ? Time.deltaTime : Time.unscaledDeltaTime));
-                if (Vector3.Distance(_screensContainer.anchoredPosition, _lerp_target) < 0.1f)
+                if (Vector3.Distance(_screensContainer.anchoredPosition, _lerp_target) < 0.2f)
                 {
                     _screensContainer.anchoredPosition = _lerp_target;
                     _lerp = false;
                     EndScreenChange();
                 }
             }
+
+            if (UseHardSwipe) return;
 
             CurrentPage = GetPageforPosition(_screensContainer.anchoredPosition);
 
@@ -241,6 +247,14 @@ namespace UnityEngine.UI.Extensions
         /// <param name="eventData"></param>
         public override void OnEndDrag(PointerEventData eventData)
         {
+            if (updated)
+            {
+                return;
+            }
+
+            // to prevent double dragging, only act on EndDrag once per frame
+            updated = true;
+
             _pointerDown = false;
 
             if (_scroll_rect.horizontal)

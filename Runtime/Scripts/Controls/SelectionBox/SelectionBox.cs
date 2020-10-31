@@ -147,14 +147,14 @@ namespace UnityEngine.UI.Extensions
 		
 		void BeginSelection(){
 			// Click somewhere in the Game View.
-			if (!Input.GetMouseButtonDown(0))
+			if (!UIExtensionsInputManager.GetMouseButtonDown(0))
 				return;
 			
 			//The boxRect will be inactive up until the point we start selecting
 			boxRect.gameObject.SetActive(true);
 			
 			// Get the initial click position of the mouse. 
-			origin = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+			origin = new Vector2(UIExtensionsInputManager.MousePosition.x, UIExtensionsInputManager.MousePosition.y);
 			
 			//If the initial click point is not inside the selection mask, we abort the selection
 			if (!PointIsValidAgainstSelectionMask(origin)) {
@@ -185,7 +185,7 @@ namespace UnityEngine.UI.Extensions
 					selectableList.Add (selectable); 
 					
 					//We're using left shift to act as the "Add To Selection" command. So if left shift isn't pressed, we want everything to begin deselected
-					if (!Input.GetKey (KeyCode.LeftShift)) {
+					if (!UIExtensionsInputManager.GetKey (KeyCode.LeftShift)) {
 						selectable.selected = false;
 					}
 				}
@@ -211,7 +211,7 @@ namespace UnityEngine.UI.Extensions
 		
 		IBoxSelectable GetSelectableAtMousePosition() {
 			//Firstly, we cannot click on something that is not inside the selection mask (if we have one)
-			if (!PointIsValidAgainstSelectionMask(Input.mousePosition)) {
+			if (!PointIsValidAgainstSelectionMask(UIExtensionsInputManager.MousePosition)) {
 				return null;
 			}
 			
@@ -227,7 +227,7 @@ namespace UnityEngine.UI.Extensions
 					
 					//Once we've found the rendering camera, we check if the selectables rectTransform contains the click. That way we
 					//Can click anywhere on a rectTransform to select it.
-					if (RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, screenCamera)) {
+					if (RectTransformUtility.RectangleContainsScreenPoint(rectTransform, UIExtensionsInputManager.MousePosition, screenCamera)) {
 						
 						//And if it does, we select it and send it back
 						return selectable;
@@ -240,7 +240,7 @@ namespace UnityEngine.UI.Extensions
 					var selectableScreenPoint = GetScreenPointOfSelectable(selectable);
 					
 					//Check that the click fits within the screen-radius of the selectable
-					if (Vector2.Distance(selectableScreenPoint, Input.mousePosition) <= radius) {
+					if (Vector2.Distance(selectableScreenPoint, UIExtensionsInputManager.MousePosition) <= radius) {
 						
 						//And if it does, we select it and send it back
 						return selectable;
@@ -255,11 +255,11 @@ namespace UnityEngine.UI.Extensions
 		
 		void DragSelection(){
 			//Return if we're not dragging or if the selection has been aborted (BoxRect disabled)
-			if (!Input.GetMouseButton(0) || !boxRect.gameObject.activeSelf)
+			if (!UIExtensionsInputManager.GetMouseButton(0) || !boxRect.gameObject.activeSelf)
 				return;
 			
 			// Store the current mouse position in screen space.
-			Vector2 currentMousePosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+			Vector2 currentMousePosition = new Vector2(UIExtensionsInputManager.MousePosition.x, UIExtensionsInputManager.MousePosition.y);
 			
 			// How far have we moved the mouse?
 			Vector2 difference = currentMousePosition - origin;
@@ -414,7 +414,7 @@ namespace UnityEngine.UI.Extensions
 		
 		void EndSelection(){
 			//Get out if we haven't finished selecting, or if the selection has been aborted (boxRect disabled)
-			if (!Input.GetMouseButtonUp(0) || !boxRect.gameObject.activeSelf)
+			if (!UIExtensionsInputManager.GetMouseButtonUp(0) || !boxRect.gameObject.activeSelf)
 				return;
 			
 			clickedAfterDrag = GetSelectableAtMousePosition();

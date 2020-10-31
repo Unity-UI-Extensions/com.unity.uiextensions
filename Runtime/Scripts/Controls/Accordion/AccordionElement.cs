@@ -12,7 +12,13 @@ namespace UnityEngine.UI.Extensions
 	{
 
 		[SerializeField] private float m_MinHeight = 18f;
-		
+
+		public float MinHeight => m_MinHeight;
+
+		[SerializeField] private float m_MinWidth = 40f;
+
+		public float MinWidth => m_MinWidth;
+
 		private Accordion m_Accordion;
 		private RectTransform m_RectTransform;
 		private LayoutElement m_LayoutElement;
@@ -43,7 +49,8 @@ namespace UnityEngine.UI.Extensions
 		protected override void OnValidate()
 		{
 			base.OnValidate();
-			
+			this.m_Accordion = this.gameObject.GetComponentInParent<Accordion>();
+
 			if (this.group == null)
 			{
 				ToggleGroup tg = this.GetComponentInParent<ToggleGroup>();
@@ -60,11 +67,26 @@ namespace UnityEngine.UI.Extensions
 			{
 				if (this.isOn)
 				{
-					le.preferredHeight = -1f;
+                    if (m_Accordion.ExpandVerticval)
+                    {
+						le.preferredHeight = -1f;
+					}
+                    else
+                    {
+						le.preferredWidth = -1f;
+                    }
 				}
 				else
 				{
-					le.preferredHeight = this.m_MinHeight;
+					if (m_Accordion.ExpandVerticval)
+					{
+						le.preferredHeight = this.m_MinHeight;
+					}
+                    else
+                    {
+						le.preferredWidth = this.m_MinWidth;
+
+					}
 				}
 			}
 		}
@@ -81,22 +103,50 @@ namespace UnityEngine.UI.Extensions
 			{
 				if (state)
 				{
-					this.m_LayoutElement.preferredHeight = -1f;
+					if (m_Accordion.ExpandVerticval)
+					{
+						this.m_LayoutElement.preferredHeight = -1f;
+					}
+                    else
+                    {
+						this.m_LayoutElement.preferredWidth = -1f;
+					}
 				}
 				else
 				{
-					this.m_LayoutElement.preferredHeight = this.m_MinHeight;
+					if (m_Accordion.ExpandVerticval)
+					{
+						this.m_LayoutElement.preferredHeight = this.m_MinHeight;
+					}
+                    else
+                    {
+						this.m_LayoutElement.preferredWidth = this.m_MinWidth;
+					}
 				}
 			}
 			else if (transition == Accordion.Transition.Tween)
 			{
 				if (state)
 				{
-					this.StartTween(this.m_MinHeight, this.GetExpandedHeight());
+					if (m_Accordion.ExpandVerticval)
+					{
+						this.StartTween(this.m_MinHeight, this.GetExpandedHeight());
+					}
+                    else
+                    {
+						this.StartTween(this.m_MinWidth, this.GetExpandedWidth());
+					}
 				}
 				else
 				{
-					this.StartTween(this.m_RectTransform.rect.height, this.m_MinHeight);
+					if (m_Accordion.ExpandVerticval)
+					{
+						this.StartTween(this.m_RectTransform.rect.height, this.m_MinHeight);
+					}
+                    else
+                    {
+						this.StartTween(this.m_RectTransform.rect.width, this.m_MinWidth);
+					}
 				}
 			}
 		}
@@ -113,7 +163,20 @@ namespace UnityEngine.UI.Extensions
 			
 			return h;
 		}
-		
+
+		protected float GetExpandedWidth()
+		{
+			if (this.m_LayoutElement == null)
+				return this.m_MinWidth;
+
+			float originalPrefW = this.m_LayoutElement.preferredWidth;
+			this.m_LayoutElement.preferredWidth = -1f;
+			float w = LayoutUtility.GetPreferredWidth(this.m_RectTransform);
+			this.m_LayoutElement.preferredWidth = originalPrefW;
+
+			return w;
+		}
+
 		protected void StartTween(float startFloat, float targetFloat)
 		{
 			float duration = (this.m_Accordion != null) ? this.m_Accordion.transitionDuration : 0.3f;
@@ -124,7 +187,14 @@ namespace UnityEngine.UI.Extensions
 				startFloat = startFloat,
 				targetFloat = targetFloat
 			};
-			info.AddOnChangedCallback(SetHeight);
+			if (m_Accordion.ExpandVerticval)
+			{
+				info.AddOnChangedCallback(SetHeight);
+			}
+            else
+            {
+				info.AddOnChangedCallback(SetWidth);
+			}
 			info.ignoreTimeScale = true;
 			this.m_FloatTweenRunner.StartTween(info);
 		}
@@ -135,6 +205,14 @@ namespace UnityEngine.UI.Extensions
 				return;
 				
 			this.m_LayoutElement.preferredHeight = height;
+		}
+
+		protected void SetWidth(float width)
+		{
+			if (this.m_LayoutElement == null)
+				return;
+
+			this.m_LayoutElement.preferredWidth = width;
 		}
 	}
 }

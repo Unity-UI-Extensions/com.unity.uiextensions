@@ -4,11 +4,14 @@
 
 namespace UnityEngine.UI.Extensions
 {
-    [RequireComponent(typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(ToggleGroup))]
+    [RequireComponent(typeof(HorizontalOrVerticalLayoutGroup), typeof(ContentSizeFitter), typeof(ToggleGroup))]
 	[AddComponentMenu("UI/Extensions/Accordion/Accordion Group")]
 	public class Accordion : MonoBehaviour
 	{
-		
+		private bool m_expandVertical = true;
+		[HideInInspector]
+		public bool ExpandVerticval => m_expandVertical;
+
 		public enum Transition
 		{
 			Instant,
@@ -37,5 +40,22 @@ namespace UnityEngine.UI.Extensions
 			get { return this.m_TransitionDuration; }
 			set { this.m_TransitionDuration = value; }
 		}
+
+        private void Awake()
+        {
+			m_expandVertical = GetComponent<HorizontalLayoutGroup>() ? false : true;
+			var group = GetComponent<ToggleGroup>();
+		}
+
+#if UNITY_EDITOR
+
+        private void OnValidate()
+        {
+            if (!GetComponent<HorizontalLayoutGroup>() && !GetComponent<VerticalLayoutGroup>())
+            {
+				Debug.LogError("Accordion requires either a Horizontal or Vertical Layout group to place children");
+            }
+        }
+#endif
 	}
 }

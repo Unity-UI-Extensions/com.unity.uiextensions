@@ -56,7 +56,7 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.Tab) && Input.GetKey(KeyCode.LeftShift))
+            if (UIExtensionsInputManager.GetKeyDown(KeyCode.Tab) && UIExtensionsInputManager.GetKey(KeyCode.LeftShift))
             {
                 if (NavigationMode == NavigationMode.Manual && NavigationPath.Length > 0)
                 {
@@ -85,7 +85,7 @@ namespace UnityEngine.UI.Extensions
                     }
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.Tab))
+            else if (UIExtensionsInputManager.GetKeyDown(KeyCode.Tab))
             {
                 if (NavigationMode == NavigationMode.Manual && NavigationPath.Length > 0)
                 {

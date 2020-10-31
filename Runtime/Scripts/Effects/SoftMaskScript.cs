@@ -48,7 +48,7 @@ namespace UnityEngine.UI.Extensions
             var text = GetComponent<Text>();
             if (text != null)
             {
-                mat = new Material(Shader.Find("UI Extensions/SoftMaskShader"));
+                mat = new Material(ShaderLibrary.GetShaderInstance("UI Extensions/SoftMaskShader"));
                 text.material = mat;
                 cachedCanvas = text.canvas;
                 cachedCanvasTransform = cachedCanvas.transform;
@@ -64,7 +64,7 @@ namespace UnityEngine.UI.Extensions
             var graphic = GetComponent<Graphic>();
             if (graphic != null)
             {
-                mat = new Material(Shader.Find("UI Extensions/SoftMaskShader"));
+                mat = new Material(ShaderLibrary.GetShaderInstance("UI Extensions/SoftMaskShader"));
                 graphic.material = mat;
                 cachedCanvas = graphic.canvas;
                 cachedCanvasTransform = cachedCanvas.transform;

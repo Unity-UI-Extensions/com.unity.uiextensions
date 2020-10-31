@@ -1,6 +1,7 @@
 ﻿/// Credit Tomasz Schelenz 
 /// Sourced from - https://bitbucket.org/SimonDarksideJ/unity-ui-extensions/issues/81/infinite-scrollrect
 /// Demo - https://www.youtube.com/watch?v=uVTV7Udx78k  - configures automatically.  - works in both vertical and horizontal (but not both at the same time)  - drag and drop  - can be initialized by code (in case you populate your scrollview content from code)
+/// Updated by Febo Zodiaco - https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/issues/349/magnticinfinitescroll
 
 using System.Collections.Generic;
 
@@ -11,10 +12,10 @@ namespace UnityEngine.UI.Extensions
     /// 
     /// Fields
     /// - InitByUSer - in case your scrollrect is populated from code, you can explicitly Initialize the infinite scroll after your scroll is ready
-    /// by callin Init() method
+    /// by calling Init() method
     /// 
     /// Notes
-    /// - doesn't work in both vertical and horizontal orientation at the same time.
+    /// - does not work in both vertical and horizontal orientation at the same time.
     /// - in order to work it disables layout components and size fitter if present(automatically)
     /// 
     /// </summary>
@@ -24,28 +25,68 @@ namespace UnityEngine.UI.Extensions
         //if true user will need to call Init() method manually (in case the contend of the scrollview is generated from code or requires special initialization)
         [Tooltip("If false, will Init automatically, otherwise you need to call Init() method")]
         public bool InitByUser = false;
-        private ScrollRect _scrollRect;
+        protected ScrollRect _scrollRect;
         private ContentSizeFitter _contentSizeFitter;
         private VerticalLayoutGroup _verticalLayoutGroup;
         private HorizontalLayoutGroup _horizontalLayoutGroup;
         private GridLayoutGroup _gridLayoutGroup;
-        private bool _isVertical = false;
-        private bool _isHorizontal = false;
+        protected bool _isVertical = false;
+        protected bool _isHorizontal = false;
         private float _disableMarginX = 0;
         private float _disableMarginY = 0;
         private bool _hasDisabledGridComponents = false;
-        private List<RectTransform> items = new List<RectTransform>();
+        protected List<RectTransform> items = new List<RectTransform>();
         private Vector2 _newAnchoredPosition = Vector2.zero;
         //TO DISABLE FLICKERING OBJECT WHEN SCROLL VIEW IS IDLE IN BETWEEN OBJECTS
-        private float _treshold = 100f;
+        private float _threshold = 100f;
         private int _itemCount = 0;
         private float _recordOffsetX = 0;
         private float _recordOffsetY = 0;
 
-        void Awake()
+        protected virtual void Awake()
         {
             if (!InitByUser)
                 Init();
+        }
+
+        public virtual void SetNewItems(ref List<Transform> newItems)
+        {
+            if (_scrollRect != null)
+            {
+                if (_scrollRect.content == null && newItems == null)
+                {
+                    return;
+                }
+
+                if (items != null)
+                {
+                    items.Clear();
+                }
+
+                for (int i = _scrollRect.content.childCount - 1; i >= 0; i--)
+                {
+                    Transform child = _scrollRect.content.GetChild(i);
+                    child.SetParent(null);
+                    GameObject.DestroyImmediate(child.gameObject);
+                }
+
+                foreach (Transform newItem in newItems)
+                {
+                    newItem.SetParent(_scrollRect.content);
+                }
+
+                SetItems();
+            }
+        }
+
+        private void SetItems()
+        {
+            for (int i = 0; i < _scrollRect.content.childCount; i++)
+            {
+                items.Add(_scrollRect.content.GetChild(i).GetComponent<RectTransform>());
+            }
+
+            _itemCount = _scrollRect.content.childCount;
         }
 
         public void Init()
@@ -56,10 +97,6 @@ namespace UnityEngine.UI.Extensions
                 _scrollRect.onValueChanged.AddListener(OnScroll);
                 _scrollRect.movementType = ScrollRect.MovementType.Unrestricted;
 
-                for (int i = 0; i < _scrollRect.content.childCount; i++)
-                {
-                    items.Add(_scrollRect.content.GetChild(i).GetComponent<RectTransform>());
-                }
                 if (_scrollRect.content.GetComponent<VerticalLayoutGroup>() != null)
                 {
                     _verticalLayoutGroup = _scrollRect.content.GetComponent<VerticalLayoutGroup>();
@@ -85,7 +122,7 @@ namespace UnityEngine.UI.Extensions
                     Debug.LogError("UI_InfiniteScroll doesn't support scrolling in both directions, please choose one direction (horizontal or vertical)");
                 }
 
-                _itemCount = _scrollRect.content.childCount;
+                SetItems();
             }
             else
             {
@@ -102,7 +139,7 @@ namespace UnityEngine.UI.Extensions
                 {
                     _recordOffsetY *= -1;
                 }
-                _disableMarginY = _recordOffsetY * _itemCount / 2;// _scrollRect.GetComponent<RectTransform>().rect.height/2 + items[0].sizeDelta.y;
+                _disableMarginY = _recordOffsetY * _itemCount / 2;
             }
             if (_isHorizontal)
             {
@@ -111,7 +148,7 @@ namespace UnityEngine.UI.Extensions
                 {
                     _recordOffsetX *= -1;
                 }
-                _disableMarginX = _recordOffsetX * _itemCount / 2;//_scrollRect.GetComponent<RectTransform>().rect.width/2 + items[0].sizeDelta.x;
+                _disableMarginX = _recordOffsetX * _itemCount / 2;
             }
 
             if (_verticalLayoutGroup)
@@ -142,7 +179,7 @@ namespace UnityEngine.UI.Extensions
             {
                 if (_isHorizontal)
                 {
-                    if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).x > _disableMarginX + _treshold)
+                    if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).x > _disableMarginX + _threshold)
                     {
                         _newAnchoredPosition = items[i].anchoredPosition;
                         _newAnchoredPosition.x -= _itemCount * _recordOffsetX;
@@ -160,7 +197,7 @@ namespace UnityEngine.UI.Extensions
 
                 if (_isVertical)
                 {
-                    if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).y > _disableMarginY + _treshold)
+                    if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).y > _disableMarginY + _threshold)
                     {
                         _newAnchoredPosition = items[i].anchoredPosition;
                         _newAnchoredPosition.y -= _itemCount * _recordOffsetY;
