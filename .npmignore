@@ -35,9 +35,6 @@ sysinfo.txt
 /.vs
 *.gitmodules
 
-# UPM Build updates
-[Ee]xamples.meta
-
 # NPM publish exclusions
 bitbucket-pipelines.yml
 bitbucket-pipelines.yml.meta

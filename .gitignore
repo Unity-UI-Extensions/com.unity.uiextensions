@@ -33,7 +33,3 @@ sysinfo.txt
 *.apk
 *.unitypackage
 /.vs
-
-# UPM Build updates
-[Ee]xamples
-[Ee]xamples.meta
