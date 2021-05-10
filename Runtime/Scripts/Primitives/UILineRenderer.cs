@@ -178,6 +178,7 @@ namespace UnityEngine.UI.Extensions
 			// Generate the quads that make up the wide line
 			var segments = new List<UIVertex[]> ();
 			if (lineList) {
+				//Loop through list in line pairs, skipping drawing between lines
 				for (var i = 1; i < pointsToDraw.Length; i += 2) {
 					var start = pointsToDraw [i - 1];
 					var end = pointsToDraw [i];
@@ -188,13 +189,15 @@ namespace UnityEngine.UI.Extensions
 						segments.Add (CreateLineCap (start, end, SegmentType.Start));
 					}
 
-					segments.Add(CreateLineSegment(start, end, SegmentType.Middle, segments.Count > 1 ? segments[segments.Count - 2] : null));
+					// Originally, UV's had to be wrapped per segment to ensure textures rendered correctly, however when tested in 2019.4, this no longer seems to be an issue.
+					segments.Add(CreateLineSegment(start, end, SegmentType.Middle));
 
 					if (lineCaps) {
 						segments.Add (CreateLineCap (start, end, SegmentType.End));
 					}
 				}
 			} else {
+				//Draw full lines
 				for (var i = 1; i < pointsToDraw.Length; i++) {
 					var start = pointsToDraw [i - 1];
 					var end = pointsToDraw [i];
@@ -458,6 +461,15 @@ namespace UnityEngine.UI.Extensions
             dot /= from_p1_to_p2.magnitude;
             float t = Mathf.Clamp01(dot);
             return p1 + from_p1_to_p2 * t;
+        }
+
+        protected override void OnEnable()
+        {
+			base.OnEnable();
+            if (m_points.Length == 0)
+            {
+				m_points = new Vector2[1];
+            }
         }
     }
 }

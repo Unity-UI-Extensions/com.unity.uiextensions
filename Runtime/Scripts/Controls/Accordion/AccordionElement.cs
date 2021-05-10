@@ -62,8 +62,8 @@ namespace UnityEngine.UI.Extensions
 			}
 			
 			LayoutElement le = this.gameObject.GetComponent<LayoutElement>();
-			
-			if (le != null)
+
+			if (le != null && m_Accordion != null)
 			{
 				if (this.isOn)
 				{
@@ -98,8 +98,8 @@ namespace UnityEngine.UI.Extensions
 				return;
 			
 			Accordion.Transition transition = (this.m_Accordion != null) ? this.m_Accordion.transition : Accordion.Transition.Instant;
-			
-			if (transition == Accordion.Transition.Instant)
+
+			if (transition == Accordion.Transition.Instant && m_Accordion != null)
 			{
 				if (state)
 				{

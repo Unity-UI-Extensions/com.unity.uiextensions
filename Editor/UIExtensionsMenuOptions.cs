@@ -806,7 +806,8 @@ namespace UnityEditor.UI
 			//Setup Template
 			itemTemplate.name = "ItemTemplate";
 			var itemTemplateRT = itemTemplate.GetComponent<RectTransform>();
-			itemTemplateRT.sizeDelta = cbbRT.sizeDelta;
+			itemTemplateRT.sizeDelta = cbbRT.sizeDelta - new Vector2(10,0);
+			itemTemplateRT.anchoredPosition = new Vector2(-5, 0);
 			var itemTemplateButton = itemTemplate.GetComponent<Button>();
 			itemTemplateButton.transition = Selectable.Transition.None;
 			var itemTemplateLayoutElement = itemTemplate.AddComponent<LayoutElement>();
@@ -902,7 +903,8 @@ namespace UnityEditor.UI
 			//Setup Template
 			itemTemplate.name = "ItemTemplate";
 			var itemTemplateRT = itemTemplate.GetComponent<RectTransform>();
-			itemTemplateRT.sizeDelta = cbbRT.sizeDelta;
+			itemTemplateRT.sizeDelta = cbbRT.sizeDelta - new Vector2(10, 0);
+			itemTemplateRT.anchoredPosition = new Vector2(-5, 0); 
 			var itemTemplateButton = itemTemplate.GetComponent<Button>();
 			itemTemplateButton.transition = Selectable.Transition.None;
 			var itemTemplateLayoutElement = itemTemplate.AddComponent<LayoutElement>();
@@ -1002,7 +1004,8 @@ namespace UnityEditor.UI
 			//Setup Template
 			itemTemplate.name = "ItemTemplate";
 			var itemTemplateRT = itemTemplate.GetComponent<RectTransform>();
-			itemTemplateRT.sizeDelta = cbbRT.sizeDelta;
+			itemTemplateRT.sizeDelta = cbbRT.sizeDelta - new Vector2(10, 0);
+			itemTemplateRT.anchoredPosition = new Vector2(-5, 0);
 			var itemTemplateButton = itemTemplate.GetComponent<Button>();
 			itemTemplateButton.transition = Selectable.Transition.None;
 			var itemTemplateLayoutElement = itemTemplate.AddComponent<LayoutElement>();

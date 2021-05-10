@@ -73,6 +73,11 @@ namespace UnityEngine.UI.Extensions
                 value = Math.Max(value, -1);
                 value = Math.Min(value, segments.Length - 1);
 
+                if (m_selectedSegmentIndex == value)
+                {
+                    return;
+                }
+
                 m_selectedSegmentIndex = value;
 
                 if (selectedSegment)

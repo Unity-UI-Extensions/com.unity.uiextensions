@@ -83,9 +83,17 @@ namespace UnityEngine.UI.Extensions
                     }
                 }
 
-                var topCanvas = menuInstance.GetComponent<Canvas>();
-                var previousCanvas = menuStack.Peek().GetComponent<Canvas>();
-                topCanvas.sortingOrder = previousCanvas.sortingOrder + 1;
+                Canvas topCanvas = menuInstance.GetComponent<Canvas>();
+                if (topCanvas != null)
+                {
+                    Canvas previousCanvas = menuStack.Peek().GetComponent<Canvas>();
+
+                    if(previousCanvas != null)
+                    {
+                        topCanvas.sortingOrder = previousCanvas.sortingOrder + 1;
+                    }
+                }
+
             }
 
             menuStack.Push(menuInstance);

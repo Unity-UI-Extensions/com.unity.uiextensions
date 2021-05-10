@@ -27,6 +27,7 @@ namespace UnityEngine.UI.Extensions
     {
         //if true user will need to call Init() method manually (in case the contend of the scrollview is generated from code or requires special initialization)
         public bool InitByUser = false;
+        private bool _initialised = false;
         private ScrollRect _scrollRect;
         private ContentSizeFitter _contentSizeFitter;
         private VerticalLayoutGroup _verticalLayoutGroup;
@@ -36,8 +37,9 @@ namespace UnityEngine.UI.Extensions
         private bool _isHorizontal = false;
         private float _disableMarginX = 0;
         private float _disableMarginY = 0;
-        private bool hasDisabledGridComponents = false;
-        private List<RectTransform> items = new List<RectTransform>();
+        private bool _hasDisabledGridComponents = false;
+        private List<RectTransform> _items = new List<RectTransform>();
+        private bool _reset = false;
 
         void Awake()
         {
@@ -45,13 +47,19 @@ namespace UnityEngine.UI.Extensions
                 return;
 
             Init();
-
         }
 
         public void Init()
         {
+            if (_initialised)
+            {
+                Debug.LogError("Control already initialized\nYou have to enable the InitByUser setting on the control in order to use Init() when running");
+                return;
+            }
+
             if (GetComponent<ScrollRect>() != null)
             {
+                _initialised = true;
                 _scrollRect = GetComponent<ScrollRect>();
                 _scrollRect.onValueChanged.AddListener(OnScroll);
 
@@ -60,7 +68,7 @@ namespace UnityEngine.UI.Extensions
 
                 for (int i = 0; i < _scrollRect.content.childCount; i++)
                 {
-                    items.Add(_scrollRect.content.GetChild(i).GetComponent<RectTransform>());
+                    _items.Add(_scrollRect.content.GetChild(i).GetComponent<RectTransform>());
                 }
                 if (_scrollRect.content.GetComponent<VerticalLayoutGroup>() != null)
                 {
@@ -78,7 +86,6 @@ namespace UnityEngine.UI.Extensions
                 {
                     _contentSizeFitter = _scrollRect.content.GetComponent<ContentSizeFitter>();
                 }
-
             }
             else
             {
@@ -86,79 +93,107 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        void DisableGridComponents()
+        void ToggleGridComponents(bool toggle)
         {
             if (_isVertical)
-                _disableMarginY = _scrollRect.GetComponent<RectTransform>().rect.height / 2 + items[0].sizeDelta.y;
+                _disableMarginY = _scrollRect.GetComponent<RectTransform>().rect.height / 2 + _items[0].sizeDelta.y;
 
             if (_isHorizontal)
-                _disableMarginX = _scrollRect.GetComponent<RectTransform>().rect.width / 2 + items[0].sizeDelta.x;
+                _disableMarginX = _scrollRect.GetComponent<RectTransform>().rect.width / 2 + _items[0].sizeDelta.x;
 
             if (_verticalLayoutGroup)
             {
-                _verticalLayoutGroup.enabled = false;
+                _verticalLayoutGroup.enabled = toggle;
             }
             if (_horizontalLayoutGroup)
             {
-                _horizontalLayoutGroup.enabled = false;
+                _horizontalLayoutGroup.enabled = toggle;
             }
             if (_contentSizeFitter)
             {
-                _contentSizeFitter.enabled = false;
+                _contentSizeFitter.enabled = toggle;
             }
             if (_gridLayoutGroup)
             {
-                _gridLayoutGroup.enabled = false;
+                _gridLayoutGroup.enabled = toggle;
             }
-            hasDisabledGridComponents = true;
+            _hasDisabledGridComponents = !toggle;
         }
 
         public void OnScroll(Vector2 pos)
         {
+            if (_reset)
+            {
+                return;
+            }
 
-            if (!hasDisabledGridComponents)
-                DisableGridComponents();
+            if (!_hasDisabledGridComponents)
+            {
+                ToggleGridComponents(false);
+            }
 
-            for (int i = 0; i < items.Count; i++)
+            for (int i = 0; i < _items.Count; i++)
             {
                 if (_isVertical && _isHorizontal)
                 {
-                    if (_scrollRect.transform.InverseTransformPoint(items[i].position).y < -_disableMarginY || _scrollRect.transform.InverseTransformPoint(items[i].position).y > _disableMarginY
-                    || _scrollRect.transform.InverseTransformPoint(items[i].position).x < -_disableMarginX || _scrollRect.transform.InverseTransformPoint(items[i].position).x > _disableMarginX)
+                    if (_scrollRect.transform.InverseTransformPoint(_items[i].position).y < -_disableMarginY || _scrollRect.transform.InverseTransformPoint(_items[i].position).y > _disableMarginY
+                    || _scrollRect.transform.InverseTransformPoint(_items[i].position).x < -_disableMarginX || _scrollRect.transform.InverseTransformPoint(_items[i].position).x > _disableMarginX)
                     {
-                        items[i].gameObject.SetActive(false);
+                        _items[i].gameObject.SetActive(false);
                     }
                     else
                     {
-                        items[i].gameObject.SetActive(true);
+                        _items[i].gameObject.SetActive(true);
                     }
                 }
                 else
                 {
                     if (_isVertical)
                     {
-                        if (_scrollRect.transform.InverseTransformPoint(items[i].position).y < -_disableMarginY || _scrollRect.transform.InverseTransformPoint(items[i].position).y > _disableMarginY)
+                        if (_scrollRect.transform.InverseTransformPoint(_items[i].position).y < -_disableMarginY || _scrollRect.transform.InverseTransformPoint(_items[i].position).y > _disableMarginY)
                         {
-                            items[i].gameObject.SetActive(false);
+                            _items[i].gameObject.SetActive(false);
                         }
                         else
                         {
-                            items[i].gameObject.SetActive(true);
+                            _items[i].gameObject.SetActive(true);
                         }
                     }
 
                     if (_isHorizontal)
                     {
-                        if (_scrollRect.transform.InverseTransformPoint(items[i].position).x < -_disableMarginX || _scrollRect.transform.InverseTransformPoint(items[i].position).x > _disableMarginX)
+                        if (_scrollRect.transform.InverseTransformPoint(_items[i].position).x < -_disableMarginX || _scrollRect.transform.InverseTransformPoint(_items[i].position).x > _disableMarginX)
                         {
-                            items[i].gameObject.SetActive(false);
+                            _items[i].gameObject.SetActive(false);
                         }
                         else
                         {
-                            items[i].gameObject.SetActive(true);
+                            _items[i].gameObject.SetActive(true);
                         }
                     }
                 }
+            }
+        }
+
+        public void SetDirty()
+        {
+            _reset = true;
+        }
+
+        private void LateUpdate()
+        {
+            if (_reset)
+            {
+                _reset = false;
+                _items.Clear();
+
+                for (int i = 0; i < _scrollRect.content.childCount; i++)
+                {
+                    _items.Add(_scrollRect.content.GetChild(i).GetComponent<RectTransform>());
+                    _items[i].gameObject.SetActive(true);
+                }
+
+                ToggleGridComponents(true);
             }
         }
     }
