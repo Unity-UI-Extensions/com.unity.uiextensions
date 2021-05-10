@@ -9,6 +9,9 @@ pipelines:
   custom:
    npmpublish:
     - step:
+      script:
+        - git submodule update --init   
+    - step:
         script:
           - echo "Publishing Unity UI Extensions to NPM"
           - pipe: atlassian/npm-publish:0.3.1
