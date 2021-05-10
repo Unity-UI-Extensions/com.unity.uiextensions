@@ -6,11 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## 2019.6 - 2.5 - Bug squash - 2021/05/10
 
-<<<<<<< HEAD
-It has been a while since the last update and although Unity keeps changing, thankfully the parts underneath do not.  Thanks to some awesome work by our contributors and the test teams, we made a run on some underlying bugs and issues.  If you spot anything else, please log it on the BitBucket site for resolution.
-=======
 Its been a while since the last update and although Unity keeps changing, thankfully the parts underneath do not.  THanks to some awesome work by our contributors and the test teams, we made a run on some underlying bugs and issues.  If you spot anything else, please log it on the BitBucket site for resolution.
->>>>>>> 383e19fb0512e6c4e942abb55d856a8578f1b76d
 
 > Be sure to logon to the new [Gitter Chat](https://gitter.im/Unity-UI-Extensions/Lobby) site for the UI Extensions project, if you have any questions, queries or suggestions
 >
