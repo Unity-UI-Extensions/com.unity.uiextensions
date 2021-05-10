@@ -28,7 +28,7 @@ In this repository is a collection of extension scripts / effects and controls t
 
 You can either download / fork this project to access the scripts, or you can also download these pre-compiled Unity Assets, chock full of goodness for each release:
 
-## [Download - 2019.5 (aka 2.3)](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Downloads)
+## [Download - 2019.6 (aka 2.5)](https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/wiki/Downloads)
 
 We have expanded where you can download the UnityPackage asset and widened the options to contribute to the project.
 
