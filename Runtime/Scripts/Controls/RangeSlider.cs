@@ -563,7 +563,10 @@ namespace UnityEngine.UI.Extensions
             {
                 //outside the handles, move the entire slider along
                 UpdateDrag(eventData, eventData.pressEventCamera);
-                interactionState = InteractionState.Bar;
+                if (eventData.pointerCurrentRaycast.gameObject == m_FillRect.gameObject)
+                {
+                    interactionState = InteractionState.Bar;
+                }
                 if (transition == Transition.ColorTint)
                 {
                     targetGraphic = m_FillImage;
@@ -578,6 +581,7 @@ namespace UnityEngine.UI.Extensions
             {
                 return;
             }
+
             UpdateDrag(eventData, eventData.pressEventCamera);
         }
 

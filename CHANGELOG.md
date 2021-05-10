@@ -4,34 +4,37 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## 2019.5 (v2.3) - 2020-10-31
+## 2019.6 - 2.5 - Bug squash - 2021/05/10
 
-Since the move to UPM, the team have been able to react quicker and push out fixes a lot easier, without affecting previous installation (whilst still adhering to Unity's backwards compatibility pattern).  So it is with great news we announce this new release, faster that ever :D  (and thanks to UPM, easier to upgrade than ever).
-Be sure to also check out the "Examples" option in the Package Manager window to import the samples to your project.
+Its been a while since the last update and although Unity keeps changing, thankfully the parts underneath do not.  THanks to some awesome work by our contributors and the test teams, we made a run on some underlying bugs and issues.  If you spot anything else, please log it on the BitBucket site for resolution.
+
+> Be sure to logon to the new [Gitter Chat](https://gitter.im/Unity-UI-Extensions/Lobby) site for the UI Extensions project, if you have any questions, queries or suggestions
+>
+> Much easier that posting a question / issue on YouTube, Twitter or Facebook :D
+>
+> ## [UIExtensions Gitter Channel](https://gitter.im/Unity-UI-Extensions/Lobby)
+
 
 ### Added
 
-- Add squircle primitive
-- Adding new magnetic scroll control
-- Added a static library to collate shaders on first use.
-- Finalized new InputManagerHelper, which translates input based on the operating input system, new or old Updated CardStack2D to have defined keyboard input or specific gamepad input over the older axisname for new input system.
-- Updated DropDown and Autocomplete controls based on feedback in #204
+Nothing new this time, bugfix release.
 
 ### Changed
 
-- Examples now included with UPM delivery and available as a button on the UPM package manager window
-- Updated DropDown and Autocomplete controls based on feedback in #204
-- Updated Accordion to support both Vertical as well as Horizontal layout
-- Updated ComboBox controls to improve better programmatic controls
-- Updates to the Infinite scroll to support content of various sizes
-- Updated UI Knob control - enabled dragging outside the target area, added example scene
-- Minor update to MagneticInfinite Scroll
-- Refactored and extended the ContentScrollSnap control
-- Added protection against errors and empty scrollrect content
-- Added new SetNewItems function to add children programmatically to the control and reset accordingly
-- Patch supplied by a contributor to improve the texture sheet use with the UIParticlesystem
-- Added "SetKnobValue" function which allows the setting of Value and loops
-- Added the programmatic capability to change the parent scroll rect on the ScrollConflictManager at runtime.
+- Updated UI Line connector to use relative position instead of anchored position to verify if the Lines need updating.
+- Allow menu prefabs to not have to have canvas components. This allows you to use any type of prefab as a "menu". Adam Kapos mentions the concept on the Unite talk, https://youtu.be/wbmjturGbAQ?t=1654
+- Updated segment line drawing for Line Lists. Seems Unity no longer needs UV's to be wrapped manually.
+- Updated the AutoCompleteComboBox to display text as entered (instead of all lowercase)
+- Updated the ComboBox to display text as entered (instead of all lowercase)
+- Updated ComboBox Examples to include programmatic versions
+- Further ComboBox improvements including:
+  * Upwards panel
+  * Start fixes
+  * Item Template resize
+  * Disabled sorting on combobox as it wasn't working
+  * Disabled Slider handle when not in use
+  * Updated Example
+- Updated the new Input system switch and tested against 2021
 
 ### Deprecated
 
@@ -39,20 +42,15 @@ None
 
 ### Fixed
 
-- Fix to add a "RequireComponent" to Primitives as Unity 2020 does not add them by default
-- Remove old Examples submodule
-- Updated submodules to hide Examples folder Additionally, updated Package manifest to allow importing of examples direct from UPM package.
-- Fixed hard swipe to ensure it only ever moves one page, no matter how far you swipe.
-- Fixed a conflict when using the ScrollConflictManager in child content of a HSS or VSS
-- Fix for UI Particle system looping
-- Fixed public GoToScreen call to only raise events internally (not multiple)
-- Final roll-up and fix. Resolved race condition for associated pagination controls.
-- Fixed issue with page events not being raised when inertia was disabled (velocity was always zero)
-- When cloned, reorderable list was creating a second List Content component that was not initialized. Refactored to ensure only one list content was present and is initialized correctly
-- Reorderable list items marked as transferable, remain transferable after being dropped
-- Patch to resolve issues without the new Input System installed
-- Refined magnetic scroll and dependencies while documenting Updated example
-- Patch Tooltip
+- Reordering issue resolved with ScrollRectOcclusion.
+- Fixed Sorting at min and max positions for ScrollRect
+- Updated ScrollToSelect script provided by zero3growlithe, tested and vastly reduces the previous jitter. Still present but barely noticeable now.
+- Fixed Issue # 363 Update Combobox control that takes multiple items programmatically, to only allow distinct items
+- Fixed the issues where dragging outside the range slider handle causes the range to update. - Resolves #369
+- Resolves an issue with Unity putting the previous controls vertex array in an uninitialised control.
+- Applied J.R. Mitchell's fix for the Accordion Controls/Accordion/AccordionElement.cs - resolves: #364
+- Resolved issue where the Content Scroll snap issue with only 1 child. Resolves #362
+- Updated the PaginationManager to override if the ScrollSnap is in motion.
 
 ### Removed
 

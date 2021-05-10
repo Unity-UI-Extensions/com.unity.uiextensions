@@ -19,6 +19,11 @@ namespace UnityEngine.UI.Extensions
         public Color disabledTextColor;
         public DropDownListItem SelectedItem { get; private set; } //outside world gets to get this, not set it
 
+        /// <summary>
+        /// Contains the included items. To add and remove items to/from this list, use the <see cref="AddItem(string)"/>,
+        /// <see cref="RemoveItem(string)"/> and <see cref="SetAvailableOptions(List{string})"/> methods as these also execute
+        /// the required methods to update to the current collection.
+        /// </summary>
         public List<string> AvailableOptions;
 
         //private bool isInitialized = false;
@@ -36,7 +41,7 @@ namespace UnityEngine.UI.Extensions
         private RectTransform _scrollPanelRT;
         private RectTransform _scrollBarRT;
         private RectTransform _slidingAreaRT;
-        //   private RectTransform scrollHandleRT;
+        private RectTransform _scrollHandleRT;
         private RectTransform _itemsPanelRT;
         private Canvas _canvas;
         private RectTransform _canvasRT;
@@ -104,6 +109,9 @@ namespace UnityEngine.UI.Extensions
 
         public AutoCompleteSearchType autocompleteSearchType = AutoCompleteSearchType.Linq;
 
+        [SerializeField]
+        private bool _displayPanelAbove = false;
+
         private bool _selectionIsValid = false;
 
 		[System.Serializable]
@@ -129,13 +137,15 @@ namespace UnityEngine.UI.Extensions
         {
             Initialize();
         }
+
 		public void Start()
 		{
 			if (SelectFirstItemOnStart && AvailableOptions.Count > 0) {
 				ToggleDropdownPanel (false);
 				OnItemClicked (AvailableOptions [0]);
 			}
-		}
+            RedrawPanel();
+        }
 
         private bool Initialize()
         {
@@ -155,7 +165,7 @@ namespace UnityEngine.UI.Extensions
                 _scrollPanelRT = _overlayRT.Find("ScrollPanel").GetComponent<RectTransform>();
                 _scrollBarRT = _scrollPanelRT.Find("Scrollbar").GetComponent<RectTransform>();
                 _slidingAreaRT = _scrollBarRT.Find("SlidingArea").GetComponent<RectTransform>();
-                //  scrollHandleRT = slidingAreaRT.FindChild("Handle").GetComponent<RectTransform>();
+                _scrollHandleRT = _slidingAreaRT.Find("Handle").GetComponent<RectTransform>();
                 _itemsPanelRT = _scrollPanelRT.Find("Items").GetComponent<RectTransform>();
                 //itemPanelLayout = itemsPanelRT.gameObject.GetComponent<LayoutGroup>();
 
@@ -182,39 +192,75 @@ namespace UnityEngine.UI.Extensions
             _panelItems = new List<string>();
 
             RebuildPanel();
-            //RedrawPanel(); - causes an initialisation failure in U5
             return success;
         }
 
+        /// <summary>
+        /// Adds the item to <see cref="this.AvailableOptions"/> if it is not a duplicate and rebuilds the panel.
+        /// </summary>
+        /// <param name="item">Item to add.</param>
         public void AddItem(string item)
         {
-            AvailableOptions.Add(item);
-            RebuildPanel();
+            if (!this.AvailableOptions.Contains(item))
+            {
+                this.AvailableOptions.Add(item);
+                this.RebuildPanel();
+            }
+            else
+            {
+                Debug.LogWarning($"{nameof(AutoCompleteComboBox)}.{nameof(AddItem)}: items may only exists once. '{item}' can not be added.");
+            }
         }
 
+        /// <summary>
+        /// Removes the item from <see cref="this.AvailableOptions"/> and rebuilds the panel.
+        /// </summary>
+        /// <param name="item">Item to remove.</param>
         public void RemoveItem(string item)
         {
-            AvailableOptions.Remove(item);
-            RebuildPanel();
+            if (this.AvailableOptions.Contains(item))
+            {
+                this.AvailableOptions.Remove(item);
+                this.RebuildPanel();
+            }
         }
 
+        /// <summary>
+        /// Sets the given items as new content for the comboBox. Previous entries will be cleared.
+        /// </summary>
+        /// <param name="newOptions">New entries.</param>
         public void SetAvailableOptions(List<string> newOptions)
         {
-            AvailableOptions.Clear();
-            AvailableOptions = newOptions;
-            RebuildPanel();
-        }
-
-        public void SetAvailableOptions(string[] newOptions)
-        {
-            AvailableOptions.Clear();
-
-            for (int i = 0; i < newOptions.Length; i++)
+            var uniqueOptions = newOptions.Distinct().ToList();
+            if (newOptions.Count != uniqueOptions.Count)
             {
-                AvailableOptions.Add(newOptions[i]);
+                Debug.LogWarning($"{nameof(AutoCompleteComboBox)}.{nameof(SetAvailableOptions)}: items may only exists once. {newOptions.Count - uniqueOptions.Count} duplicates.");
             }
 
-            RebuildPanel();
+            this.AvailableOptions.Clear();
+            this.AvailableOptions = uniqueOptions;
+            this.RebuildPanel();
+        }
+
+        /// <summary>
+        /// Sets the given items as new content for the comboBox. Previous entries will be cleared.
+        /// </summary>
+        /// <param name="newOptions">New entries.</param>
+        public void SetAvailableOptions(string[] newOptions)
+        {
+            var uniqueOptions = newOptions.Distinct().ToList();
+            if (newOptions.Length != uniqueOptions.Count)
+            {
+                Debug.LogWarning($"{nameof(AutoCompleteComboBox)}.{nameof(SetAvailableOptions)}: items may only exists once. {newOptions.Length - uniqueOptions.Count} duplicates.");
+            }
+
+            this.AvailableOptions.Clear();
+            for (int i = 0; i < newOptions.Length; i++)
+            {
+                this.AvailableOptions.Add(newOptions[i]);
+            }
+
+            this.RebuildPanel();
         }
 
         public void ResetItems()
@@ -264,7 +310,7 @@ namespace UnityEngine.UI.Extensions
                 if (i < AvailableOptions.Count)
                 {
                     itemObjs[i].name = "Item " + i + " " + _panelItems[i];
-                    itemObjs[i].transform.Find("Text").GetComponent<Text>().text = _panelItems[i]; //set the text value
+                    itemObjs[i].transform.Find("Text").GetComponent<Text>().text = AvailableOptions[i]; //set the text value
 
                     Button itemBtn = itemObjs[i].GetComponent<Button>();
                     itemBtn.onClick.RemoveAllListeners();
@@ -331,7 +377,9 @@ namespace UnityEngine.UI.Extensions
                 _inputRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _rectTransform.sizeDelta.y);
 
                 _scrollPanelRT.SetParent(transform, true);//break the scroll panel from the overlay
-                _scrollPanelRT.anchoredPosition = new Vector2(0, -_rectTransform.sizeDelta.y); //anchor it to the bottom of the button
+                _scrollPanelRT.anchoredPosition = _displayPanelAbove ?
+                    new Vector2(0, DropdownOffset + _rectTransform.sizeDelta.y * _panelItems.Count - 1) :
+                    new Vector2(0, -_rectTransform.sizeDelta.y);
 
                 //make the overlay fill the screen
                 _overlayRT.SetParent(_canvas.transform, false); //attach it to top level object
@@ -354,6 +402,7 @@ namespace UnityEngine.UI.Extensions
 
             _scrollBarRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, scrollbarWidth);
             _scrollBarRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, dropdownHeight);
+            if (scrollbarWidth == 0) _scrollHandleRT.gameObject.SetActive(false); else _scrollHandleRT.gameObject.SetActive(true); 
 
             _slidingAreaRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0);
             _slidingAreaRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, dropdownHeight - _scrollBarRT.sizeDelta.x);

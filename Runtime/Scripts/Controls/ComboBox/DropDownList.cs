@@ -31,7 +31,7 @@ namespace UnityEngine.UI.Extensions
 		private RectTransform _scrollPanelRT;
 		private RectTransform _scrollBarRT;
 		private RectTransform _slidingAreaRT;
-		//   private RectTransform scrollHandleRT;
+		private RectTransform _scrollHandleRT;
 		private RectTransform _itemsPanelRT;
 		private Canvas _canvas;
 		private RectTransform _canvasRT;
@@ -57,7 +57,6 @@ namespace UnityEngine.UI.Extensions
 		//    private int scrollOffset; //offset of the selected item
 		private int _selectedIndex = -1;
 
-
 		[SerializeField]
 		private int _itemsToDisplay;
 		public int ItemsToDisplay
@@ -71,6 +70,9 @@ namespace UnityEngine.UI.Extensions
 		}
 
 		public bool SelectFirstItemOnStart = false;
+
+		[SerializeField]
+		private bool _displayPanelAbove = false;
 
 		[System.Serializable]
 		public class SelectionChangedEvent :  UnityEngine.Events.UnityEvent<int> {
@@ -86,6 +88,7 @@ namespace UnityEngine.UI.Extensions
 				ToggleDropdownPanel (false);
 				OnItemClicked (0);
 			}
+			RedrawPanel();
 		}
 
 		private bool Initialize()
@@ -103,7 +106,7 @@ namespace UnityEngine.UI.Extensions
 				_scrollPanelRT = _overlayRT.Find("ScrollPanel").GetComponent<RectTransform>();
 				_scrollBarRT = _scrollPanelRT.Find("Scrollbar").GetComponent<RectTransform>();
 				_slidingAreaRT = _scrollBarRT.Find("SlidingArea").GetComponent<RectTransform>();
-				//  scrollHandleRT = slidingAreaRT.FindChild("Handle").GetComponent<RectTransform>();
+				_scrollHandleRT = _slidingAreaRT.Find("Handle").GetComponent<RectTransform>();
 				_itemsPanelRT = _scrollPanelRT.Find("Items").GetComponent<RectTransform>();
 				//itemPanelLayout = itemsPanelRT.gameObject.GetComponent<LayoutGroup>();
 
@@ -332,7 +335,9 @@ namespace UnityEngine.UI.Extensions
 				_mainButton.txt.rectTransform.offsetMax = new Vector2(4, 0);
 
 				_scrollPanelRT.SetParent(transform, true);//break the scroll panel from the overlay
-				_scrollPanelRT.anchoredPosition = new Vector2(0, -_rectTransform.sizeDelta.y); //anchor it to the bottom of the button
+				_scrollPanelRT.anchoredPosition = _displayPanelAbove ?
+					new Vector2(0, _rectTransform.sizeDelta.y * ItemsToDisplay - 1) :
+					new Vector2(0, -_rectTransform.sizeDelta.y);
 
 				//make the overlay fill the screen
 				_overlayRT.SetParent(_canvas.transform, false); //attach it to top level object
@@ -355,6 +360,7 @@ namespace UnityEngine.UI.Extensions
 
 			_scrollBarRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, scrollbarWidth);
 			_scrollBarRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, dropdownHeight);
+			if (scrollbarWidth == 0) _scrollHandleRT.gameObject.SetActive(false); else _scrollHandleRT.gameObject.SetActive(true);
 
 			_slidingAreaRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0);
 			_slidingAreaRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, dropdownHeight - _scrollBarRT.sizeDelta.x);

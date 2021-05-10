@@ -359,11 +359,12 @@ namespace UnityEngine.UI.Extensions
         /// *Note, this is based on a 0 starting index - 0 to x
         /// </summary>
         /// <param name="screenIndex">0 starting index of page to jump to</param>
-        public void GoToScreen(int screenIndex)
+        /// <param name="pagination">Override the screen movement if driven from a pagination control</param>
+        public void GoToScreen(int screenIndex, bool pagination = false)
         {
             if (screenIndex <= _screens - 1 && screenIndex >= 0)
             {
-                if (!_lerp) StartScreenChange();
+                if (!_lerp || pagination) StartScreenChange();
 
                 _lerp = true;
                 CurrentPage = screenIndex;

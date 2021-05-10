@@ -103,7 +103,7 @@ namespace UnityEngine.UI.Extensions
         private ScrollRect scrollRect = null;
         private RectTransform scrollRectTransform = null;
         private RectTransform contentTransform = null;
-        private List<Vector3> contentPositions = null;
+        private List<Vector3> contentPositions = new List<Vector3>();
         private Vector3 lerpTarget = Vector3.zero;
         private float totalScrollableWidth = 0;
         private DrivenRectTransformTracker tracker ;
@@ -514,6 +514,11 @@ namespace UnityEngine.UI.Extensions
         #region Behind the Scenes Movement stuff
         public void OnBeginDrag(PointerEventData ped)
         {
+            if (contentPositions.Count < 2)
+            {
+                return;
+            }
+
             StopMovement();
             if (!Moving)
             {
@@ -523,6 +528,11 @@ namespace UnityEngine.UI.Extensions
 
         public void OnEndDrag(PointerEventData ped)
         {
+            if (contentPositions.Count <= 1)
+            {
+                return;
+            }
+
             if (IsScrollRectAvailable)
             {
                 StartCoroutine("SlideAndLerp");
