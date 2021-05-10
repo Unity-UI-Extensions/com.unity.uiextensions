@@ -9,8 +9,8 @@ pipelines:
   custom:
    npmpublish:
     - step:
-      script:
-        - git submodule update --init   
+        script:
+          - git submodule update --init   
     - step:
         script:
           - echo "Publishing Unity UI Extensions to NPM"
