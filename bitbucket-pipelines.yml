@@ -10,9 +10,8 @@ pipelines:
    npmpublish:
     - step:
         script:
-          - git submodule update --init   
-    - step:
-        script:
+          - echo "Getting Submodules"
+          - git submodule update --init --recursive   
           - echo "Publishing Unity UI Extensions to NPM"
           - pipe: atlassian/npm-publish:0.3.1
             variables:
