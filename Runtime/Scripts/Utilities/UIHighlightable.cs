@@ -15,6 +15,10 @@ namespace UnityEngine.UI.Extensions
 
         [System.Serializable]
         public class InteractableChangedEvent : Events.UnityEvent<bool> { }
+        [System.Serializable]
+        public class HighlightChangedEvent : Events.UnityEvent<bool> { }
+        [System.Serializable]
+        public class PressChangedEvent : Events.UnityEvent<bool> { }
 
         [SerializeField][Tooltip("Can this panel be interacted with or is it disabled? (does not affect child components)")]
         private bool m_Interactable = true;
@@ -29,13 +33,71 @@ namespace UnityEngine.UI.Extensions
                 m_Interactable = value;
                 HighlightInteractable(m_Graphic);
                 OnInteractableChanged.Invoke(m_Interactable);
+
+                if(!m_Interactable)
+                {
+                    if(m_Highlighted)
+                    {
+                        m_Highlighted = false;
+                        OnHighlightChanged.Invoke(false);
+                    }
+
+                    if(m_Pressed)
+                    {
+                        m_Pressed = false;
+                        OnPressChanged.Invoke(false);
+                    }
+                }
             }
         }
 
         public bool ClickToHold
         {
             get { return m_ClickToHold; }
-            set { m_ClickToHold = value; }
+            set
+            {
+                m_ClickToHold = value;
+
+                if(!m_ClickToHold && m_Pressed)
+                {
+                    m_Pressed = false;
+                    OnPressChanged.Invoke(false);
+                }
+            }
+        }
+
+        public bool Highlighted
+        {
+            get { return m_Highlighted; }
+            set
+            {
+                if(m_Highlighted != value)
+                {
+                    m_Highlighted = value;
+                    HighlightInteractable(m_Graphic);
+                    if(m_Interactable)
+                    {
+                        OnHighlightChanged.Invoke(m_Highlighted);
+                    }
+                }
+            }
+        }
+
+        public bool Pressed
+        {
+            get { return m_Pressed; }
+            set
+            {
+                if(m_Pressed != value)
+                {
+                    m_Pressed = value;
+                    m_Graphic.color = (m_Pressed ? PressedColor : NormalColor);
+                    if(m_Interactable)
+                    {
+                        OnPressChanged.Invoke(m_Pressed);
+                    }
+                }
+            }
         }
 
         [Tooltip("The default color for the panel")]
@@ -49,6 +111,10 @@ namespace UnityEngine.UI.Extensions
 
         [Tooltip("Event for when the panel is enabled / disabled, to enable disabling / enabling of child or other gameobjects")]
         public InteractableChangedEvent OnInteractableChanged;
+        [Tooltip("Event for when the panel highlight state is activated or deactivated")]
+        public HighlightChangedEvent OnHighlightChanged;
+        [Tooltip("Event for when the panel press state is activated or deactivated")]
+        public PressChangedEvent OnPressChanged;
 
         void Awake()
         {
@@ -61,6 +127,7 @@ namespace UnityEngine.UI.Extensions
             {
                 m_Highlighted = true;
                 m_Graphic.color = HighlightedColor;
+                OnHighlightChanged.Invoke(true);
             }
         }
 
@@ -70,6 +137,7 @@ namespace UnityEngine.UI.Extensions
             {
                 m_Highlighted = false;
                 m_Graphic.color = NormalColor;
+                OnHighlightChanged.Invoke(false);
             }
         }
 
@@ -80,14 +148,33 @@ namespace UnityEngine.UI.Extensions
                 m_Graphic.color = PressedColor;
                 if (ClickToHold)
                 {
-                    m_Pressed = !m_Pressed;
+                    if(m_Pressed)
+                    {
+                        m_Pressed = false;
+                    }
+                    else
+                    {
+                        m_Pressed = true;
+                        OnPressChanged.Invoke(true);
+                    }
+                }
+                else
+                {
+                    OnPressChanged.Invoke(true);
                 }
             }
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            if(!m_Pressed) HighlightInteractable(m_Graphic);
+            if(!m_Pressed)
+            {
+                HighlightInteractable(m_Graphic);
+                if(m_Interactable)
+                {
+                    OnPressChanged.Invoke(false);
+                }
+            }
         }
 
         private void HighlightInteractable(Graphic graphic)
