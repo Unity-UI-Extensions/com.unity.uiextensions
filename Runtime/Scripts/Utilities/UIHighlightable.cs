@@ -32,20 +32,20 @@ namespace UnityEngine.UI.Extensions
             {
                 m_Interactable = value;
                 HighlightInteractable(m_Graphic);
-                OnInteractableChanged.Invoke(m_Interactable);
+                OnInteractableChanged?.Invoke(m_Interactable);
 
                 if(!m_Interactable)
                 {
                     if(m_Highlighted)
                     {
                         m_Highlighted = false;
-                        OnHighlightChanged.Invoke(false);
+                        OnHighlightChanged?.Invoke(false);
                     }
 
                     if(m_Pressed)
                     {
                         m_Pressed = false;
-                        OnPressChanged.Invoke(false);
+                        OnPressChanged?.Invoke(false);
                     }
                 }
             }
@@ -61,7 +61,7 @@ namespace UnityEngine.UI.Extensions
                 if(!m_ClickToHold && m_Pressed)
                 {
                     m_Pressed = false;
-                    OnPressChanged.Invoke(false);
+                    OnPressChanged?.Invoke(false);
                 }
             }
         }
@@ -77,7 +77,7 @@ namespace UnityEngine.UI.Extensions
                     HighlightInteractable(m_Graphic);
                     if(m_Interactable)
                     {
-                        OnHighlightChanged.Invoke(m_Highlighted);
+                        OnHighlightChanged?.Invoke(m_Highlighted);
                     }
                 }
             }
@@ -94,7 +94,7 @@ namespace UnityEngine.UI.Extensions
                     m_Graphic.color = (m_Pressed ? PressedColor : NormalColor);
                     if(m_Interactable)
                     {
-                        OnPressChanged.Invoke(m_Pressed);
+                        OnPressChanged?.Invoke(m_Pressed);
                     }
                 }
             }
@@ -127,7 +127,7 @@ namespace UnityEngine.UI.Extensions
             {
                 m_Highlighted = true;
                 m_Graphic.color = HighlightedColor;
-                OnHighlightChanged.Invoke(true);
+                OnHighlightChanged?.Invoke(true);
             }
         }
 
@@ -137,7 +137,7 @@ namespace UnityEngine.UI.Extensions
             {
                 m_Highlighted = false;
                 m_Graphic.color = NormalColor;
-                OnHighlightChanged.Invoke(false);
+                OnHighlightChanged?.Invoke(false);
             }
         }
 
@@ -155,12 +155,12 @@ namespace UnityEngine.UI.Extensions
                     else
                     {
                         m_Pressed = true;
-                        OnPressChanged.Invoke(true);
+                        OnPressChanged?.Invoke(true);
                     }
                 }
                 else
                 {
-                    OnPressChanged.Invoke(true);
+                    OnPressChanged?.Invoke(true);
                 }
             }
         }
@@ -172,7 +172,7 @@ namespace UnityEngine.UI.Extensions
                 HighlightInteractable(m_Graphic);
                 if(m_Interactable)
                 {
-                    OnPressChanged.Invoke(false);
+                    OnPressChanged?.Invoke(false);
                 }
             }
         }
