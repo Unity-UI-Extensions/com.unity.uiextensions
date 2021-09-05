@@ -533,31 +533,17 @@ namespace UnityEngine.UI.Extensions
             //HANDLE DRAG EVENTS
             m_LowOffset = m_HighOffset = Vector2.zero;
             Vector2 localMousePos;
-            if (m_HighHandleRect != null && RectTransformUtility.RectangleContainsScreenPoint(m_HighHandleRect, eventData.position, eventData.enterEventCamera))
+            if(m_LowHandleRect != null && LowValue == MaxValue && RectTransformUtility.RectangleContainsScreenPoint(m_LowHandleRect, eventData.position, eventData.enterEventCamera))
             {
-                //dragging the high value handle
-                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(m_HighHandleRect, eventData.position, eventData.pressEventCamera, out localMousePos))
-                {
-                    m_HighOffset = localMousePos;
-                }
-                interactionState = InteractionState.High;
-                if (transition == Transition.ColorTint)
-                {
-                    targetGraphic = m_HighHandleRect.GetComponent<Graphic>();
-                }
+                SetToMoveLowValueHandle(m_LowHandleRect, eventData);
+            }
+            else if (m_HighHandleRect != null && RectTransformUtility.RectangleContainsScreenPoint(m_HighHandleRect, eventData.position, eventData.enterEventCamera))
+            {
+                SetToMoveHighValueHandle(m_HighHandleRect, eventData);
             }
             else if (m_LowHandleRect != null && RectTransformUtility.RectangleContainsScreenPoint(m_LowHandleRect, eventData.position, eventData.enterEventCamera))
             {
-                //dragging the low value handle
-                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(m_LowHandleRect, eventData.position, eventData.pressEventCamera, out localMousePos))
-                {
-                    m_LowOffset = localMousePos;
-                }
-                interactionState = InteractionState.Low;
-                if (transition == Transition.ColorTint)
-                {
-                    targetGraphic = m_LowHandleRect.GetComponent<Graphic>();
-                }
+                SetToMoveLowValueHandle(m_LowHandleRect, eventData);
             }
             else
             {
@@ -573,6 +559,34 @@ namespace UnityEngine.UI.Extensions
                 }
             }
             base.OnPointerDown(eventData);
+        }
+
+        private void SetToMoveLowValueHandle(RectTransform transform, PointerEventData eventData)
+        {
+            //dragging the low value handle
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(transform, eventData.position, eventData.pressEventCamera, out var localMousePos))
+            {
+                m_LowOffset = localMousePos;
+            }
+            interactionState = InteractionState.Low;
+            if (transition == Transition.ColorTint)
+            {
+                targetGraphic = m_LowHandleRect.GetComponent<Graphic>();
+            }
+        }
+
+        private void SetToMoveHighValueHandle(RectTransform transform, PointerEventData eventData)
+        {
+            //dragging the low value handle
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(transform, eventData.position, eventData.pressEventCamera, out var localMousePos))
+            {
+                m_HighOffset = localMousePos;
+            }
+            interactionState = InteractionState.High;
+            if (transition == Transition.ColorTint)
+            {
+                targetGraphic = m_HighHandleRect.GetComponent<Graphic>();
+            }
         }
 
         public virtual void OnDrag(PointerEventData eventData)
