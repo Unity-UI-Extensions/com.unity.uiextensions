@@ -32,16 +32,12 @@ namespace UnityEngine.UI.Extensions
         private GridLayoutGroup _gridLayoutGroup;
         protected bool _isVertical = false;
         protected bool _isHorizontal = false;
-        private float _disableMarginX = 0;
-        private float _disableMarginY = 0;
         private bool _hasDisabledGridComponents = false;
         protected List<RectTransform> items = new List<RectTransform>();
         private Vector2 _newAnchoredPosition = Vector2.zero;
         //TO DISABLE FLICKERING OBJECT WHEN SCROLL VIEW IS IDLE IN BETWEEN OBJECTS
         private Vector2 _threshold = Vector2.zero;
         private int _itemCount = 0;
-        private float _recordOffsetX = 0;
-        private float _recordOffsetY = 0;
 
         protected virtual void Awake()
         {
@@ -81,6 +77,12 @@ namespace UnityEngine.UI.Extensions
 
         private void SetItems()
         {
+            //Remove Pivots from content as they mess up translation
+            foreach (RectTransform transform in _scrollRect.content.transform)
+            {
+                transform.pivot = Vector3.zero;
+            }
+
             for (int i = 0; i < _scrollRect.content.childCount; i++)
             {
                 items.Add(_scrollRect.content.GetChild(i).GetComponent<RectTransform>());
@@ -133,25 +135,6 @@ namespace UnityEngine.UI.Extensions
 
         void DisableGridComponents()
         {
-            if (_isVertical)
-            {
-                _recordOffsetY = items[1].GetComponent<RectTransform>().anchoredPosition.y - items[0].GetComponent<RectTransform>().anchoredPosition.y;
-                if (_recordOffsetY < 0)
-                {
-                    _recordOffsetY *= -1;
-                }
-                _disableMarginY = _recordOffsetY * _itemCount / 2;
-            }
-            if (_isHorizontal)
-            {
-                _recordOffsetX = items[1].GetComponent<RectTransform>().anchoredPosition.x - items[0].GetComponent<RectTransform>().anchoredPosition.x;
-                if (_recordOffsetX < 0)
-                {
-                    _recordOffsetX *= -1;
-                }
-                _disableMarginX = _recordOffsetX * _itemCount / 2;
-            }
-
             if (_verticalLayoutGroup)
             {
                 _verticalLayoutGroup.enabled = false;
