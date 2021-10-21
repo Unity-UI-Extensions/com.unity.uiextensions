@@ -74,12 +74,14 @@ namespace UnityEngine.UI.Extensions
 		[SerializeField]
 		private bool _displayPanelAbove = false;
 
+		[SerializeField]
+		[Tooltip("Override the Text width for the values.")]
+		private bool _overrideTextWidth = true;
+
 		[System.Serializable]
-		public class SelectionChangedEvent :  UnityEngine.Events.UnityEvent<int> {
-		}
+		public class SelectionChangedEvent : UnityEngine.Events.UnityEvent<int> { }
 		// fires when item is changed;
 		public SelectionChangedEvent OnSelectionChanged;
-
 
 		public void Start()
 		{
@@ -332,7 +334,10 @@ namespace UnityEngine.UI.Extensions
 				_hasDrawnOnce = true;
 				_mainButton.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _rectTransform.sizeDelta.x);
 				_mainButton.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _rectTransform.sizeDelta.y);
-				_mainButton.txt.rectTransform.offsetMax = new Vector2(4, 0);
+                if (_overrideTextWidth)
+                {
+					_mainButton.txt.rectTransform.offsetMax = new Vector2(4, 0);
+				}
 
 				_scrollPanelRT.SetParent(transform, true);//break the scroll panel from the overlay
 				_scrollPanelRT.anchoredPosition = _displayPanelAbove ?
