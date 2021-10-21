@@ -532,7 +532,6 @@ namespace UnityEngine.UI.Extensions
 
             //HANDLE DRAG EVENTS
             m_LowOffset = m_HighOffset = Vector2.zero;
-            Vector2 localMousePos;
             if(m_LowHandleRect != null && LowValue == MaxValue && RectTransformUtility.RectangleContainsScreenPoint(m_LowHandleRect, eventData.position, eventData.enterEventCamera))
             {
                 SetToMoveLowValueHandle(m_LowHandleRect, eventData);
