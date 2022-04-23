@@ -179,7 +179,7 @@ namespace UnityEngine.UI.Extensions
 
             //If nothing found or the list is not dropable, put the fake element outside
             if (_currentReorderableListRaycasted == null || _currentReorderableListRaycasted.IsDropable == false
-//                || (_oldReorderableListRaycasted != _reorderableList && !IsTransferable)
+                || (_oldReorderableListRaycasted != _reorderableList && !IsTransferable)
                 || ((_fakeElement.parent == _currentReorderableListRaycasted.Content 
                     ? _currentReorderableListRaycasted.Content.childCount - 1 
                     : _currentReorderableListRaycasted.Content.childCount) >= _currentReorderableListRaycasted.maxItems && !_currentReorderableListRaycasted.IsDisplacable)
