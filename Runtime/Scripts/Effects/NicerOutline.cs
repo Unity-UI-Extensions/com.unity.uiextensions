@@ -1,5 +1,6 @@
-/// Credit Melang
+/// Credit Melang, Lee Hui
 /// Sourced from - http://forum.unity3d.com/members/melang.593409/
+/// GC Alloc fix - https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/pull-requests/130
 
 using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
@@ -89,42 +90,7 @@ namespace UnityEngine.UI.Extensions
 				}
 			}
 		}
-
-        protected void ApplyShadowZeroAlloc(List<UIVertex> verts, Color32 color, int start, int end, float x, float y)
-        {
-            UIVertex vt;
-
-            var neededCpacity = verts.Count * 2;
-            if (verts.Capacity < neededCpacity)
-                verts.Capacity = neededCpacity;
-
-            for (int i = start; i < end; ++i)
-            {
-                vt = verts[i];
-                verts.Add(vt);
-
-                Vector3 v = vt.position;
-                v.x += x;
-                v.y += y;
-                vt.position = v;
-                var newColor = color;
-                if (m_UseGraphicAlpha)
-                    newColor.a = (byte)((newColor.a * verts[i].color.a) / 255);
-                vt.color = newColor;
-                verts[i] = vt;
-            }
-        }
-
-        protected void ApplyShadow(List<UIVertex> verts, Color32 color, int start, int end, float x, float y)
-        {
-            var neededCpacity = verts.Count * 2;
-            if (verts.Capacity < neededCpacity)
-                verts.Capacity = neededCpacity;
-
-            ApplyShadowZeroAlloc(verts, color, start, end, x, y);
-        }
-
-
+		
         public override void ModifyMesh(VertexHelper vh)
         {
             if (!this.IsActive ())
@@ -148,36 +114,75 @@ namespace UnityEngine.UI.Extensions
 			float distanceX = this.effectDistance.x * best_fit_adjustment;
 			float distanceY = this.effectDistance.y * best_fit_adjustment;
 
+			vh.Clear();
+
 			int start = 0;
-			int count = m_Verts.Count;
-			this.ApplyShadow (m_Verts, this.effectColor, start, m_Verts.Count, distanceX, distanceY);
-			start = count;
-			count = m_Verts.Count;
-			this.ApplyShadow (m_Verts, this.effectColor, start, m_Verts.Count, distanceX, -distanceY);
-			start = count;
-			count = m_Verts.Count;
-			this.ApplyShadow (m_Verts, this.effectColor, start, m_Verts.Count, -distanceX, distanceY);
-			start = count;
-			count = m_Verts.Count;
-			this.ApplyShadow (m_Verts, this.effectColor, start, m_Verts.Count, -distanceX, -distanceY);
 
-			start = count;
-			count = m_Verts.Count;
-			this.ApplyShadow (m_Verts, this.effectColor, start, m_Verts.Count, distanceX, 0);
-			start = count;
-			count = m_Verts.Count;
-			this.ApplyShadow (m_Verts, this.effectColor, start, m_Verts.Count, -distanceX, 0);
+			// Apply Outline
+			start += this.ApplyOutlineNoGC(m_Verts, this.effectColor, distanceX, distanceY, vh, start);
+			start += this.ApplyOutlineNoGC(m_Verts, this.effectColor, distanceX, -distanceY, vh, start);
+			start += this.ApplyOutlineNoGC(m_Verts, this.effectColor, -distanceX, distanceY, vh, start);
+			start += this.ApplyOutlineNoGC(m_Verts, this.effectColor, -distanceX, -distanceY, vh, start);
+			start += this.ApplyOutlineNoGC(m_Verts, this.effectColor, distanceX, 0, vh, start);
+			start += this.ApplyOutlineNoGC(m_Verts, this.effectColor, -distanceX, 0, vh, start);
+			start += this.ApplyOutlineNoGC(m_Verts, this.effectColor, 0, distanceY, vh, start);
+			start += this.ApplyOutlineNoGC(m_Verts, this.effectColor, 0, -distanceY, vh, start);
 
-			start = count;
-			count = m_Verts.Count;
-			this.ApplyShadow (m_Verts, this.effectColor, start, m_Verts.Count, 0, distanceY);
-			start = count;
-			count = m_Verts.Count;
-			this.ApplyShadow (m_Verts, this.effectColor, start, m_Verts.Count, 0, -distanceY);
-
-            vh.Clear();
-            vh.AddUIVertexTriangleStream(m_Verts);
+			// Apply self Text stuff
+			start += ApplyText(m_Verts, vh, start);
         }
+        
+		private int ApplyOutlineNoGC(List<UIVertex> verts, Color color, float x, float y, VertexHelper vh, int startIndex)
+		{
+			int length = verts.Count;
+			for (int i = 0; i < length; ++i)
+			{
+				UIVertex vt = verts[i];
+
+				Vector3 v = vt.position;
+				v.x += x;
+				v.y += y;
+				vt.position = v;
+				var newColor = color;
+				if (m_UseGraphicAlpha)
+					newColor.a = (byte)((newColor.a * verts[i].color.a) / 255);
+				vt.color = newColor;
+
+				// Tips: Since two triangles share same two vertices, in theory vertices can reduce to 4 / 6
+				// But VertexHelper.FillMesh forbid, so leave it be.
+				
+				vh.AddVert(vt);
+			}
+
+			int triangleCount = length / 3;
+			for(int i=0; i<triangleCount; ++i)
+			{
+				int start = startIndex + 3 * i;
+				vh.AddTriangle(start + 0, start + 1, start + 2);
+			}
+
+			return length;
+		}
+		
+		private int ApplyText(List<UIVertex> verts, VertexHelper vh, int startIndex)
+		{
+			int length = verts.Count;
+
+			for (int i = 0; i < length; ++i)
+			{
+				vh.AddVert(verts[i]);
+			}
+
+			int triangleCount = length / 3;
+			for (int i = 0; i < triangleCount; ++i)
+			{
+				int start = startIndex + 3 * i;
+				vh.AddTriangle(start + 0, start + 1, start + 2);
+			}
+
+			return length;
+		}
+
 
 #if UNITY_EDITOR
 		protected override void OnValidate ()
