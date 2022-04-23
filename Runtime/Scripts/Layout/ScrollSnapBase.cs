@@ -5,6 +5,7 @@
 using System;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.UI.Extensions;
 
 namespace UnityEngine.UI.Extensions
 {
@@ -314,6 +315,8 @@ namespace UnityEngine.UI.Extensions
         //Function for switching screens with buttons
         public void NextScreen()
         {
+            _scroll_rect.velocity = Vector2.zero;
+
             if (_currentPage < _screens - 1 || _isInfinite)
             {
                 if (!_lerp) StartScreenChange();
@@ -336,6 +339,8 @@ namespace UnityEngine.UI.Extensions
         //Function for switching screens with buttons
         public void PreviousScreen()
         {
+            _scroll_rect.velocity = Vector2.zero;
+
             if (_currentPage > 0 || _isInfinite)
             {
                 if (!_lerp) StartScreenChange();
@@ -515,15 +520,8 @@ namespace UnityEngine.UI.Extensions
                 MaskBuffer = 1;
             }
 
-            if (PageStep < 0)
-            {
-                PageStep = 0;
-            }
+            PageStep.Clamp(0, 9);
 
-            if (PageStep > 8)
-            {
-                PageStep = 9;
-            }
             var infiniteScroll = GetComponent<UI_InfiniteScroll>();
             if (ChildObjects != null && ChildObjects.Length > 0 && infiniteScroll != null && !infiniteScroll.InitByUser)
             {
