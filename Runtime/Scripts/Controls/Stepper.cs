@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 namespace UnityEngine.UI.Extensions
 {
     // Stepper control
+    [ExecuteInEditMode]
     [AddComponentMenu("UI/Extensions/Stepper")]
     [RequireComponent(typeof(RectTransform))]
     public class Stepper : UIBehaviour
@@ -88,28 +89,6 @@ namespace UnityEngine.UI.Extensions
 
         protected Stepper()
         { }
-
-#if UNITY_EDITOR
-        protected override void OnValidate()
-        {
-            base.OnValidate();
-
-            RecreateSprites(sides);
-            if (separator)
-                LayoutSides();
-
-            if (!wrap)
-            {
-                DisableAtExtremes(sides);
-            }
-        }
-#endif
-
-        protected override void Start()
-        {
-            if (isActiveAndEnabled)
-                StartCoroutine(DelayedInit());
-        }
 
         protected override void OnEnable()
         {
