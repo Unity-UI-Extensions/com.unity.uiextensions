@@ -15,6 +15,10 @@ namespace UnityEngine.UI.Extensions
                 parentCanvas = rt.GetComponentInParent<Canvas>();
                 if (parentCanvas == null)
                 {
+                    if (parent.parent == null)
+                    {
+                        return null;
+                    }
                     parent = parent.parent.GetComponent<RectTransform>();
                     SearchIndex++;
                 }
