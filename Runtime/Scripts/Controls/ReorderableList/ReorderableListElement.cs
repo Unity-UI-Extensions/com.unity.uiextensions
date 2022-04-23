@@ -381,16 +381,19 @@ namespace UnityEngine.UI.Extensions
                         ToList = _currentReorderableListRaycasted,
                         ToIndex = _fakeElement.GetSiblingIndex()
                     };
+                    
                     //Send OnelementDropped Event
                     if (_reorderableList && _reorderableList.OnElementDropped != null)
                     {
                         _reorderableList.OnElementDropped.Invoke(args);
                     }
-                    if (!isValid)
+
+                    if (!isValid || (!IsTransferable && _currentReorderableListRaycasted != _reorderableList))
                     {
                         CancelDrag();
                         return;
                     }
+
                     RefreshSizes();
                     _draggingObject.SetParent(_currentReorderableListRaycasted.Content, false);
                     _draggingObject.rotation = _currentReorderableListRaycasted.transform.rotation;
