@@ -191,7 +191,19 @@ namespace UnityEngine.UI.Extensions
                 if (minDistance == distance[i])
                 {
                     focusedElementIndex = i;
-                    result = _arrayOfElements[i].GetComponentInChildren<Text>().text;
+#if UNITY_2022_1_OR_NEWER
+                    var textComponentTxtMeshPro = _arrayOfElements[i].GetComponentInChildren<TMPro.TMP_Text>();
+                    if (textComponentTxtMeshPro != null)
+                    {
+                        result = textComponentTxtMeshPro.text;
+                    }
+#else
+                    var textComponent = _arrayOfElements[i].GetComponentInChildren<Text>();
+                    if (textComponent != null)
+                    {
+                        result = textComponent.text;
+                    }
+#endif
                 }
             }
             if (focusedElementIndex != oldFocusedElement && OnFocusChanged != null)
