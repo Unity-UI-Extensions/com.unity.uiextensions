@@ -1,6 +1,7 @@
 ﻿/// Credit Titinious (https://github.com/Titinious)
 /// Sourced from - https://github.com/Titinious/CurlyUI
 
+using System.Collections;
 using System.Collections.Generic;
 
 #if UNITY_EDITOR
@@ -286,6 +287,13 @@ namespace UnityEngine.UI.Extensions
 
         public void Refresh()
         {
+            StartCoroutine(RefreshOnNextFrame());
+        }
+
+        public IEnumerator RefreshOnNextFrame()
+        {
+            yield return new WaitForEndOfFrame();
+
             ReportSet();
 
             // we use local position as the true value. Ratio position follows it, so it should be updated when refresh
