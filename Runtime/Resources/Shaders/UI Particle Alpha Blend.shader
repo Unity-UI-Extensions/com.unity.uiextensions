@@ -3,8 +3,7 @@ Properties {
 	_TintColor ("Tint Color", Color) = (0.5,0.5,0.5,0.5)
 	_MainTex ("Particle Texture", 2D) = "white" {}
 	_InvFade ("Soft Particles Factor", Range(0.01,3.0)) = 1.0
-
-		_StencilComp ("Stencil Comparison", Float) = 8
+	_StencilComp ("Stencil Comparison", Float) = 8
     _Stencil ("Stencil ID", Float) = 0
     _StencilOp ("Stencil Operation", Float) = 0
     _StencilWriteMask ("Stencil Write Mask", Float) = 255
@@ -82,7 +81,7 @@ Category {
 				return v;
 			}
 
-			sampler2D_float _CameraDepthTexture;
+			UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 			float _InvFade;
 			
 			fixed4 frag (v2f i) : SV_Target
