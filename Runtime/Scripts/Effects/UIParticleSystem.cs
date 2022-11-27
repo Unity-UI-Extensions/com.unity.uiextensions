@@ -223,7 +223,7 @@ namespace UnityEngine.UI.Extensions
                             frame = Mathf.FloorToInt(frameProgress * textureSheetAnimation.numTilesX);
 
                             int row = textureSheetAnimation.rowIndex;
-#if UNITY_2020 || UNITY_2019
+#if UNITY_2019_1_OR_NEWER
                             if (textureSheetAnimation.rowMode == ParticleSystemAnimationRowMode.Random)
 #else
                             if (textureSheetAnimation.useRandomRow)
