@@ -9,8 +9,8 @@ using UnityEngine.EventSystems;
 namespace UnityEngine.UI.Extensions
 {
     // Stepper control
-    [AddComponentMenu("UI/Extensions/Stepper")]
     [RequireComponent(typeof(RectTransform))]
+    [AddComponentMenu("UI/Extensions/Sliders/Stepper")]
     public class Stepper : UIBehaviour
     {
         private Selectable[] _sides;

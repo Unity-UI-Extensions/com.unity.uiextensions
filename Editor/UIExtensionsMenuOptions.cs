@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
@@ -1847,7 +1848,7 @@ namespace UnityEditor.UI
         #endregion
 
         #region Stepper
-        [MenuItem("GameObject/UI/Extensions/Stepper", false)]
+        [MenuItem("GameObject/UI/Extensions/Sliders/Stepper", false)]
         static public void AddStepper(MenuCommand menuCommand)
         {
             GameObject go = CreateUIElementRoot("Stepper", menuCommand, new Vector2(kWidth / 2, kThickHeight));
@@ -1891,7 +1892,7 @@ namespace UnityEditor.UI
         #endregion
 
         #region BoxSlider
-        [MenuItem("GameObject/UI/Extensions/Box Slider", false)]
+        [MenuItem("GameObject/UI/Extensions/Sliders/Box Slider", false)]
         static public void AddBoxSlider(MenuCommand menuCommand)
         {
 
@@ -1946,7 +1947,7 @@ namespace UnityEditor.UI
         #endregion
 
         #region Radial Slider
-        [MenuItem("GameObject/UI/Extensions/Radial Slider", false)]
+        [MenuItem("GameObject/UI/Extensions/Sliders/Radial Slider", false)]
         static public void AddRadialSlider(MenuCommand menuCommand)
         {
             GameObject sliderRoot = CreateUIElementRoot("Radial Slider", menuCommand, s_ThickGUIElementSize);
@@ -1984,21 +1985,21 @@ namespace UnityEditor.UI
         #endregion
 
         #region RangeSlider
-        [MenuItem("GameObject/UI/Extensions/Range Slider", false)]
+        [MenuItem("GameObject/UI/Extensions/Sliders/Range Slider", false)]
         static public void AddRangeSlider(MenuCommand menuCommand)
         {
-            GameObject rangeSliderRoot = CreateUIElementRoot("Range Slider", menuCommand, new Vector2(160, 20));
+            GameObject minMaxSliderRoot = CreateUIElementRoot("Range Slider", menuCommand, new Vector2(160, 20));
 
-            GameObject background = CreateUIObject("Background", rangeSliderRoot);
+            GameObject background = CreateUIObject("Background", minMaxSliderRoot);
 
-            GameObject fillArea = CreateUIObject("Fill Area", rangeSliderRoot);
+            GameObject fillArea = CreateUIObject("Fill Area", minMaxSliderRoot);
             GameObject fill = CreateUIObject("Fill", fillArea);
 
-            GameObject handleSlideArea = CreateUIObject("Handle Slide Area", rangeSliderRoot);
-            GameObject lowHandle = CreateUIObject("Low Handle", handleSlideArea);
+            GameObject handleSlideArea = CreateUIObject("Handle Slide Area", minMaxSliderRoot);
+            GameObject minHandle = CreateUIObject("Low Handle", handleSlideArea);
             GameObject highHandle = CreateUIObject("High Handle", handleSlideArea);
 
-            SetAnchorsAndStretch(rangeSliderRoot);
+            SetAnchorsAndStretch(minMaxSliderRoot);
             Image backgroundImage = background.AddComponent<Image>();
             backgroundImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath);
             backgroundImage.type = Image.Type.Sliced;
@@ -2029,8 +2030,8 @@ namespace UnityEditor.UI
             handleSlideRect.offsetMin = new Vector2(10, -10);
             handleSlideRect.offsetMax = new Vector2(-10, 10);
 
-            RectTransform lowHandleRect = SetAnchorsAndStretch(lowHandle);
-            Image lowHandleImage = lowHandle.AddComponent<Image>();
+            RectTransform lowHandleRect = SetAnchorsAndStretch(minHandle);
+            Image lowHandleImage = minHandle.AddComponent<Image>();
             lowHandleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kKnobPath);
             lowHandleRect.sizeDelta = new Vector2(20, 0);
 
@@ -2039,7 +2040,7 @@ namespace UnityEditor.UI
             highHandleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kKnobPath);
             highHandleRect.sizeDelta = new Vector2(20, 0);
 
-            RangeSlider rangeSlider = rangeSliderRoot.AddComponent<RangeSlider>();
+            RangeSlider rangeSlider = minMaxSliderRoot.AddComponent<RangeSlider>();
             rangeSlider.FillRect = fillRect;
             rangeSlider.LowHandleRect = lowHandleRect;
             rangeSlider.HighHandleRect = highHandleRect;
@@ -2047,7 +2048,7 @@ namespace UnityEditor.UI
             rangeSlider.HighValue = rangeSlider.MaxValue;
             rangeSlider.targetGraphic = fillImage;
 
-            Selection.activeGameObject = rangeSliderRoot;
+            Selection.activeGameObject = minMaxSliderRoot;
         }
         #endregion
 
@@ -2062,6 +2063,80 @@ namespace UnityEditor.UI
         }
         #endregion
 
+        #region MinMaxSlider
+        [MenuItem("GameObject/UI/Extensions/Sliders/MinMax Slider", false)]
+        static public void AddMinMaxSlider(MenuCommand menuCommand)
+        {
+            GameObject minMaxSliderRoot = CreateUIElementRoot("MinMax Slider", menuCommand, new Vector2(390, 60));
+
+            //GameObject background = CreateUIObject("Background", rangeSliderRoot);
+
+            GameObject sliderBounds = CreateUIObject("Slider Bounds", minMaxSliderRoot);
+            GameObject middleGraphic = CreateUIObject("Middle Graphic", minMaxSliderRoot);
+
+            GameObject minHandle = CreateUIObject("Min Handle", minMaxSliderRoot);
+            GameObject minHandleText = CreateUIObject("Min Text", minHandle);
+            GameObject maxHandle = CreateUIObject("Max Handle", minMaxSliderRoot);
+            GameObject maxHandleText = CreateUIObject("Max Text", maxHandle);
+
+            SetAnchorsAndStretch(minMaxSliderRoot);
+            Image backgroundImage = minMaxSliderRoot.AddComponent<Image>();
+            backgroundImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+            backgroundImage.type = Image.Type.Sliced;
+            backgroundImage.fillCenter = false;
+            backgroundImage.color = new Color(27, 41, 89);
+
+            RectTransform backgroundRect = backgroundImage.rectTransform;
+            backgroundRect.anchorMin = new Vector2(0.5f, 0.5f);
+            backgroundRect.anchorMax = new Vector2(0.5f, 0.5f);
+            backgroundRect.sizeDelta = Vector2.zero;
+
+            RectTransform sliderBoundsRect = SetAnchorsAndStretch(sliderBounds);
+            sliderBoundsRect.anchorMin = new Vector2(0, 0);
+            sliderBoundsRect.anchorMax = new Vector2(1, 1);
+
+            RectTransform middleGraphicRect = SetAnchorsAndStretch(middleGraphic);
+            Image fillImage = middleGraphic.AddComponent<Image>();
+            fillImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+            fillImage.type = Image.Type.Sliced;
+            fillImage.fillCenter = true;
+			fillImage.color = new Color(41, 98, 164);
+
+            RectTransform minHandleRect = SetAnchorsAndStretch(minHandle);
+            Image lowHandleImage = minHandle.AddComponent<Image>();
+            lowHandleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+            minHandleRect.sizeDelta = new Vector2(30, 62);
+
+            RectTransform minHandleTextRect = SetAnchorsAndStretch(minHandleText);
+            TextMeshProUGUI minHandleTextComponent = minHandleText.AddComponent<TextMeshProUGUI>();
+			minHandleTextComponent.text = "0";
+			minHandleTextComponent.fontSize = 36;
+            minHandleTextRect.sizeDelta = new Vector2(70, 50);
+            minHandleTextRect.position = new Vector3(0, -60,0);
+
+            RectTransform maxHandleRect = SetAnchorsAndStretch(maxHandle);
+            Image maxHandleImage = maxHandle.AddComponent<Image>();
+            maxHandleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+            maxHandleRect.sizeDelta = new Vector2(20, 0);
+
+            RectTransform maxHandleTextRect = SetAnchorsAndStretch(maxHandleText);
+            TextMeshProUGUI maxHandleTextComponent = maxHandleText.AddComponent<TextMeshProUGUI>();
+            maxHandleTextComponent.text = "0";
+            maxHandleTextComponent.fontSize = 36;
+            maxHandleTextRect.sizeDelta = new Vector2(70, 50);
+            maxHandleTextRect.position = new Vector3(0, -60, 0);
+
+            MinMaxSlider minMaxSlider = minMaxSliderRoot.AddComponent<MinMaxSlider>();
+			minMaxSlider.SliderBounds = sliderBoundsRect;
+			minMaxSlider.MinHandle = minHandleRect;
+			minMaxSlider.MaxHandle = maxHandleRect;
+			minMaxSlider.MiddleGraphic = middleGraphicRect;
+			minMaxSlider.MinText = minHandleTextComponent;
+			minMaxSlider.MaxText = maxHandleTextComponent;
+
+            Selection.activeGameObject = minMaxSliderRoot;
+        }
+        #endregion
 
         #endregion
 

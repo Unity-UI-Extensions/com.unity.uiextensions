@@ -8,8 +8,8 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-    [AddComponentMenu("UI/Extensions/Radial Slider")]
     [RequireComponent(typeof(Image))]
+    [AddComponentMenu("UI/Extensions/Sliders/Radial Slider")]
     public class RadialSlider : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler, IPointerUpHandler, IDragHandler
     {
         private bool isPointerDown, isPointerReleased, lerpInProgress;
