@@ -2,11 +2,11 @@
 /// Sourced from - https://github.com/setchi/FancyScrollView
 
 using System;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
+    [Obsolete("ScrollPositionController has been replaced by the Scroller component", true)]
     public class ScrollPositionController : UIBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         [SerializeField]
