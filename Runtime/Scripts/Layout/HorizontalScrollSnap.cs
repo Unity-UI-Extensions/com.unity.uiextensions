@@ -157,7 +157,12 @@ namespace UnityEngine.UI.Extensions
             {
                 return;
             }
-            _scroll_rect.horizontalNormalizedPosition = 0;
+            try
+            {
+                // Rare instances of Unity bug cause error, adding try to manage it.
+                _scroll_rect.horizontalNormalizedPosition = 0;
+            }
+            catch { }
 
             Transform child = _screensContainer.transform.GetChild(index);
             child.SetParent(null, WorldPositionStays);
