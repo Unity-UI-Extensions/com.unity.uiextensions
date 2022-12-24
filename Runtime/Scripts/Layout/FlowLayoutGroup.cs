@@ -422,5 +422,13 @@ namespace UnityEngine.UI.Extensions
 			}
 			return max;
 		}
-	}
+
+        protected override void OnDisable()
+        {
+            m_Tracker.Clear();
+            LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+        }
+
+
+    }
 }
