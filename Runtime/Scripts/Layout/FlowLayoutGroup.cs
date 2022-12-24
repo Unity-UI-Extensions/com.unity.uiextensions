@@ -166,7 +166,6 @@ namespace UnityEngine.UI.Extensions
 					childSize = LayoutUtility.GetPreferredSize (child, 0);
 					childSize = Mathf.Min (childSize, workingSize);
 					childOtherSize = LayoutUtility.GetPreferredSize (child, 1);
-					childOtherSize = Mathf.Min (childOtherSize, workingSize);
 				} else if (startAxis == Axis.Vertical) {
 					if (invertOrder) {
 						index = IsRightAlign ? rectChildren.Count - 1 - i : i;
@@ -175,7 +174,6 @@ namespace UnityEngine.UI.Extensions
 					childSize = LayoutUtility.GetPreferredSize (child, 1);
 					childSize = Mathf.Min (childSize, workingSize);
 					childOtherSize = LayoutUtility.GetPreferredSize (child, 0);
-					childOtherSize = Mathf.Min (childOtherSize, workingSize);
 				}
 
 				// If adding this element would exceed the bounds of the container,
