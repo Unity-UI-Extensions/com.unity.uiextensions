@@ -118,24 +118,6 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        //      /// <summary>
-        //      /// List of Segments to be drawn.
-        //      /// </summary>
-        //      public List<Vector2[]> Segments
-        //{
-        //	get
-        //	{
-        //		return m_segments;
-        //	}
-
-        //	set
-        //	{
-        //		m_segments = value;
-        //		SetAllDirty();
-        //	}
-        //}
-
-
         public void AddPoint(Vector2 pointToAdd)
         {
             m_points.Add(pointToAdd);
@@ -298,15 +280,6 @@ namespace UnityEngine.UI.Extensions
 				PopulateMesh (vh, m_points);
 
 			}
-			//else if (m_segments != null && m_segments.Count > 0) {
-			//	GeneratedUVs ();
-			//	vh.Clear ();
-
-			//	for (int s = 0; s < m_segments.Count; s++) {
-			//		Vector2[] pointsToDraw = m_segments [s];
-			//		PopulateMesh (vh, pointsToDraw);
-			//	}
-			//} 
         }
 
 		private UIVertex[] CreateLineCap(Vector2 start, Vector2 end, SegmentType type)
