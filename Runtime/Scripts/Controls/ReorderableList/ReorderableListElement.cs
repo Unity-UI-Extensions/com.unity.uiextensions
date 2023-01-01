@@ -8,7 +8,6 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-
     [RequireComponent(typeof(RectTransform), typeof(LayoutElement))]
     public class ReorderableListElement : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
     {
@@ -24,7 +23,7 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         private bool isDroppableInSpace = false;
 
-
+        [Tooltip("Can this element be dropped in another container?")]
         public bool IsTransferable
         {
             get { return _isTransferable; }
@@ -61,7 +60,6 @@ namespace UnityEngine.UI.Extensions
 
 
         #region IBeginDragHandler Members
-
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (!_canvasGroup) { _canvasGroup = gameObject.GetOrAddComponent<CanvasGroup>(); }
@@ -142,12 +140,9 @@ namespace UnityEngine.UI.Extensions
 
             _isDragging = true;
         }
-
         #endregion
 
-
         #region IDragHandler Members
-
         public void OnDrag(PointerEventData eventData)
         {
             if (!_isDragging)
@@ -179,7 +174,6 @@ namespace UnityEngine.UI.Extensions
 
             //If nothing found or the list is not dropable, put the fake element outside
             if (_currentReorderableListRaycasted == null || _currentReorderableListRaycasted.IsDropable == false
-//                || (_oldReorderableListRaycasted != _reorderableList && !IsTransferable)
                 || ((_fakeElement.parent == _currentReorderableListRaycasted.Content 
                     ? _currentReorderableListRaycasted.Content.childCount - 1 
                     : _currentReorderableListRaycasted.Content.childCount) >= _currentReorderableListRaycasted.maxItems && !_currentReorderableListRaycasted.IsDisplacable)
@@ -194,7 +188,7 @@ namespace UnityEngine.UI.Extensions
                 }
             }
             //Else find the best position on the list and put fake element on the right index 
-            else
+            else if (_currentReorderableListRaycasted == _reorderableList || IsTransferable)
             {
                 if (_currentReorderableListRaycasted.Content.childCount < _currentReorderableListRaycasted.maxItems && _fakeElement.parent != _currentReorderableListRaycasted.Content)
                 {
@@ -245,12 +239,9 @@ namespace UnityEngine.UI.Extensions
 
             }
         }
-
         #endregion
 
-
         #region Displacement
-
         private void displaceElement(int targetIndex, Transform displaced)
         {
             _displacedFromIndex = targetIndex;
@@ -343,7 +334,6 @@ namespace UnityEngine.UI.Extensions
 
         }
 
-
         public void finishDisplacingElement()
         {
             if (_displacedObject.parent == null)
@@ -355,12 +345,9 @@ namespace UnityEngine.UI.Extensions
             _displacedObject = null;
             _displacedObjectLE = null;
         }
-
         #endregion
 
-
         #region IEndDragHandler Members
-
         public void OnEndDrag(PointerEventData eventData)
         {
             _isDragging = false;
@@ -473,11 +460,9 @@ namespace UnityEngine.UI.Extensions
             }
             _canvasGroup.blocksRaycasts = true;
         }
-
         #endregion
 
-
-        void CancelDrag()
+        private void CancelDrag()
         {
             _isDragging = false;
             //If it's a clone, delete it

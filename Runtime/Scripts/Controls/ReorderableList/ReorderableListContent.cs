@@ -21,7 +21,6 @@ namespace UnityEngine.UI.Extensions
             if(_rect)StartCoroutine(RefreshChildren());
         }
 
-
         public void OnTransformChildrenChanged()
         {
             if(this.isActiveAndEnabled)StartCoroutine(RefreshChildren());

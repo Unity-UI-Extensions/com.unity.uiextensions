@@ -6,7 +6,6 @@ using UnityEngine.Events;
 
 namespace UnityEngine.UI.Extensions
 {
-
     [RequireComponent(typeof(RectTransform)), DisallowMultipleComponent]
     [AddComponentMenu("UI/Extensions/Re-orderable list")]
     public class ReorderableList : MonoBehaviour
@@ -31,10 +30,10 @@ namespace UnityEngine.UI.Extensions
         
         // This sets every item size (when being dragged over this list) to the current size of the first element of this list
         [Tooltip("Should items being dragged over this list have their sizes equalized?")]
-        public bool EqualizeSizesOnDrag = false; 
+        public bool EqualizeSizesOnDrag = false;
 
+        [Tooltip("Maximum number of items this container can hold")]
         public int maxItems = int.MaxValue;
-
 
         [Header("UI Re-orderable Events")]
         public ReorderableListHandler OnElementDropped = new ReorderableListHandler();
@@ -62,7 +61,7 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        Canvas GetCanvas()
+        public Canvas GetCanvas()
         {
             Transform t = transform;
             Canvas canvas = null;
@@ -73,8 +72,7 @@ namespace UnityEngine.UI.Extensions
 
             while (canvas == null && lvl < lvlLimit)
             {
-                canvas = t.gameObject.GetComponent<Canvas>();
-                if (canvas == null)
+                if (!t.gameObject.TryGetComponent<Canvas>(out canvas))
                 {
                     t = t.parent;
                 }
@@ -95,7 +93,6 @@ namespace UnityEngine.UI.Extensions
 
         private void Start()
         {
-
             if (ContentLayout == null)
             {
                 Debug.LogError("You need to have a child LayoutGroup content set for the list: " + name, gameObject);
@@ -113,7 +110,6 @@ namespace UnityEngine.UI.Extensions
 
             Refresh();
         }
-
 
         #region Nested type: ReorderableListEventStruct
 
@@ -136,13 +132,10 @@ namespace UnityEngine.UI.Extensions
 
         #endregion
 
-
         #region Nested type: ReorderableListHandler
 
         [Serializable]
-        public class ReorderableListHandler : UnityEvent<ReorderableListEventStruct>
-        {
-        }
+        public class ReorderableListHandler : UnityEvent<ReorderableListEventStruct> { }
 
         public void TestReOrderableListTarget(ReorderableListEventStruct item)
         {
