@@ -1,7 +1,6 @@
 ﻿///Credit perchik
 ///Sourced from - http://forum.unity3d.com/threads/receive-onclick-event-and-pass-it-on-to-lower-ui-elements.293642/
 
-
 using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
@@ -10,7 +9,7 @@ namespace UnityEngine.UI.Extensions
     ///  Extension to the UI class which creates a dropdown list 
     /// </summary>
     [RequireComponent(typeof(RectTransform))]
-	[AddComponentMenu("UI/Extensions/Dropdown List")]
+	[AddComponentMenu("UI/Extensions/ComboBox/Dropdown List")]
 	public class DropDownList : MonoBehaviour
 	{
 		public Color disabledTextColor;
@@ -43,6 +42,9 @@ namespace UnityEngine.UI.Extensions
 		private GameObject _itemTemplate;
 
 		[SerializeField]
+		private float dropdownOffset;
+
+        [SerializeField]
 		private float _scrollBarWidth = 20.0f;
 		public float ScrollBarWidth
 		{
@@ -74,12 +76,8 @@ namespace UnityEngine.UI.Extensions
 		[SerializeField]
 		private bool _displayPanelAbove = false;
 
-		[SerializeField]
-		[Tooltip("Override the Text width for the values.")]
-		private bool _overrideTextWidth = true;
-
 		[System.Serializable]
-		public class SelectionChangedEvent : UnityEngine.Events.UnityEvent<int> { }
+		public class SelectionChangedEvent : Events.UnityEvent<int> { }
 		// fires when item is changed;
 		public SelectionChangedEvent OnSelectionChanged;
 
@@ -103,8 +101,6 @@ namespace UnityEngine.UI.Extensions
 
 				_overlayRT = _rectTransform.Find("Overlay").GetComponent<RectTransform>();
 				_overlayRT.gameObject.SetActive(false);
-
-
 				_scrollPanelRT = _overlayRT.Find("ScrollPanel").GetComponent<RectTransform>();
 				_scrollBarRT = _scrollPanelRT.Find("Scrollbar").GetComponent<RectTransform>();
 				_slidingAreaRT = _scrollBarRT.Find("SlidingArea").GetComponent<RectTransform>();
@@ -119,7 +115,6 @@ namespace UnityEngine.UI.Extensions
 				_scrollRect.scrollSensitivity = _rectTransform.sizeDelta.y / 2;
 				_scrollRect.movementType = ScrollRect.MovementType.Clamped;
 				_scrollRect.content = _itemsPanelRT;
-
 
 				_itemTemplate = _rectTransform.Find("ItemTemplate").gameObject;
 				_itemTemplate.SetActive(false);
@@ -171,72 +166,80 @@ namespace UnityEngine.UI.Extensions
 			}
 			Items.AddRange(ddItems);
 			RebuildPanel();
-		}
+            RedrawPanel();
+        }
 
-		/// <summary>
-		/// Adds an additional item to the drop down list (recommended)
-		/// </summary>
-		/// <param name="item">Item of type DropDownListItem</param>
-		public void AddItem(DropDownListItem item)
+        /// <summary>
+        /// Adds an additional item to the drop down list (recommended)
+        /// </summary>
+        /// <param name="item">Item of type DropDownListItem</param>
+        public void AddItem(DropDownListItem item)
         {
 			Items.Add(item);
 			RebuildPanel();
-		}
+			RedrawPanel();
+        }
 
-		/// <summary>
-		/// Adds an additional drop down list item using a string name 
-		/// </summary>
-		/// <param name="item">Item of type String</param>
-		public void AddItem(string item)
+        /// <summary>
+        /// Adds an additional drop down list item using a string name 
+        /// </summary>
+        /// <param name="item">Item of type String</param>
+        public void AddItem(string item)
 		{
 			Items.Add(new DropDownListItem(caption: (string)item));
 			RebuildPanel();
-		}
+            RedrawPanel();
+        }
 
-		/// <summary>
-		/// Adds an additional drop down list item using a sprite image 
-		/// </summary>
-		/// <param name="item">Item of type UI Sprite</param>
-		public void AddItem(Sprite item)
+        /// <summary>
+        /// Adds an additional drop down list item using a sprite image 
+        /// </summary>
+        /// <param name="item">Item of type UI Sprite</param>
+        public void AddItem(Sprite item)
 		{
 			Items.Add(new DropDownListItem(image: (Sprite)item));
 			RebuildPanel();
-		}
+            RedrawPanel();
+        }
 
-		/// <summary>
-		/// Removes an item from the drop down list (recommended)
-		/// </summary>
-		/// <param name="item">Item of type DropDownListItem</param>
-		public void RemoveItem(DropDownListItem item)
+        /// <summary>
+        /// Removes an item from the drop down list (recommended)
+        /// </summary>
+        /// <param name="item">Item of type DropDownListItem</param>
+        public void RemoveItem(DropDownListItem item)
 		{
 			Items.Remove(item);
 			RebuildPanel();
-		}
+            RedrawPanel();
+        }
 
-		/// <summary>
-		/// Removes an item from the drop down list item using a string name 
-		/// </summary>
-		/// <param name="item">Item of type String</param>
-		public void RemoveItem(string item)
+        /// <summary>
+        /// Removes an item from the drop down list item using a string name 
+        /// </summary>
+        /// <param name="item">Item of type String</param>
+        public void RemoveItem(string item)
 		{
 			Items.Remove(new DropDownListItem(caption: (string)item));
 			RebuildPanel();
-		}
+            RedrawPanel();
+        }
 
-		/// <summary>
-		/// Removes an item from the drop down list item using a sprite image 
-		/// </summary>
-		/// <param name="item">Item of type UI Sprite</param>
-		public void RemoveItem(Sprite item)
+        /// <summary>
+        /// Removes an item from the drop down list item using a sprite image 
+        /// </summary>
+        /// <param name="item">Item of type UI Sprite</param>
+        public void RemoveItem(Sprite item)
 		{
 			Items.Remove(new DropDownListItem(image: (Sprite)item));
 			RebuildPanel();
-		}
+            RedrawPanel();
+        }
 
-		public void ResetItems()
+        public void ResetItems()
 		{
 			Items.Clear();
 			RebuildPanel();
+			RedrawPanel();
 		}
 
 		/// <summary>
@@ -302,9 +305,6 @@ namespace UnityEngine.UI.Extensions
 			{
 				_mainButton.img.sprite = SelectedItem.Image;
 				_mainButton.img.color = Color.white;
-
-				//if (Interactable) mainButton.img.color = Color.white;
-				//else mainButton.img.color = new Color(1, 1, 1, .5f);
 			}
 			else
 			{
@@ -316,7 +316,6 @@ namespace UnityEngine.UI.Extensions
             //update selected index color
             if (OverrideHighlighted)
             {
-
                 for (int i = 0; i < _itemsPanelRT.childCount; i++)
                 {
                     _panelItems[i].btnImg.color = (_selectedIndex == i) ? _mainButton.btn.colors.highlightedColor : new Color(0, 0, 0, 0);
@@ -324,38 +323,36 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-
-        private void RedrawPanel()
+		private void RedrawPanel()
 		{
-			float scrollbarWidth = Items.Count > ItemsToDisplay ? _scrollBarWidth : 0f;//hide the scrollbar if there's not enough items
-
+			float scrollbarWidth = _panelItems.Count > ItemsToDisplay ? _scrollBarWidth : 0f;//hide the scrollbar if there's not enough items
+			_scrollBarRT.gameObject.SetActive(_panelItems.Count > ItemsToDisplay);
 			if (!_hasDrawnOnce || _rectTransform.sizeDelta != _mainButton.rectTransform.sizeDelta)
 			{
 				_hasDrawnOnce = true;
 				_mainButton.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _rectTransform.sizeDelta.x);
 				_mainButton.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _rectTransform.sizeDelta.y);
-                if (_overrideTextWidth)
-                {
-					_mainButton.txt.rectTransform.offsetMax = new Vector2(4, 0);
-				}
 
-				_scrollPanelRT.SetParent(transform, true);//break the scroll panel from the overlay
+				var itemsRemaining = _panelItems.Count - ItemsToDisplay;
+				itemsRemaining = itemsRemaining < 0 ? 0 : itemsRemaining;
+
+				_scrollPanelRT.SetParent(transform, true);
 				_scrollPanelRT.anchoredPosition = _displayPanelAbove ?
-					new Vector2(0, _rectTransform.sizeDelta.y * ItemsToDisplay - 1) :
+					new Vector2(0, dropdownOffset + _rectTransform.sizeDelta.y * (_panelItems.Count - itemsRemaining) - 1) :
 					new Vector2(0, -_rectTransform.sizeDelta.y);
 
 				//make the overlay fill the screen
-				_overlayRT.SetParent(_canvas.transform, false); //attach it to top level object
+				_overlayRT.SetParent(_canvas.transform, false);
 				_overlayRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _canvasRT.sizeDelta.x);
 				_overlayRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _canvasRT.sizeDelta.y);
 
-				_overlayRT.SetParent(transform, true);//reattach to this object
-				_scrollPanelRT.SetParent(_overlayRT, true); //reattach the scrollpanel to the overlay            
+				_overlayRT.SetParent(transform, true);
+				_scrollPanelRT.SetParent(_overlayRT, true);
 			}
 
-			if (Items.Count < 1) return;
+			if (_panelItems.Count < 1) return;
 
-			float dropdownHeight = _rectTransform.sizeDelta.y * Mathf.Min(_itemsToDisplay, Items.Count);
+			float dropdownHeight = _rectTransform.sizeDelta.y * Mathf.Min(_itemsToDisplay, _panelItems.Count) + dropdownOffset;
 
 			_scrollPanelRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, dropdownHeight);
 			_scrollPanelRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _rectTransform.sizeDelta.x);
