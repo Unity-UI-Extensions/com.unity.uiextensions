@@ -329,7 +329,7 @@ namespace UnityEngine.UI.Extensions
 
             if (hold && snap.Enable)
             {
-                UpdateSelection(Mathf.Clamp(Mathf.RoundToInt(currentPosition), 0, totalCount - 1));
+                UpdateSelection(Mathf.RoundToInt(CircularPosition(currentPosition, totalCount)));
                 ScrollTo(Mathf.RoundToInt(currentPosition), snap.Duration, snap.Easing);
             }
 
