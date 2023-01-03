@@ -1,0 +1,40 @@
+name: Build and test UPM packages for platforms
+
+on:
+  pull_request:
+    branches-ignore:    
+      - 'release'
+  # Ignore PRs targetting main
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Check Unity version requird by the package
+  validate-environment:
+    name: Get Unity Version from UPM package
+    uses: Unity-UI-Extensions/reusableworkflows/.github/workflows/getunityversionfrompackage.yml@main
+    with:
+      build-target: self-hosted
+
+  # Check Unity Hub and Editor Environment
+  Setup-Unity:
+    name: Validate Unity Install
+    needs: validate-environment
+    uses: Unity-UI-Extensions/reusableworkflows/.github/workflows/validateunityinstall.yml@main
+    with:
+      build-target: self-hosted
+      unityversion: ${{ needs.validate-environment.outputs.unityversion }}
+
+  # Run Unity unit tests defined in the package
+  Run-Unit-Tests:
+    name: Run Unity Unit Tests
+    needs: Setup-Unity
+    uses: Unity-UI-Extensions/reusableworkflows/.github/workflows/rununityunittests.yml@main
+    with:
+      build-target: self-hosted
+      unityversion: ${{ needs.Setup-Unity.outputs.unityeditorversion }}
