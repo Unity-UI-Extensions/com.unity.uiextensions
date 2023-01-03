@@ -388,6 +388,7 @@ namespace UnityEngine.UI.Extensions
         {
             currentMaterial = null;
             currentTexture = null;
+            base.OnDestroy();
         }
 
         public void StartParticleEmission()
