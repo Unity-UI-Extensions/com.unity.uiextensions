@@ -13,25 +13,24 @@ namespace UnityEngine.UI.Extensions
     {
         [Tooltip("Can this element be dragged?")]
         [SerializeField]
-        private bool IsGrabbable = true;
+        private bool isGrabbable = true;
 
-        [Tooltip("Can this element be transfered to another list")]
+        [Tooltip("Can this element be dropped in another container?")]
         [SerializeField]
-        private bool _isTransferable = true;
+        private bool isTransferable = true;
 
         [Tooltip("Can this element be dropped in space?")]
         [SerializeField]
         private bool isDroppableInSpace = false;
 
-        [Tooltip("Can this element be dropped in another container?")]
         public bool IsTransferable
         {
-            get { return _isTransferable; }
+            get { return isTransferable; }
             set 
             {
                 _canvasGroup = gameObject.GetOrAddComponent<CanvasGroup>();
                 _canvasGroup.blocksRaycasts = value;
-                _isTransferable = value; 
+                isTransferable = value; 
             }
         }
 
@@ -69,7 +68,7 @@ namespace UnityEngine.UI.Extensions
                 return;
 
             //Can't drag, return...
-            if (!_reorderableList.IsDraggable || !this.IsGrabbable)
+            if (!_reorderableList.IsDraggable || !this.isGrabbable)
             {
                 _draggingObject = null;
                 return;
