@@ -285,15 +285,10 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        public void Refresh()
-        {
-            StartCoroutine(RefreshOnNextFrame());
-        }
+        public void Refresh() { Invoke(nameof(Refreshx), 0.3f); }
 
-        public IEnumerator RefreshOnNextFrame()
+        private void Refreshx()
         {
-            yield return new WaitForEndOfFrame();
-
             ReportSet();
 
             // we use local position as the true value. Ratio position follows it, so it should be updated when refresh
