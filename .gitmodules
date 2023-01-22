@@ -1,0 +1,3 @@
+[submodule "Examples~"]
+	path = Examples~
+	url = https://github.com/Unity-UI-Extensions/com.unity.uiextensions-examples.git
