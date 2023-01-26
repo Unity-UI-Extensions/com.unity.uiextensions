@@ -6,6 +6,7 @@ namespace UnityEngine.UI.Extensions
     /// A concrete subclass of the Unity UI `Graphic` class that just skips drawing.
     /// Useful for providing a raycast target without actually drawing anything.
     [AddComponentMenu("Layout/Extensions/NonDrawingGraphic")]
+    [RequireComponent(typeof(CanvasRenderer))]
     public class NonDrawingGraphic : MaskableGraphic
     {
         public override void SetMaterialDirty() { return; }
