@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest an idea for the Unity UI Extensions
 title: 'Feature Request: '
-labels: Feature Request
+labels: enhancement
 assignees: ''
 ---
 
