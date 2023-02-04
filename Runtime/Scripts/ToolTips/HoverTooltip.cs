@@ -11,7 +11,11 @@ namespace UnityEngine.UI.Extensions
         public int verticalPadding;
 
         //tooltip text
+#if UNITY_2022_1_OR_NEWER
+        public TMPro.TMP_Text thisText;
+#else
         public Text thisText;
+#endif
 
         //horizontal layout of the tooltip
         public HorizontalLayoutGroup hlG;

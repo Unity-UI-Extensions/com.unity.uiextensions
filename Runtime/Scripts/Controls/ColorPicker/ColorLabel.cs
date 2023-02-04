@@ -5,7 +5,11 @@
 namespace UnityEngine.UI.Extensions.ColorPicker
 {
 
+#if UNITY_2022_1_OR_NEWER
+    [RequireComponent(typeof(TMPro.TMP_Text))]
+#else
     [RequireComponent(typeof(Text))]
+#endif
     public class ColorLabel : MonoBehaviour
     {
         public ColorPickerControl picker;
@@ -18,12 +22,18 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 
         public int precision = 0;
 
+#if UNITY_2022_1_OR_NEWER
+        private TMPro.TMP_Text label;
+#else
         private Text label;
-
+#endif
         private void Awake()
         {
+#if UNITY_2022_1_OR_NEWER
+            label = GetComponent<TMPro.TMP_Text>();
+#else
             label = GetComponent<Text>();
-
+#endif
         }
 
         private void OnEnable()
@@ -47,7 +57,11 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 #if UNITY_EDITOR
         private void OnValidate()
         {
+#if UNITY_2022_1_OR_NEWER
+            label = GetComponent<TMPro.TMP_Text>();
+#else
             label = GetComponent<Text>();
+#endif
             UpdateValue();
         }
 #endif

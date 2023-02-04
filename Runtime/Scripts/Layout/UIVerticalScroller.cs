@@ -213,10 +213,10 @@ namespace UnityEngine.UI.Extensions
                 {
                     FocusedElementIndex = i;
 #if UNITY_2022_1_OR_NEWER
-                    var textComponentTxtMeshPro = _arrayOfElements[i].GetComponentInChildren<TMPro.TMP_Text>();
+                    var textComponentTxtMeshPro = arrayOfElements[i].GetComponentInChildren<TMPro.TMP_Text>();
                     if (textComponentTxtMeshPro != null)
                     {
-                        result = textComponentTxtMeshPro.text;
+                        Result = textComponentTxtMeshPro.text;
                     }
 #else
                     var textComponent = arrayOfElements[i].GetComponentInChildren<Text>();

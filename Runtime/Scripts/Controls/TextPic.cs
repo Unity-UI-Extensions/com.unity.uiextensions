@@ -16,7 +16,12 @@ namespace UnityEngine.UI.Extensions {
     [AddComponentMenu("UI/Extensions/TextPic")]
        
     [ExecuteInEditMode] // Needed for culling images that are not used //
-    public class TextPic : Text, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler, ISelectHandler {
+#if UNITY_2022_1_OR_NEWER
+    public class TextPic : TMPro.TMP_Text, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler, ISelectHandler
+#else
+    public class TextPic : Text, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler, ISelectHandler
+#endif
+	{
 		// Icon entry to replace text with
         [Serializable]
         public struct IconName {
@@ -465,14 +470,21 @@ namespace UnityEngine.UI.Extensions {
 		/// UNITY METHODS ///
 
         protected override void OnPopulateMesh(VertexHelper toFill) {
+#if UNITY_2022_1_OR_NEWER
+            originalText = text;
+            text = GetOutputText();
+			base.OnPopulateMesh(toFill);
+
+            text = originalText;
+#else
             originalText = m_Text;
             m_Text = GetOutputText();
-
             base.OnPopulateMesh(toFill);
 
-			m_DisableFontTextureRebuiltCallback = true;
+            m_DisableFontTextureRebuiltCallback = true;
 
             m_Text = originalText;
+#endif
 
             positions.Clear();
 
@@ -539,8 +551,10 @@ namespace UnityEngine.UI.Extensions {
 			// Update the quad images
             updateQuad = true;
 
+#if !UNITY_2022_1_OR_NEWER
 			m_DisableFontTextureRebuiltCallback = false;
-        }
+#endif
+		}
 
         /// <summary>
         /// Click event is detected whether to click a hyperlink text
@@ -641,7 +655,7 @@ namespace UnityEngine.UI.Extensions {
 #endif
 
 		protected override void OnEnable() {
-			#if UNITY_2019_1_OR_NEWER
+#if UNITY_2019_1_OR_NEWER
 			// Here is the hack to see if Unity is using the new rendering system for text
 			usesNewRendering = false;
 
@@ -660,13 +674,14 @@ namespace UnityEngine.UI.Extensions {
 			else {
 				usesNewRendering = true;
 			}
-			#endif
+#endif
 
 			base.OnEnable();
 
+#if !UNITY_2022_1_OR_NEWER
 			supportRichText = true;
 			alignByGeometry = true;
-
+#endif
 			// Enable images on TextPic disable
             if (m_ImagesPool.Count >= 1) {
                 for (int i = 0; i < m_ImagesPool.Count; i++) {
