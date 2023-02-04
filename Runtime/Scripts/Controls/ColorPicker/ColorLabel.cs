@@ -34,6 +34,10 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 #else
             label = GetComponent<Text>();
 #endif
+            if (!label)
+            {
+                Debug.LogError($"{gameObject.name} does not have a Text component assigned for the {nameof(ColorLabel)}");
+            }
         }
 
         private void OnEnable()
@@ -53,18 +57,6 @@ namespace UnityEngine.UI.Extensions.ColorPicker
                 picker.onHSVChanged.RemoveListener(HSVChanged);
             }
         }
-
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-#if UNITY_2022_1_OR_NEWER
-            label = GetComponent<TMPro.TMP_Text>();
-#else
-            label = GetComponent<Text>();
-#endif
-            UpdateValue();
-        }
-#endif
 
         private void ColorChanged(Color color)
         {
