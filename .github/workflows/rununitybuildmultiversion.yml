@@ -16,6 +16,18 @@ jobs:
       matrix:
         include:
           - os: macos
+            unityVersion: 2019.4
+            build-target: Android
+          - os: macos
+            unityVersion: 2019.4
+            build-target: iOS
+          - os: windows
+            unityVersion: 2019.4
+            build-target: StandaloneWindows64
+          - os: windows
+            unityVersion: 2019.4
+            build-target: WSAPlayer             
+          - os: macos
             unityVersion: 2020.3
             build-target: Android
           - os: macos
