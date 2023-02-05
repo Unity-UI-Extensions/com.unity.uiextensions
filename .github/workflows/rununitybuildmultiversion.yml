@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos
+          - os: windows
             unityVersion: 2019.4
             build-target: Android
           - os: macos
@@ -27,7 +27,7 @@ jobs:
           - os: windows
             unityVersion: 2019.4
             build-target: WSAPlayer             
-          - os: macos
+          - os: windows
             unityVersion: 2020.3
             build-target: Android
           - os: macos
@@ -39,7 +39,7 @@ jobs:
           - os: windows
             unityVersion: 2020.3
             build-target: WSAPlayer        
-          - os: macos
+          - os: windows
             unityVersion: 2021.3
             build-target: Android
           - os: macos
@@ -51,7 +51,7 @@ jobs:
           - os: windows
             unityVersion: 2021.3
             build-target: WSAPlayer
-          - os: macos
+          - os: windows
             unityVersion: 2022.2
             build-target: Android
           - os: macos
