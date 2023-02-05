@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using static UnityEditor.Progress;
 
 namespace UnityEngine.UI.Extensions
 {
@@ -10,10 +11,14 @@ namespace UnityEngine.UI.Extensions
     [AddComponentMenu("UI/Extensions/ComboBox/ComboBox")]
     public class ComboBox : MonoBehaviour
     {
-        public Color disabledTextColor;
         public DropDownListItem SelectedItem { get; private set; }
 
+        [Header("Combo Box Items")]
         public List<string> AvailableOptions;
+
+        [Header("Properties")]
+        [SerializeField]
+        private bool isActive = true;
 
         [SerializeField]
         private float _scrollBarWidth = 20.0f;
@@ -27,22 +32,32 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         private bool _displayPanelAbove = false;
 
+        public bool SelectFirstItemOnStart = false;
+
+        [SerializeField]
+        private int selectItemIndexOnStart = 0;
+
+        private bool shouldSelectItemOnStart => SelectFirstItemOnStart || selectItemIndexOnStart > 0;
+
         [System.Serializable]
         public class SelectionChangedEvent : Events.UnityEvent<string> { }
 
+        [Header("Events")]
         // fires when item is changed;
         public SelectionChangedEvent OnSelectionChanged;
+
+        [System.Serializable]
+        public class ControlDisabledEvent : Events.UnityEvent<bool> { }
+
+        // fires when item is changed;
+        public ControlDisabledEvent OnControlDisabled;
 
         //private bool isInitialized = false;
         private bool _isPanelActive = false;
         private bool _hasDrawnOnce = false;
-
         private InputField _mainInput;
         private RectTransform _inputRT;
-
-
         private RectTransform _rectTransform;
-
         private RectTransform _overlayRT;
         private RectTransform _scrollPanelRT;
         private RectTransform _scrollBarRT;
@@ -51,14 +66,11 @@ namespace UnityEngine.UI.Extensions
         private RectTransform _itemsPanelRT;
         private Canvas _canvas;
         private RectTransform _canvasRT;
-
         private ScrollRect _scrollRect;
-
         private List<string> _panelItems; //items that will get shown in the drop-down
-
         private Dictionary<string, GameObject> panelObjects;
-        
         private GameObject itemTemplate;
+        private bool _initialized;
 
         public string Text { get; private set; }
 
@@ -89,11 +101,17 @@ namespace UnityEngine.UI.Extensions
 
         public void Start()
         {
+            if (shouldSelectItemOnStart && AvailableOptions.Count > 0)
+            {
+                SelectItemIndex(SelectFirstItemOnStart ? 0 : selectItemIndexOnStart);
+            }
             RedrawPanel();
         }
 
         private bool Initialize()
         {
+            if (_initialized) return true;
+
             bool success = true;
             try
             {
@@ -133,9 +151,20 @@ namespace UnityEngine.UI.Extensions
 
             _panelItems = AvailableOptions.ToList();
 
+            _initialized = true;
+
             RebuildPanel();
-            //RedrawPanel();  - causes an initialisation failure in U5
             return success;
+        }
+
+        /// <summary>
+        /// Update the drop down selection to a specific index
+        /// </summary>
+        /// <param name="index"></param>
+        public void SelectItemIndex(int index)
+        {
+            ToggleDropdownPanel(false);
+            OnItemClicked(AvailableOptions[index]);
         }
 
         public void AddItem(string item)
@@ -187,6 +216,11 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         private void RebuildPanel()
         {
+            if (!_initialized)
+            {
+                Start();
+            }
+
             //panel starts with all options
             _panelItems.Clear();
             foreach (string option in AvailableOptions)
@@ -310,6 +344,8 @@ namespace UnityEngine.UI.Extensions
         /// <param name="directClick"> whether an item was directly clicked on</param>
         public void ToggleDropdownPanel(bool directClick)
         {
+            if (!isActive) return;
+
             _isPanelActive = !_isPanelActive;
 
             _overlayRT.gameObject.SetActive(_isPanelActive);
@@ -321,6 +357,19 @@ namespace UnityEngine.UI.Extensions
             {
                 // scrollOffset = Mathf.RoundToInt(itemsPanelRT.anchoredPosition.y / _rectTransform.sizeDelta.y); 
             }
+        }
+
+        /// <summary>
+        /// Updates the control and sets its active status, determines whether the dropdown will open ot not
+        /// </summary>
+        /// <param name="status"></param>
+        public void SetActive(bool status)
+        {
+            if (status != isActive)
+            {
+                OnControlDisabled?.Invoke(status);
+            }
+            isActive = status;
         }
     }
 }

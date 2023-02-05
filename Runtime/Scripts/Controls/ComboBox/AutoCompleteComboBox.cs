@@ -1,6 +1,7 @@
 ﻿///Credit perchik
 ///Sourced from - http://forum.unity3d.com/threads/receive-onclick-event-and-pass-it-on-to-lower-ui-elements.293642/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,7 +17,6 @@ namespace UnityEngine.UI.Extensions
     [AddComponentMenu("UI/Extensions/ComboBox/AutoComplete ComboBox")]
     public class AutoCompleteComboBox : MonoBehaviour
     {
-        public Color disabledTextColor;
         public DropDownListItem SelectedItem { get; private set; } //outside world gets to get this, not set it
 
         /// <summary>
@@ -24,6 +24,7 @@ namespace UnityEngine.UI.Extensions
         /// <see cref="RemoveItem(string)"/> and <see cref="SetAvailableOptions(List{string})"/> methods as these also execute
         /// the required methods to update to the current collection.
         /// </summary>
+        [Header("AutoComplete Box Items")]
         public List<string> AvailableOptions;
 
         private bool _isPanelActive = false;
@@ -51,11 +52,13 @@ namespace UnityEngine.UI.Extensions
         private Dictionary<string, GameObject> panelObjects;
 
         private GameObject itemTemplate;
+        private bool _initialized;
 
         public string Text { get; private set; }
 
+        [Header("Properties")]
         [SerializeField]
-        private float dropdownOffset;
+        private bool isActive = true;
 
         [SerializeField]
         private float _scrollBarWidth = 20.0f;
@@ -80,8 +83,6 @@ namespace UnityEngine.UI.Extensions
                 RedrawPanel();
             }
         }
-
-        public bool SelectFirstItemOnStart = false;
 
         [SerializeField]
         [Tooltip("Change input text color based on matching items")]
@@ -108,7 +109,17 @@ namespace UnityEngine.UI.Extensions
         public AutoCompleteSearchType autocompleteSearchType = AutoCompleteSearchType.Linq;
 
         [SerializeField]
+        private float dropdownOffset;
+
+        [SerializeField]
         private bool _displayPanelAbove = false;
+
+        public bool SelectFirstItemOnStart = false;
+
+        [SerializeField]
+        private int selectItemIndexOnStart = 0;
+
+        private bool shouldSelectItemOnStart => SelectFirstItemOnStart || selectItemIndexOnStart > 0;
 
         private bool _selectionIsValid = false;
 
@@ -121,12 +132,18 @@ namespace UnityEngine.UI.Extensions
         [System.Serializable]
         public class SelectionValidityChangedEvent : Events.UnityEvent<bool> { }
 
+        [System.Serializable]
+        public class ControlDisabledEvent : Events.UnityEvent<bool> { }
+
         // fires when input text is changed;
+        [Header("Events")]
         public SelectionTextChangedEvent OnSelectionTextChanged;
         // fires when an Item gets selected / deselected (including when items are added/removed once this is possible)
         public SelectionValidityChangedEvent OnSelectionValidityChanged;
         // fires in both cases
         public SelectionChangedEvent OnSelectionChanged;
+        // fires when item is changed;
+        public ControlDisabledEvent OnControlDisabled;
 
         public void Awake()
         {
@@ -135,16 +152,17 @@ namespace UnityEngine.UI.Extensions
 
         public void Start()
         {
-            if (SelectFirstItemOnStart && AvailableOptions.Count > 0)
+            if (shouldSelectItemOnStart && AvailableOptions.Count > 0)
             {
-                ToggleDropdownPanel(false);
-                OnItemClicked(AvailableOptions[0]);
+                SelectItemIndex(SelectFirstItemOnStart ? 0 : selectItemIndexOnStart);
             }
             RedrawPanel();
         }
 
         private bool Initialize()
         {
+            if (_initialized) return true;
+
             bool success = true;
             try
             {
@@ -184,6 +202,8 @@ namespace UnityEngine.UI.Extensions
             _prunedPanelItems = new List<string>();
             _panelItems = new List<string>();
 
+            _initialized = true;
+
             RebuildPanel();
             return success;
         }
@@ -216,6 +236,17 @@ namespace UnityEngine.UI.Extensions
                 this.AvailableOptions.Remove(item);
                 this.RebuildPanel();
             }
+        }
+
+
+        /// <summary>
+        /// Update the drop down selection to a specific index
+        /// </summary>
+        /// <param name="index"></param>
+        public void SelectItemIndex(int index)
+        {
+            ToggleDropdownPanel(false);
+            OnItemClicked(AvailableOptions[index]);
         }
 
         /// <summary>
@@ -263,6 +294,11 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         private void RebuildPanel()
         {
+            if (!_initialized)
+            {
+                Start();
+            }
+
             if (_isPanelActive) ToggleDropdownPanel();
 
             //panel starts with all options
@@ -427,6 +463,8 @@ namespace UnityEngine.UI.Extensions
         /// <param name="directClick"> whether an item was directly clicked on</param>
         public void ToggleDropdownPanel(bool directClick = false)
         {
+            if (!isActive) return;
+
             _isPanelActive = !_isPanelActive;
 
             _overlayRT.gameObject.SetActive(_isPanelActive);
@@ -438,6 +476,20 @@ namespace UnityEngine.UI.Extensions
             {
                 // scrollOffset = Mathf.RoundToInt(itemsPanelRT.anchoredPosition.y / _rectTransform.sizeDelta.y); 
             }
+        }
+
+
+        /// <summary>
+        /// Updates the control and sets its active status, determines whether the dropdown will open ot not
+        /// </summary>
+        /// <param name="status"></param>
+        public void SetActive(bool status)
+        {
+            if (status != isActive)
+            {
+                OnControlDisabled?.Invoke(status);
+            }
+            isActive = status;
         }
 
         private void PruneItems(string currText)

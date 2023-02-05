@@ -15,7 +15,14 @@ namespace UnityEngine.UI.Extensions
 		public Color disabledTextColor;
 		public DropDownListItem SelectedItem { get; private set; } //outside world gets to get this, not set it
 
-		public List<DropDownListItem> Items;
+        [Header("Dropdown List Items")]
+        public List<DropDownListItem> Items;
+
+        [Header("Properties")]
+
+        [SerializeField]
+        private bool isActive = true;
+
         public bool OverrideHighlighted = true;
 
 		//private bool isInitialized = false;
@@ -37,12 +44,10 @@ namespace UnityEngine.UI.Extensions
 
 		private ScrollRect _scrollRect;
 
-		private List<DropDownListButton> _panelItems;
+		private List<DropDownListButton> _panelItems = new List<DropDownListButton>();
 
-		private GameObject _itemTemplate;
-
-		[SerializeField]
-		private float dropdownOffset;
+        private GameObject _itemTemplate;
+		private bool _initialized;
 
         [SerializeField]
 		private float _scrollBarWidth = 20.0f;
@@ -71,28 +76,45 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 
-		public bool SelectFirstItemOnStart = false;
+        [SerializeField]
+        private float dropdownOffset;
 
-		[SerializeField]
-		private bool _displayPanelAbove = false;
+        [SerializeField]
+        private bool _displayPanelAbove = false;
 
-		[System.Serializable]
+        public bool SelectFirstItemOnStart = false;
+
+        [SerializeField]
+        private int selectItemIndexOnStart = 0;
+        private bool shouldSelectItemOnStart => SelectFirstItemOnStart || selectItemIndexOnStart > 0;
+
+        [System.Serializable]
 		public class SelectionChangedEvent : Events.UnityEvent<int> { }
-		// fires when item is changed;
-		public SelectionChangedEvent OnSelectionChanged;
 
-		public void Start()
-		{
-			Initialize();
-			if (SelectFirstItemOnStart && Items.Count > 0) {
-				ToggleDropdownPanel (false);
-				OnItemClicked (0);
-			}
-			RedrawPanel();
-		}
+        // fires when item is changed;
+        [Header("Events")]
+        public SelectionChangedEvent OnSelectionChanged;
 
-		private bool Initialize()
+        [System.Serializable]
+        public class ControlDisabledEvent : Events.UnityEvent<bool> { }
+
+        // fires when item is changed;
+        public ControlDisabledEvent OnControlDisabled;
+
+        public void Start()
+        {
+            Initialize();
+            if (shouldSelectItemOnStart && Items.Count > 0)
+            {
+                SelectItemIndex(SelectFirstItemOnStart ? 0 : selectItemIndexOnStart);
+            }
+            RedrawPanel();
+        }
+
+        private bool Initialize()
 		{
+			if (_initialized) return true;
+
 			bool success = true;
 			try
 			{
@@ -125,23 +147,32 @@ namespace UnityEngine.UI.Extensions
 				Debug.LogError("Something is setup incorrectly with the dropdownlist component causing a Null Reference Exception");
 				success = false;
 			}
+            _initialized = true;
 
-			_panelItems = new List<DropDownListButton>();
-
-			RebuildPanel();
+            RebuildPanel();
 			RedrawPanel();
 			return success;
 		}
 
-		// currently just using items in the list instead of being able to add to it.
-		/// <summary>
-		/// Rebuilds the list from a new collection.
+        /// <summary>
+		/// Update the drop down selection to a specific index
 		/// </summary>
-		/// <remarks>
-		/// NOTE, this will clear all existing items
-		/// </remarks>
-		/// <param name="list"></param>
-		public void RefreshItems(params object[] list)
+		/// <param name="index"></param>
+		public void SelectItemIndex(int index)
+        {
+            ToggleDropdownPanel(false);
+            OnItemClicked(index);
+        }
+
+        // currently just using items in the list instead of being able to add to it.
+        /// <summary>
+        /// Rebuilds the list from a new collection.
+        /// </summary>
+        /// <remarks>
+        /// NOTE, this will clear all existing items
+        /// </remarks>
+        /// <param name="list"></param>
+        public void RefreshItems(params object[] list)
 		{
 			Items.Clear();
 			List<DropDownListItem> ddItems = new List<DropDownListItem>();
@@ -248,6 +279,11 @@ namespace UnityEngine.UI.Extensions
 		private void RebuildPanel()
 		{
 			if (Items.Count == 0) return;
+
+			if (!_initialized)
+			{
+				Start();
+			}
 
 			int indx = _panelItems.Count;
 			while (_panelItems.Count < Items.Count)
@@ -374,6 +410,8 @@ namespace UnityEngine.UI.Extensions
 		/// <param name="directClick"> whether an item was directly clicked on</param>
 		public void ToggleDropdownPanel(bool directClick)
 		{
+            if (!isActive) return;
+            
 			_overlayRT.transform.localScale = new Vector3(1, 1, 1);
 			_scrollBarRT.transform.localScale = new Vector3(1, 1, 1);
 			_isPanelActive = !_isPanelActive;
@@ -387,5 +425,18 @@ namespace UnityEngine.UI.Extensions
 				// scrollOffset = Mathf.RoundToInt(itemsPanelRT.anchoredPosition.y / _rectTransform.sizeDelta.y); 
 			}
 		}
-	}
+
+        /// <summary>
+        /// Updates the control and sets its active status, determines whether the dropdown will open ot not
+        /// </summary>
+        /// <param name="status"></param>
+        public void SetActive(bool status)
+        {
+            if (status != isActive)
+            {
+                OnControlDisabled?.Invoke(status);
+            }
+            isActive = status;
+        }
+    }
 }
