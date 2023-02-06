@@ -14,16 +14,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
   # Run Unity multi-version build unit tests defined in the package
   Run-Unit-Tests:
     name: Run Unity Unit Tests
     uses: ./.github/workflows/rununitybuildmultiversion.yml
 
   # Update the package release version
-  #Update-Version:
-  #  name: Update Package Version
-  #  uses: ./.github/workflows/tagrelease.yml
-  #  with:
-  #    build-target: windows
-  #  secrets: inherit      
+  Update-Version:
+    name: Update Package Version
+    uses: ./.github/workflows/tagrelease.yml
+    with:
+      build-target: windows
+    secrets: inherit      
