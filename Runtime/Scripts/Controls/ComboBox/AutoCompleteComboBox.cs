@@ -369,6 +369,10 @@ namespace UnityEngine.UI.Extensions
         {
             float scrollbarWidth = _panelItems.Count > ItemsToDisplay ? _scrollBarWidth : 0f;//hide the scrollbar if there's not enough items
             _scrollBarRT.gameObject.SetActive(_panelItems.Count > ItemsToDisplay);
+
+            float dropdownHeight = _itemsToDisplay > 0 ? _rectTransform.sizeDelta.y * Mathf.Min(_itemsToDisplay, _panelItems.Count) : _rectTransform.sizeDelta.y * _panelItems.Count;
+            dropdownHeight += dropdownOffset;
+
             if (!_hasDrawnOnce || _rectTransform.sizeDelta != _inputRT.sizeDelta)
             {
                 _hasDrawnOnce = true;
@@ -380,8 +384,8 @@ namespace UnityEngine.UI.Extensions
 
                 _scrollPanelRT.SetParent(transform, true);
                 _scrollPanelRT.anchoredPosition = _displayPanelAbove ?
-                    new Vector2(0, dropdownOffset + _rectTransform.sizeDelta.y * (_panelItems.Count - itemsRemaining) - 1) :
-                    new Vector2(0, -_rectTransform.sizeDelta.y);
+                    new Vector2(0, dropdownOffset + dropdownHeight) :
+                    new Vector2(0, -(dropdownOffset + _rectTransform.sizeDelta.y));
 
                 //make the overlay fill the screen
                 _overlayRT.SetParent(_canvas.transform, false);
@@ -393,8 +397,6 @@ namespace UnityEngine.UI.Extensions
             }
 
             if (_panelItems.Count < 1) return;
-
-            float dropdownHeight = _rectTransform.sizeDelta.y * Mathf.Min(_itemsToDisplay, _panelItems.Count) + dropdownOffset;
 
             _scrollPanelRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, dropdownHeight);
             _scrollPanelRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _rectTransform.sizeDelta.x);

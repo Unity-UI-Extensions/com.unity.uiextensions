@@ -363,7 +363,11 @@ namespace UnityEngine.UI.Extensions
 		{
 			float scrollbarWidth = _panelItems.Count > ItemsToDisplay ? _scrollBarWidth : 0f;//hide the scrollbar if there's not enough items
 			_scrollBarRT.gameObject.SetActive(_panelItems.Count > ItemsToDisplay);
-			if (!_hasDrawnOnce || _rectTransform.sizeDelta != _mainButton.rectTransform.sizeDelta)
+
+            float dropdownHeight = _itemsToDisplay > 0 ? _rectTransform.sizeDelta.y * Mathf.Min(_itemsToDisplay, _panelItems.Count) : _rectTransform.sizeDelta.y * _panelItems.Count;
+            dropdownHeight += dropdownOffset;
+
+            if (!_hasDrawnOnce || _rectTransform.sizeDelta != _mainButton.rectTransform.sizeDelta)
 			{
 				_hasDrawnOnce = true;
 				_mainButton.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _rectTransform.sizeDelta.x);
@@ -373,12 +377,12 @@ namespace UnityEngine.UI.Extensions
 				itemsRemaining = itemsRemaining < 0 ? 0 : itemsRemaining;
 
 				_scrollPanelRT.SetParent(transform, true);
-				_scrollPanelRT.anchoredPosition = _displayPanelAbove ?
-					new Vector2(0, dropdownOffset + _rectTransform.sizeDelta.y * (_panelItems.Count - itemsRemaining) - 1) :
-					new Vector2(0, -_rectTransform.sizeDelta.y);
+                _scrollPanelRT.anchoredPosition = _displayPanelAbove ?
+                    new Vector2(0, dropdownOffset + dropdownHeight) :
+                    new Vector2(0, -(dropdownOffset + _rectTransform.sizeDelta.y));
 
-				//make the overlay fill the screen
-				_overlayRT.SetParent(_canvas.transform, false);
+                //make the overlay fill the screen
+                _overlayRT.SetParent(_canvas.transform, false);
 				_overlayRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _canvasRT.sizeDelta.x);
 				_overlayRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _canvasRT.sizeDelta.y);
 
@@ -388,9 +392,7 @@ namespace UnityEngine.UI.Extensions
 
 			if (_panelItems.Count < 1) return;
 
-			float dropdownHeight = _rectTransform.sizeDelta.y * Mathf.Min(_itemsToDisplay, _panelItems.Count) + dropdownOffset;
-
-			_scrollPanelRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, dropdownHeight);
+            _scrollPanelRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, dropdownHeight);
 			_scrollPanelRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _rectTransform.sizeDelta.x);
 
 			_itemsPanelRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _scrollPanelRT.sizeDelta.x - scrollbarWidth - 5);
