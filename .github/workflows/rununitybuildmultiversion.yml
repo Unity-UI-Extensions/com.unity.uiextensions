@@ -1,0 +1,459 @@
+name: Run Unity Builds
+
+on:
+  workflow_call:
+    inputs:
+      dependencies:
+        description: "json array of dependencies and their targets"
+        required: false
+        type: string
+
+jobs:
+  run_build:
+    name: Run Unity Build process
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows
+            unityVersion: 2019.4
+            build-target: Android
+          - os: macos
+            unityVersion: 2019.4
+            build-target: iOS
+          - os: windows
+            unityVersion: 2019.4
+            build-target: StandaloneWindows64
+          - os: windows
+            unityVersion: 2019.4
+            build-target: WSAPlayer             
+          - os: windows
+            unityVersion: 2020.3
+            build-target: Android
+          - os: macos
+            unityVersion: 2020.3
+            build-target: iOS
+          - os: windows
+            unityVersion: 2020.3
+            build-target: StandaloneWindows64
+          - os: windows
+            unityVersion: 2020.3
+            build-target: WSAPlayer        
+          - os: windows
+            unityVersion: 2021.3
+            build-target: Android
+          - os: macos
+            unityVersion: 2021.3
+            build-target: iOS
+          - os: windows
+            unityVersion: 2021.3
+            build-target: StandaloneWindows64
+          - os: windows
+            unityVersion: 2021.3
+            build-target: WSAPlayer
+          - os: windows
+            unityVersion: 2022.2
+            build-target: Android
+          - os: macos
+            unityVersion: 2022.2
+            build-target: iOS
+          - os: windows
+            unityVersion: 2022.2
+            build-target: StandaloneWindows64
+          - os: windows
+            unityVersion: 2022.2
+            build-target: WSAPlayer
+    steps:
+      - name: Script Version
+        run: |
+          echo "::group::Script Versioning"
+          $scriptVersion = "1.0.0"
+          echo "Build Script Version: $scriptVersion"
+          echo "::endgroup::"
+        shell: pwsh     
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          clean: true
+
+      - id: build
+        name: 'Run Unity Builds'
+        run: |
+          echo "::group::Set Hub and editor locations"
+          $unityVersion = ${{ matrix.unityVersion }}
+
+          echo "::group::Set Hub and editor locations"
+
+          ## Set Hub and editor locations
+          if ( (-not $global:PSVersionTable.Platform) -or ($global:PSVersionTable.Platform -eq "Win32NT") )
+          {
+            $hubPath = "C:\Program Files\Unity Hub\Unity Hub.exe"
+            $editorRootPath = "C:\Program Files\Unity\Hub\Editor\"
+            $editorFileEx = "\Editor\Unity.exe"
+
+            #"Unity Hub.exe" -- --headless help
+            #. 'C:\Program Files\Unity Hub\Unity Hub.exe' -- --headless help
+            function unity-hub 
+            {
+              & $hubPath -- --headless $args.Split(" ") | Out-String -NoNewline
+            }            
+          }
+          elseif ( $global:PSVersionTable.OS.Contains("Darwin") ) 
+          {
+            $hubPath = "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub"
+            $editorRootPath = "/Applications/Unity/Hub/Editor/"
+            $editorFileEx = "/Unity.app/Contents/MacOS/Unity"
+
+            # /Applications/Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- --headless help
+            function unity-hub 
+            {
+              & $hubPath -- --headless $args.Split(" ") | Out-String -NoNewline
+            }            
+          }
+          elseif ( $global:PSVersionTable.OS.Contains("Linux") ) 
+          {
+            $hubPath = "$HOME/Unity Hub/UnityHub.AppImage"
+            $editorRootPath = "$HOME/Unity/Hub/Editor/"
+            $editorFileEx = "/Editor/Unity"
+
+            # /UnityHub.AppImage --headless help
+            # xvfb-run --auto-servernum "$HOME/Unity Hub/UnityHub.AppImage" --headless help
+            function unity-hub 
+            {
+              xvfb-run --auto-servernum "$hubPath" --headless $args.Split(" ")
+            }            
+          }
+
+          echo "::endgroup::"
+
+
+
+          echo "::group::Get String function to query a string for a value"
+
+          function GetString($InputString, $InputPattern, $MatchIndex) 
+          {
+            $regExResult = $InputString | Select-String -Pattern $InputPattern
+            if($regExResult.Length -gt 0)
+            {
+              return $regExResult.Matches[$MatchIndex].Value
+            }
+            else 
+            {
+              return 0
+            }
+          }
+
+          function Get-LetterCount
+          {
+            Param ([string]$string)
+            return $string.Length
+          }
+          echo "::endgroup::"
+
+          echo "::group::Get Installed Unity version based on Matrix"
+          echo 'Script Start'
+          echo "Unity hub path is {$hubPath}"
+          echo "Requested unity version is {$unityVersion}"
+          
+          $InstalledUnityVersions = unity-hub editors
+          $editorRootPath = unity-hub ip -g
+          echo "Installed unity versions are {$InstalledUnityVersions}"
+          echo "Unity install path is {$editorRootPath}"
+
+          $versionLength = Get-LetterCount $unityVersion
+          if ($versionLength -eq 4) {
+            $queryUnityVersion = GetString $InstalledUnityVersions "$unityVersion.{4,7}" -MatchIndex 0
+          }
+          elseif ($versionLength -eq 6) {
+            $queryUnityVersion = GetString $InstalledUnityVersions "$unityVersion.{4,5}" -MatchIndex 0
+          }
+          else {
+            $queryUnityVersion = GetString $InstalledUnityVersions "$unityVersion" -MatchIndex 0
+          }
+
+          echo "Found unity version is {$queryUnityVersion}"
+
+          if ($queryUnityVersion -ne 0) 
+          {
+            $unityVersion = $queryUnityVersion.Trim(","," ").Trim()
+            echo "Long Unity version is $unityVersion"
+          }
+          else 
+          {
+            echo "Unity $unityVersion not found on this machine, skipping"
+            exit 0
+          }
+
+          echo "::endgroup::"
+
+          echo "::group::Search for Editor if not found"
+          $checkPath = Join-Path $editorRootPath $unityVersion
+          echo "Testing for editor at $checkPath"
+          while (-not (Test-Path "$checkPath")) {
+              $source = $unityVersion.Replace("f1","")
+              $newversion = $source.Split(".")
+              $newversion[2] = [int]$newversion[2] - 1
+              if ([int]$newversion[2] -lt 1) {
+                echo "Unity ${{ matrix.unityVersion }} not found on this machine, skipping"
+                exit 0
+              }
+              $newunityVersion = "{0}.{1}.{2}f1" -f $newversion[0],$newversion[1],$newversion[2]
+              echo "Unity $unityVersion not found on this machine, trying $newunityVersion"
+              $unityVersion = $newunityVersion
+              $checkPath = Join-Path $editorRootPath $unityVersion
+          }
+          echo "::endgroup::"
+
+          echo "::group::Set editor locations"
+
+          if ( (-not $global:PSVersionTable.Platform) -or ($global:PSVersionTable.Platform -eq "Win32NT") ) {
+            echo 'Building using Windows'
+            $editorFileEx = "/Editor/Unity.exe"
+            $editorrunpath = Join-Path $editorRootPath $unityVersion $editorFileEx
+
+            function unity-editor {
+              #$p = Start-Process -Verbose -NoNewWindow -PassThru -Wait -FilePath "$editorrunpath" -ArgumentList (@(' -batchmode') + $args.Split(" "))
+              & $editorrunpath -batchmode $args.Split(" ") | Out-String
+            }
+          }
+          elseif ( $global:PSVersionTable.OS.Contains("Darwin") ) {
+            echo 'Building using Mac'
+            $editorFileEx = "/Unity.app/Contents/MacOS/Unity"
+            $editorrunpath = Join-Path $editorRootPath $unityVersion $editorFileEx
+
+            function unity-editor {
+              #$p = Start-Process -Verbose -NoNewWindow -PassThru -Wait -FilePath "$editorrunpath" -ArgumentList (@(' -batchmode') + $args.Split(" "))
+              & $editorrunpath -batchmode $args.Split(" ") | Out-String
+            }
+          }
+          elseif ( $global:PSVersionTable.OS.Contains("Linux") ) {
+            echo 'Building using Linux'
+            $editorFileEx = "/Editor/Unity"
+            $editorrunpath = Join-Path $editorRootPath $unityVersion $editorFileEx
+
+            function unity-editor {
+              xvfb-run --auto-servernum "$editorrunpath" -batchmode $args.Split(" ")
+            }
+          }
+          else
+          {
+            echo 'Unknown build platform'
+          }
+
+          echo "::endgroup::"
+
+          echo "::group::Test Unity version is installed"
+
+          if ( -not (Test-Path "$editorrunpath") ) 
+          {
+            Write-Error "Editor not Found for $unityVersion"
+            exit 1
+          }
+          else {
+              echo "Editor Path is {$editorrunpath}"
+          }
+
+          echo "::endgroup::"
+
+          echo "::group::Setup logging and run Unit tests"          
+
+          # Log detail
+          $logDirectory = "Logs"          
+          if (Test-Path -Path $logDirectory) {
+              echo "Clearing logs from a previous run"
+              Remove-item $logDirectory -recurse
+            }
+
+          $logDirectory = New-Item -ItemType Directory -Force -Path $logDirectory | Select-Object
+
+          echo "Log Directory: $logDirectory"
+          $date = Get-Date -Format "yyyyMMddTHHmmss"
+
+          # If run manually, the Refname is actually blank, so just use date
+          if([string]::IsNullOrEmpty(${GITHUB_REF_NAME})) {
+            $logName = "$logDirectory$directorySeparatorChar$date"
+          }
+          else{          
+            $logName = "$logDirectory$directorySeparatorChar${GITHUB_REF_NAME}-$date"
+          }
+
+          $logPath = "$logName.log"
+          $testsLogPath = "$logName-tests.xml"
+
+          echo "Logpath [$logPath]"
+          echo "TestsPath [$testsLogPath]"
+          echo "::endgroup::"
+
+          echo "::group::Grouping Package in a UPM folder"
+
+          $UPMFolderName = 'u'
+
+          if ( -not (Test-Path '$UPMFolderName') ) 
+          {
+            New-Item $UPMFolderName -ItemType Directory
+          }
+
+          Move-Item -Path * -Destination $UPMFolderName -exclude $UPMFolderName
+
+          echo "::endgroup::"
+
+          echo "::group::Creating Temp Unity project"
+
+          $TempUnityProjectName = 'P'
+
+          unity-editor '-createProject' $TempUnityProjectName -quit
+
+          $destinationPath = $TempUnityProjectName + $directorySeparatorChar + 'packages'
+          Move-Item -Path $UPMFolderName -Destination $destinationPath
+
+          echo "::endgroup::"
+
+          echo "::group::If required, clone dependencies in to test project"
+
+          <# Dependency option requires specific inputs
+           
+           * A dependency input string in json format, listing each dependency by name and git url, e.g.
+             $dependencies = '[{"ASADependencies": "github.com/SimonDarksideJ/upmGithubActionsTests.git"}]' 
+             *Note, remove the https:// portion to allow using a PAT to access the repo
+             The Name of the dependency should ALSO MATCH the name of the branch on the repo where the dependency is held (files intended for the packages folder)
+           
+           * Additionally, if Manifest entries are required, then a manifest file with those dependencies (and ONLY the new dependancies) should also be in the dependency branch named the same as the branch name
+             e.g. "ASADependencies.json" - keep the same structure, but only the dependancy entries
+          
+           !!Does NOT support additional scoped registries at this time! #>
+
+          echo "---------------------------------------------"
+          echo "Read dependancy input value"
+          if([string]::IsNullOrEmpty('${{ inputs.dependencies }}'))
+          {
+            echo "No dependencies provided"
+            echo "input ${{ inputs.dependencies }}"
+            echo "------------------------------"
+          }
+          else {
+            echo "dependencies provided, validating"
+
+            # Read dependancy input value
+            $dependencies = '${{ inputs.dependencies }}'
+
+            if([string]::IsNullOrEmpty('${{ secrets.GIT_USER_NAME }}') -or [string]::IsNullOrEmpty('${{ secrets.GIT_PAT }}')){
+              echo ""
+              echo "Secrets for GIT_USER_NAME or GIT_PAT missing, please register them with access to this runner"
+              echo "*Note, Organisation secrets are not accessible to Forked repos and need registering in the local fork"
+              exit 1
+            }
+
+            echo "---------------------------------------------"
+            echo "Read dependancy input values as json"
+            $JSONdependencies = $dependencies | ConvertFrom-Json
+
+            echo $JSONdependencies
+
+            # Read current Manifest json
+            $manifestPath = $destinationPath + $directorySeparatorChar + 'manifest.json'
+            $projectManifest = Get-Content -Path $manifestPath | ConvertFrom-Json
+            $strArray = $projectManifest.dependencies.PsObject.Properties | ForEach-Object {"$($_.Name)@$($_.Value),"}
+
+            echo "---------------------------------------------"
+            echo "Loop through new dependancies and add them to the project Manifest"
+            foreach($dependency in $JSONdependencies){
+              $dependency.PsObject.Properties | ForEach-Object -Process { 
+                $dependencyName = $_.Name
+                $dependencyPath = $dependencyName.Replace("/","_")
+                $dependencyURL = $_.Value
+                echo "---------------------------------------------"
+                echo "Cloning dependency - Name [$dependencyName] - Path [$dependencyPath] - URL [$dependencyURL]"
+                $cloneURL = "https://${{ secrets.GIT_USER_NAME }}:${{ secrets.GIT_PAT }}@$dependencyURL"
+
+                echo "cloning $dependencyName from $dependencyURL and moving to $destinationPath"
+                echo "git path - $cloneURL"
+
+                # Clone Dependancy repo to destination folder
+                git clone -b $dependencyName --single-branch $cloneURL $dependencyPath
+
+                if( -not (Test-Path -Path "$dependencyPath")){
+                  echo "Unable to clone $dependencyName from $dependencyURL"
+                  exit 1
+                }
+
+                # Move files from clone path into packages folder, if the dependency contains a UPM package then move the entire folder and not just its contents
+                if (Test-Path -Path "$dependencyPath/package.json") {
+                  $package_json = Get-Content -Path $dependencyPath/package.json | ConvertFrom-Json
+                  $packageName = $package_json.name
+                  Rename-Item $dependencyPath $packageName
+                  echo "Moving whole $packageName UPM package to $destinationPath"
+                  Move-Item -Path "$packageName" -Destination $destinationPath
+                }
+                else {
+                  echo "Moving the contents of $dependencyName into the $destinationPath folder"
+                  Move-Item -Path "$dependencyPath/*" -Destination $destinationPath
+                }
+
+                # Get Dependency manifest entries (if applicable)
+                if (Test-Path -Path "$destinationPath/$dependencyName.json") {
+                    $dependencyManifest = Get-Content -Path "$destinationPath/$dependencyName.json" | ConvertFrom-Json
+                    $dependencyManifest.dependencies.PsObject.Properties | ForEach-Object {
+                        $strArray += "$($_.Name)@$($_.Value),"
+                    }
+                }
+                else{
+                  echo "No denendency json found called $destinationPath/$dependencyName.json, skipping adding additional manifest entries"
+                }
+              }
+            }
+            echo "---------------------------------------------"
+          
+            # Reformat combined dependancies list
+            $strArray = $strArray.Trim(",") | ConvertTo-Json 
+            $strArray = $strArray.Replace("@",'":"').Replace("[","{").Replace("]","}")
+            $strArrayObject = $strArray | ConvertFrom-Json
+            
+            # Save manifest back to project
+            $projectManifest.dependencies = $strArrayObject
+            $projectManifest | ConvertTo-Json | Set-Content -Path "$destinationPath/manifest.json"
+
+            echo "Project updated with the following dependencies"
+            echo "-----------------------------------------------"
+            echo $projectManifest
+          }
+
+          echo "::endgroup::"
+
+          echo "::group::Run build"              
+
+          echo "---------------------------------------------"
+          echo "Start Testing"
+          echo "Unity Command\n[unity-editor -projectPath $TempUnityProjectName -logfile $logPath -batchmode -nographics -quit -buildTarget ${{ matrix.build-target }}]"
+
+          unity-editor -projectPath $TempUnityProjectName -logfile $logPath -batchmode -nographics -quit -buildTarget ${{ matrix.build-target }}
+
+          echo "---------------------------------------------"
+          echo "::group::Unity Unit tests Results"
+          if (Test-Path $testsLogPath) {
+            echo "Test Run results for ${GITHUB_REPOSITORY} Branch ${GITHUB_REF}"
+            echo ""
+            Select-Xml -Path $testsLogPath -XPath '/test-run/test-suite' | ForEach-Object { "Name: " +$_.Node.name, ", Result: " + $_.Node.result, ", Total Tests: " + $_.Node.total, ", Passed: " + $_.Node.passed, ", Failed: " + $_.Node.failed, ", Skipped: " + $_.Node.skipped }
+          }
+          else {
+            echo "No test results found for ${GITHUB_REPOSITORY} Branch ${GITHUB_REF} at $testsLogPath"
+            echo ""
+          }
+          echo "::endgroup::"
+
+          if($LASTEXITCODE -ne '0'){
+          echo "::group::Unity Unit tests errors"
+            $exitCode = $testResult.ExitCode
+            Get-Content $logPath
+            echo "Build failed due to errors ($LASTEXITCODE), please check the log at $logPath"
+          echo "::endgroup::"
+
+            exit $LASTEXITCODE
+          }
+          echo "::endgroup::"
+
+        shell: pwsh
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: unity-build-log
+          path: Logs/**        

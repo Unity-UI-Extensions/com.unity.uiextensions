@@ -1,10 +1,12 @@
 /// Credit Ges
 /// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/page-3#post-2280109
 
+using System;
 using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
+    [Obsolete("TileSizeFitter will be deprecated in next version as Unity has disabled this feature")]
     [ExecuteInEditMode]
     [RequireComponent(typeof(RectTransform))]
     [AddComponentMenu("Layout/Extensions/Tile Size Fitter")]

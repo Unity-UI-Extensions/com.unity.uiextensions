@@ -1,4 +1,4 @@
-name: Build and test UPM packages for platforms
+name: Build and test UPM packages for platforms on all available Unity Versions
 
 on:
   pull_request:
@@ -14,27 +14,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Check Unity version requird by the package
-  validate-environment:
-    name: Get Unity Version from UPM package
-    uses: Unity-UI-Extensions/reusableworkflows/.github/workflows/getunityversionfrompackage.yml@main
-    with:
-      build-target: self-hosted
-
-  # Check Unity Hub and Editor Environment
-  Setup-Unity:
-    name: Validate Unity Install
-    needs: validate-environment
-    uses: Unity-UI-Extensions/reusableworkflows/.github/workflows/validateunityinstall.yml@main
-    with:
-      build-target: self-hosted
-      unityversion: ${{ needs.validate-environment.outputs.unityversion }}
-
-  # Run Unity unit tests defined in the package
-  Run-Unit-Tests:
+  # Run Unity build unit tests defined in the package for a single version for feature branches
+  Run-Partial-Unit-Tests:
     name: Run Unity Unit Tests
-    needs: Setup-Unity
-    uses: Unity-UI-Extensions/reusableworkflows/.github/workflows/rununityunittests.yml@main
+    if: github.ref != 'refs/heads/development'
+    uses: ./.github/workflows/rununitysinglebuild.yml    
     with:
-      build-target: self-hosted
-      unityversion: ${{ needs.Setup-Unity.outputs.unityeditorversion }}
+      unityversion: 2020.3
+
+  # Run Unity multi-version build unit tests defined in the package for the development branch
+  Run-Full-Unit-Tests:
+    name: Run Unity Unit Tests
+    if: github.ref == 'refs/heads/development'
+    uses: ./.github/workflows/rununitybuildmultiversion.yml
+
+  # Update the package release version
+  Update-Version:
+    name: Update Package Version
+    uses: ./.github/workflows/tagrelease.yml
+    with:
+      build-target: windows
+    secrets: inherit      

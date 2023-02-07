@@ -1,33 +1,35 @@
 {
   "name": "com.unity.uiextensions",
   "displayName": "Unity UI Extensions",
-  "version": "2.2.7",
+  "version": "2.3.0",
   "description": "An extension project for the Unity3D UI system, all crafted and contributed by the awesome Unity community",
   "author": "Simon darkside Jackson <@SimonDarksideJ>",
-  "contributors": [{
-  "name": "SimonDarksideJ",
-  "twitter": "@SimonDarksideJ"
-}],
-  "unity": "2019.4",
+  "contributors": [
+    {
+      "name": "SimonDarksideJ",
+      "twitter": "@SimonDarksideJ"
+    }
+  ],
+  "unity": "2020.3",
   "repository": {
-  "type": "git",
-  "url": "git+https://bitbucket.org/UnityUIExtensions/unity-ui-extensions.git"
-},
+    "type": "git",
+    "url": "git+https://github.com/Unity-UI-Extensions/com.unity.uiextensions.git"
+  },
   "bugs": {
-  "url": "https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/issues"
-},
+    "url": "https://github.com/Unity-UI-Extensions/com.unity.uiextensions/issues"
+  },
   "keywords": [
-  "Unity3D",
-  "Unity",
-  "Unity UI",
-  "UI Extensions"
-],
+    "Unity3D",
+    "Unity",
+    "Unity UI",
+    "UI Extensions"
+  ],
   "samples": [
     {
       "displayName": "UI Extensions Samples",
       "description": "Examples and demonstrations of the Unity UI Extensions controls",
       "path": "Examples~"
     }
-], 
+  ],
   "license": "BSD3"
 }

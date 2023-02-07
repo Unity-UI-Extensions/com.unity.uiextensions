@@ -5,7 +5,11 @@ namespace UnityEngine.UI.Extensions
 {
     public class ReorderableListDebug : MonoBehaviour
     {
+#if UNITY_2022_1_OR_NEWER
+        public TMPro.TMP_Text DebugLabel;
+#else
         public Text DebugLabel;
+#endif
 
         void Awake()
         {

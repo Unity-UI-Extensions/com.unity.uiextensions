@@ -12,6 +12,7 @@ namespace UnityEngine.UI.Extensions
     [CanEditMultipleObjects]
     public class RangeSliderEditor : SelectableEditor
     {
+        SerializedProperty m_Direction;
         SerializedProperty m_LowHandleRect;
         SerializedProperty m_HighHandleRect;
         SerializedProperty m_FillRect;
@@ -36,6 +37,7 @@ namespace UnityEngine.UI.Extensions
             m_LowHandleRect = serializedObject.FindProperty("m_LowHandleRect");
             m_HighHandleRect = serializedObject.FindProperty("m_HighHandleRect");
             m_FillRect = serializedObject.FindProperty("m_FillRect");
+            m_Direction = serializedObject.FindProperty("m_Direction");
 
             m_MinValue = serializedObject.FindProperty("m_MinValue");
             m_MaxValue = serializedObject.FindProperty("m_MaxValue");
@@ -66,6 +68,16 @@ namespace UnityEngine.UI.Extensions
             if (m_LowHandleRect.objectReferenceValue != null && m_HighHandleRect.objectReferenceValue != null)
             {
                 EditorGUI.BeginChangeCheck();
+                EditorGUILayout.PropertyField(m_Direction);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    RangeSlider.Direction direction = (RangeSlider.Direction)m_Direction.enumValueIndex;
+                    foreach (var obj in serializedObject.targetObjects)
+                    {
+                        RangeSlider rangeSlider = obj as RangeSlider;
+                        rangeSlider.SetDirection(direction, true);
+                    }
+                }
 
                 EditorGUILayout.PropertyField(m_MinValue);
                 EditorGUILayout.PropertyField(m_MaxValue);
@@ -120,4 +132,3 @@ namespace UnityEngine.UI.Extensions
     }
 
 }
-

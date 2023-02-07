@@ -114,7 +114,13 @@ namespace UnityEngine.UI.Extensions
         /// <param name="WorldPositionStays">Should the world position be updated to it's parent transform?</param>
         public void AddChild(GameObject GO, bool WorldPositionStays)
         {
-            _scroll_rect.verticalNormalizedPosition = 0;
+            try
+            {
+                // Rare instances of Unity bug cause error, adding try to manage it.
+                _scroll_rect.verticalNormalizedPosition = 0;
+            }
+            catch { }
+
             GO.transform.SetParent(_screensContainer, WorldPositionStays);
             InitialiseChildObjectsFromScene();
             DistributePages();
@@ -148,7 +154,12 @@ namespace UnityEngine.UI.Extensions
             {
                 return;
             }
-            _scroll_rect.verticalNormalizedPosition = 0;
+            try
+            {
+                // Rare instances of Unity bug cause error, adding try to manage it.
+                _scroll_rect.verticalNormalizedPosition = 0;
+            }
+            catch { }
 
             Transform child = _screensContainer.transform.GetChild(index);
             child.SetParent(null, WorldPositionStays);

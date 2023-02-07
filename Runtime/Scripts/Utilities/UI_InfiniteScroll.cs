@@ -32,16 +32,12 @@ namespace UnityEngine.UI.Extensions
         private GridLayoutGroup _gridLayoutGroup;
         protected bool _isVertical = false;
         protected bool _isHorizontal = false;
-        private float _disableMarginX = 0;
-        private float _disableMarginY = 0;
         private bool _hasDisabledGridComponents = false;
         protected List<RectTransform> items = new List<RectTransform>();
         private Vector2 _newAnchoredPosition = Vector2.zero;
         //TO DISABLE FLICKERING OBJECT WHEN SCROLL VIEW IS IDLE IN BETWEEN OBJECTS
-        private float _threshold = 100f;
+        private Vector2 _threshold = Vector2.zero;
         private int _itemCount = 0;
-        private float _recordOffsetX = 0;
-        private float _recordOffsetY = 0;
 
         protected virtual void Awake()
         {
@@ -81,6 +77,12 @@ namespace UnityEngine.UI.Extensions
 
         private void SetItems()
         {
+            //Remove Pivots from content as they mess up translation
+            foreach (RectTransform transform in _scrollRect.content.transform)
+            {
+                transform.pivot = Vector3.zero;
+            }
+
             for (int i = 0; i < _scrollRect.content.childCount; i++)
             {
                 items.Add(_scrollRect.content.GetChild(i).GetComponent<RectTransform>());
@@ -116,6 +118,7 @@ namespace UnityEngine.UI.Extensions
 
                 _isHorizontal = _scrollRect.horizontal;
                 _isVertical = _scrollRect.vertical;
+                _threshold = _scrollRect.GetComponent<RectTransform>().sizeDelta * 0.5f;
 
                 if (_isHorizontal && _isVertical)
                 {
@@ -132,25 +135,6 @@ namespace UnityEngine.UI.Extensions
 
         void DisableGridComponents()
         {
-            if (_isVertical)
-            {
-                _recordOffsetY = items[1].GetComponent<RectTransform>().anchoredPosition.y - items[0].GetComponent<RectTransform>().anchoredPosition.y;
-                if (_recordOffsetY < 0)
-                {
-                    _recordOffsetY *= -1;
-                }
-                _disableMarginY = _recordOffsetY * _itemCount / 2;
-            }
-            if (_isHorizontal)
-            {
-                _recordOffsetX = items[1].GetComponent<RectTransform>().anchoredPosition.x - items[0].GetComponent<RectTransform>().anchoredPosition.x;
-                if (_recordOffsetX < 0)
-                {
-                    _recordOffsetX *= -1;
-                }
-                _disableMarginX = _recordOffsetX * _itemCount / 2;
-            }
-
             if (_verticalLayoutGroup)
             {
                 _verticalLayoutGroup.enabled = false;
@@ -175,41 +159,51 @@ namespace UnityEngine.UI.Extensions
             if (!_hasDisabledGridComponents)
                 DisableGridComponents();
 
+            var firstChild = _scrollRect.content.GetChild(0).GetComponent<RectTransform>();
+            var lastChild = _scrollRect.content.GetChild(_itemCount - 1).GetComponent<RectTransform>();
+
             for (int i = 0; i < items.Count; i++)
             {
                 if (_isHorizontal)
                 {
-                    if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).x > _disableMarginX + _threshold)
+                    if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).x > items[i].sizeDelta.x + _threshold.x && items[i] == lastChild)
                     {
+                        //Moving before first child ( slide right)
                         _newAnchoredPosition = items[i].anchoredPosition;
-                        _newAnchoredPosition.x -= _itemCount * _recordOffsetX;
+                        _newAnchoredPosition.x = firstChild.anchoredPosition.x - items[i].sizeDelta.x;
                         items[i].anchoredPosition = _newAnchoredPosition;
-                        _scrollRect.content.GetChild(_itemCount - 1).transform.SetAsFirstSibling();
+                        lastChild.transform.SetAsFirstSibling();
                     }
-                    else if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).x < -_disableMarginX)
+                    else if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).x < -items[i].sizeDelta.x - _threshold.x - 100 && items[i] == firstChild)
                     {
+                        //Moving before first child (slide left)
                         _newAnchoredPosition = items[i].anchoredPosition;
-                        _newAnchoredPosition.x += _itemCount * _recordOffsetX;
+                        _newAnchoredPosition.x = lastChild.anchoredPosition.x + lastChild.sizeDelta.x;
                         items[i].anchoredPosition = _newAnchoredPosition;
-                        _scrollRect.content.GetChild(0).transform.SetAsLastSibling();
+                        firstChild.transform.SetAsLastSibling();
+
                     }
                 }
 
                 if (_isVertical)
                 {
-                    if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).y > _disableMarginY + _threshold)
+                    if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).y > items[i].sizeDelta.y + _threshold.y && items[i] == firstChild)
                     {
+                        //Moving after last child ( slide up)
                         _newAnchoredPosition = items[i].anchoredPosition;
-                        _newAnchoredPosition.y -= _itemCount * _recordOffsetY;
+                        _newAnchoredPosition.y = lastChild.anchoredPosition.y - items[i].sizeDelta.y;
+
                         items[i].anchoredPosition = _newAnchoredPosition;
-                        _scrollRect.content.GetChild(_itemCount - 1).transform.SetAsFirstSibling();
+                        firstChild.transform.SetAsLastSibling();
                     }
-                    else if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).y < -_disableMarginY)
+                    else if (_scrollRect.transform.InverseTransformPoint(items[i].gameObject.transform.position).y < -items[i].sizeDelta.y - _threshold.y - 100 && items[i] == lastChild)
                     {
+                        //Moving before first child (slidw down)
                         _newAnchoredPosition = items[i].anchoredPosition;
-                        _newAnchoredPosition.y += _itemCount * _recordOffsetY;
+                        _newAnchoredPosition.y = firstChild.anchoredPosition.y + firstChild.sizeDelta.y;
+
                         items[i].anchoredPosition = _newAnchoredPosition;
-                        _scrollRect.content.GetChild(0).transform.SetAsLastSibling();
+                        lastChild.transform.SetAsFirstSibling();
                     }
                 }
             }

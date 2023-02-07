@@ -1,10 +1,9 @@
 ﻿/// Credit Febo Zodiaco
 /// Sourced from - https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/issues/349/magnticinfinitescroll
-/// 
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
@@ -13,7 +12,7 @@ namespace UnityEngine.UI.Extensions
     [RequireComponent(typeof(ScrollRect))]
     public class UI_MagneticInfiniteScroll : UI_InfiniteScroll, IDragHandler, IEndDragHandler, IScrollHandler
     {
-        public event Action<GameObject> OnNewSelect;
+        public event UnityAction<GameObject> OnNewSelect;
 
         [Tooltip("The pointer to the pivot, the visual element for centering objects.")]
         [SerializeField]

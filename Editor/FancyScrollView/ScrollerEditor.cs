@@ -4,8 +4,6 @@
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 
-// For maintenance, every new [SerializeField] variable in Scroller must be declared here
-
 namespace UnityEngine.UI.Extensions
 {
     [CustomEditor(typeof(Scroller))]
@@ -20,16 +18,11 @@ namespace UnityEngine.UI.Extensions
         SerializedProperty inertia;
         SerializedProperty decelerationRate;
         SerializedProperty snap;
-        SerializedProperty snapEnable;
-        SerializedProperty snapVelocityThreshold;
-        SerializedProperty snapDuration;
-        SerializedProperty snapEasing;
         SerializedProperty draggable;
         SerializedProperty scrollbar;
 
         AnimBool showElasticity;
         AnimBool showInertiaRelatedValues;
-        AnimBool showSnapEnableRelatedValues;
 
         void OnEnable()
         {
@@ -41,16 +34,11 @@ namespace UnityEngine.UI.Extensions
             inertia = serializedObject.FindProperty("inertia");
             decelerationRate = serializedObject.FindProperty("decelerationRate");
             snap = serializedObject.FindProperty("snap");
-            snapEnable = serializedObject.FindProperty("snap.Enable");
-            snapVelocityThreshold = serializedObject.FindProperty("snap.VelocityThreshold");
-            snapDuration = serializedObject.FindProperty("snap.Duration");
-            snapEasing = serializedObject.FindProperty("snap.Easing");
             draggable = serializedObject.FindProperty("draggable");
             scrollbar = serializedObject.FindProperty("scrollbar");
 
             showElasticity = new AnimBool(Repaint);
             showInertiaRelatedValues = new AnimBool(Repaint);
-            showSnapEnableRelatedValues = new AnimBool(Repaint);
             SetAnimBools(true);
         }
 
@@ -58,14 +46,12 @@ namespace UnityEngine.UI.Extensions
         {
             showElasticity.valueChanged.RemoveListener(Repaint);
             showInertiaRelatedValues.valueChanged.RemoveListener(Repaint);
-            showSnapEnableRelatedValues.valueChanged.RemoveListener(Repaint);
         }
 
         void SetAnimBools(bool instant)
         {
             SetAnimBool(showElasticity, !movementType.hasMultipleDifferentValues && movementType.enumValueIndex == (int)MovementType.Elastic, instant);
             SetAnimBool(showInertiaRelatedValues, !inertia.hasMultipleDifferentValues && inertia.boolValue, instant);
-            SetAnimBool(showSnapEnableRelatedValues, !snapEnable.hasMultipleDifferentValues && snapEnable.boolValue, instant);
         }
 
         void SetAnimBool(AnimBool a, bool value, bool instant)
@@ -126,31 +112,6 @@ namespace UnityEngine.UI.Extensions
                 {
                     EditorGUILayout.PropertyField(decelerationRate);
                     EditorGUILayout.PropertyField(snap);
-
-                    using (new EditorGUI.IndentLevelScope())
-                    {
-                        DrawSnapRelatedValues();
-                    }
-                }
-            }
-        }
-
-        void DrawSnapRelatedValues()
-        {
-            if (snap.isExpanded)
-            {
-                EditorGUILayout.PropertyField(snapEnable);
-
-                using (var group = new EditorGUILayout.FadeGroupScope(showSnapEnableRelatedValues.faded))
-                {
-                    if (!group.visible)
-                    {
-                        return;
-                    }
-
-                    EditorGUILayout.PropertyField(snapVelocityThreshold);
-                    EditorGUILayout.PropertyField(snapDuration);
-                    EditorGUILayout.PropertyField(snapEasing);
                 }
             }
         }

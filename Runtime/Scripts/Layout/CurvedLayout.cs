@@ -29,6 +29,13 @@ namespace UnityEngine.UI.Extensions
         public float centerpoint = 0.5f;
 
         protected override void OnEnable() { base.OnEnable(); CalculateRadial(); }
+
+        protected override void OnDisable()
+        {
+            m_Tracker.Clear();
+            LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+        }
+
         public override void SetLayoutHorizontal() {
         }
         public override void SetLayoutVertical() {

@@ -101,7 +101,7 @@ namespace UnityEngine.UI.Extensions
         /// <param name="p"><see cref="Scroller"/> のスクロール位置.</param>
         void OnScrollerValueChanged(float p)
         {
-            base.UpdatePosition(Scrollable ? ToFancyScrollViewPosition(p) : 0f);
+            base.UpdatePosition(ToFancyScrollViewPosition(Scrollable ? p : 0f));
 
             if (Scroller.Scrollbar)
             {
@@ -161,8 +161,6 @@ namespace UnityEngine.UI.Extensions
         /// <inheritdoc/>
         protected override void UpdateContents(IList<TItemData> items)
         {
-            Debug.Assert(Context.CalculateScrollSize != null);
-
             AdjustCellIntervalAndScrollOffset();
             base.UpdateContents(items);
 

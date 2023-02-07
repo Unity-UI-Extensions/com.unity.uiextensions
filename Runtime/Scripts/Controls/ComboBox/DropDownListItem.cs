@@ -2,6 +2,7 @@
 ///Sourced from - http://forum.unity3d.com/threads/receive-onclick-event-and-pass-it-on-to-lower-ui-elements.293642/
 
 using System;
+using UnityEngine.Events;
 
 namespace UnityEngine.UI.Extensions
 {
@@ -76,9 +77,9 @@ namespace UnityEngine.UI.Extensions
             set { _id = value; }
         }
 
-        public Action OnSelect = null; //action to be called when this item is selected
+        public UnityAction OnSelect = null; //action to be called when this item is selected
 
-        internal Action OnUpdate = null; //action to be called when something changes.  
+        internal UnityAction OnUpdate = null; //action to be called when something changes.  
 
         /// <summary>
         /// Constructor for Drop Down List panelItems
@@ -87,8 +88,8 @@ namespace UnityEngine.UI.Extensions
         /// <param name="val">ID of the item </param>
         /// <param name="image"></param>
         /// <param name="disabled">Should the item start disabled</param>
-        /// <param name="onSelect">Action to be called when this item is selected</param>
-        public DropDownListItem(string caption = "", string inId = "", Sprite image = null, bool disabled = false, Action onSelect = null)
+        /// <param name="onSelect">UnityAction to be called when this item is selected</param>
+        public DropDownListItem(string caption = "", string inId = "", Sprite image = null, bool disabled = false, UnityAction onSelect = null)
         {
             _caption = caption;
             _image = image;

@@ -3,7 +3,12 @@
 
 namespace UnityEngine.UI.Extensions
 {
-    [RequireComponent(typeof(Text), typeof(RectTransform))]
+#if UNITY_2022_1_OR_NEWER
+    [RequireComponent(typeof(TMPro.TMP_Text))]
+#else
+    [RequireComponent(typeof(Text))]
+#endif
+    [RequireComponent(typeof(RectTransform))]
     [AddComponentMenu("UI/Effects/Extensions/Curved Text")]
     public class CurvedText : BaseMeshEffect
     {

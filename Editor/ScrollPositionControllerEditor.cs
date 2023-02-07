@@ -3,10 +3,12 @@
 
 // For maintenance, every new [SerializeField] variable in ScrollPositionController must be declared here
 
+using System;
 using UnityEditor;
 
 namespace UnityEngine.UI.Extensions
 {
+    [Obsolete("ScrollPositionController has been replaced by the Scroller component", true)]
     [CustomEditor(typeof(ScrollPositionController))]
     [CanEditMultipleObjects]
     public class ScrollPositionControllerEditor : Editor

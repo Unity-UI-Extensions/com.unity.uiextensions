@@ -43,6 +43,22 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        public ParticleSystem.Particle[] Particles
+        {
+            get
+            {
+                if (particles == null)
+                {
+#if UNITY_5_5_OR_NEWER
+                    particles = new ParticleSystem.Particle[pSystem.main.maxParticles];
+#else
+                    particles = new ParticleSystem.Particle[pSystem.maxParticles];
+#endif
+                }
+                return particles;
+            }
+        }
+
         protected bool Initialize()
         {
             // initialize members
@@ -66,8 +82,10 @@ namespace UnityEngine.UI.Extensions
                     mainModule.maxParticles = 14000;
                 }
 #else
-                    if (pSystem.maxParticles > 14000)
-                        pSystem.maxParticles = 14000;
+                if (pSystem.maxParticles > 14000)
+                {
+                    pSystem.maxParticles = 14000;
+                }
 #endif
 
                 pRenderer = pSystem.GetComponent<ParticleSystemRenderer>();
@@ -95,18 +113,9 @@ namespace UnityEngine.UI.Extensions
 #if UNITY_5_5_OR_NEWER
                 mainModule.scalingMode = ParticleSystemScalingMode.Hierarchy;
 #else
-                    pSystem.scalingMode = ParticleSystemScalingMode.Hierarchy;
+                pSystem.scalingMode = ParticleSystemScalingMode.Hierarchy;
 #endif
-
-                particles = null;
             }
-#if UNITY_5_5_OR_NEWER
-            if (particles == null)
-                particles = new ParticleSystem.Particle[pSystem.main.maxParticles];
-#else
-                if (particles == null)
-                    particles = new ParticleSystem.Particle[pSystem.maxParticles];
-#endif
 
             imageUV = new Vector4(0, 0, 1, 1);
 
@@ -127,7 +136,9 @@ namespace UnityEngine.UI.Extensions
         {
             base.Awake();
             if (!Initialize())
+            {
                 enabled = false;
+            }
         }
 
 
@@ -160,17 +171,17 @@ namespace UnityEngine.UI.Extensions
             Vector2 corner1 = Vector2.zero;
             Vector2 corner2 = Vector2.zero;
             // iterate through current particles
-            int count = pSystem.GetParticles(particles);
+            int count = pSystem.GetParticles(Particles);
 
             for (int i = 0; i < count; ++i)
             {
-                ParticleSystem.Particle particle = particles[i];
+                ParticleSystem.Particle particle = Particles[i];
 
                 // get particle properties
 #if UNITY_5_5_OR_NEWER
                 Vector2 position = (mainModule.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
 #else
-                    Vector2 position = (pSystem.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
+                Vector2 position = (pSystem.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
 #endif
                 float rotation = -particle.rotation * Mathf.Deg2Rad;
                 float rotation90 = rotation + Mathf.PI / 2;
@@ -182,8 +193,8 @@ namespace UnityEngine.UI.Extensions
                 if (mainModule.scalingMode == ParticleSystemScalingMode.Shape)
                     position /= canvas.scaleFactor;
 #else
-                    if (pSystem.scalingMode == ParticleSystemScalingMode.Shape)
-                        position /= canvas.scaleFactor;
+                if (pSystem.scalingMode == ParticleSystemScalingMode.Shape)
+                    position /= canvas.scaleFactor;
 #endif
 
                 // apply texture sheet animation
@@ -223,7 +234,7 @@ namespace UnityEngine.UI.Extensions
                             frame = Mathf.FloorToInt(frameProgress * textureSheetAnimation.numTilesX);
 
                             int row = textureSheetAnimation.rowIndex;
-#if UNITY_2020 || UNITY_2019
+#if UNITY_2019_1_OR_NEWER
                             if (textureSheetAnimation.rowMode == ParticleSystemAnimationRowMode.Random)
 #else
                             if (textureSheetAnimation.useRandomRow)
@@ -378,8 +389,7 @@ namespace UnityEngine.UI.Extensions
                     }
                 }
             }
-            if (material == currentMaterial)
-                return;
+            if (material == currentMaterial) { return; }
             pSystem = null;
             Initialize();
         }
@@ -388,6 +398,7 @@ namespace UnityEngine.UI.Extensions
         {
             currentMaterial = null;
             currentTexture = null;
+            base.OnDestroy();
         }
 
         public void StartParticleEmission()
@@ -407,4 +418,4 @@ namespace UnityEngine.UI.Extensions
         }
     }
 #endif
-                    }
+}

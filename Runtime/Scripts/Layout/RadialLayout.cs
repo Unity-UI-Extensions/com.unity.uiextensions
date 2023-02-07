@@ -55,6 +55,13 @@ namespace UnityEngine.UI.Extensions
             CalculateRadial();
         }
 #endif
+
+        protected override void OnDisable()
+        {
+            m_Tracker.Clear(); // key change - do not restore - false
+            LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+        }
+
         void CalculateRadial()
         {
             m_Tracker.Clear();
