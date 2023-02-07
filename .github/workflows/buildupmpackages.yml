@@ -14,9 +14,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Run Unity multi-version build unit tests defined in the package
-  Run-Unit-Tests:
+  # Run Unity build unit tests defined in the package for a single version for feature branches
+  Run-Partial-Unit-Tests:
     name: Run Unity Unit Tests
+    if: github.ref != 'refs/heads/development'
+    uses: ./.github/workflows/rununitysinglebuild.yml    
+    with:
+      unityversion: 2020.3
+
+  # Run Unity multi-version build unit tests defined in the package for the development branch
+  Run-Full-Unit-Tests:
+    name: Run Unity Unit Tests
+    if: github.ref == 'refs/heads/development'
     uses: ./.github/workflows/rununitybuildmultiversion.yml
 
   # Update the package release version

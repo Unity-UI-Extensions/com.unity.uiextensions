@@ -141,5 +141,6 @@ jobs:
           echo "packageversion=$result" >> $env:GITHUB_OUTPUT
           git add "$packageFile"
           git commit -m "Auto increment pre-release version to $result [skip ci]"
+          git tag -fa "$result" "${GITHUB_SHA}" -m "$result Release"
           git push origin --force
-        shell: pwsh
+        shell: pwsh   
