@@ -5,7 +5,6 @@
 using System;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.UI.Extensions;
 
 namespace UnityEngine.UI.Extensions
 {
@@ -14,9 +13,7 @@ namespace UnityEngine.UI.Extensions
         internal Rect panelDimensions;
         internal RectTransform _screensContainer;
         internal bool _isVertical;
-
         internal int _screens = 1;
-
         internal float _scrollStartPosition;
         internal float _childSize;
         private float _childPos, _maskSize;
@@ -27,7 +24,6 @@ namespace UnityEngine.UI.Extensions
         internal bool _pointerDown = false;
         internal bool _settled = true;
         internal Vector3 _startPosition = new Vector3();
-        [Tooltip("The currently active page")]
         internal int _currentPage;
         internal int _previousPage;
         internal int _halfNoVisibleItems;
@@ -37,7 +33,7 @@ namespace UnityEngine.UI.Extensions
         private int _bottomItem, _topItem;
         internal bool _startEventCalled = false;
         internal bool _endEventCalled = false;
-        internal bool _suspendEvents = false; 
+        internal bool _suspendEvents = false;
 
         [Serializable]
         public class SelectionChangeStartEvent : UnityEvent { }
@@ -68,25 +64,25 @@ namespace UnityEngine.UI.Extensions
         public float transitionSpeed = 7.5f;
 
         [Tooltip("Hard Swipe forces to swiping to the next / previous page (optional)")]
-        public Boolean UseHardSwipe = false;
+        public bool UseHardSwipe = false;
 
         [Tooltip("Fast Swipe makes swiping page next / previous (optional)")]
-        public Boolean UseFastSwipe = false;
-        
+        public bool UseFastSwipe = false;
+
         [Tooltip("Swipe Delta Threshold looks at the speed of input to decide if a swipe will be initiated (optional)")]
-        public Boolean UseSwipeDeltaThreshold = false;
+        public bool UseSwipeDeltaThreshold = false;
 
         [Tooltip("Offset for how far a swipe has to travel to initiate a page change (optional)")]
         public int FastSwipeThreshold = 100;
 
         [Tooltip("Speed at which the ScrollRect will keep scrolling before slowing down and stopping (optional)")]
         public int SwipeVelocityThreshold = 100;
-        
+
         [Tooltip("Threshold for swipe speed to initiate a swipe, below threshold will return to closest page (optional)")]
         public float SwipeDeltaThreshold = 5.0f;
 
-	    [Tooltip("Use time scale instead of unscaled time (optional)")]
-	    public Boolean UseTimeScale = true;
+        [Tooltip("Use time scale instead of unscaled time (optional)")]
+        public bool UseTimeScale = true;
 
         [Tooltip("The visible bounds area, controls which items are visible/enabled. *Note Should use a RectMask. (optional)")]
         public RectTransform MaskArea;
@@ -168,7 +164,6 @@ namespace UnityEngine.UI.Extensions
         private SelectionChangeEndEvent m_OnSelectionChangeEndEvent = new SelectionChangeEndEvent();
         public SelectionChangeEndEvent OnSelectionChangeEndEvent { get { return m_OnSelectionChangeEndEvent; } set { m_OnSelectionChangeEndEvent = value; } }
 
-        // Use this for initialization
         void Awake()
         {
             if (_scroll_rect == null)
@@ -186,7 +181,7 @@ namespace UnityEngine.UI.Extensions
                 vscroll.ss = this;
             }
             panelDimensions = gameObject.GetComponent<RectTransform>().rect;
-            
+
             if (StartingScreen < 0)
             {
                 StartingScreen = 0;
@@ -315,8 +310,6 @@ namespace UnityEngine.UI.Extensions
         //Function for switching screens with buttons
         public void NextScreen()
         {
-            _scroll_rect.velocity = Vector2.zero;
-
             if (_currentPage < _screens - 1 || _isInfinite)
             {
                 if (!_lerp) StartScreenChange();
@@ -339,8 +332,6 @@ namespace UnityEngine.UI.Extensions
         //Function for switching screens with buttons
         public void PreviousScreen()
         {
-            _scroll_rect.velocity = Vector2.zero;
-
             if (_currentPage > 0 || _isInfinite)
             {
                 if (!_lerp) StartScreenChange();
@@ -419,7 +410,7 @@ namespace UnityEngine.UI.Extensions
             else
             {
                 _infiniteOffset = _screensContainer.anchoredPosition.x < 0 ? -_screensContainer.sizeDelta.x * _infiniteWindow : _screensContainer.sizeDelta.x * _infiniteWindow;
-                _infiniteOffset = _infiniteOffset == 0 ? 0 : _infiniteOffset < 0 ? _infiniteOffset - _childSize * _infiniteWindow : _infiniteOffset + _childSize * _infiniteWindow; 
+                _infiniteOffset = _infiniteOffset == 0 ? 0 : _infiniteOffset < 0 ? _infiniteOffset - _childSize * _infiniteWindow : _infiniteOffset + _childSize * _infiniteWindow;
                 target.x = _childPos + _scrollStartPosition + _infiniteOffset;
             }
         }
@@ -520,8 +511,15 @@ namespace UnityEngine.UI.Extensions
                 MaskBuffer = 1;
             }
 
-            PageStep.Clamp(0, 9);
+            if (PageStep < 0)
+            {
+                PageStep = 0;
+            }
 
+            if (PageStep > 8)
+            {
+                PageStep = 9;
+            }
             var infiniteScroll = GetComponent<UI_InfiniteScroll>();
             if (ChildObjects != null && ChildObjects.Length > 0 && infiniteScroll != null && !infiniteScroll.InitByUser)
             {

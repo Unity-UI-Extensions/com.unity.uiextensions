@@ -81,8 +81,12 @@ namespace UnityEngine.UI.Extensions
             List<UIVertex> verts = new List<UIVertex>();
             vh.GetUIVertexStream(verts);
 
-            Text text = GetComponent<Text>();
-			if (text == null)
+#if UNITY_2022_1_OR_NEWER
+            var text = GetComponent<TMPro.TMP_Text>();
+#else
+            var text = GetComponent<Text>();
+#endif
+            if (text == null)
 			{
 				Debug.LogWarning("LetterSpacing: Missing Text component");
 				return;
@@ -93,29 +97,52 @@ namespace UnityEngine.UI.Extensions
 			float    letterOffset    = spacing * (float)text.fontSize / 100f;
 			float    alignmentFactor = 0;
 			int      glyphIdx        = 0;
-			
-			switch (text.alignment)
-			{
-			case TextAnchor.LowerLeft:
-			case TextAnchor.MiddleLeft:
-			case TextAnchor.UpperLeft:
-				alignmentFactor = 0f;
-				break;
-				
-			case TextAnchor.LowerCenter:
-			case TextAnchor.MiddleCenter:
-			case TextAnchor.UpperCenter:
-				alignmentFactor = 0.5f;
-				break;
-				
-			case TextAnchor.LowerRight:
-			case TextAnchor.MiddleRight:
-			case TextAnchor.UpperRight:
-				alignmentFactor = 1f;
-				break;
-			}
-			
-			for (int lineIdx=0; lineIdx < lines.Length; lineIdx++)
+
+#if UNITY_2022_1_OR_NEWER
+            switch (text.alignment)
+            {
+                case TMPro.TextAlignmentOptions.BottomLeft:
+                case TMPro.TextAlignmentOptions.MidlineLeft:
+                case TMPro.TextAlignmentOptions.TopLeft:
+                    alignmentFactor = 0f;
+                    break;
+
+                case TMPro.TextAlignmentOptions.BottomJustified:
+                case TMPro.TextAlignmentOptions.MidlineJustified:
+                case TMPro.TextAlignmentOptions.TopJustified:
+                    alignmentFactor = 0.5f;
+                    break;
+
+                case TMPro.TextAlignmentOptions.BottomRight:
+                case TMPro.TextAlignmentOptions.MidlineRight:
+                case TMPro.TextAlignmentOptions.TopRight:
+                    alignmentFactor = 1f;
+                    break;
+            }
+#else
+            switch (text.alignment)
+            {
+                case TextAnchor.LowerLeft:
+                case TextAnchor.MiddleLeft:
+                case TextAnchor.UpperLeft:
+                    alignmentFactor = 0f;
+                    break;
+
+                case TextAnchor.LowerCenter:
+                case TextAnchor.MiddleCenter:
+                case TextAnchor.UpperCenter:
+                    alignmentFactor = 0.5f;
+                    break;
+
+                case TextAnchor.LowerRight:
+                case TextAnchor.MiddleRight:
+                case TextAnchor.UpperRight:
+                    alignmentFactor = 1f;
+                    break;
+            }
+#endif
+
+            for (int lineIdx=0; lineIdx < lines.Length; lineIdx++)
 			{
 				string line = lines[lineIdx];
 				float lineOffset = (line.Length -1) * letterOffset * alignmentFactor;

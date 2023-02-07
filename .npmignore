@@ -35,6 +35,4 @@ sysinfo.txt
 /.vs
 *.gitmodules
 
-# NPM publish exclusions
-bitbucket-pipelines.yml
-bitbucket-pipelines.yml.meta
+**/.github/*

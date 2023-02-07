@@ -166,7 +166,6 @@ namespace UnityEngine.UI.Extensions
 					childSize = LayoutUtility.GetPreferredSize (child, 0);
 					childSize = Mathf.Min (childSize, workingSize);
 					childOtherSize = LayoutUtility.GetPreferredSize (child, 1);
-					childOtherSize = Mathf.Min (childOtherSize, workingSize);
 				} else if (startAxis == Axis.Vertical) {
 					if (invertOrder) {
 						index = IsRightAlign ? rectChildren.Count - 1 - i : i;
@@ -175,7 +174,6 @@ namespace UnityEngine.UI.Extensions
 					childSize = LayoutUtility.GetPreferredSize (child, 1);
 					childSize = Mathf.Min (childSize, workingSize);
 					childOtherSize = LayoutUtility.GetPreferredSize (child, 0);
-					childOtherSize = Mathf.Min (childOtherSize, workingSize);
 				}
 
 				// If adding this element would exceed the bounds of the container,
@@ -227,11 +225,11 @@ namespace UnityEngine.UI.Extensions
 				if (startAxis == Axis.Horizontal) {
 					float newOffset = CalculateRowVerticalOffset (groupHeight, offset, currentBarSpace);
 					currentBarSize -= spacingBetweenElements;
-					LayoutRow (_itemList, currentBarSize, currentBarSpace, workingSize - (ChildForceExpandWidth ? 0 : spacingBetweenElements), padding.left, newOffset, axis);
+					LayoutRow (_itemList, currentBarSize, currentBarSpace, workingSize, padding.left, newOffset, axis);
 				}else if (startAxis == Axis.Vertical) {
 					float newOffset = CalculateColHorizontalOffset(groupWidth, offset, currentBarSpace);
 					currentBarSize -= spacingBetweenElements;
-					LayoutCol(_itemList, currentBarSpace, currentBarSize, workingSize - (ChildForceExpandHeight ? 0 : spacingBetweenElements), newOffset, padding.top, axis);
+					LayoutCol(_itemList, currentBarSpace, currentBarSize, workingSize, newOffset, padding.top, axis);
 				}
 			}
 
@@ -424,5 +422,13 @@ namespace UnityEngine.UI.Extensions
 			}
 			return max;
 		}
-	}
+
+        protected override void OnDisable()
+        {
+            m_Tracker.Clear();
+            LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+        }
+
+
+    }
 }

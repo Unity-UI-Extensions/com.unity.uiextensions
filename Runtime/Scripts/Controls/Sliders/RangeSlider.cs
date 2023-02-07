@@ -9,9 +9,9 @@ using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
 {
-    [AddComponentMenu("UI/Extensions/Range Slider", 34)]
     [ExecuteInEditMode]
     [RequireComponent(typeof(RectTransform))]
+    [AddComponentMenu("UI/Extensions/Sliders/Range Slider", 34)]
     public class RangeSlider : Selectable, IDragHandler, IInitializePotentialDragHandler, ICanvasElement
     {
         public enum Direction

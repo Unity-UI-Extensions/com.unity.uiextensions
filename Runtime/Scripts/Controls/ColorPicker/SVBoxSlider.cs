@@ -52,7 +52,9 @@ namespace UnityEngine.UI.Extensions.ColorPicker
         private void OnDestroy()
         {
             if (image.texture != null)
+            {
                 DestroyImmediate(image.texture);
+            }
         }
 
 #if UNITY_EDITOR

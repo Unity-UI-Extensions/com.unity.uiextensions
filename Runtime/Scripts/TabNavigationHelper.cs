@@ -6,6 +6,7 @@
 ///                        - autoselect "firstSelectedGameObject" since it doesn't seem to work automatically
 /// Updated 08-29-15 - On request of Issue #13 on repo, added a manual navigation order.
 
+using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
@@ -16,14 +17,18 @@ namespace UnityEngine.UI.Extensions
     public class TabNavigationHelper : MonoBehaviour
     {
         private EventSystem _system;
-        private Selectable StartingObject;
-        private Selectable LastObject;
+        private Selectable startingObject;
+        private Selectable lastObject;
+
         [Tooltip("The path to take when user is tabbing through ui components.")]
         public Selectable[] NavigationPath;
+
         [Tooltip("Use the default Unity navigation system or a manual fixed order using Navigation Path")]
         public NavigationMode NavigationMode;
+
         [Tooltip("If True, this will loop the tab order from last to first automatically")]
         public bool CircularNavigation;
+        
 
         void Start()
         {
@@ -34,24 +39,35 @@ namespace UnityEngine.UI.Extensions
             }
             if (NavigationMode == NavigationMode.Manual && NavigationPath.Length > 0)
             {
-                StartingObject = NavigationPath[0].gameObject.GetComponent<Selectable>();
+                startingObject = NavigationPath[0].gameObject.GetComponent<Selectable>();
             }
-            if (StartingObject == null && CircularNavigation)
+            if (startingObject == null && CircularNavigation)
             {
-                SelectDefaultObject(out StartingObject); 
+                SelectDefaultObject(out startingObject); 
             }
         }
 
         public void Update()
         {
             Selectable next = null;
-            if (LastObject == null && _system.currentSelectedGameObject != null)
+            if (lastObject == null && _system.currentSelectedGameObject != null)
             {
+                var startingPoint = _system.currentSelectedGameObject.GetComponent<Selectable>();
+                var selectableItems = new Stack<Selectable>();
+                selectableItems.Push(startingPoint);
+
                 //Find the last selectable object
-                next = _system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnDown();
+                next = startingPoint.FindSelectableOnDown();
                 while (next != null)
                 {
-                    LastObject = next;
+                    if (selectableItems.Contains(next))
+                    {
+                        lastObject = selectableItems.Pop();
+                        selectableItems.Clear();
+                        break;
+                    }
+                    lastObject = next;
+                    selectableItems.Push(next);
                     next = next.FindSelectableOnDown();
                 }
             }
@@ -76,7 +92,7 @@ namespace UnityEngine.UI.Extensions
                         next = _system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnUp();
                         if (next == null && CircularNavigation)
                         {
-                            next = LastObject;
+                            next = lastObject;
                         }
                     }
                     else
@@ -105,7 +121,7 @@ namespace UnityEngine.UI.Extensions
                         next = _system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnDown();
                         if (next == null && CircularNavigation)
                         {
-                            next = StartingObject;
+                            next = startingObject;
                         }
                     }
                     else
@@ -119,9 +135,9 @@ namespace UnityEngine.UI.Extensions
                 SelectDefaultObject(out next);
             }
 
-            if (CircularNavigation && StartingObject == null)
+            if (CircularNavigation && startingObject == null)
             {
-                StartingObject = next;
+                startingObject = next;
             }
             selectGameObject(next);
         }

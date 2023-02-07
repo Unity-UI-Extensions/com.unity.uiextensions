@@ -1,9 +1,12 @@
 {
     "name": "UnityUIExtensions.editor",
+    "rootNamespace": "",
     "references": [
         "GUID:343deaaf83e0cee4ca978e7df0b80d21",
         "GUID:2bafac87e7f4b9b418d9448d219b01ab",
-        "GUID:cf414061cae3a954baf92763590f3127"
+        "GUID:cf414061cae3a954baf92763590f3127",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
     ],
     "includePlatforms": [
         "Editor"
@@ -14,5 +17,6 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": []
+    "versionDefines": [],
+    "noEngineReferences": false
 }

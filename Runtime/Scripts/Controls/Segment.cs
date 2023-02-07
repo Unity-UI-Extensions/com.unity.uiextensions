@@ -1,9 +1,7 @@
 /// Credit David Gileadi
 /// Sourced from - https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/pull-requests/12
 
-using System;
 using System.Collections;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI.Extensions
@@ -205,7 +203,11 @@ namespace UnityEngine.UI.Extensions
 
         void ChangeTextColor(Color targetColor)
         {
+#if UNITY_2022_1_OR_NEWER
+            var text = GetComponentInChildren<TMPro.TMP_Text>();
+#else
             var text = GetComponentInChildren<Text>();
+#endif
             if (!text)
                 return;
 

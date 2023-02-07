@@ -1,6 +1,7 @@
 ﻿/// Credit Titinious (https://github.com/Titinious)
 /// Sourced from - https://github.com/Titinious/CurlyUI
 
+using System.Collections;
 using System.Collections.Generic;
 
 #if UNITY_EDITOR
@@ -284,7 +285,9 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        public void Refresh()
+        public void Refresh() { Invoke(nameof(Refreshx), 0.3f); }
+
+        private void Refreshx()
         {
             ReportSet();
 

@@ -284,5 +284,11 @@ namespace UnityEngine.UI.Extensions
             // Set preferredRowHeights to null to free memory
             preferredRowHeights = null;
         }
+
+        protected override void OnDisable()
+        {
+            m_Tracker.Clear(); // key change - do not restore - false
+            LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+        }
     }
 }

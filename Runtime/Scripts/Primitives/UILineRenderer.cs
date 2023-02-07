@@ -111,10 +111,18 @@ namespace UnityEngine.UI.Extensions
 
 			set
 			{
-				if (m_points == value)
-					return;
-				m_points = value;
-				SetAllDirty();
+				if (m_points == value) return;
+
+				if (value == null || value.Length == 0)
+				{
+					m_points = new Vector2[1];
+				}
+				else
+				{
+                    m_points = value;
+                }
+
+                SetAllDirty();
 			}
 		}
 

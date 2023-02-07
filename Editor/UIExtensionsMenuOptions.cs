@@ -1,15 +1,24 @@
-﻿using UnityEngine;
+﻿#if UNITY_2019_1_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
+#define NEW_INPUT_SYSTEM
+#endif
+
+using TMPro;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
+#if NEW_INPUT_SYSTEM
+using UnityEngine.InputSystem.UI;
+#endif
+
 namespace UnityEditor.UI
 {
-    /// <summary>
-    /// This script adds the Extensions UI menu options to the Unity Editor.
-    /// </summary>
+	/// <summary>
+	/// This script adds the Extensions UI menu options to the Unity Editor.
+	/// </summary>
 
-    static internal class ExtensionMenuOptions
+	static internal class ExtensionMenuOptions
 	{
 		#region Unity Builder section  - Do not change unless UI Source (Editor\MenuOptions) changes
 		#region Unity Builder properties  - Do not change unless UI Source (Editor\MenuOptions) changes
@@ -156,7 +165,11 @@ namespace UnityEditor.UI
 				var eventSystem = new GameObject("EventSystem");
 				GameObjectUtility.SetParentAndAlign(eventSystem, parent);
 				esys = eventSystem.AddComponent<EventSystem>();
+#if NEW_INPUT_SYSTEM
+                eventSystem.AddComponent<InputSystemUIInputModule>();
+#else
 				eventSystem.AddComponent<StandaloneInputModule>();
+#endif
 
 				Undo.RegisterCreatedObjectUndo(eventSystem, "Create " + eventSystem.name);
 			}
@@ -207,7 +220,7 @@ namespace UnityEditor.UI
 		#region UI Extensions "Create" Menu items
 
 		#region Scroll Snap controls
-		[MenuItem("GameObject/UI/Extensions/Horizontal Scroll Snap", false)]
+		[MenuItem("GameObject/UI/Extensions/Layout/Horizontal Scroll Snap", false)]
 		static public void AddHorizontalScrollSnap(MenuCommand menuCommand)
 		{
 			GameObject horizontalScrollSnapRoot = CreateUIElementRoot("Horizontal Scroll Snap", menuCommand, s_ThickGUIElementSize);
@@ -272,7 +285,7 @@ namespace UnityEditor.UI
 			Selection.activeGameObject = horizontalScrollSnapRoot;
 		}
 
-		[MenuItem("GameObject/UI/Extensions/Vertical Scroll Snap", false)]
+		[MenuItem("GameObject/UI/Extensions/Layout/Vertical Scroll Snap", false)]
 		static public void AddVerticallScrollSnap(MenuCommand menuCommand)
 		{
 			GameObject verticalScrollSnapRoot = CreateUIElementRoot("Vertical Scroll Snap", menuCommand, s_ThickGUIElementSize);
@@ -466,119 +479,119 @@ namespace UnityEditor.UI
 		{
 			FixedScrollSnapBase(menuCommand, "Scroll Snap Vertical Multiple", ScrollSnap.ScrollDirection.Vertical, 3, 15, new Vector2(100, 100));
 		}
-        #endregion
+		#endregion
 
-        #region ContentScrollSnapHorizontal
-        [MenuItem("GameObject/UI/Extensions/Content Scroll Snap Horizontal", false)]
-        static public void AddContentScrollSnapHorizontal(MenuCommand menuCommand)
-        {
-            GameObject contentScrollSnapRoot = CreateUIElementRoot("Content Scroll Snap Horizontal", menuCommand, s_ThickGUIElementSize);
+		#region ContentScrollSnapHorizontal
+		[MenuItem("GameObject/UI/Extensions/Layout/Content Scroll Snap Horizontal", false)]
+		static public void AddContentScrollSnapHorizontal(MenuCommand menuCommand)
+		{
+			GameObject contentScrollSnapRoot = CreateUIElementRoot("Content Scroll Snap Horizontal", menuCommand, s_ThickGUIElementSize);
 
-            GameObject childContent = CreateUIObject("Content", contentScrollSnapRoot);
+			GameObject childContent = CreateUIObject("Content", contentScrollSnapRoot);
 
-            GameObject childPage01 = CreateUIObject("Position 1", childContent);
+			GameObject childPage01 = CreateUIObject("Position 1", childContent);
 
-            GameObject childPage02 = CreateUIObject("Position 2", childContent);
+			GameObject childPage02 = CreateUIObject("Position 2", childContent);
 
-            GameObject childPage03 = CreateUIObject("Position 3", childContent);
+			GameObject childPage03 = CreateUIObject("Position 3", childContent);
 
-            GameObject childPage04 = CreateUIObject("Position 4", childContent);
+			GameObject childPage04 = CreateUIObject("Position 4", childContent);
 
-            GameObject childPage05 = CreateUIObject("Position 5", childContent);
+			GameObject childPage05 = CreateUIObject("Position 5", childContent);
 
-            //setup root
-            RectTransform contentScrollSnapRectTransform = ((RectTransform)contentScrollSnapRoot.transform);
-            contentScrollSnapRectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-            contentScrollSnapRectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-            contentScrollSnapRectTransform.anchoredPosition = Vector2.zero;
-            contentScrollSnapRectTransform.sizeDelta = new Vector2(100, 200);
+			//setup root
+			RectTransform contentScrollSnapRectTransform = ((RectTransform)contentScrollSnapRoot.transform);
+			contentScrollSnapRectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+			contentScrollSnapRectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+			contentScrollSnapRectTransform.anchoredPosition = Vector2.zero;
+			contentScrollSnapRectTransform.sizeDelta = new Vector2(100, 200);
 
-            Image image = contentScrollSnapRoot.AddComponent<Image>();
-            image.sprite = null;
-            image.color = new Color(1, 0, 0, .5f);
+			Image image = contentScrollSnapRoot.AddComponent<Image>();
+			image.sprite = null;
+			image.color = new Color(1, 0, 0, .5f);
 
-            ScrollRect sr = contentScrollSnapRoot.AddComponent<ScrollRect>();
-            sr.vertical = false;
-            sr.horizontal = true;
+			ScrollRect sr = contentScrollSnapRoot.AddComponent<ScrollRect>();
+			sr.vertical = false;
+			sr.horizontal = true;
 
-            //setup content container
-            RectTransform contentTransform = ((RectTransform)childContent.transform);
-            contentTransform.anchorMin = new Vector2(.5f, .5f);
-            contentTransform.anchorMax = new Vector2(.5f, .5f);
-            contentTransform.pivot = new Vector2(.5f, .5f);
-            contentTransform.sizeDelta = new Vector2(200, 300);
+			//setup content container
+			RectTransform contentTransform = ((RectTransform)childContent.transform);
+			contentTransform.anchorMin = new Vector2(.5f, .5f);
+			contentTransform.anchorMax = new Vector2(.5f, .5f);
+			contentTransform.pivot = new Vector2(.5f, .5f);
+			contentTransform.sizeDelta = new Vector2(200, 300);
 
-            Image contentImage = childContent.AddComponent<Image>();
-            contentImage.sprite = null;
-            contentImage.color = new Color(0, 0, 1, .5f);
+			Image contentImage = childContent.AddComponent<Image>();
+			contentImage.sprite = null;
+			contentImage.color = new Color(0, 0, 1, .5f);
 
-            sr.content = contentTransform;
+			sr.content = contentTransform;
 
-            //setup child 1
-            RectTransform childPage01Transform = (RectTransform)childPage01.transform;
-            childPage01Transform.anchorMin = new Vector2(0, 1);
-            childPage01Transform.anchorMax = new Vector2(0, 1);
-            childPage01Transform.pivot = new Vector2(0, 1);
-            childPage01Transform.anchoredPosition = new Vector2(0, -125);
+			//setup child 1
+			RectTransform childPage01Transform = (RectTransform)childPage01.transform;
+			childPage01Transform.anchorMin = new Vector2(0, 1);
+			childPage01Transform.anchorMax = new Vector2(0, 1);
+			childPage01Transform.pivot = new Vector2(0, 1);
+			childPage01Transform.anchoredPosition = new Vector2(0, -125);
 
-            Image childPage01Image = childPage01.AddComponent<Image>();
-            childPage01Image.sprite = null;
-            childPage01Image.color = Color.white;
+			Image childPage01Image = childPage01.AddComponent<Image>();
+			childPage01Image.sprite = null;
+			childPage01Image.color = Color.white;
 
-            //setup child 2
-            RectTransform childPage02Transform = (RectTransform)childPage02.transform;
-            childPage02Transform.anchorMin = new Vector2(0, 1);
-            childPage02Transform.anchorMax = new Vector2(0, 1);
-            childPage02Transform.pivot = new Vector2(0, 1);
-            childPage02Transform.anchoredPosition = new Vector2(175, -150);
+			//setup child 2
+			RectTransform childPage02Transform = (RectTransform)childPage02.transform;
+			childPage02Transform.anchorMin = new Vector2(0, 1);
+			childPage02Transform.anchorMax = new Vector2(0, 1);
+			childPage02Transform.pivot = new Vector2(0, 1);
+			childPage02Transform.anchoredPosition = new Vector2(175, -150);
 
-            Image childPage02Image = childPage02.AddComponent<Image>();
-            childPage02Image.sprite = null;
-            childPage02Image.color = Color.white;
+			Image childPage02Image = childPage02.AddComponent<Image>();
+			childPage02Image.sprite = null;
+			childPage02Image.color = Color.white;
 
-            //setup child 3
-            RectTransform childPage03Transform = (RectTransform)childPage03.transform;
-            childPage03Transform.anchorMin = new Vector2(0, 1);
-            childPage03Transform.anchorMax = new Vector2(0, 1);
-            childPage03Transform.pivot = new Vector2(0, 1);
-            childPage03Transform.anchoredPosition = new Vector2(315, -125);
-            childPage03Transform.sizeDelta = new Vector2(50, 100);
+			//setup child 3
+			RectTransform childPage03Transform = (RectTransform)childPage03.transform;
+			childPage03Transform.anchorMin = new Vector2(0, 1);
+			childPage03Transform.anchorMax = new Vector2(0, 1);
+			childPage03Transform.pivot = new Vector2(0, 1);
+			childPage03Transform.anchoredPosition = new Vector2(315, -125);
+			childPage03Transform.sizeDelta = new Vector2(50, 100);
 
-            Image childPage03Image = childPage03.AddComponent<Image>();
-            childPage03Image.sprite = null;
-            childPage03Image.color = Color.white;
+			Image childPage03Image = childPage03.AddComponent<Image>();
+			childPage03Image.sprite = null;
+			childPage03Image.color = Color.white;
 
-            //setup child 4
-            RectTransform childPage04Transform = (RectTransform)childPage04.transform;
-            childPage04Transform.anchorMin = new Vector2(0, 1);
-            childPage04Transform.anchorMax = new Vector2(0, 1);
-            childPage04Transform.pivot = new Vector2(0, 1);
-            childPage04Transform.anchoredPosition = new Vector2(490, -110);
+			//setup child 4
+			RectTransform childPage04Transform = (RectTransform)childPage04.transform;
+			childPage04Transform.anchorMin = new Vector2(0, 1);
+			childPage04Transform.anchorMax = new Vector2(0, 1);
+			childPage04Transform.pivot = new Vector2(0, 1);
+			childPage04Transform.anchoredPosition = new Vector2(490, -110);
 
-            Image childPage04Image = childPage04.AddComponent<Image>();
-            childPage04Image.sprite = null;
-            childPage04Image.color = Color.white;
+			Image childPage04Image = childPage04.AddComponent<Image>();
+			childPage04Image.sprite = null;
+			childPage04Image.color = Color.white;
 
-            //setup child 5
-            RectTransform childPage05Transform = (RectTransform)childPage05.transform;
-            childPage05Transform.anchorMin = new Vector2(0, 1);
-            childPage05Transform.anchorMax = new Vector2(0, 1);
-            childPage05Transform.pivot = new Vector2(0, 1);
-            childPage05Transform.anchoredPosition = new Vector2(630, -180);
+			//setup child 5
+			RectTransform childPage05Transform = (RectTransform)childPage05.transform;
+			childPage05Transform.anchorMin = new Vector2(0, 1);
+			childPage05Transform.anchorMax = new Vector2(0, 1);
+			childPage05Transform.pivot = new Vector2(0, 1);
+			childPage05Transform.anchoredPosition = new Vector2(630, -180);
 
-            Image childPage05Image = childPage05.AddComponent<Image>();
-            childPage05Image.sprite = null;
-            childPage05Image.color = Color.white;
+			Image childPage05Image = childPage05.AddComponent<Image>();
+			childPage05Image.sprite = null;
+			childPage05Image.color = Color.white;
 
-            //add scroll snap after we've added the content & items
-            contentScrollSnapRoot.AddComponent<ContentScrollSnapHorizontal>();
-        }
-        #endregion
+			//add scroll snap after we've added the content & items
+			contentScrollSnapRoot.AddComponent<ContentScrollSnapHorizontal>();
+		}
+		#endregion
 
-        #endregion
+		#endregion
 
-        #region UIVertical Scroller
-        [MenuItem("GameObject/UI/Extensions/UI Vertical Scroller", false)]
+		#region UIVertical Scroller
+		[MenuItem("GameObject/UI/Extensions/Layout/UI Vertical Scroller", false)]
 		static public void AddUIVerticallScroller(MenuCommand menuCommand)
 		{
 			GameObject uiVerticalScrollerRoot = CreateUIElementRoot("UI Vertical Scroller", menuCommand, s_ThickGUIElementSize);
@@ -607,7 +620,7 @@ namespace UnityEditor.UI
 			rectTransformCenter.anchorMax = new Vector2(1f, 0.6f);
 			rectTransformCenter.sizeDelta = Vector2.zero;
 
-			uiscr.center = uiScrollerCenter.GetComponent<RectTransform>();
+			uiscr.Center = uiScrollerCenter.GetComponent<RectTransform>();
 
 			//Setup Content container
 			RectTransform rectTransformContent = childContent.GetComponent<RectTransform>();
@@ -658,8 +671,89 @@ namespace UnityEditor.UI
 		}
         #endregion
 
+        #region UIHorizontal Scroller
+        [MenuItem("GameObject/UI/Extensions/Layout/UI Horizontal Scroller", false)]
+        static public void AddUIHorizontalScroller(MenuCommand menuCommand)
+        {
+            GameObject uiHorizontalScrollerRoot = CreateUIElementRoot("UI Horizontal Scroller", menuCommand, s_ThickGUIElementSize);
+
+            GameObject uiScrollerCenter = CreateUIObject("Center", uiHorizontalScrollerRoot);
+
+            GameObject childContent = CreateUIObject("Content", uiHorizontalScrollerRoot);
+
+            // Set RectTransform to stretch
+            RectTransform rectTransformScrollSnapRoot = uiHorizontalScrollerRoot.GetComponent<RectTransform>();
+            rectTransformScrollSnapRoot.anchorMin = new Vector2(0.5f, 0.5f);
+            rectTransformScrollSnapRoot.anchorMax = new Vector2(0.5f, 0.5f);
+            rectTransformScrollSnapRoot.anchoredPosition = Vector2.zero;
+            rectTransformScrollSnapRoot.sizeDelta = new Vector2(500f, 150f);
+
+            // Add required ScrollRect
+            ScrollRect sr = uiHorizontalScrollerRoot.AddComponent<ScrollRect>();
+            sr.vertical = false;
+            sr.horizontal = true;
+            sr.movementType = ScrollRect.MovementType.Unrestricted;
+            var uiscr = uiHorizontalScrollerRoot.AddComponent<UIHorizontalScroller>();
+
+            //Setup container center point
+            RectTransform rectTransformCenter = uiScrollerCenter.GetComponent<RectTransform>();
+            rectTransformCenter.anchorMin = new Vector2(0.3f,0f);
+            rectTransformCenter.anchorMax = new Vector2(0.6f,1f);
+            rectTransformCenter.sizeDelta = Vector2.zero;
+
+            uiscr.Center = uiScrollerCenter.GetComponent<RectTransform>();
+
+            //Setup Content container
+            RectTransform rectTransformContent = childContent.GetComponent<RectTransform>();
+            rectTransformContent.anchorMin = Vector2.zero;
+            rectTransformContent.anchorMax = new Vector2(1f, 1f);
+            rectTransformContent.sizeDelta = Vector2.zero;
+
+            sr.content = rectTransformContent;
+
+            // Add sample children
+            for (int i = 0; i < 10; i++)
+            {
+                GameObject childPage = CreateUIObject("Page_" + i, childContent);
+
+                GameObject childText = CreateUIObject("Text", childPage);
+
+                //Setup 1st Child
+                Image pageImage = childPage.AddComponent<Image>();
+                pageImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+                pageImage.type = Image.Type.Sliced;
+                pageImage.color = s_DefaultSelectableColor;
+
+                RectTransform rectTransformPage = childPage.GetComponent<RectTransform>();
+                rectTransformPage.anchorMin = new Vector2(0.5f, 0);
+                rectTransformPage.anchorMax = new Vector2(0.5f, 1f);
+                rectTransformPage.sizeDelta = new Vector2(80f, 0f);
+                rectTransformPage.pivot = new Vector2(0.5f, 0.5f);
+                rectTransformPage.localPosition = new Vector3(80 * i, 0, 0);
+                childPage.AddComponent<Button>();
+
+                var childCG = childPage.AddComponent<CanvasGroup>();
+                childCG.interactable = false;
+
+                //Setup Text on Item
+                Text text = childText.AddComponent<Text>();
+                text.text = "Item_" + i;
+                text.alignment = TextAnchor.MiddleCenter;
+                text.color = new Color(0.196f, 0.196f, 0.196f);
+
+                //Setup Text on Item
+                RectTransform rectTransformPageText = childText.GetComponent<RectTransform>();
+                rectTransformPageText.anchorMin = new Vector2(0.5f, 0.5f);
+                rectTransformPageText.anchorMax = new Vector2(0.5f, 0.5f);
+                rectTransformPageText.pivot = new Vector2(0.5f, 0.5f);
+            }
+
+            Selection.activeGameObject = uiHorizontalScrollerRoot;
+        }
+        #endregion
+
         #region UI Button
-        [MenuItem("GameObject/UI/Extensions/UI Button", false)]
+        [MenuItem("GameObject/UI/Extensions/Controls/UI Button", false)]
 		static public void AddUIButton(MenuCommand menuCommand)
 		{
 			GameObject uiButtonRoot = CreateUIElementRoot("UI Button", menuCommand, s_ThickGUIElementSize);
@@ -686,10 +780,10 @@ namespace UnityEditor.UI
 
 			Selection.activeGameObject = uiButtonRoot;
 		}
-        #endregion
+		#endregion
 
-        #region UI Flippable
-        [MenuItem("GameObject/UI/Extensions/UI Flippable", false)]
+		#region UI Flippable
+		[MenuItem("GameObject/UI/Extensions/Controls/UI Flippable", false)]
 		static public void AddUIFlippableImage(MenuCommand menuCommand)
 		{
 			GameObject go = CreateUIElementRoot("UI Flippable", menuCommand, s_ImageGUIElementSize);
@@ -697,10 +791,10 @@ namespace UnityEditor.UI
 			go.AddComponent<UIFlippable>();
 			Selection.activeGameObject = go;
 		}
-        #endregion
+		#endregion
 
-        #region UI WindowBase
-        [MenuItem("GameObject/UI/Extensions/UI Window Base", false)]
+		#region UI WindowBase
+		[MenuItem("GameObject/UI/Extensions/Controls/UI Window Base", false)]
 		static public void AddUIWindowBase(MenuCommand menuCommand)
 		{
 			GameObject go = CreateUIElementRoot("UI Window Base", menuCommand, s_ThickGUIElementSize);
@@ -716,8 +810,8 @@ namespace UnityEditor.UI
 		{
 			GameObject go = CreateUIElementRoot("Accordion Group", menuCommand, s_ThickGUIElementSize);
 			CreateAccordionGroup(go);
-            for (int i = 0; i < 3; i++)
-            {
+			for (int i = 0; i < 3; i++)
+			{
 				GameObject child = CreateUIObject($"Accordion Element {i}", go);
 				CreateAccordionElement(child);
 			}
@@ -726,60 +820,60 @@ namespace UnityEditor.UI
 
 		[MenuItem("GameObject/UI/Extensions/Accordion/Accordion Group", false)]
 		static public void AddAccordionGroup(MenuCommand menuCommand)
-        {
-            GameObject go = CreateUIElementRoot("Accordion Group", menuCommand, s_ThickGUIElementSize);
-            CreateAccordionGroup(go);
-            Selection.activeGameObject = go;
-        }
+		{
+			GameObject go = CreateUIElementRoot("Accordion Group", menuCommand, s_ThickGUIElementSize);
+			CreateAccordionGroup(go);
+			Selection.activeGameObject = go;
+		}
 
-        private static void CreateAccordionGroup(GameObject go)
-        {
-            var vlg = go.AddComponent<VerticalLayoutGroup>();
-            vlg.childControlHeight = true;
-            vlg.childControlWidth = true;
-            vlg.childForceExpandHeight = false;
-            vlg.childForceExpandHeight = true;
-            var csf = go.AddComponent<ContentSizeFitter>();
-            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            go.AddComponent<ToggleGroup>();
-            go.AddComponent<Accordion>();
-        }
+		private static void CreateAccordionGroup(GameObject go)
+		{
+			var vlg = go.AddComponent<VerticalLayoutGroup>();
+			vlg.childControlHeight = true;
+			vlg.childControlWidth = true;
+			vlg.childForceExpandHeight = false;
+			vlg.childForceExpandHeight = true;
+			var csf = go.AddComponent<ContentSizeFitter>();
+			csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+			go.AddComponent<ToggleGroup>();
+			go.AddComponent<Accordion>();
+		}
 
-        [MenuItem("GameObject/UI/Extensions/Accordion/Accordion Element", false)]
+		[MenuItem("GameObject/UI/Extensions/Accordion/Accordion Element", false)]
 		static public void AddAccordionElement(MenuCommand menuCommand)
-        {
-            GameObject go = CreateUIElementRoot("Accordion Element", menuCommand, s_ThickGUIElementSize);
-            CreateAccordionElement(go);
+		{
+			GameObject go = CreateUIElementRoot("Accordion Element", menuCommand, s_ThickGUIElementSize);
+			CreateAccordionElement(go);
 
-            Selection.activeGameObject = go;
-        }
+			Selection.activeGameObject = go;
+		}
 
-        private static void CreateAccordionElement(GameObject go)
-        {
-            var vlg = go.AddComponent<VerticalLayoutGroup>();
-            vlg.childControlHeight = true;
-            vlg.childControlWidth = true;
-            vlg.childForceExpandHeight = false;
-            vlg.childForceExpandHeight = true;
-            go.AddComponent<LayoutElement>();
-            var accordionElement = go.AddComponent<AccordionElement>();
+		private static void CreateAccordionElement(GameObject go)
+		{
+			var vlg = go.AddComponent<VerticalLayoutGroup>();
+			vlg.childControlHeight = true;
+			vlg.childControlWidth = true;
+			vlg.childForceExpandHeight = false;
+			vlg.childForceExpandHeight = true;
+			go.AddComponent<LayoutElement>();
+			var accordionElement = go.AddComponent<AccordionElement>();
 
-            // Header
-            GameObject headergo = CreateUIObject("Header", go);
-            var headerLayout = headergo.AddComponent<LayoutElement>();
-            headerLayout.minHeight = accordionElement.MinHeight;
-            var headerText = headergo.AddComponent<Text>();
-            headerText.text = "This is an Accordion header";
+			// Header
+			GameObject headergo = CreateUIObject("Header", go);
+			var headerLayout = headergo.AddComponent<LayoutElement>();
+			headerLayout.minHeight = accordionElement.MinHeight;
+			var headerText = headergo.AddComponent<Text>();
+			headerText.text = "This is an Accordion header";
 
-            // Text
-            GameObject textgo = CreateUIObject("Text", go);
-            var textText = textgo.AddComponent<Text>();
-            textText.text = "This is an example of text in an accordion element\nLots of information can be put here for selection\nIf you like";
-        }
-        #endregion
+			// Text
+			GameObject textgo = CreateUIObject("Text", go);
+			var textText = textgo.AddComponent<Text>();
+			textText.text = "This is an example of text in an accordion element\nLots of information can be put here for selection\nIf you like";
+		}
+		#endregion
 
-        #region Drop Down controls
-        [MenuItem("GameObject/UI/Extensions/AutoComplete ComboBox", false)]
+		#region Drop Down controls
+		[MenuItem("GameObject/UI/Extensions/ComboBox/AutoComplete ComboBox", false)]
 		static public void AddAutoCompleteComboBox(MenuCommand menuCommand)
 		{
 			GameObject autoCompleteComboBoxRoot = CreateUIElementRoot("AutoCompleteComboBox", menuCommand, s_ThickGUIElementSize);
@@ -806,7 +900,7 @@ namespace UnityEditor.UI
 			//Setup Template
 			itemTemplate.name = "ItemTemplate";
 			var itemTemplateRT = itemTemplate.GetComponent<RectTransform>();
-			itemTemplateRT.sizeDelta = cbbRT.sizeDelta - new Vector2(10,0);
+			itemTemplateRT.sizeDelta = cbbRT.sizeDelta - new Vector2(10, 0);
 			itemTemplateRT.anchoredPosition = new Vector2(-5, 0);
 			var itemTemplateButton = itemTemplate.GetComponent<Button>();
 			itemTemplateButton.transition = Selectable.Transition.None;
@@ -876,7 +970,7 @@ namespace UnityEditor.UI
 			Selection.activeGameObject = autoCompleteComboBoxRoot;
 		}
 
-		[MenuItem("GameObject/UI/Extensions/ComboBox", false)]
+		[MenuItem("GameObject/UI/Extensions/ComboBox/ComboBox", false)]
 		static public void AddComboBox(MenuCommand menuCommand)
 		{
 			GameObject comboBoxRoot = CreateUIElementRoot("ComboBox", menuCommand, s_ThickGUIElementSize);
@@ -904,7 +998,7 @@ namespace UnityEditor.UI
 			itemTemplate.name = "ItemTemplate";
 			var itemTemplateRT = itemTemplate.GetComponent<RectTransform>();
 			itemTemplateRT.sizeDelta = cbbRT.sizeDelta - new Vector2(10, 0);
-			itemTemplateRT.anchoredPosition = new Vector2(-5, 0); 
+			itemTemplateRT.anchoredPosition = new Vector2(-5, 0);
 			var itemTemplateButton = itemTemplate.GetComponent<Button>();
 			itemTemplateButton.transition = Selectable.Transition.None;
 			var itemTemplateLayoutElement = itemTemplate.AddComponent<LayoutElement>();
@@ -973,7 +1067,7 @@ namespace UnityEditor.UI
 			Selection.activeGameObject = comboBoxRoot;
 		}
 
-		[MenuItem("GameObject/UI/Extensions/DropDownList", false)]
+		[MenuItem("GameObject/UI/Extensions/ComboBox/DropDownList", false)]
 		static public void AddDropDownList(MenuCommand menuCommand)
 		{
 			GameObject dropDownListRoot = CreateUIElementRoot("DropDownList", menuCommand, s_ThickGUIElementSize);
@@ -1192,7 +1286,7 @@ namespace UnityEditor.UI
 		#endregion
 
 		#region Progress bar
-		[MenuItem("GameObject/UI/Extensions/Progress Bar", false)]
+		[MenuItem("GameObject/UI/Extensions/Controls/Progress Bar", false)]
 		static public void AddSlider(MenuCommand menuCommand)
 		{
 			// Create GOs Hierarchy
@@ -1256,7 +1350,7 @@ namespace UnityEditor.UI
 			Selection.activeGameObject = go;
 		}
 
-        [MenuItem("GameObject/UI/Extensions/Primitives/UI Squircle", false)]
+		[MenuItem("GameObject/UI/Extensions/Primitives/UI Squircle", false)]
 		static public void AddUISquircle(MenuCommand menuCommand)
 		{
 			GameObject go = CreateUIElementRoot("UI Squircle", menuCommand, s_ImageGUIElementSize);
@@ -1296,19 +1390,19 @@ namespace UnityEditor.UI
 			Selection.activeGameObject = go;
 		}
 
-        [MenuItem("GameObject/UI/Extensions/Primitives/UI Grid Renderer", false)]
-        static public void AddUIGridRenderer(MenuCommand menuCommand)
-        {
-            GameObject go = CreateUIElementRoot("UI GridRenderer", menuCommand, s_ImageGUIElementSize);
-            go.AddComponent<UIGridRenderer>();
-            Selection.activeGameObject = go;
-        }
+		[MenuItem("GameObject/UI/Extensions/Primitives/UI Grid Renderer", false)]
+		static public void AddUIGridRenderer(MenuCommand menuCommand)
+		{
+			GameObject go = CreateUIElementRoot("UI GridRenderer", menuCommand, s_ImageGUIElementSize);
+			go.AddComponent<UIGridRenderer>();
+			Selection.activeGameObject = go;
+		}
 
-        #endregion
+		#endregion
 
-        #region Re-Orderable Lists
+		#region Re-Orderable Lists
 
-        [MenuItem("GameObject/UI/Extensions/Re-orderable Lists/Re-orderable Vertical Scroll Rect", false)]
+		[MenuItem("GameObject/UI/Extensions/Re-orderable Lists/Re-orderable Vertical Scroll Rect", false)]
 		static public void AddReorderableScrollRectVertical(MenuCommand menuCommand)
 		{
 			GameObject reorderableScrollRoot = CreateUIElementRoot("Re-orderable Vertical ScrollRect", menuCommand, s_ThickGUIElementSize);
@@ -1813,64 +1907,64 @@ namespace UnityEditor.UI
 		}
 
 
-        #endregion
+		#endregion
 
-        #region Segmented Control
-        [MenuItem("GameObject/UI/Extensions/Segmented Control", false)]
-        static public void AddSegmentedControl(MenuCommand menuCommand)
-        {
-            GameObject go = CreateUIElementRoot("Segmented Control", menuCommand, s_ThickGUIElementSize);
-            SegmentedControl control = go.AddComponent<SegmentedControl>();
+		#region Segmented Control
+		[MenuItem("GameObject/UI/Extensions/Controls/Segmented Control", false)]
+		static public void AddSegmentedControl(MenuCommand menuCommand)
+		{
+			GameObject go = CreateUIElementRoot("Segmented Control", menuCommand, s_ThickGUIElementSize);
+			SegmentedControl control = go.AddComponent<SegmentedControl>();
 
-            Color selectedColor = new Color(0f, 0.455f, 0.894f);
+			Color selectedColor = new Color(0f, 0.455f, 0.894f);
 
-            var labels = new string[] { "This", "That", "Other" };
-            for (int i = 0; i < 3; i++)
+			var labels = new string[] { "This", "That", "Other" };
+			for (int i = 0; i < 3; i++)
 			{
-                var button = AddButtonAsChild(go).GetComponent<Button>();
+				var button = AddButtonAsChild(go).GetComponent<Button>();
 				button.gameObject.AddComponent<Segment>();
-                button.name = "Segment " + (i + 1);
+				button.name = "Segment " + (i + 1);
 
-                var colors = button.colors;
-                colors.pressedColor = selectedColor;
-                button.colors = colors;
+				var colors = button.colors;
+				colors.pressedColor = selectedColor;
+				button.colors = colors;
 
-                var text = button.GetComponentInChildren<Text>();
-                text.text = labels[i];
-                text.color = selectedColor;
-            }
+				var text = button.GetComponentInChildren<Text>();
+				text.text = labels[i];
+				text.color = selectedColor;
+			}
 
-            control.LayoutSegments();
+			control.LayoutSegments();
 
-            Selection.activeGameObject = go;
-        }
-        #endregion
+			Selection.activeGameObject = go;
+		}
+		#endregion
 
-        #region Stepper
-        [MenuItem("GameObject/UI/Extensions/Stepper", false)]
-        static public void AddStepper(MenuCommand menuCommand)
-        {
-            GameObject go = CreateUIElementRoot("Stepper", menuCommand, new Vector2(kWidth / 2, kThickHeight));
-            Stepper control = go.AddComponent<Stepper>();
+		#region Stepper
+		[MenuItem("GameObject/UI/Extensions/Sliders/Stepper", false)]
+		static public void AddStepper(MenuCommand menuCommand)
+		{
+			GameObject go = CreateUIElementRoot("Stepper", menuCommand, new Vector2(kWidth / 2, kThickHeight));
+			Stepper control = go.AddComponent<Stepper>();
 
-            var labels = new string[] { "−", "+" };
-            for (int i = 0; i < 2; i++)
-            {
-                var button = AddButtonAsChild(go);
+			var labels = new string[] { "−", "+" };
+			for (int i = 0; i < 2; i++)
+			{
+				var button = AddButtonAsChild(go);
 				button.gameObject.AddComponent<StepperSide>();
-                button.name = i == 0 ? "Minus" : "Plus";
-                var text = button.GetComponentInChildren<Text>();
-                text.text = labels[i];
-            }
+				button.name = i == 0 ? "Minus" : "Plus";
+				var text = button.GetComponentInChildren<Text>();
+				text.text = labels[i];
+			}
 
-            control.LayoutSides();
+			control.LayoutSides();
 
-            Selection.activeGameObject = go;
-        }
-        #endregion
+			Selection.activeGameObject = go;
+		}
+		#endregion
 
-        #region UI Knob
-        [MenuItem("GameObject/UI/Extensions/UI Knob", false)]
+		#region UI Knob
+		[MenuItem("GameObject/UI/Extensions/Controls/UI Knob", false)]
 		static public void AddUIKnob(MenuCommand menuCommand)
 		{
 			GameObject go = CreateUIElementRoot("UI Knob", menuCommand, s_ImageGUIElementSize);
@@ -1878,195 +1972,279 @@ namespace UnityEditor.UI
 			go.AddComponent<UI_Knob>();
 			Selection.activeGameObject = go;
 		}
-        #endregion
+		#endregion
 
-        #region TextPic
-        [MenuItem("GameObject/UI/Extensions/TextPic", false)]
+		#region TextPic
+		[MenuItem("GameObject/UI/Extensions/Controls/TextPic", false)]
 		static public void AddTextPic(MenuCommand menuCommand)
 		{
 			GameObject go = CreateUIElementRoot("TextPic", menuCommand, s_ImageGUIElementSize);
 			go.AddComponent<TextPic>();
 			Selection.activeGameObject = go;
 		}
-        #endregion
+		#endregion
 
-        #region BoxSlider
-        [MenuItem("GameObject/UI/Extensions/Box Slider", false)]
-        static public void AddBoxSlider(MenuCommand menuCommand)
-        {
+		#region BoxSlider
+		[MenuItem("GameObject/UI/Extensions/Sliders/Box Slider", false)]
+		static public void AddBoxSlider(MenuCommand menuCommand)
+		{
 
-            GameObject uiboxSliderRoot = CreateUIElementRoot("Box Slider", menuCommand, s_ImageGUIElementSize);
+			GameObject uiboxSliderRoot = CreateUIElementRoot("Box Slider", menuCommand, s_ImageGUIElementSize);
 
-            GameObject handleSlideArea = CreateUIObject("Handle Slide Area", uiboxSliderRoot);
+			GameObject handleSlideArea = CreateUIObject("Handle Slide Area", uiboxSliderRoot);
 
-            GameObject handle = CreateUIObject("Handle", handleSlideArea);
+			GameObject handle = CreateUIObject("Handle", handleSlideArea);
 
-            // Set RectTransform to stretch
-            SetAnchorsAndStretch(uiboxSliderRoot);
-            Image backgroundImage = uiboxSliderRoot.AddComponent<Image>();
-            backgroundImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath);
-            backgroundImage.type = Image.Type.Sliced;
-            backgroundImage.fillCenter = false;
-            backgroundImage.color = new Color(1f, 1f, 1f, 0.392f);
+			// Set RectTransform to stretch
+			SetAnchorsAndStretch(uiboxSliderRoot);
+			Image backgroundImage = uiboxSliderRoot.AddComponent<Image>();
+			backgroundImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath);
+			backgroundImage.type = Image.Type.Sliced;
+			backgroundImage.fillCenter = false;
+			backgroundImage.color = new Color(1f, 1f, 1f, 0.392f);
 
-            RectTransform handleRect = SetAnchorsAndStretch(handle);
-            handleRect.sizeDelta = new Vector2(25, 25);
-            Image handleImage = handle.AddComponent<Image>();
-            handleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kKnobPath);
-            handleImage.type = Image.Type.Simple;
-            handleImage.fillCenter = false;
-            handleImage.color = new Color(1f, 1f, 1f, 0.392f);
-
-
-            BoxSlider selectableArea = uiboxSliderRoot.AddComponent<BoxSlider>();
-            selectableArea.HandleRect = handle.GetComponent<RectTransform>();
-            selectableArea.ValueX = selectableArea.ValueY = 0.5f;
-
-            Selection.activeGameObject = uiboxSliderRoot;
-        }
-        #endregion
-
-        #region Non Drawing  Graphic options
-        [MenuItem("GameObject/UI/Extensions/NonDrawingGraphic", false)]
-        static public void AddNonDrawingGraphic(MenuCommand menuCommand)
-        {
-            GameObject go = CreateUIElementRoot("NonDrawing Graphic", menuCommand, s_ImageGUIElementSize);
-            go.AddComponent<NonDrawingGraphic>();
-            Selection.activeGameObject = go;
-        }
-
-        [MenuItem("GameObject/UI/Extensions/NonDrawingGraphicClickable", false)]
-        static public void AddClickableNonDrawingGraphic(MenuCommand menuCommand)
-        {
-            GameObject go = CreateUIElementRoot("NonDrawing Graphic-Clickable", menuCommand, s_ImageGUIElementSize);
-            go.AddComponent<NonDrawingGraphic>();
-            go.AddComponent<UISelectableExtension>();
-            Selection.activeGameObject = go;
-        }
-        #endregion
-
-        #region Radial Slider
-        [MenuItem("GameObject/UI/Extensions/Radial Slider", false)]
-        static public void AddRadialSlider(MenuCommand menuCommand)
-        {
-            GameObject sliderRoot = CreateUIElementRoot("Radial Slider", menuCommand, s_ThickGUIElementSize);
-            GameObject SliderControl = CreateUIObject("Slider", sliderRoot);
-
-            Image image = sliderRoot.AddComponent<Image>();
-            image.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
-            image.type = Image.Type.Simple;
-            image.color = s_DefaultSelectableColor;
-
-            RectTransform sliderRootRectTransform = sliderRoot.GetComponent<RectTransform>();
-            sliderRootRectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-            sliderRootRectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-            sliderRootRectTransform.anchoredPosition = Vector2.zero;
-            sliderRootRectTransform.sizeDelta = new Vector2(250f, 250f);
-
-            Image slidrImage = SliderControl.AddComponent<Image>();
-            slidrImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
-            slidrImage.type = Image.Type.Filled;
-            slidrImage.fillMethod = Image.FillMethod.Radial360;
-            slidrImage.fillOrigin = 3;
-            slidrImage.color = Color.red;
-            slidrImage.fillAmount = 0;
-            RadialSlider slider = SliderControl.AddComponent<RadialSlider>();
-            slider.StartColor = Color.green;
-            slider.EndColor = Color.red;
-
-            RectTransform sliderRectTransform = SliderControl.GetComponent<RectTransform>();
-            sliderRectTransform.anchorMin = Vector2.zero;
-            sliderRectTransform.anchorMax = Vector2.one;
-            sliderRectTransform.sizeDelta = Vector2.zero;
-
-            Selection.activeGameObject = sliderRoot;
-        }
-        #endregion
-
-        #region RangeSlider
-        [MenuItem("GameObject/UI/Extensions/Range Slider", false)]
-        static public void AddRangeSlider(MenuCommand menuCommand)
-        {
-            GameObject rangeSliderRoot = CreateUIElementRoot("Range Slider", menuCommand, new Vector2(160, 20));
-
-            GameObject background = CreateUIObject("Background", rangeSliderRoot);
-
-            GameObject fillArea = CreateUIObject("Fill Area", rangeSliderRoot);
-            GameObject fill = CreateUIObject("Fill", fillArea);
-
-            GameObject handleSlideArea = CreateUIObject("Handle Slide Area", rangeSliderRoot);
-            GameObject lowHandle = CreateUIObject("Low Handle", handleSlideArea);
-            GameObject highHandle = CreateUIObject("High Handle", handleSlideArea);
-
-            SetAnchorsAndStretch(rangeSliderRoot);
-            Image backgroundImage = background.AddComponent<Image>();
-            backgroundImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath);
-            backgroundImage.type = Image.Type.Sliced;
-            backgroundImage.fillCenter = false;
-
-            RectTransform backgroundRect = backgroundImage.rectTransform;
-            backgroundRect.anchorMin = new Vector2(0, 0.25f);
-            backgroundRect.anchorMax = new Vector2(1, 0.75f);
-            backgroundRect.sizeDelta = Vector2.zero;
-
-            RectTransform fillAreaRect = SetAnchorsAndStretch(fillArea);
-            fillAreaRect.anchorMin = new Vector2(0, 0.25f);
-            fillAreaRect.anchorMax = new Vector2(1, 0.75f);
-            fillAreaRect.offsetMin = new Vector2(5, 0);
-            fillAreaRect.offsetMax = new Vector2(-5, 0);
-
-            RectTransform fillRect = SetAnchorsAndStretch(fill);
-            Image fillImage = fill.AddComponent<Image>();
-            fillImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
-            fillImage.type = Image.Type.Sliced;
-            fillImage.fillCenter = true;
-            fillRect.offsetMin = new Vector2(-5, 0);
-            fillRect.offsetMax = new Vector2(5, 0);
-
-            RectTransform handleSlideRect = SetAnchorsAndStretch(handleSlideArea);
-            handleSlideRect.anchorMin = new Vector2(0, 0.5f);
-            handleSlideRect.anchorMax = new Vector2(1, 0.5f);
-            handleSlideRect.offsetMin = new Vector2(10, -10);
-            handleSlideRect.offsetMax = new Vector2(-10, 10);
-
-            RectTransform lowHandleRect = SetAnchorsAndStretch(lowHandle);
-            Image lowHandleImage = lowHandle.AddComponent<Image>();
-            lowHandleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kKnobPath);
-            lowHandleRect.sizeDelta = new Vector2(20, 0);
-
-            RectTransform highHandleRect = SetAnchorsAndStretch(highHandle);
-            Image highHandleImage = highHandle.AddComponent<Image>();
-            highHandleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kKnobPath);
-            highHandleRect.sizeDelta = new Vector2(20, 0);
-
-            RangeSlider rangeSlider = rangeSliderRoot.AddComponent<RangeSlider>();
-            rangeSlider.FillRect = fillRect;
-            rangeSlider.LowHandleRect = lowHandleRect;
-            rangeSlider.HighHandleRect = highHandleRect;
-            rangeSlider.LowValue = rangeSlider.MinValue;
-            rangeSlider.HighValue = rangeSlider.MaxValue;
-            rangeSlider.targetGraphic = fillImage;
-
-            Selection.activeGameObject = rangeSliderRoot;
-        }
-        #endregion
-
-        #region Menu Manager GO
-        [MenuItem("GameObject/UI/Extensions/Menu Manager", false)]
-        static public void AddMenuManager(MenuCommand menuCommand)
-        {
-            GameObject child = new GameObject("MenuManager");
-            Undo.RegisterCreatedObjectUndo(child, "Create " + "MenuManager");
-            child.AddComponent<MenuManager>();
-            Selection.activeGameObject = child;
-        }
-        #endregion
+			RectTransform handleRect = SetAnchorsAndStretch(handle);
+			handleRect.sizeDelta = new Vector2(25, 25);
+			Image handleImage = handle.AddComponent<Image>();
+			handleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kKnobPath);
+			handleImage.type = Image.Type.Simple;
+			handleImage.fillCenter = false;
+			handleImage.color = new Color(1f, 1f, 1f, 0.392f);
 
 
-        #endregion
+			BoxSlider selectableArea = uiboxSliderRoot.AddComponent<BoxSlider>();
+			selectableArea.HandleRect = handle.GetComponent<RectTransform>();
+			selectableArea.ValueX = selectableArea.ValueY = 0.5f;
 
-        #region Helper Functions
-        private static GameObject AddInputFieldAsChild(GameObject parent)
+			Selection.activeGameObject = uiboxSliderRoot;
+		}
+		#endregion
+
+		#region Non Drawing  Graphic options
+		[MenuItem("GameObject/UI/Extensions/Controls/NonDrawingGraphic", false)]
+		static public void AddNonDrawingGraphic(MenuCommand menuCommand)
+		{
+			GameObject go = CreateUIElementRoot("NonDrawing Graphic", menuCommand, s_ImageGUIElementSize);
+			go.AddComponent<NonDrawingGraphic>();
+			Selection.activeGameObject = go;
+		}
+
+		[MenuItem("GameObject/UI/Extensions/Controls/NonDrawingGraphicClickable", false)]
+		static public void AddClickableNonDrawingGraphic(MenuCommand menuCommand)
+		{
+			GameObject go = CreateUIElementRoot("NonDrawing Graphic-Clickable", menuCommand, s_ImageGUIElementSize);
+			go.AddComponent<NonDrawingGraphic>();
+			go.AddComponent<UISelectableExtension>();
+			Selection.activeGameObject = go;
+		}
+		#endregion
+
+		#region Radial Slider
+		[MenuItem("GameObject/UI/Extensions/Sliders/Radial Slider", false)]
+		static public void AddRadialSlider(MenuCommand menuCommand)
+		{
+			GameObject sliderRoot = CreateUIElementRoot("Radial Slider", menuCommand, s_ThickGUIElementSize);
+			GameObject SliderControl = CreateUIObject("Slider", sliderRoot);
+
+			Image image = sliderRoot.AddComponent<Image>();
+			image.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+			image.type = Image.Type.Simple;
+			image.color = s_DefaultSelectableColor;
+
+			RectTransform sliderRootRectTransform = sliderRoot.GetComponent<RectTransform>();
+			sliderRootRectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+			sliderRootRectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+			sliderRootRectTransform.anchoredPosition = Vector2.zero;
+			sliderRootRectTransform.sizeDelta = new Vector2(250f, 250f);
+
+			Image slidrImage = SliderControl.AddComponent<Image>();
+			slidrImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+			slidrImage.type = Image.Type.Filled;
+			slidrImage.fillMethod = Image.FillMethod.Radial360;
+			slidrImage.fillOrigin = 3;
+			slidrImage.color = Color.red;
+			slidrImage.fillAmount = 0;
+			RadialSlider slider = SliderControl.AddComponent<RadialSlider>();
+			slider.StartColor = Color.green;
+			slider.EndColor = Color.red;
+
+			RectTransform sliderRectTransform = SliderControl.GetComponent<RectTransform>();
+			sliderRectTransform.anchorMin = Vector2.zero;
+			sliderRectTransform.anchorMax = Vector2.one;
+			sliderRectTransform.sizeDelta = Vector2.zero;
+
+			Selection.activeGameObject = sliderRoot;
+		}
+		#endregion
+
+		#region RangeSlider
+		[MenuItem("GameObject/UI/Extensions/Sliders/Range Slider", false)]
+		static public void AddRangeSlider(MenuCommand menuCommand)
+		{
+			GameObject minMaxSliderRoot = CreateUIElementRoot("Range Slider", menuCommand, new Vector2(160, 20));
+
+			GameObject background = CreateUIObject("Background", minMaxSliderRoot);
+
+			GameObject fillArea = CreateUIObject("Fill Area", minMaxSliderRoot);
+			GameObject fill = CreateUIObject("Fill", fillArea);
+
+			GameObject handleSlideArea = CreateUIObject("Handle Slide Area", minMaxSliderRoot);
+			GameObject minHandle = CreateUIObject("Low Handle", handleSlideArea);
+			GameObject highHandle = CreateUIObject("High Handle", handleSlideArea);
+
+			SetAnchorsAndStretch(minMaxSliderRoot);
+			Image backgroundImage = background.AddComponent<Image>();
+			backgroundImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath);
+			backgroundImage.type = Image.Type.Sliced;
+			backgroundImage.fillCenter = false;
+
+			RectTransform backgroundRect = backgroundImage.rectTransform;
+			backgroundRect.anchorMin = new Vector2(0, 0.25f);
+			backgroundRect.anchorMax = new Vector2(1, 0.75f);
+			backgroundRect.sizeDelta = Vector2.zero;
+
+			RectTransform fillAreaRect = SetAnchorsAndStretch(fillArea);
+			fillAreaRect.anchorMin = new Vector2(0, 0.25f);
+			fillAreaRect.anchorMax = new Vector2(1, 0.75f);
+			fillAreaRect.offsetMin = new Vector2(5, 0);
+			fillAreaRect.offsetMax = new Vector2(-5, 0);
+
+			RectTransform fillRect = SetAnchorsAndStretch(fill);
+			Image fillImage = fill.AddComponent<Image>();
+			fillImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+			fillImage.type = Image.Type.Sliced;
+			fillImage.fillCenter = true;
+			fillRect.offsetMin = new Vector2(-5, 0);
+			fillRect.offsetMax = new Vector2(5, 0);
+
+			RectTransform handleSlideRect = SetAnchorsAndStretch(handleSlideArea);
+			handleSlideRect.anchorMin = new Vector2(0, 0.5f);
+			handleSlideRect.anchorMax = new Vector2(1, 0.5f);
+			handleSlideRect.offsetMin = new Vector2(10, -10);
+			handleSlideRect.offsetMax = new Vector2(-10, 10);
+
+			RectTransform lowHandleRect = SetAnchorsAndStretch(minHandle);
+			Image lowHandleImage = minHandle.AddComponent<Image>();
+			lowHandleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kKnobPath);
+			lowHandleRect.sizeDelta = new Vector2(20, 0);
+
+			RectTransform highHandleRect = SetAnchorsAndStretch(highHandle);
+			Image highHandleImage = highHandle.AddComponent<Image>();
+			highHandleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kKnobPath);
+			highHandleRect.sizeDelta = new Vector2(20, 0);
+
+			RangeSlider rangeSlider = minMaxSliderRoot.AddComponent<RangeSlider>();
+			rangeSlider.FillRect = fillRect;
+			rangeSlider.LowHandleRect = lowHandleRect;
+			rangeSlider.HighHandleRect = highHandleRect;
+			rangeSlider.LowValue = rangeSlider.MinValue;
+			rangeSlider.HighValue = rangeSlider.MaxValue;
+			rangeSlider.targetGraphic = fillImage;
+
+			Selection.activeGameObject = minMaxSliderRoot;
+		}
+		#endregion
+
+		#region Menu Manager GO
+		[MenuItem("GameObject/UI/Extensions/Menu Manager", false)]
+		static public void AddMenuManager(MenuCommand menuCommand)
+		{
+			GameObject child = new GameObject("MenuManager");
+			Undo.RegisterCreatedObjectUndo(child, "Create " + "MenuManager");
+			child.AddComponent<MenuManager>();
+			Selection.activeGameObject = child;
+		}
+		#endregion
+
+		#region MinMaxSlider
+		[MenuItem("GameObject/UI/Extensions/Sliders/MinMax Slider", false)]
+		static public void AddMinMaxSlider(MenuCommand menuCommand)
+		{
+			GameObject minMaxSliderRoot = CreateUIElementRoot("Min Max Slider", menuCommand, new Vector2(390, 60));
+			GameObject sliderBounds = CreateUIObject("Slider Bounds", minMaxSliderRoot);
+			GameObject middleGraphic = CreateUIObject("Middle Graphic", minMaxSliderRoot);
+			GameObject minHandle = CreateUIObject("Min Handle", minMaxSliderRoot);
+			GameObject minHandleText = CreateUIObject("Min Text", minHandle);
+			GameObject maxHandle = CreateUIObject("Max Handle", minMaxSliderRoot);
+			GameObject maxHandleText = CreateUIObject("Max Text", maxHandle);
+
+			Image backgroundImage = minMaxSliderRoot.AddComponent<Image>();
+			backgroundImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+			backgroundImage.type = Image.Type.Sliced;
+			backgroundImage.fillCenter = false;
+			backgroundImage.color = new Color32(27, 41, 89, 255);
+			backgroundImage.fillCenter = true;
+
+			RectTransform sliderBoundsRect = SetAnchorsAndStretch(sliderBounds);
+			sliderBoundsRect.anchorMin = new Vector2(0, 0);
+			sliderBoundsRect.anchorMax = new Vector2(1, 1);
+			sliderBoundsRect.offsetMin = new Vector2(15, 0);
+			sliderBoundsRect.offsetMax = new Vector2(-15, 0);
+
+			RectTransform middleGraphicRect = SetAnchorsAndStretch(middleGraphic);
+			middleGraphicRect.anchorMin = new Vector2(0, 0);
+			middleGraphicRect.anchorMax = new Vector2(1, 1);
+			middleGraphicRect.offsetMin = new Vector2(82, 0);
+			middleGraphicRect.offsetMax = new Vector2(-90, 0);
+			Image fillImage = middleGraphic.AddComponent<Image>();
+			fillImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+			fillImage.type = Image.Type.Sliced;
+			fillImage.fillCenter = true;
+			fillImage.color = new Color32(41, 98, 164, 255);
+
+			RectTransform minHandleRect = SetAnchorsAndStretch(minHandle);
+			minHandleRect.anchorMin = new Vector2(0, 0.5f);
+			minHandleRect.anchorMax = new Vector2(0, 0.5f);
+			minHandleRect.sizeDelta = new Vector2(30, 62);
+			minHandleRect.anchoredPosition = new Vector3(82, 0, 0);
+			Image minHandleImage = minHandle.AddComponent<Image>();
+			minHandleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+			minHandleImage.type = Image.Type.Sliced;
+			minHandleImage.fillCenter = true;
+
+			RectTransform minHandleTextRect = SetAnchorsAndStretch(minHandleText);
+			minHandleTextRect.sizeDelta = new Vector2(70, 50);
+			minHandleTextRect.anchoredPosition = new Vector3(0, 60, 0);
+			TextMeshProUGUI minHandleTextComponent = minHandleText.AddComponent<TextMeshProUGUI>();
+			minHandleTextComponent.fontSize = 36;
+			minHandleTextComponent.alignment = TextAlignmentOptions.Center;
+
+
+			RectTransform maxHandleRect = SetAnchorsAndStretch(maxHandle);
+			maxHandleRect.anchorMin = new Vector2(1, 0.5f);
+			maxHandleRect.anchorMax = new Vector2(1, 0.5f);
+			maxHandleRect.sizeDelta = new Vector2(30, 62);
+			maxHandleRect.anchoredPosition = new Vector3(-82, 0, 0);
+			Image maxHandleImage = maxHandle.AddComponent<Image>();
+			maxHandleImage.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+			maxHandleImage.type = Image.Type.Sliced;
+			maxHandleImage.fillCenter = true;
+
+			RectTransform maxHandleTextRect = SetAnchorsAndStretch(maxHandleText);
+			maxHandleTextRect.sizeDelta = new Vector2(70, 50);
+			maxHandleTextRect.anchoredPosition = new Vector3(0, 60, 0);
+			TextMeshProUGUI maxHandleTextComponent = maxHandleText.AddComponent<TextMeshProUGUI>();
+			maxHandleTextComponent.fontSize = 36;
+			maxHandleTextComponent.alignment = TextAlignmentOptions.Center;
+
+			MinMaxSlider minMaxSlider = minMaxSliderRoot.AddComponent<MinMaxSlider>();
+			minMaxSlider.SliderBounds = sliderBoundsRect;
+			minMaxSlider.MinHandle = minHandleRect;
+			minMaxSlider.MaxHandle = maxHandleRect;
+			minMaxSlider.MiddleGraphic = middleGraphicRect;
+			minMaxSlider.MinText = minHandleTextComponent;
+			minMaxSlider.MaxText = maxHandleTextComponent;
+
+			minMaxSlider.SetValues(minMaxSlider.Values.minValue, minMaxSlider.Values.maxValue);
+
+			Selection.activeGameObject = minMaxSliderRoot;
+		}
+		#endregion
+
+		#endregion
+
+		#region Helper Functions
+		private static GameObject AddInputFieldAsChild(GameObject parent)
 		{
 			GameObject root = CreateUIObject("InputField", parent);
 
@@ -2196,16 +2374,15 @@ namespace UnityEditor.UI
 			return buttonRoot;
 		}
 
-        private static RectTransform SetAnchorsAndStretch(GameObject root)
-        {
-            RectTransform rectTransformRoot = root.GetComponent<RectTransform>();
-            rectTransformRoot.anchorMin = new Vector2(0.5f, 0.5f);
-            rectTransformRoot.anchorMax = new Vector2(0.5f, 0.5f);
-            rectTransformRoot.anchoredPosition = Vector2.zero;
-            return rectTransformRoot;
-        }
+		private static RectTransform SetAnchorsAndStretch(GameObject root)
+		{
+			RectTransform rectTransformRoot = root.GetComponent<RectTransform>();
+			rectTransformRoot.anchorMin = new Vector2(0.5f, 0.5f);
+			rectTransformRoot.anchorMax = new Vector2(0.5f, 0.5f);
+			rectTransformRoot.anchoredPosition = Vector2.zero;
+			return rectTransformRoot;
+		}
 
-        #endregion
-
-    }
+		#endregion
+	}
 }

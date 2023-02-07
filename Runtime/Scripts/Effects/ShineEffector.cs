@@ -96,10 +96,8 @@ namespace UnityEngine.UI.Extensions
             {
                 effectRoot.SetActive(true);
             }
-            {
-
-            }
         }
+
         void OnDestroy()
         {
             if (!Application.isPlaying)

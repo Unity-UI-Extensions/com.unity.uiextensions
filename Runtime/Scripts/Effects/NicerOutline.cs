@@ -1,7 +1,9 @@
 /// Credit Melang, Lee Hui
 /// Sourced from - http://forum.unity3d.com/members/melang.593409/
 /// GC Alloc fix - https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/pull-requests/130
+/// NOT supported in Unity 2022
 
+#if !UNITY_2022_1_OR_NEWER
 using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
 {
@@ -193,3 +195,4 @@ namespace UnityEngine.UI.Extensions
 #endif
 	}
 }
+#endif

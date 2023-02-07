@@ -1,4 +1,6 @@
-﻿/// Credit NemoKrad (aka Charles Humphrey) / valtain
+﻿
+using static System.Net.Mime.MediaTypeNames;
+/// Credit NemoKrad (aka Charles Humphrey) / valtain
 /// Sourced from - http://www.randomchaos.co.uk/SoftAlphaUIMask.aspx
 /// Updated by valtain - https://bitbucket.org/SimonDarksideJ/unity-ui-extensions/pull-requests/33
 
@@ -45,7 +47,11 @@ namespace UnityEngine.UI.Extensions
                 MaskArea = GetComponent<RectTransform>();
             }
 
+#if UNITY_2022_1_OR_NEWER
+            var text = GetComponent<TMPro.TMP_Text>();
+#else
             var text = GetComponent<Text>();
+#endif
             if (text != null)
             {
                 mat = new Material(ShaderLibrary.GetShaderInstance("UI Extensions/SoftMaskShader"));

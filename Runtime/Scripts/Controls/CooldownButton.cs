@@ -7,15 +7,14 @@ using UnityEngine.EventSystems;
 namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/Cooldown Button")]
-    public class CooldownButton : MonoBehaviour, IPointerDownHandler
+    public class CooldownButton : MonoBehaviour, IPointerDownHandler, ISubmitHandler
     {
         #region Sub-Classes
         [System.Serializable]
-        public class CooldownButtonEvent : UnityEvent<PointerEventData.InputButton> { }
+        public class CooldownButtonEvent : UnityEvent<GameObject> { }
         #endregion
 
         #region Private variables
-
         [SerializeField]
         private float cooldownTimeout;
         [SerializeField]
@@ -33,7 +32,7 @@ namespace UnityEngine.UI.Extensions
         [SerializeField][ReadOnly]
         private int cooldownPercentComplete;
 
-        PointerEventData buttonSource;
+        BaseEventData buttonSource;
         #endregion
 
         #region Public Properties
@@ -116,7 +115,6 @@ namespace UnityEngine.UI.Extensions
         #endregion
 
         #region Public Methods
-
         /// <summary>
         /// Pause Cooldown without resetting values, allows Restarting of cooldown
         /// </summary>
@@ -144,9 +142,9 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         public void StartCooldown()
         {
-            PointerEventData emptySource = new PointerEventData(EventSystem.current);
+            BaseEventData emptySource = new BaseEventData(EventSystem.current);
             buttonSource = emptySource;
-            OnCooldownStart.Invoke(emptySource.button);
+            OnCooldownStart.Invoke(emptySource.selectedObject);
             cooldownTimeRemaining = cooldownTimeout;
             CooldownActive = cooldownInEffect = true;
         }
@@ -161,7 +159,7 @@ namespace UnityEngine.UI.Extensions
             cooldownPercentRemaining = 0;
             cooldownPercentComplete = 100;
             cooldownActive = cooldownInEffect = false;
-            if (OnCoolDownFinish != null) OnCoolDownFinish.Invoke(buttonSource.button);
+            OnCoolDownFinish?.Invoke(buttonSource.selectedObject);
         }
 
         /// <summary>
@@ -171,27 +169,38 @@ namespace UnityEngine.UI.Extensions
         {
             cooldownActive = cooldownInEffect = false;
         }
-
         #endregion
 
         #region IPointerDownHandler
-
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
         {
+            HandleButtonClick(eventData);
+        }
+        #endregion
+
+        #region ISubmitHandler
+        public void OnSubmit(BaseEventData eventData)
+        {
+            HandleButtonClick(eventData);
+        }
+        #endregion ISubmitHandler
+
+        #region Private Methods
+        public void HandleButtonClick(BaseEventData eventData)
+        {
             buttonSource = eventData;
+
             if (CooldownInEffect)
             {
-                if (OnButtonClickDuringCooldown != null) OnButtonClickDuringCooldown.Invoke(eventData.button);
+                OnButtonClickDuringCooldown?.Invoke(buttonSource.selectedObject);
             }
             if (!CooldownInEffect)
             {
-                if(OnCooldownStart != null) OnCooldownStart.Invoke(eventData.button);
+                OnCooldownStart?.Invoke(buttonSource.selectedObject);
                 cooldownTimeRemaining = cooldownTimeout;
                 cooldownActive = cooldownInEffect = true;
             }
         }
-
-        #endregion
-
+        #endregion Private Methods
     }
 }

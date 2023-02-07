@@ -46,7 +46,11 @@ using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Effects/Extensions/Mono Spacing")]
+#if UNITY_2022_1_OR_NEWER
+    [RequireComponent(typeof(TMPro.TMP_Text))]
+#else
     [RequireComponent(typeof(Text))]
+#endif
     [RequireComponent(typeof(RectTransform))]
     ///Summary
     /// Note, Vertex Count has changed in 5.2.1+, is now 6 (two tris) instead of 4 (tri strip).
@@ -58,13 +62,21 @@ namespace UnityEngine.UI.Extensions
         public bool UseHalfCharWidth = false;
 
         private RectTransform rectTransform;
+#if UNITY_2022_1_OR_NEWER
+        private TMPro.TMP_Text text;
+#else
         private Text text;
+#endif
 
 		protected MonoSpacing() { }
 
         protected override void Awake()
         {
+#if UNITY_2022_1_OR_NEWER
+            text = GetComponent<TMPro.TMP_Text>();
+#else
             text = GetComponent<Text>();
+#endif
             if (text == null)
             {
                 Debug.LogWarning("MonoSpacing: Missing Text component");
@@ -104,29 +116,51 @@ namespace UnityEngine.UI.Extensions
 			float    letterOffset    = Spacing * (float)text.fontSize / 100f;
 			float    alignmentFactor = 0;
 			int      glyphIdx        = 0;
-			
-			switch (text.alignment)
+
+#if UNITY_2022_1_OR_NEWER
+            switch (text.alignment)
 			{
-			case TextAnchor.LowerLeft:
-			case TextAnchor.MiddleLeft:
-			case TextAnchor.UpperLeft:
+                case TMPro.TextAlignmentOptions.BottomLeft:
+                case TMPro.TextAlignmentOptions.MidlineLeft:
+                case TMPro.TextAlignmentOptions.TopLeft:
 				alignmentFactor = 0f;
 				break;
-				
-			case TextAnchor.LowerCenter:
-			case TextAnchor.MiddleCenter:
-			case TextAnchor.UpperCenter:
+
+                case TMPro.TextAlignmentOptions.BottomJustified:
+                case TMPro.TextAlignmentOptions.MidlineJustified:
+                case TMPro.TextAlignmentOptions.TopJustified:
 				alignmentFactor = 0.5f;
 				break;
-				
-			case TextAnchor.LowerRight:
-			case TextAnchor.MiddleRight:
-			case TextAnchor.UpperRight:
+
+                case TMPro.TextAlignmentOptions.BottomRight:
+                case TMPro.TextAlignmentOptions.MidlineRight:
+                case TMPro.TextAlignmentOptions.TopRight:
 				alignmentFactor = 1f;
 				break;
 			}
-			
-			for (int lineIdx=0; lineIdx < lines.Length; lineIdx++)
+#else
+            switch (text.alignment)
+            {
+                case TextAnchor.LowerLeft:
+                case TextAnchor.MiddleLeft:
+                case TextAnchor.UpperLeft:
+                    alignmentFactor = 0f;
+                    break;
+
+                case TextAnchor.LowerCenter:
+                case TextAnchor.MiddleCenter:
+                case TextAnchor.UpperCenter:
+                    alignmentFactor = 0.5f;
+                    break;
+
+                case TextAnchor.LowerRight:
+                case TextAnchor.MiddleRight:
+                case TextAnchor.UpperRight:
+                    alignmentFactor = 1f;
+                    break;
+            }
+#endif
+            for (int lineIdx=0; lineIdx < lines.Length; lineIdx++)
 			{
 				string line = lines[lineIdx];
                 float lineOffset = (line.Length - 1) * letterOffset * (alignmentFactor) - (alignmentFactor - 0.5f) * rectTransform.rect.width;
