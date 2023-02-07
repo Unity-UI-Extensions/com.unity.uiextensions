@@ -1,9 +1,11 @@
 ﻿using System;
-using UnityEngine;
 using UnityEngine.Events;
 
-[Serializable]
-public class ColorChangedEvent : UnityEvent<Color>
+namespace UnityEngine.UI.Extensions.ColorPicker
 {
+    [Serializable]
+    public class ColorChangedEvent : UnityEvent<Color>
+    {
 
+    }
 }
