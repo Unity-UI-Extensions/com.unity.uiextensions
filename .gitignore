@@ -33,3 +33,5 @@ sysinfo.txt
 *.apk
 *.unitypackage
 /.vs
+
+**/node_modules/*
