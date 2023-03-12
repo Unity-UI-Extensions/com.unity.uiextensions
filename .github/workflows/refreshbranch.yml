@@ -1,0 +1,43 @@
+name: Refresh branch
+
+on:
+  workflow_call:
+    inputs:
+      build-host:
+        required: true
+        type: string    
+      target-branch:
+        required: true
+        type: string
+      source-branch:
+        required: true
+        type: string
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  packageRelease:
+    name: Refresh ${{ inputs.target-branch }} branch from ${{ inputs.source-branch }} branch
+    runs-on: ${{ inputs.build-host }}
+    steps:
+      - name: Script Version
+        run: |
+          echo "::group::Script Versioning"
+          $scriptVersion = "1.0.1"
+          echo "Build Script Version: $scriptVersion"
+          echo "::endgroup::"
+        shell: pwsh   
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.target-branch }}
+          clean: true
+          token: ${{ secrets.GIT_PAT }}
+      - name: Refresh from Source Branch
+        run: |
+          git pull origin ${{ inputs.source-branch }}
+          git commit -m "Branch ${{ inputs.target-branch }} updated with changes from ${{ inputs.source-branch }} [skip ci]"
+          git push origin ${{ inputs.target-branch }}
+          echo "Branch ${{ inputs.target-branch }} updated with changes from ${{ inputs.source-branch }}"
+        shell: pwsh
