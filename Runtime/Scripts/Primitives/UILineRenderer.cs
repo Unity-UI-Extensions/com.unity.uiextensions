@@ -452,7 +452,7 @@ namespace UnityEngine.UI.Extensions
 		/// <param name="p1">Required Control point 2</param>
 		/// <param name="p1">Required End point</param>
         /// <returns>Vector2 position of point on curve at t percentage between p1 and p4</returns>
-		private Vector2 CalculatePointOnCurve(float t, Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4)
+		public Vector2 CalculatePointOnCurve(float t, Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4)
         {
             var t2 = t * t;
             var t3 = t2 * t;
