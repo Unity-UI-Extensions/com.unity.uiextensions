@@ -419,7 +419,7 @@ namespace UnityEngine.UI.Extensions
             {
                 return Segments[segmentIndex - 1][index - 1];
             }
-            else if (Segments.Count > 0)
+            else if (Segments?.Count > 0)
             {
                 var segmentIndexCount = 0;
                 var indexCount = index;
