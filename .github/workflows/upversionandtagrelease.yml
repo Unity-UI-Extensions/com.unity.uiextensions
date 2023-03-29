@@ -31,8 +31,8 @@ on:
         description: "Returns the version of Unity the UPM package requires"
         value: ${{ jobs.packageRelease.outputs.packageversion }}
     secrets:
-      GIT_USER_NAME: 
-        required: false
+      GIT_PAT: 
+        required: true
 
 jobs:
   packageRelease:
