@@ -1,33 +1,26 @@
-name: Package UPM project and deploy
+name: Tag Release
 
 on:
   workflow_call:
     inputs:
-      build-target:
+      build-host:
+        required: true
+        type: string    
+      version:
         required: true
         type: string
-      build-type:
-        required: false
-        default: 'pre-release'    
-        type: string
-#        options:
-#        - major
-#        - minor
-#        - patch  
-#        - pre-release  
-#        - build  
-    outputs:
-      packageversion:
-        description: "Returns the version of Unity the UPM package requires"
-        value: ${{ jobs.packageRelease.outputs.packageversion }}
-    secrets:
-      GIT_USER_NAME: 
-        required: false
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   packageRelease:
     name: Package UPM Project and tag
-    runs-on: ${{ inputs.build-target }}
+    runs-on: ${{ inputs.build-host }}
     outputs:
       packageversion: ${{ steps.getpackageversion.outputs.packageversion }}    
     steps:
@@ -40,6 +33,7 @@ jobs:
         shell: pwsh   
       - uses: actions/checkout@v3
         with:
+          fetch-depth: 0
           submodules: recursive
           clean: true
           token: ${{ secrets.GIT_PAT }}
@@ -60,87 +54,26 @@ jobs:
             $gitUser = "${{ secrets.GIT_USER_NAME }}"
             $gitEmail = "$gitUser@users.noreply.github.com"
           }
-          echo "email $gitUser@users.noreply.github.com"
           git config --global user.email "$gitUser@users.noreply.github.com"
           git config --global user.name "$gitUser"
-        shell: pwsh
-      - id: getpackageversion
-        name: Bump UPM Package version
+        shell: pwsh     
+      - name: Check if Tag Exists
         run: |
-          function UpdateProjectVersionJSON {
-              param (
-                  [Parameter(Mandatory)]
-                  $type,
-                  $packageFile = 'package.json'
-              )
-              <#
-              Type of build can be one of the following
-              - 'build'       # Build release       - 1.0.0-pre-release.0+1
-              - 'pre-release' # Pre-Release release - 1.0.0-pre-release.1
-              - 'patch'       # Patch release       - 1.0.1
-              - 'minor'       # Minor release       - 1.1.0
-              - 'major'       # Major release       - 2.0.0
-              #>
-
-              if ( -not (Test-Path -Path $packageFile) ) {
-                  Write-Error "Failed to find a valid project manifest at `"$packageFile`""
-                  return $null
+          $tagVersion = "${{ inputs.version }}"
+          $tags = git tag
+          echo "Tags found are [$tags], searching for [$tagVersion]"
+          foreach ($tag in $tags)
+          {
+              if($tag.Trim() -eq "$tagVersion")
+              {
+                Write-Error "$tagVersion tag already exists"
+                exit 1
               }
-
-              $packageInfo = (Get-Content $packageFile -Raw) | ConvertFrom-Json
-              Write-Host "Detected Project Version:" $packageInfo.version
-              function IfNull($a, $b, $c) { if ($null -eq $a) { return $b } else { return $c } }
-
-              $packageSemVer = [System.Management.Automation.SemanticVersion]$packageInfo.version
-              $majorVersion = if($null -eq $packageSemVer.Major) {0} else {$packageSemVer.Major}
-              $minorVersion = if($null -eq $packageSemVer.Minor) {0} else {$packageSemVer.Minor}
-              $patchVersion = if($null -eq $packageSemVer.Patch) {0} else {$packageSemVer.Patch}
-              $prereleaseVersion = if($null -eq $packageSemVer.PreReleaseLabel) {0} else {$packageSemVer.PreReleaseLabel.Replace('pre-release.','')}
-              $buildVersion = if($null -eq $packageSemVer.BuildLabel) {0} else {$packageSemVer.BuildLabel}
-
-              # work out new version
-              switch ($type) {
-                  'build' { 
-                      [int]$buildVersion += 1
-                      $newPackageSemVer = [System.Management.Automation.SemanticVersion]::New($majorVersion, $minorVersion, $patchVersion, "pre-release." + $prereleaseVersion, $buildVersion)
-                  }    
-                  'pre-release' { 
-                      [int]$prereleaseVersion += 1
-                      $newPackageSemVer = [System.Management.Automation.SemanticVersion]::New($majorVersion, $minorVersion, $patchVersion, "pre-release." + $prereleaseVersion)
-                  }
-                  'patch' { 
-                      [int]$patchVersion += 1 
-                      $newPackageSemVer = [System.Management.Automation.SemanticVersion]::New($majorVersion, $minorVersion, $patchVersion)
-                  }
-                  'minor' { 
-                      [int]$minorVersion += 1 
-                      $newPackageSemVer = [System.Management.Automation.SemanticVersion]::New($majorVersion, $minorVersion, 0)
-                  }
-                  'major' { 
-                      [int]$majorVersion += 1
-                      $newPackageSemVer = [System.Management.Automation.SemanticVersion]::New($majorVersion, 0, 0)
-                  }
-              }
-
-              Write-Host "Upgrading project version [$packageSemVer] to [$newPackageSemVer]"
-
-              # Write out updated package info
-
-              $packageInfo.version = $newPackageSemVer.ToString()
-              $packageInfo | ConvertTo-Json | Set-Content $packageFile
-
-              return $packageInfo.version
           }
-
-          $packageFile = 'package.json'
-          $result = UpdateProjectVersionJSON("${{ inputs.build-type }}","$packageFile")
-          if([string]::IsNullOrEmpty($result)) {
-            echo "Version patch failed"
-            exit 1
-          }          
-          echo "packageversion=$result" >> $env:GITHUB_OUTPUT
-          git add "$packageFile"
-          git commit -m "Auto increment pre-release version to $result [skip ci]"
-          git tag -fa "$result" "${GITHUB_SHA}" -m "$result Release"
-          git push origin --force
-        shell: pwsh   
+        shell: pwsh
+      - name: Create tag and push
+        run: |
+          $tagVersion = "${{ inputs.version }}"
+          git tag -fa "v$tagVersion" "${GITHUB_SHA}" -m "v$tagVersion Release [skip ci]"
+          git push origin "v$tagVersion" --force       
+        shell: pwsh
