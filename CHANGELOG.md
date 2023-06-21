@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Release 2.3 - Reanimation - 2022/02/07
+## Release 2.3 - Reanimation - 2023/02/07
 
 It has been a tough time for all since the last update, but things have been moving steadily along.  In the past few months there has been a concerted effort to revamp and update the project ready for Unity 2022, as well as migrating the source repository over to GitHub and refreshing all the things.
 We hope the new release is better for everyone and we have paid close attention to the editor menus and places to find all the controls for this release.
