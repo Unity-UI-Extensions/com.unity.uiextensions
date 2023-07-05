@@ -29,7 +29,6 @@ namespace UnityEngine.UI.Extensions
         private Vector2 textureSheetAnimationFrameSize;
         private ParticleSystemRenderer pRenderer;
         private bool isInitialised = false;
-        private float _lengthScale;
 
         private Material currentMaterial;
 
@@ -96,7 +95,6 @@ namespace UnityEngine.UI.Extensions
                 if (pRenderer != null)
                     pRenderer.enabled = false;
                 
-                _lengthScale = pRenderer.lengthScale;
                 if (material == null)
                 {
                     var foundShader = ShaderLibrary.GetShaderInstance("UI Extensions/Particles/Additive");
@@ -285,8 +283,8 @@ namespace UnityEngine.UI.Extensions
 
                 
                 float rotation = -particle.rotation * Mathf.Deg2Rad;
-                var lengthScale = _lengthScale;
-                if (_useLengthScale) // this flag is mostly to secure old behaviour, it probably can be replaced with _lengthScale != 1
+                var lengthScale = pRenderer.lengthScale;
+                if (_useLengthScale)
                 {
                     // rotate towards velocity
                     var normalizedVelocity = particle.velocity.normalized;
