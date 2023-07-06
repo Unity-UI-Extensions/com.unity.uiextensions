@@ -134,7 +134,7 @@ namespace UnityEngine.UI.Extensions
 			start += ApplyText(m_Verts, vh, start);
         }
         
-		private int ApplyOutlineNoGC(List<UIVertex> verts, Color color, float x, float y, VertexHelper vh, int startIndex)
+		private int ApplyOutlineNoGC(List<UIVertex> verts, Color32 color, float x, float y, VertexHelper vh, int startIndex)
 		{
 			int length = verts.Count;
 			for (int i = 0; i < length; ++i)
