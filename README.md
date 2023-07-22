@@ -209,6 +209,8 @@ There are almost 70+ extension controls / effect and other utilities in the proj
 |NicerOutline|RaycastMask|UIFlippable|UIImageCrop|SoftAlphaMask|
 |CylinderText|UIParticleSystem|CurlyUI|Shine Effect|Shader Effects|
 
+> Text Effects are not supported with TextMeshPro due to its architecture, try using the native TextMeshPro effects instead.
+
 [Additional Components](https://unity-ui-extensions.github.io/Controls.html#additional-components)
 
 |ReturnKeyTrigger|TabNavigation|uGUITools|ScrollRectTweener|ScrollRectLinker|

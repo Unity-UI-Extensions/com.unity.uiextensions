@@ -40,7 +40,7 @@ use HTML-like tags in your text. Try it out, you'll see what I mean. It doesn't
 break down entirely, but it doesn't really do what you'd want either.
 
 */
-
+#if !UNITY_2022_1_OR_NEWER
 using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
@@ -74,6 +74,11 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 
+        protected override void Awake()
+        {
+            Debug.Log($"Awake, [{m_spacing}]");
+        }
+
         public override void ModifyMesh(VertexHelper vh)
         {
             if (! IsActive()) return;
@@ -81,11 +86,8 @@ namespace UnityEngine.UI.Extensions
             List<UIVertex> verts = new List<UIVertex>();
             vh.GetUIVertexStream(verts);
 
-#if UNITY_2022_1_OR_NEWER
-            var text = GetComponent<TMPro.TMP_Text>();
-#else
             var text = GetComponent<Text>();
-#endif
+
             if (text == null)
 			{
 				Debug.LogWarning("LetterSpacing: Missing Text component");
@@ -98,28 +100,6 @@ namespace UnityEngine.UI.Extensions
 			float    alignmentFactor = 0;
 			int      glyphIdx        = 0;
 
-#if UNITY_2022_1_OR_NEWER
-            switch (text.alignment)
-            {
-                case TMPro.TextAlignmentOptions.BottomLeft:
-                case TMPro.TextAlignmentOptions.MidlineLeft:
-                case TMPro.TextAlignmentOptions.TopLeft:
-                    alignmentFactor = 0f;
-                    break;
-
-                case TMPro.TextAlignmentOptions.BottomJustified:
-                case TMPro.TextAlignmentOptions.MidlineJustified:
-                case TMPro.TextAlignmentOptions.TopJustified:
-                    alignmentFactor = 0.5f;
-                    break;
-
-                case TMPro.TextAlignmentOptions.BottomRight:
-                case TMPro.TextAlignmentOptions.MidlineRight:
-                case TMPro.TextAlignmentOptions.TopRight:
-                    alignmentFactor = 1f;
-                    break;
-            }
-#else
             switch (text.alignment)
             {
                 case TextAnchor.LowerLeft:
@@ -140,8 +120,7 @@ namespace UnityEngine.UI.Extensions
                     alignmentFactor = 1f;
                     break;
             }
-#endif
-
+      
             for (int lineIdx=0; lineIdx < lines.Length; lineIdx++)
 			{
 				string line = lines[lineIdx];
@@ -193,3 +172,4 @@ namespace UnityEngine.UI.Extensions
         }
 	}
 }
+#endif
