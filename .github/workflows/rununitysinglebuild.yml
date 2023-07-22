@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos
+          - os: macOS
             build-target: iOS        
           - os: windows
             build-target: Android
