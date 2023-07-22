@@ -18,7 +18,7 @@ jobs:
           - os: windows
             unityVersion: 2019.4
             build-target: Android
-          - os: macos
+          - os: macOS
             unityVersion: 2019.4
             build-target: iOS
           - os: windows
@@ -30,7 +30,7 @@ jobs:
           - os: windows
             unityVersion: 2020.3
             build-target: Android
-          - os: macos
+          - os: macOS
             unityVersion: 2020.3
             build-target: iOS
           - os: windows
@@ -42,7 +42,7 @@ jobs:
           - os: windows
             unityVersion: 2021.3
             build-target: Android
-          - os: macos
+          - os: macOS
             unityVersion: 2021.3
             build-target: iOS
           - os: windows
@@ -54,7 +54,7 @@ jobs:
           - os: windows
             unityVersion: 2022.2
             build-target: Android
-          - os: macos
+          - os: macOS
             unityVersion: 2022.2
             build-target: iOS
           - os: windows
@@ -101,12 +101,12 @@ jobs:
           }
           elseif ( $global:PSVersionTable.OS.Contains("Darwin") ) 
           {
-            $hubPath = "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub"
+            $hubPath = "/Applications/Unity Hub.app/Contents/macOS/Unity Hub"
             $editorRootPath = "/Applications/Unity/Hub/Editor/"
-            $editorFileEx = "/Unity.app/Contents/MacOS/Unity"
+            $editorFileEx = "/Unity.app/Contents/macOS/Unity"
             $directorySeparatorChar = "/"
 
-            # /Applications/Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- --headless help
+            # /Applications/Unity\ Hub.app/Contents/macOS/Unity\ Hub -- --headless help
             function unity-hub 
             {
               & $hubPath -- --headless $args.Split(" ") | Out-String -NoNewline
@@ -218,7 +218,7 @@ jobs:
           }
           elseif ( $global:PSVersionTable.OS.Contains("Darwin") ) {
             echo 'Building using Mac'
-            $editorFileEx = "/Unity.app/Contents/MacOS/Unity"
+            $editorFileEx = "/Unity.app/Contents/macOS/Unity"
             $editorrunpath = Join-Path $editorRootPath $unityVersion $editorFileEx
 
             function unity-editor {
