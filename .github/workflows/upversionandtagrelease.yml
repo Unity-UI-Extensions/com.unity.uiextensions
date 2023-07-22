@@ -1,0 +1,181 @@
+name: UpVersion Package UPM project and create new tag
+
+on:
+  workflow_call:
+    inputs:
+      build-host:
+        required: true
+        type: string
+      build-type:
+        required: false
+        default: 'pre-release'    
+        type: string
+#        options:
+#        - major
+#        - minor
+#        - patch
+#        - patch-release
+#        - pre-release
+#        - build
+      target-branch:
+        required: false
+        type: string
+        default: ${{ github.ref }}
+      createTag:
+        required: false
+        type: boolean
+        default: true        
+
+    outputs:
+      packageversion:
+        description: "Returns the version of Unity the UPM package requires"
+        value: ${{ jobs.packageRelease.outputs.packageversion }}
+    secrets:
+      GIT_PAT: 
+        required: true
+
+jobs:
+  packageRelease:
+    name: Package UPM Project and tag
+    runs-on: ${{ inputs.build-host }}
+    outputs:
+      packageversion: ${{ steps.getpackageversion.outputs.packageversion }}    
+    steps:
+      - name: Script Version
+        run: |
+          echo "::group::Script Versioning"
+          $scriptVersion = "1.0.2"
+          echo "Build Script Version: $scriptVersion"
+          echo "::endgroup::"
+        shell: pwsh   
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.target-branch }}
+          fetch-depth: 0
+          submodules: recursive
+          clean: true
+          token: ${{ secrets.GIT_PAT }}
+      - uses: actions/setup-node@v3
+      - name: Set Github vars
+        run: |
+          if([string]::IsNullOrEmpty('${{ secrets.GIT_USER_NAME }}')){
+            if([string]::IsNullOrEmpty('${{ secrets.GIT_USER_NAME }}')){
+              $gitUser = "action"
+              $gitEmail = "action@github.com"
+            }
+            else {
+              $gitUser = "${GITHUB_ACTOR}"
+              $gitEmail = "$gitUser@users.noreply.github.com"
+            }
+          }
+          else {
+            $gitUser = "${{ secrets.GIT_USER_NAME }}"
+            $gitEmail = "$gitUser@users.noreply.github.com"
+          }
+          git config --global user.email "$gitUser@users.noreply.github.com"
+          git config --global user.name "$gitUser"
+        shell: pwsh
+      - id: getpackageversion
+        name: Bump UPM Package version
+        run: |
+          function UpdateProjectVersionJSON {
+              param (
+                  [Parameter(Mandatory)]
+                  $type,
+                  $packageFile = 'package.json'
+              )
+              <#
+              Type of build can be one of the following
+              - 'build'         # Build release       - 1.0.0-pre.0+1
+              - 'pre-release'   # Pre-Release - 1.0.0-pre.1
+              - 'patch-release' # Patch release       - 1.0.1 (reset preview version to current patch, no increase)
+              - 'patch'         # Patch release       - 1.0.1
+              - 'minor'         # Minor release       - 1.1.0
+              - 'major'         # Major release       - 2.0.0
+              #>
+
+              if ( -not (Test-Path -Path $packageFile) ) {
+                  Write-Error "Failed to find a valid project manifest at `"$packageFile`""
+                  return $null
+              }
+
+              $packageInfo = (Get-Content $packageFile -Raw) | ConvertFrom-Json
+              Write-Host "Detected Project Version:" $packageInfo.version
+              function IfNull($a, $b, $c) { if ($null -eq $a) { return $b } else { return $c } }
+
+              $packageSemVer = [System.Management.Automation.SemanticVersion]$packageInfo.version
+              $majorVersion = if($null -eq $packageSemVer.Major) {0} else {$packageSemVer.Major}
+              $minorVersion = if($null -eq $packageSemVer.Minor) {0} else {$packageSemVer.Minor}
+              $patchVersion = if($null -eq $packageSemVer.Patch) {0} else {$packageSemVer.Patch}
+              $prereleaseVersion = if($null -eq $packageSemVer.PreReleaseLabel) {0} else {$packageSemVer.PreReleaseLabel.Replace('pre.','')}
+              $buildVersion = if($null -eq $packageSemVer.BuildLabel) {0} else {$packageSemVer.BuildLabel}
+
+              # work out new version
+              switch ($type) {
+                  'build' { 
+                      [int]$buildVersion += 1
+                      $newPackageSemVer = [System.Management.Automation.SemanticVersion]::New($majorVersion, $minorVersion, $patchVersion, "pre." + $prereleaseVersion, $buildVersion)
+                  }    
+                  'pre-release' { 
+                      [int]$prereleaseVersion += 1
+                      $newPackageSemVer = [System.Management.Automation.SemanticVersion]::New($majorVersion, $minorVersion, $patchVersion, "pre." + $prereleaseVersion)
+                  }
+                  'patch-release' { 
+                      $newPackageSemVer = [System.Management.Automation.SemanticVersion]::New($majorVersion, $minorVersion, $patchVersion)
+                  }                  
+                  'patch' { 
+                      [int]$patchVersion += 1 
+                      $newPackageSemVer = [System.Management.Automation.SemanticVersion]::New($majorVersion, $minorVersion, $patchVersion)
+                  }
+                  'minor' { 
+                      [int]$minorVersion += 1 
+                      $newPackageSemVer = [System.Management.Automation.SemanticVersion]::New($majorVersion, $minorVersion, 0)
+                  }
+                  'major' { 
+                      [int]$majorVersion += 1
+                      $newPackageSemVer = [System.Management.Automation.SemanticVersion]::New($majorVersion, 0, 0)
+                  }
+              }
+
+              Write-Host "Upgrading project version [$packageSemVer] to [$newPackageSemVer]"
+
+              # Write out updated package info
+
+              $packageInfo.version = $newPackageSemVer.ToString()
+              $packageInfo | ConvertTo-Json | Set-Content $packageFile
+
+              return $packageInfo.version
+          }
+
+          $packageFile = 'package.json'
+          $result = UpdateProjectVersionJSON("${{ inputs.build-type }}","$packageFile")
+          if([string]::IsNullOrEmpty($result)) {
+            echo "Version patch failed"
+            exit 1
+          }          
+          git add "$packageFile"
+          git commit -m "Auto increment pre-release version to $result [skip ci]"
+          git push origin
+          echo "packageversion=$result" >> $env:GITHUB_OUTPUT
+        shell: pwsh
+      - name: Check if Tag Exists
+        run: |
+          $tagVersion = '${{steps.getpackageversion.outputs.packageversion }}'
+          $tags = git tag
+          echo "Tags found are [$tags], searching for [$tagVersion]"
+          foreach ($tag in $tags)
+          {
+              if($tag.Trim() -eq "$tagVersion")
+              {
+                Write-Error "$tagVersion tag already exists"
+                exit 1
+              }
+          }
+        shell: pwsh
+      - name: Publish package tag
+        if: ${{inputs.createTag == true}}
+        run: |
+          $outputVersion = '${{steps.getpackageversion.outputs.packageversion }}'
+          git tag -fa "v$outputVersion" "${GITHUB_SHA}" -m "v$outputVersion Release"
+          git push origin "v$outputVersion" --force --tags
+        shell: pwsh

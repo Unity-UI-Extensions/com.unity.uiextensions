@@ -328,6 +328,10 @@ namespace UnityEngine.UI.Extensions
                                 }
                             }
                         }
+                        else if (distance == 0)
+                        {
+                            EndScreenChange();
+                        }
                     }
                 }
             }

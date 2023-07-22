@@ -1,13 +1,10 @@
 ﻿/// Credit Breyer
 /// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1777407
+#if !UNITY_2022_1_OR_NEWER
 
 namespace UnityEngine.UI.Extensions
 {
-#if UNITY_2022_1_OR_NEWER
-    [RequireComponent(typeof(TMPro.TMP_Text))]
-#else
     [RequireComponent(typeof(Text))]
-#endif
     [RequireComponent(typeof(RectTransform))]
     [AddComponentMenu("UI/Effects/Extensions/Curved Text")]
     public class CurvedText : BaseMeshEffect
@@ -87,3 +84,4 @@ namespace UnityEngine.UI.Extensions
         }
     }
 }
+#endif

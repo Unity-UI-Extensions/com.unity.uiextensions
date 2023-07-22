@@ -40,17 +40,14 @@ use HTML-like tags in your text. Try it out, you'll see what I mean. It doesn't
 break down entirely, but it doesn't really do what you'd want either.
 
 */
+#if !UNITY_2022_1_OR_NEWER
 
 using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Effects/Extensions/Mono Spacing")]
-#if UNITY_2022_1_OR_NEWER
-    [RequireComponent(typeof(TMPro.TMP_Text))]
-#else
     [RequireComponent(typeof(Text))]
-#endif
     [RequireComponent(typeof(RectTransform))]
     ///Summary
     /// Note, Vertex Count has changed in 5.2.1+, is now 6 (two tris) instead of 4 (tri strip).
@@ -62,21 +59,15 @@ namespace UnityEngine.UI.Extensions
         public bool UseHalfCharWidth = false;
 
         private RectTransform rectTransform;
-#if UNITY_2022_1_OR_NEWER
-        private TMPro.TMP_Text text;
-#else
+
         private Text text;
-#endif
 
 		protected MonoSpacing() { }
 
         protected override void Awake()
         {
-#if UNITY_2022_1_OR_NEWER
-            text = GetComponent<TMPro.TMP_Text>();
-#else
             text = GetComponent<Text>();
-#endif
+
             if (text == null)
             {
                 Debug.LogWarning("MonoSpacing: Missing Text component");
@@ -117,28 +108,6 @@ namespace UnityEngine.UI.Extensions
 			float    alignmentFactor = 0;
 			int      glyphIdx        = 0;
 
-#if UNITY_2022_1_OR_NEWER
-            switch (text.alignment)
-			{
-                case TMPro.TextAlignmentOptions.BottomLeft:
-                case TMPro.TextAlignmentOptions.MidlineLeft:
-                case TMPro.TextAlignmentOptions.TopLeft:
-				alignmentFactor = 0f;
-				break;
-
-                case TMPro.TextAlignmentOptions.BottomJustified:
-                case TMPro.TextAlignmentOptions.MidlineJustified:
-                case TMPro.TextAlignmentOptions.TopJustified:
-				alignmentFactor = 0.5f;
-				break;
-
-                case TMPro.TextAlignmentOptions.BottomRight:
-                case TMPro.TextAlignmentOptions.MidlineRight:
-                case TMPro.TextAlignmentOptions.TopRight:
-				alignmentFactor = 1f;
-				break;
-			}
-#else
             switch (text.alignment)
             {
                 case TextAnchor.LowerLeft:
@@ -159,7 +128,7 @@ namespace UnityEngine.UI.Extensions
                     alignmentFactor = 1f;
                     break;
             }
-#endif
+
             for (int lineIdx=0; lineIdx < lines.Length; lineIdx++)
 			{
 				string line = lines[lineIdx];
@@ -222,3 +191,4 @@ namespace UnityEngine.UI.Extensions
         }
 	}
 }
+#endif
