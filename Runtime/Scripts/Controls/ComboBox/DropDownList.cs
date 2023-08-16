@@ -101,7 +101,7 @@ namespace UnityEngine.UI.Extensions
 		[System.Serializable]
 		public class ControlDisabledEvent : Events.UnityEvent<bool> { }
 
-		// fires when item is changed;
+		// fires when item changed between enabled and disabled;
 		public ControlDisabledEvent OnControlDisabled;
 
 		public void Start()
@@ -427,38 +427,45 @@ namespace UnityEngine.UI.Extensions
 		}
 
 		/// <summary>
-		/// Toggle the drop down list
+		/// Toggle the drop down list if it's active
 		/// </summary>
-		/// <param name="directClick"> whether an item was directly clicked on</param>
+		/// <param name="directClick">makes no difference, only for backwards compatibility reasons</param>
 		public void ToggleDropdownPanel(bool directClick)
 		{
-			if (!isActive) return;
+			if (!isActive)
+				return;
 
 			_overlayRT.transform.localScale = new Vector3(1, 1, 1);
 			_scrollBarRT.transform.localScale = new Vector3(1, 1, 1);
 			_isPanelActive = !_isPanelActive;
 			_overlayRT.gameObject.SetActive(_isPanelActive);
+
 			if (_isPanelActive)
-			{
 				transform.SetAsLastSibling();
-			}
-			else if (directClick)
-			{
-				// scrollOffset = Mathf.RoundToInt(itemsPanelRT.anchoredPosition.y / _rectTransform.sizeDelta.y);
-			}
+		}
+
+		/// <summary>
+		/// Hides the drop down panel if its visible at the moment
+		/// </summary>
+		public void HideDropDownPanel()
+		{
+			if (!_isPanelActive)
+				return;
+			ToggleDropdownPanel(false);
 		}
 
 		/// <summary>
 		/// Updates the control and sets its active status, determines whether the dropdown will open ot not
+		/// and takes care of the underlying button to follow the status.
 		/// </summary>
 		/// <param name="status"></param>
 		public void SetActive(bool status)
 		{
-			if (status != isActive)
-			{
-				OnControlDisabled?.Invoke(status);
-			}
+			if (status == isActive)
+				return;
 			isActive = status;
+			OnControlDisabled?.Invoke(isActive);
+			_mainButton.btn.enabled = isActive;
 		}
 	}
 }
