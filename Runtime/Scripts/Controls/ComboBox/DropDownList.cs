@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
 {
     /// <summary>
-    ///  Extension to the UI class which creates a dropdown list 
+    ///  Extension to the UI class which creates a dropdown list
     /// </summary>
     [RequireComponent(typeof(RectTransform))]
 	[AddComponentMenu("UI/Extensions/ComboBox/Dropdown List")]
@@ -48,6 +48,9 @@ namespace UnityEngine.UI.Extensions
 
         private GameObject _itemTemplate;
 		private bool _initialized;
+
+		private string _defaultMainButtonCaption = null;
+		private Color _defaultNormalColor;
 
         [SerializeField]
 		private float _scrollBarWidth = 20.0f;
@@ -120,6 +123,9 @@ namespace UnityEngine.UI.Extensions
 			{
 				_rectTransform = GetComponent<RectTransform>();
 				_mainButton = new DropDownListButton(_rectTransform.Find("MainButton").gameObject);
+
+				_defaultMainButtonCaption = _mainButton.txt.text;
+				_defaultNormalColor = _mainButton.btn.colors.normalColor;
 
 				_overlayRT = _rectTransform.Find("Overlay").GetComponent<RectTransform>();
 				_overlayRT.gameObject.SetActive(false);
@@ -212,7 +218,7 @@ namespace UnityEngine.UI.Extensions
         }
 
         /// <summary>
-        /// Adds an additional drop down list item using a string name 
+        /// Adds an additional drop down list item using a string name
         /// </summary>
         /// <param name="item">Item of type String</param>
         public void AddItem(string item)
@@ -223,7 +229,7 @@ namespace UnityEngine.UI.Extensions
         }
 
         /// <summary>
-        /// Adds an additional drop down list item using a sprite image 
+        /// Adds an additional drop down list item using a sprite image
         /// </summary>
         /// <param name="item">Item of type UI Sprite</param>
         public void AddItem(Sprite item)
@@ -245,7 +251,7 @@ namespace UnityEngine.UI.Extensions
         }
 
         /// <summary>
-        /// Removes an item from the drop down list item using a string name 
+        /// Removes an item from the drop down list item using a string name
         /// </summary>
         /// <param name="item">Item of type String</param>
         public void RemoveItem(string item)
@@ -256,7 +262,7 @@ namespace UnityEngine.UI.Extensions
         }
 
         /// <summary>
-        /// Removes an item from the drop down list item using a sprite image 
+        /// Removes an item from the drop down list item using a sprite image
         /// </summary>
         /// <param name="item">Item of type UI Sprite</param>
         public void RemoveItem(Sprite item)
@@ -266,7 +272,21 @@ namespace UnityEngine.UI.Extensions
             RedrawPanel();
         }
 
-        public void ResetItems()
+		public void ResetDropDown()
+		{
+			if (!_initialized)
+				return;
+
+			_mainButton.txt.text = _defaultMainButtonCaption;
+			for (int i = 0; i < _itemsPanelRT.childCount; i++)
+				_panelItems[i].btnImg.color = _defaultNormalColor;
+
+			_selectedIndex = -1;
+			_initialized = false;
+			Initialize();
+		}
+
+		public void ResetItems()
 		{
 			Items.Clear();
 			RebuildPanel();
@@ -304,7 +324,7 @@ namespace UnityEngine.UI.Extensions
 					_panelItems[i].txt.text = item.Caption;
 					if (item.IsDisabled) _panelItems[i].txt.color = disabledTextColor;
 
-					if (_panelItems[i].btnImg != null) _panelItems[i].btnImg.sprite = null;//hide the button image  
+					if (_panelItems[i].btnImg != null) _panelItems[i].btnImg.sprite = null;//hide the button image
 					_panelItems[i].img.sprite = item.Image;
 					_panelItems[i].img.color = (item.Image == null) ? new Color(1, 1, 1, 0)
 																	: item.IsDisabled ? new Color(1, 1, 1, .5f)
@@ -413,7 +433,7 @@ namespace UnityEngine.UI.Extensions
 		public void ToggleDropdownPanel(bool directClick)
 		{
             if (!isActive) return;
-            
+
 			_overlayRT.transform.localScale = new Vector3(1, 1, 1);
 			_scrollBarRT.transform.localScale = new Vector3(1, 1, 1);
 			_isPanelActive = !_isPanelActive;
@@ -424,7 +444,7 @@ namespace UnityEngine.UI.Extensions
 			}
 			else if (directClick)
 			{
-				// scrollOffset = Mathf.RoundToInt(itemsPanelRT.anchoredPosition.y / _rectTransform.sizeDelta.y); 
+				// scrollOffset = Mathf.RoundToInt(itemsPanelRT.anchoredPosition.y / _rectTransform.sizeDelta.y);
 			}
 		}
 
