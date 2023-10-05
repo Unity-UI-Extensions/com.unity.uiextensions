@@ -64,7 +64,6 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 
-		//	private int scrollOffset; //offset of the selected item
 		private int _selectedIndex = -1;
 
 		[SerializeField]
@@ -101,7 +100,7 @@ namespace UnityEngine.UI.Extensions
 		[System.Serializable]
 		public class ControlDisabledEvent : Events.UnityEvent<bool> { }
 
-		// fires when item changed between enabled and disabled;
+		// fires when item changes between enabled and disabled;
 		public ControlDisabledEvent OnControlDisabled;
 
 		public void Start()
@@ -275,11 +274,15 @@ namespace UnityEngine.UI.Extensions
 		public void ResetDropDown()
 		{
 			if (!_initialized)
+			{
 				return;
+			}
 
 			_mainButton.txt.text = _defaultMainButtonCaption;
 			for (int i = 0; i < _itemsPanelRT.childCount; i++)
+			{
 				_panelItems[i].btnImg.color = _defaultNormalColor;
+			}
 
 			_selectedIndex = -1;
 			_initialized = false;
@@ -427,13 +430,24 @@ namespace UnityEngine.UI.Extensions
 		}
 
 		/// <summary>
-		/// Toggle the drop down list if it's active
+		/// Toggle the drop down list if it is active
 		/// </summary>
-		/// <param name="directClick">makes no difference, only for backwards compatibility reasons</param>
-		public void ToggleDropdownPanel(bool directClick)
+		/// <param name="directClick">Retained for backwards compatibility only.</param>
+		[Obsolete("DirectClick Parameter is no longer required")]
+		public void ToggleDropdownPanel(bool directClick = false)
+		{
+			ToggleDropdownPanel();
+		}		
+
+		/// <summary>
+		/// Toggle the drop down list if it is active
+		/// </summary>
+		public void ToggleDropdownPanel()
 		{
 			if (!isActive)
+			{
 				return;
+			}
 
 			_overlayRT.transform.localScale = new Vector3(1, 1, 1);
 			_scrollBarRT.transform.localScale = new Vector3(1, 1, 1);
@@ -441,7 +455,9 @@ namespace UnityEngine.UI.Extensions
 			_overlayRT.gameObject.SetActive(_isPanelActive);
 
 			if (_isPanelActive)
+			{
 				transform.SetAsLastSibling();
+			}
 		}
 
 		/// <summary>
@@ -450,7 +466,10 @@ namespace UnityEngine.UI.Extensions
 		public void HideDropDownPanel()
 		{
 			if (!_isPanelActive)
+			{
 				return;
+			}
+			
 			ToggleDropdownPanel(false);
 		}
 
@@ -462,7 +481,9 @@ namespace UnityEngine.UI.Extensions
 		public void SetActive(bool status)
 		{
 			if (status == isActive)
+			{
 				return;
+			}
 			isActive = status;
 			OnControlDisabled?.Invoke(isActive);
 			_mainButton.btn.enabled = isActive;
