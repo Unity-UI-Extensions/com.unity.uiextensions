@@ -287,7 +287,7 @@ namespace UnityEngine.UI.Extensions
 				PopulateMesh (vh, m_points);
 
 			}
-			else if (m_segments != null && m_segments.Count > 0) {
+			if (m_segments != null && m_segments.Count > 0) {
 				GeneratedUVs ();
 				vh.Clear ();
 
