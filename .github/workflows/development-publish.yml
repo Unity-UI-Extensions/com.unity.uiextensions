@@ -1,0 +1,26 @@
+name: Publish development branch on Merge
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - development
+  # On close of PR targeting development
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release_on_merge:
+    if: github.event.pull_request.merged == true
+    name: Tag and Publish UPM package
+    uses: ./.github/workflows/upversionandtagrelease.yml
+    with:
+      build-host: ubuntu-latest
+      build-type: pre-release
+    secrets: inherit

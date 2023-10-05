@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos
+          - os: macOS
             build-target: iOS        
           - os: windows
             build-target: Android
@@ -40,12 +40,11 @@ jobs:
         with:
           submodules: recursive
           clean: true
-
       - id: build
         name: 'Run Unity Builds'
         run: |
           echo "::group::Set Hub and editor locations"
-          $unityVersion = ${{ inputs.unityVersion }}
+          $unityVersion = '${{ inputs.unityVersion }}'
 
           echo "::group::Set Hub and editor locations"
 
@@ -55,6 +54,7 @@ jobs:
             $hubPath = "C:\Program Files\Unity Hub\Unity Hub.exe"
             $editorRootPath = "C:\Program Files\Unity\Hub\Editor\"
             $editorFileEx = "\Editor\Unity.exe"
+            $directorySeparatorChar = "\"
 
             #"Unity Hub.exe" -- --headless help
             #. 'C:\Program Files\Unity Hub\Unity Hub.exe' -- --headless help
@@ -68,6 +68,7 @@ jobs:
             $hubPath = "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub"
             $editorRootPath = "/Applications/Unity/Hub/Editor/"
             $editorFileEx = "/Unity.app/Contents/MacOS/Unity"
+            $directorySeparatorChar = "/"
 
             # /Applications/Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- --headless help
             function unity-hub 
@@ -80,6 +81,7 @@ jobs:
             $hubPath = "$HOME/Unity Hub/UnityHub.AppImage"
             $editorRootPath = "$HOME/Unity/Hub/Editor/"
             $editorFileEx = "/Editor/Unity"
+            $directorySeparatorChar = "/"
 
             # /UnityHub.AppImage --headless help
             # xvfb-run --auto-servernum "$HOME/Unity Hub/UnityHub.AppImage" --headless help
@@ -90,8 +92,6 @@ jobs:
           }
 
           echo "::endgroup::"
-
-
 
           echo "::group::Get String function to query a string for a value"
 
@@ -115,8 +115,7 @@ jobs:
           }
           echo "::endgroup::"
 
-          echo "::group::Get Installed Unity version based on Matrix"
-          echo 'Script Start'
+          echo "::group::Find Installed Unity version based on input"
           echo "Unity hub path is {$hubPath}"
           echo "Requested unity version is {$unityVersion}"
           
@@ -136,7 +135,7 @@ jobs:
             $queryUnityVersion = GetString $InstalledUnityVersions "$unityVersion" -MatchIndex 0
           }
 
-          echo "Found unity version is {$queryUnityVersion}"
+          echo "Found unity version is {$queryUnityVersion} for input {$unityVersion}"
 
           if ($queryUnityVersion -ne 0) 
           {
@@ -421,4 +420,4 @@ jobs:
         if: always()
         with:
           name: unity-build-log
-          path: Logs/**        
+          path: Logs/**
