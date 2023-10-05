@@ -1,7 +1,7 @@
 ﻿/// adaption for cylindrical bending by herbst
 /// Credit Breyer
 /// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1777407
-#if UNITY_2022_1_OR_NEWER
+#if !UNITY_2022_1_OR_NEWER
 
 namespace UnityEngine.UI.Extensions
 {
