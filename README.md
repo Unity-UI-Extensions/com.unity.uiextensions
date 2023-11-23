@@ -266,7 +266,7 @@ Check out the [page on my blog](http://bit.ly/Unity3DUIEssentials) for more deta
 
 ## [The downloads](https://unity-ui-extensions.github.io/Downloads)
 
-As this repo was created to support my new Unity UI Title ["Unity 3D UI Essentials"](http://bit.ly/Unity3DUIEssentials), in the downloads section you will find two custom assets (SpaceShip-DemoScene-Start.unitypackage and RollABallSample-Start.unitypackage).  These are just here as starter scenes for doing UI tasks in the book.
+As this repo was created to support my new Unity UI Title ["Unity 3D UI Essentials"](http://bit.ly/Unity3DUIEssentials), in the downloads section you will find two custom assets (SpaceShip-DemoScene-Start.unitypackage and RollABallSample-Start.unitypackage).   These are just here as starter scenes for doing UI tasks in the book.
 
 I will add more sample scenes for the UI examples in this repository and detail them above over time.
 
