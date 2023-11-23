@@ -46,7 +46,13 @@ namespace UnityEngine.UI.Extensions
             get
             {
                 if (instance == null)
+                {
+#if UNITY_2023_1_OR_NEWER
+                    instance = GameObject.FindFirstObjectByType<BoundTooltipItem>();
+#else
                     instance = GameObject.FindObjectOfType<BoundTooltipItem>();
+#endif
+                }
                 return instance;
             }
         }

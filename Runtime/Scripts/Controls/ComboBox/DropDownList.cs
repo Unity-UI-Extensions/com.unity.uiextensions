@@ -166,7 +166,7 @@ namespace UnityEngine.UI.Extensions
 		/// <param name="index"></param>
 		public void SelectItemIndex(int index)
 		{
-			ToggleDropdownPanel(false);
+			ToggleDropdownPanel();
 			OnItemClicked(index);
 		}
 
@@ -351,7 +351,7 @@ namespace UnityEngine.UI.Extensions
 			if (indx != _selectedIndex && OnSelectionChanged != null) OnSelectionChanged.Invoke(indx);
 
 			_selectedIndex = indx;
-			ToggleDropdownPanel(true);
+			ToggleDropdownPanel();
 			UpdateSelected();
 		}
 
@@ -471,7 +471,7 @@ namespace UnityEngine.UI.Extensions
 				return;
 			}
 			
-			ToggleDropdownPanel(false);
+			ToggleDropdownPanel();
 		}
 
 		/// <summary>
