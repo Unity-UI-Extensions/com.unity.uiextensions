@@ -1,5 +1,3 @@
-/// Credit herbst / derived from LetterSpacing by Deeperbeige
-/// Sourced from - http://forum.unity3d.com/threads/adjustable-character-spacing-free-script.288277/
 /*
 
 Produces an simple mono-spacing effect on UI Text components.
@@ -41,11 +39,24 @@ break down entirely, but it doesn't really do what you'd want either.
 
 */
 #if !UNITY_2022_1_OR_NEWER
-
 using System.Collections.Generic;
+#endif
 
+using System;
+
+/// Credit herbst / derived from LetterSpacing by Deeperbeige
+/// Sourced from - http://forum.unity3d.com/threads/adjustable-character-spacing-free-script.288277/
 namespace UnityEngine.UI.Extensions
 {
+#if UNITY_2022_1_OR_NEWER
+    [Obsolete("MonoSpacing is not supported in Unity 2022.1 or newer. Use TMPro instead.")]
+    public class MonoSpacing : BaseMeshEffect
+    {
+        public override void ModifyMesh(VertexHelper vh)
+        {
+        }
+    }
+#else
     [AddComponentMenu("UI/Effects/Extensions/Mono Spacing")]
     [RequireComponent(typeof(Text))]
     [RequireComponent(typeof(RectTransform))]
@@ -76,13 +87,13 @@ namespace UnityEngine.UI.Extensions
             rectTransform = text.GetComponent<RectTransform>();
         }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         protected override void OnValidate()
 		{
 			Spacing = m_spacing;
 			base.OnValidate();
 		}
-		#endif
+#endif
 		
 		public float Spacing
 		{
@@ -190,5 +201,5 @@ namespace UnityEngine.UI.Extensions
             vh.AddUIVertexTriangleStream(verts);
         }
 	}
-}
 #endif
+    }

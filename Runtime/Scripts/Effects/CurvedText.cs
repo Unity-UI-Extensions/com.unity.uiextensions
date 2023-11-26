@@ -1,9 +1,17 @@
-﻿/// Credit Breyer
-/// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1777407
-#if !UNITY_2022_1_OR_NEWER
+﻿
+using System;
 
 namespace UnityEngine.UI.Extensions
 {
+#if UNITY_2022_1_OR_NEWER
+    [Obsolete("CurvedText is not supported in Unity 2022.1 or newer. Use TMPro instead.")]
+    public class CurvedText : BaseMeshEffect
+    {
+        public override void ModifyMesh(VertexHelper vh)
+        {
+        }
+    }
+#else
     [RequireComponent(typeof(Text))]
     [RequireComponent(typeof(RectTransform))]
     [AddComponentMenu("UI/Effects/Extensions/Curved Text")]
@@ -83,5 +91,5 @@ namespace UnityEngine.UI.Extensions
             }
         }
     }
-}
 #endif
+}

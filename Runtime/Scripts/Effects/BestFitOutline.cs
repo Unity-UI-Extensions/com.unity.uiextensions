@@ -2,10 +2,19 @@
 /// Sourced from - http://forum.unity3d.com/members/melang.593409/
 /// NOT supported in Unity 2022
 
+using System;
 #if !UNITY_2022_1_OR_NEWER
 using System.Collections.Generic;
+#endif
+
 namespace UnityEngine.UI.Extensions
 {
+#if UNITY_2022_1_OR_NEWER
+	[Obsolete("BestFitOutline is not supported in Unity 2022.1 or newer. Use TMPro instead.")]
+	public class BestFitOutline : Shadow
+	{
+	}
+#else
     [AddComponentMenu("UI/Effects/Extensions/BestFit Outline")]
 	public class BestFitOutline : Shadow
 	{
@@ -61,5 +70,5 @@ namespace UnityEngine.UI.Extensions
             }
         }
 	}
-}
 #endif
+    }
