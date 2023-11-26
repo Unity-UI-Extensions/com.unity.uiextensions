@@ -132,6 +132,9 @@ namespace UnityEngine.UI.Extensions
         public class SelectionValidityChangedEvent : Events.UnityEvent<bool> { }
 
         [System.Serializable]
+        public class ItemSelectedEvent : Events.UnityEvent<string> { }
+
+        [System.Serializable]
         public class ControlDisabledEvent : Events.UnityEvent<bool> { }
 
         // fires when input text is changed;
@@ -141,6 +144,8 @@ namespace UnityEngine.UI.Extensions
         public SelectionValidityChangedEvent OnSelectionValidityChanged;
         // fires in both cases
         public SelectionChangedEvent OnSelectionChanged;
+        // fires when an item is clicked
+        public ItemSelectedEvent OnItemSelected;
         // fires when item is changed;
         public ControlDisabledEvent OnControlDisabled;
 
@@ -358,10 +363,10 @@ namespace UnityEngine.UI.Extensions
         /// <param name="item"></param>
         private void OnItemClicked(string item)
         {
-            //Debug.Log("item " + item + " clicked");
             Text = item;
             _mainInput.text = Text;
             ToggleDropdownPanel(true);
+            OnItemSelected?.Invoke(Text);
         }
 
         private void RedrawPanel()
