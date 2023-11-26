@@ -1,4 +1,4 @@
-name: Get the Unity version required from a UPM Package.json file
+name: Get the Package version from a UPM Package.json file
 
 on:
   workflow_call:
@@ -11,21 +11,21 @@ on:
         type: string
         required: false
     outputs:
-      unityversion:
-        description: "Returns the version of Unity the UPM package requires"
-        value: ${{ jobs.get_unity_version.outputs.upmunityversion }}
+      packageversion:
+        description: "Returns the version of the UPM package"
+        value: ${{ jobs.get_package_version.outputs.upmpackageversion }}
 
 jobs:
-  get_unity_version:
-    name: Get required Unity version from UPM Package
+  get_package_version:
+    name: Get required Package version from UPM Package
     runs-on: ${{ inputs.build-host }}
     outputs:
-      upmunityversion: ${{ steps.getVersion.outputs.packageunityversion }}
+      upmpackageversion: ${{ steps.getVersion.outputs.packageversion }}
     steps:
       - name: Script Version
         run: |
           echo "::group::Script Versioning"
-          $scriptVersion = "1.0.2"
+          $scriptVersion = "1.0.0"
           echo "Build Script Version: $scriptVersion"
           echo "::endgroup::"
         shell: pwsh
@@ -34,7 +34,7 @@ jobs:
           submodules: recursive
           clean: true
       - id: getVersion
-        name: 'Get Unity Version Number'
+        name: 'Get Package Version Number'
         run: |
           echo "::group::Validating input"
 
@@ -53,20 +53,18 @@ jobs:
 
           echo "::endgroup::"
 
-          echo "::group::Unity Version UPM check"
+          echo "::group::Package Version UPM check"
 
           $package_json = Get-Content -Path $versionFile | ConvertFrom-Json
-          $unityVersion = $package_json.unity
+          $packageVersion = $package_json.version
 
-          if($unityVersion.Length -lt 6) {
-            echo "Error - Detected version is $unityVersion"
-            echo "Unity version is too short, please check your UPM package Unity setting"
+          if([string]::IsNullOrEmpty($packageVersion)) {
+            Write-Error "Project.json version number does not exist or is empty"
             exit 1
           }
 
-          echo "packageunityversion=$unityVersion" >> $env:GITHUB_OUTPUT
+          echo "packageversion=$packageVersion" >> $env:GITHUB_OUTPUT
 
-          echo "Detected version is $unityVersion"
+          echo "Detected version is $packageVersion"
           echo "::endgroup::"
-
         shell: pwsh
