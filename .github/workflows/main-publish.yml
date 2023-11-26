@@ -5,7 +5,7 @@ on:
     types:
       - closed
     branches:
-      - main
+      - release
 
 jobs:
   # Get Version to tag and release the branch, no up-version - [no-ver] included in PR title
