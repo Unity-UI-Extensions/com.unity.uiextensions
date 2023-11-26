@@ -40,6 +40,10 @@ namespace UnityEngine.UI.Extensions
                 bool updateLine = false;
                 for (int i = 0; i < transforms.Length; i++)
                 {
+                    if (transforms[i] == null)
+                    {
+                        continue;
+                    }
                     if (!updateLine && previousPositions[i] != transforms[i].position)
                     {
                         updateLine = true;
@@ -60,6 +64,10 @@ namespace UnityEngine.UI.Extensions
             // First, convert the pivot to worldspace
             for (int i = 0; i < transforms.Length; i++)
             {
+                if (transforms[i] == null)
+                {
+                    continue;
+                }
                 worldSpaces[i] = transforms[i].TransformPoint(thisPivot);
             }
 
@@ -83,6 +91,10 @@ namespace UnityEngine.UI.Extensions
             previousPositions = new Vector3[transforms.Length];
             for (int i = 0; i < transforms.Length; i++)
             {
+                if (transforms[i] == null)
+                {
+                    continue;
+                }
                 previousPositions[i] = transforms[i].position;
             }
         }

@@ -6,7 +6,7 @@ namespace UnityEngine.UI.Extensions
 {
     public static class uGUITools
     {
-        [MenuItem("uGUI/Anchors to Corners %[")]
+        [MenuItem("Tools/UnityUIExtensions/Anchors to Corners %[")]
         static void AnchorsToCorners()
         {
             if (Selection.transforms == null || Selection.transforms.Length == 0)
@@ -37,7 +37,7 @@ namespace UnityEngine.UI.Extensions
             Undo.CollapseUndoOperations(undoGroup);
         }
 
-        [MenuItem("uGUI/Corners to Anchors %]")]
+        [MenuItem("Tools/UnityUIExtensions/Corners to Anchors %]")]
         static void CornersToAnchors()
         {
             if (Selection.transforms == null || Selection.transforms.Length == 0)
@@ -60,13 +60,13 @@ namespace UnityEngine.UI.Extensions
             Undo.CollapseUndoOperations(undoGroup);
         }
 
-        [MenuItem("uGUI/Mirror Horizontally Around Anchors %;")]
+        [MenuItem("Tools/UnityUIExtensions/Mirror Horizontally Around Anchors %;")]
         static void MirrorHorizontallyAnchors()
         {
             MirrorHorizontally(false);
         }
 
-        [MenuItem("uGUI/Mirror Horizontally Around Parent Center %:")]
+        [MenuItem("Tools/UnityUIExtensions/Mirror Horizontally Around Parent Center %:")]
         static void MirrorHorizontallyParent()
         {
             MirrorHorizontally(true);
@@ -96,13 +96,13 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        [MenuItem("uGUI/Mirror Vertically Around Anchors %'")]
+        [MenuItem("Tools/UnityUIExtensions/Mirror Vertically Around Anchors %'")]
         static void MirrorVerticallyAnchors()
         {
             MirrorVertically(false);
         }
 
-        [MenuItem("uGUI/Mirror Vertically Around Parent Center %\"")]
+        [MenuItem("Tools/UnityUIExtensions/Mirror Vertically Around Parent Center %\"")]
         static void MirrorVerticallyParent()
         {
             MirrorVertically(true);

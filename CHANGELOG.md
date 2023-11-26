@@ -4,17 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## Release 2.3 - Reanimation - 2022/02/07
+## Release 2.3.2 - Rejuvenation - 2023/11/26
 
-It has been a tough time for all since the last update, but things have been moving steadily along.  In the past few months there has been a concerted effort to revamp and update the project ready for Unity 2022, as well as migrating the source repository over to GitHub and refreshing all the things.
-We hope the new release is better for everyone and we have paid close attention to the editor menus and places to find all the controls for this release.
+2023 is certainly an interesting year to keep you on your toes, and finding time to keep managing all the requests and updates that come in are taking their toll, especially for a FREE project, but nonetheless, I still do it.
+
+Mainly bugfixes for the end of year update, promoting some resolutions that have been verified and tested since the last release.
 
 To get up to speed with the Unity UI Extensions, check out the [Getting Started](https://unity-ui-extensions.github.io/GettingStarted.html) Page.
 
 > Ways to get in touch:
 >
-> - [Gitter Chat](https://gitter.im/Unity-UI-Extensions/Lobby) site for the UI Extensions project
 > - [GitHub Discussions](https://github.com/Unity-UI-Extensions/com.unity.uiextensions/discussions), if you have any questions, queries or suggestions
+> - [Gitter Chat](https://gitter.im/Unity-UI-Extensions/Lobby) site for the UI Extensions project
 >
 > Much easier that posting a question / issue on YouTube, Twitter or Facebook :D
 
@@ -28,64 +29,23 @@ For more details, see the [deprecation notice](https://github.com/Unity-UI-Exten
 
 ## Added
 
-- Added new FIFO based UI Line Render when dynamic line rendering is needed.
-- Added ResetSelectableHighlight component.
-- Added SetArc method to UICircle as requested.
-- Added new UIHorizontalScroller based on UIVerticalScroller.
-- Added OnHighlightChanged and OnPressChanged events for UI Button.
-- Added error handling around setting Unity UI Components for Vertical/Horizontal ScrollSnaps.
-- Added Editor Menu Option to create a Min/Max slider.
-- Added the ability to set a specific item for combobox controls on start and not just the first.
-- Added the ability to disable the combo boxes and make them read-only.
+- Add CalculatePointOnCurve for uilinerenderer (@victornor)
 
 ## Changed
 
-- Refresh FancyScrollView with the latest fixes
-- All Text based components updated to use TextMeshPro from Unity 2022 **Breaking Change**
-
-- Clean-up and reset pivots on scene start.
-- Merged in feature/improved-ui-highlightable (pull request UILineRenderer - issues with specifying point locations at runtime #123).
-- Merged in fix/rangesliderfix (pull request HorizontalScrollSnap Mask Area doesn't work when content created dynamically #125).
-- Merged in fix/infinitescrollcontentsize (pull request Gradient initialization should be in Awake() #126).
-- Merged in feature/controlTouchUp (pull request UILineRenderer mesh not updating in Editor scene view #127).
-- Upgraded RangeSlider to work in both Horizontal and Vertical setups.
-- Merged in RangeSlider-upgrade. (pull request Newtonsoft.Json.dll conflict #131)
-- Updated UIVertical scroller to be 2022 compliant.
-- Updated Curly UI to wait until end of the frame to recalculate positions.
-- Updated Depth Texture sampler in UI Particles Shaders.
-- Updated Points to always be an array of 1 when set to nothing for the Line Renderer.
-- Updated Cooldown button to work with Keyboard input.
-- Removed unneeded size calculation which caused some issues with mixed content.
-- Resolved an issue whereby the last row in a flow layout group would not size correctly.
-- Updated all components using "LayoutGroup" to override their OnDisable.
-- Updated validation in the new MinMaxSlider.
-- Updated Editor create options to add the correct Event System Input manager.
-- Updated initialisation logic to not cause an endless loop in the TabNavigationHelper.
-- Updated "Action" use to "UnityAction" to avoid Unity issues for DropDowns.
-- Updated UIVerticalScroller for standards.
-- Updated ReorderableList/ReorderableListElement to prevent creating a fake object for non-transferable items.
-- Updated panel drawing for ComboBox controls and added DropdownOffset.
-- Updated build issue with ReorderableListElement.
-- Updated NonDrawingGraphic to require a CanvasRender, else it causes an error on run.
+- fix: Fixed an null reference exception with the ResetSelectableHighlight (@FejZa)
+- fix: Resolved an issue where the last line in a flow layout group would overflow the rect bounds.
+- fix: GetPosition when Segments is null (@victornor)
+- fix: Fix Bug! NicerOutline color.a Loss when m_UseGraphicAlpha is true (wanliyun)
+- fix: Update to force Enumerated start for Accordion elements, Resolves: #455
+- Added argument to the UpdateLayout method for the HSS/VSS to move to a new starting page.
+- Updated implementations to handle 2023 support, with 2023 moving in to public release.
+- Added extra event on the AutoCompleteComboBox, to fire when an item in the list is selected, with its display name.
+- FlowLayoutGroup components updated to latest (likely the last as the author has stopped development)
 
 ## Deprecated
 
-- Marked ScrollPositionController as Obsolete, users should use the new Scoller.
-- BestFitOutline - Deprecated in Unity 2020 onwards. (still available for earlier versions)
-- NicerOutline - Deprecated in Unity 2020 onwards. (still available for earlier versions)
-- Marked TileSizeFitter as obsolete as Unity has made this unworkable.
-
-## Fixed
-
-- Resolved issues with DisplayAbove and using a 0 ItemsToDisplay for ComboBox controls.
-- Resolved startup issue that prevented the control from being used (Unity changed the start order in some instances), this was causing null reference issues with comboboxes.
-- Patch fix for UILineRenderer.
-- Resolves issue where the lower range value would become stuck when moving.
-- Updated Infinite scroll to work with content of different sizes.
-- Updated Dropdown list to NOT resize text Rect on draw.
-- Revised the Curly UI fix as it was preventing the graphic from being updated in the scene view.
-- Cleanup and ensuring the UIParticleSystem is disposed in onDestroy correctly.
-- Clean up range slider unused variables.
+- All deprecated Text based components now have "obsolete" tags, to avoid breaking code.  Note, these do not function in 2022 and above, as Unity have "changed" things.  For any affected component, I recommend updating to use TextMeshPro native features.
 
 ## Additional Notes
 
@@ -98,6 +58,7 @@ New for 2020, we have added OpenUPM support and the package can be installed usi
 ```cli
 `openupm add com.unity.uiextensions`
 ```
+
 > For more details on using [OpenUPM CLI, check the docs here](https://github.com/openupm/openupm-cli#installation).
 
 - Unity Package Manager - manual

@@ -159,7 +159,11 @@ namespace UnityEditor.UI
 
 		private static void CreateEventSystem(bool select, GameObject parent)
 		{
+#if UNITY_2023_1_OR_NEWER
+			var esys = Object.FindFirstObjectByType<EventSystem>();
+#else
 			var esys = Object.FindObjectOfType<EventSystem>();
+#endif     			
 			if (esys == null)
 			{
 				var eventSystem = new GameObject("EventSystem");
@@ -191,7 +195,11 @@ namespace UnityEditor.UI
 				return canvas.gameObject;
 
 			// No canvas in selection or its parents? Then use just any canvas..
+#if UNITY_2023_1_OR_NEWER
+			canvas = Object.FindFirstObjectByType<Canvas>();
+#else
 			canvas = Object.FindObjectOfType(typeof(Canvas)) as Canvas;
+#endif
 			if (canvas != null && canvas.gameObject.activeInHierarchy)
 				return canvas.gameObject;
 
@@ -1121,7 +1129,7 @@ namespace UnityEditor.UI
 			mainButtonRT.anchorMin = Vector2.zero;
 			mainButtonRT.anchorMax = Vector2.one;
 			mainButtonRT.sizeDelta = Vector2.zero;
-			Events.UnityEventTools.AddBoolPersistentListener(mainButton.GetComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(dropDownList.ToggleDropdownPanel), true);
+			Events.UnityEventTools.AddPersistentListener(mainButton.GetComponent<Button>().onClick, dropDownList.ToggleDropdownPanel);
 			var mainButtonText = mainButton.GetComponentInChildren<Text>();
 			mainButtonText.alignment = TextAnchor.MiddleLeft;
 			mainButtonText.text = "Select Item...";
@@ -1149,7 +1157,7 @@ namespace UnityEditor.UI
 			overlayRT.sizeDelta = new Vector2(0f, 1f);
 			overlayRT.pivot = new Vector2(0f, 1f);
 			overlay.AddComponent<Image>().color = new Color(0.243f, 0.871f, 0f, 0f);
-			Events.UnityEventTools.AddBoolPersistentListener(overlay.AddComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(dropDownList.ToggleDropdownPanel), true);
+			Events.UnityEventTools.AddPersistentListener(overlay.AddComponent<Button>().onClick, dropDownList.ToggleDropdownPanel);
 			//Overlay Scroll Panel
 			var overlayScrollPanelRT = overlayScrollPanel.GetComponent<RectTransform>();
 			overlayScrollPanelRT.position += new Vector3(0, -cbbRT.sizeDelta.y, 0);
@@ -1257,7 +1265,11 @@ namespace UnityEditor.UI
 
 		private static void CreateToolTipItem(bool select, GameObject parent)
 		{
+#if UNITY_2023_1_OR_NEWER
+			var btti = Object.FindFirstObjectByType<BoundTooltipItem>();
+#else
 			var btti = Object.FindObjectOfType<BoundTooltipItem>();
+#endif
 			if (btti == null)
 			{
 				var boundTooltipItem = CreateUIObject("ToolTipItem", parent.GetComponentInParent<Canvas>().gameObject);

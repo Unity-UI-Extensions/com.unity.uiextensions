@@ -1,12 +1,25 @@
+
+#if !UNITY_2022_1_OR_NEWER
+using System.Collections.Generic;
+#endif
+
+using System;
+
 /// Credit Melang, Lee Hui
 /// Sourced from - http://forum.unity3d.com/members/melang.593409/
 /// GC Alloc fix - https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/pull-requests/130
 /// NOT supported in Unity 2022
-
-#if !UNITY_2022_1_OR_NEWER
-using System.Collections.Generic;
 namespace UnityEngine.UI.Extensions
 {
+#if UNITY_2022_1_OR_NEWER
+	[Obsolete("BestFitOutline is not supported in Unity 2022.1 or newer. Use TMPro instead.")]
+	public class NicerOutline : BaseMeshEffect
+	{
+        public override void ModifyMesh(VertexHelper vh)
+        {
+        }
+    }
+#else
     //An outline that looks a bit nicer than the default one. It has less "holes" in the outline by drawing more copies of the effect
     [AddComponentMenu("UI/Effects/Extensions/Nicer Outline")]
 	public class NicerOutline : BaseMeshEffect
@@ -134,7 +147,7 @@ namespace UnityEngine.UI.Extensions
 			start += ApplyText(m_Verts, vh, start);
         }
         
-		private int ApplyOutlineNoGC(List<UIVertex> verts, Color color, float x, float y, VertexHelper vh, int startIndex)
+		private int ApplyOutlineNoGC(List<UIVertex> verts, Color32 color, float x, float y, VertexHelper vh, int startIndex)
 		{
 			int length = verts.Count;
 			for (int i = 0; i < length; ++i)
@@ -194,5 +207,5 @@ namespace UnityEngine.UI.Extensions
 		}
 #endif
 	}
-}
 #endif
+    }

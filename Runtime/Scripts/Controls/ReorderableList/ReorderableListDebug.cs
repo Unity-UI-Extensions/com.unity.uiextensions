@@ -13,7 +13,11 @@ namespace UnityEngine.UI.Extensions
 
         void Awake()
         {
+#if UNITY_2023_1_OR_NEWER
+            foreach (var list in FindObjectsByType<ReorderableList>(FindObjectsSortMode.None))
+#else
             foreach (var list in FindObjectsOfType<ReorderableList>())
+#endif
             {
                 list.OnElementDropped.AddListener(ElementDropped);
             }

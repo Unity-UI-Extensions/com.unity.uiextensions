@@ -223,12 +223,21 @@ namespace UnityEngine.UI.Extensions
         /// <summary>
         /// used for changing / updating between screen resolutions
         /// </summary>
-        public void UpdateLayout()
+        public void UpdateLayout(bool resetPositionToStart = false)
         {
             _lerp = false;
             DistributePages();
+
+            if (resetPositionToStart)
+            {
+                _currentPage = StartingScreen;
+            }
+
             if (MaskArea)
+            {
                 UpdateVisible();
+            }
+
             SetScrollContainerPosition();
             OnCurrentScreenChange(_currentPage);
         }
@@ -327,6 +336,10 @@ namespace UnityEngine.UI.Extensions
                                     PreviousScreen();
                                 }
                             }
+                        }
+                        else if (distance == 0)
+                        {
+                            EndScreenChange();
                         }
                     }
                 }

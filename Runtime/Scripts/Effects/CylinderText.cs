@@ -1,14 +1,21 @@
-﻿/// adaption for cylindrical bending by herbst
+﻿
+using System;
+
+/// adaption for cylindrical bending by herbst
 /// Credit Breyer
 /// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1777407
-
 namespace UnityEngine.UI.Extensions
 {
 #if UNITY_2022_1_OR_NEWER
-    [RequireComponent(typeof(TMPro.TMP_Text))]
+    [Obsolete("CylinderText is not supported in Unity 2022.1 or newer. Use TMPro instead.")]
+    public class CylinderText : BaseMeshEffect
+    {
+        public override void ModifyMesh(VertexHelper vh)
+        {
+        }
+    }
 #else
     [RequireComponent(typeof(Text))]
-#endif
     [RequireComponent(typeof(RectTransform))]
     [AddComponentMenu("UI/Effects/Extensions/Cylinder Text")]
     public class CylinderText : BaseMeshEffect
@@ -56,4 +63,5 @@ namespace UnityEngine.UI.Extensions
             }
         }
     }
+#endif
 }

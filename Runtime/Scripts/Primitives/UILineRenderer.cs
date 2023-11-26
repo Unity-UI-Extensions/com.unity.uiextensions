@@ -296,8 +296,6 @@ namespace UnityEngine.UI.Extensions
 					PopulateMesh (vh, pointsToDraw);
 				}
 			} 
-
-
         }
 
 		private UIVertex[] CreateLineCap(Vector2 start, Vector2 end, SegmentType type)
@@ -419,7 +417,7 @@ namespace UnityEngine.UI.Extensions
             {
                 return Segments[segmentIndex - 1][index - 1];
             }
-            else if (Segments.Count > 0)
+            else if (Segments?.Count > 0)
             {
                 var segmentIndexCount = 0;
                 var indexCount = index;
@@ -441,6 +439,29 @@ namespace UnityEngine.UI.Extensions
             {
                 return Points[index - 1];
             }
+        }
+
+		/// <summary>
+        /// Calculates the position of a point on the curve, given t (0-1), start point, control points and end point.
+        /// </summary>
+        /// <param name="t">Required Percentage between start and end point, in the range 0 to 1</param>
+		/// <param name="p1">Required Starting point</param>
+		/// <param name="p1">Required Control point 1</param>
+		/// <param name="p1">Required Control point 2</param>
+		/// <param name="p1">Required End point</param>
+        /// <returns>Vector2 position of point on curve at t percentage between p1 and p4</returns>
+		public Vector2 CalculatePointOnCurve(float t, Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4)
+        {
+            var t2 = t * t;
+            var t3 = t2 * t;
+
+            var x = p1.x + (-p1.x * 3 + t * (3 * p1.x - p1.x * t)) * t + (3 * p2.x + t * (-6 * p2.x + p2.x * 3 * t)) * t +
+                    (p3.x * 3 - p3.x * 3 * t) * t2 + p4.x * t3;
+            
+            var y = p1.y + (-p1.y * 3 + t * (3 * p1.y - p1.y * t)) * t + (3 * p2.y + t * (-6 * p2.y + p2.y * 3 * t)) * t +
+                    (p3.y * 3 - p3.y * 3 * t) * t2 + p4.y * t3;
+
+            return new Vector2(x, y);
         }
 
         /// <summary>
@@ -478,6 +499,10 @@ namespace UnityEngine.UI.Extensions
             {
 				m_points = new Vector2[1];
             }
+			if (transform.GetComponent<RectTransform>().position != Vector3.zero)
+			{
+				Debug.LogWarning("A Line Renderer component should be on a RectTransform positioned at (0,0,0), do not use in child Objects.\nFor best results, create separate RectTransforms as children of the canvas positioned at (0,0) for a UILineRenderer and do not move.");
+			}
         }
     }
 }
