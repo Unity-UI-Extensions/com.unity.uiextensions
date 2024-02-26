@@ -9,6 +9,12 @@
 /// </summary>
 using System;
 using System.Collections.Generic;
+#if UNITY_2021_2_OR_NEWER
+using System.Buffers;
+#endif
+#if UNITY_2021_1_OR_NEWER
+using UnityEngine.Pool;
+#endif
 
 namespace UnityEngine.UI.Extensions
 {
@@ -36,6 +42,9 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         UnityEngine.Gradient _effectGradient = new UnityEngine.Gradient() { colorKeys = new GradientColorKey[] { new GradientColorKey(Color.black, 0), new GradientColorKey(Color.white, 1) } };
 
+        private GradientColorKey[] _colorKeys;
+        private GradientAlphaKey[] _alphaKeys;
+        
         #region Properties
         public Blend BlendMode
         {
@@ -103,7 +112,11 @@ namespace UnityEngine.UI.Extensions
             if (!IsActive() || helper.currentVertCount == 0)
                 return;
 
+#if UNITY_2021_1_OR_NEWER
+            List<UIVertex> _vertexList = ListPool<UIVertex>.Get();
+#else
             List<UIVertex> _vertexList = new List<UIVertex>();
+#endif
 
             helper.GetUIVertexStream(_vertexList);
 
@@ -238,6 +251,10 @@ namespace UnityEngine.UI.Extensions
                     }
                     break;
             }
+
+#if UNITY_2021_1_OR_NEWER
+            ListPool<UIVertex>.Release(_vertexList);
+#endif
         }
 
         Rect GetBounds(List<UIVertex> vertices)
@@ -264,7 +281,11 @@ namespace UnityEngine.UI.Extensions
 
         void SplitTrianglesAtGradientStops(List<UIVertex> _vertexList, Rect bounds, float zoomOffset, VertexHelper helper)
         {
-            List<float> stops = FindStops(zoomOffset, bounds);
+#if UNITY_2021_1_OR_NEWER
+            List<float> stops = FindStops(zoomOffset, bounds, ListPool<float>.Get());
+#else
+            List<float> stops = FindStops(zoomOffset, bounds, new List<float>());
+#endif
             if (stops.Count > 0)
             {
                 helper.Clear();
@@ -272,10 +293,23 @@ namespace UnityEngine.UI.Extensions
                 int nCount = _vertexList.Count;
                 for (int i = 0; i < nCount; i += 3)
                 {
-                    float[] positions = GetPositions(_vertexList, i);
+#if UNITY_2021_2_OR_NEWER
+                    var positions = ArrayPool<float>.Shared.Rent(3);
+#else
+                    var positions = new float[3];
+#endif
+                    
+                    GetPositions(_vertexList, i, ref positions);
+                    
+#if UNITY_2021_1_OR_NEWER
+                    List<int> originIndices = ListPool<int>.Get();
+                    List<UIVertex> starts = ListPool<UIVertex>.Get();
+                    List<UIVertex> ends = ListPool<UIVertex>.Get();
+#else
                     List<int> originIndices = new List<int>(3);
                     List<UIVertex> starts = new List<UIVertex>(3);
                     List<UIVertex> ends = new List<UIVertex>(2);
+#endif
 
                     for (int s = 0; s < stops.Count; s++)
                     {
@@ -403,13 +437,24 @@ namespace UnityEngine.UI.Extensions
                         int vertexCount = helper.currentVertCount;
                         helper.AddTriangle(vertexCount - 3, vertexCount - 2, vertexCount - 1);
                     }
+
+#if UNITY_2021_2_OR_NEWER
+                    ArrayPool<float>.Shared.Return(positions);
+#endif
+#if UNITY_2021_1_OR_NEWER
+                    ListPool<int>.Release(originIndices);
+                    ListPool<UIVertex>.Release(starts);
+                    ListPool<UIVertex>.Release(ends);
+#endif
                 }
             }
+#if UNITY_2021_1_OR_NEWER
+            ListPool<float>.Release(stops);
+#endif
         }
 
-        float[] GetPositions(List<UIVertex> _vertexList, int index)
+        void GetPositions(List<UIVertex> _vertexList, int index, ref float[] positions)
         {
-            float[] positions = new float[3];
             if (GradientType == Type.Horizontal)
             {
                 positions[0] = _vertexList[index].position.x;
@@ -422,24 +467,27 @@ namespace UnityEngine.UI.Extensions
                 positions[1] = _vertexList[index + 1].position.y;
                 positions[2] = _vertexList[index + 2].position.y;
             }
-            return positions;
         }
-
-        List<float> FindStops(float zoomOffset, Rect bounds)
+        
+        List<float> FindStops(float zoomOffset, Rect bounds, List<float> stops)
         {
-            List<float> stops = new List<float>();
             var offset = Offset * (1 - zoomOffset);
             var startBoundary = zoomOffset - offset;
             var endBoundary = (1 - zoomOffset) - offset;
 
-            foreach (var color in EffectGradient.colorKeys)
+            if (_colorKeys == null) _colorKeys = EffectGradient.colorKeys;
+            
+            foreach (var color in _colorKeys)
             {
                 if (color.time >= endBoundary)
                     break;
                 if (color.time > startBoundary)
                     stops.Add((color.time - startBoundary) * Zoom);
             }
-            foreach (var alpha in EffectGradient.alphaKeys)
+
+            if (_alphaKeys == null) _alphaKeys = _effectGradient.alphaKeys;
+            
+            foreach (var alpha in _alphaKeys)
             {
                 if (alpha.time >= endBoundary)
                     break;
@@ -455,7 +503,13 @@ namespace UnityEngine.UI.Extensions
                 size = bounds.height;
             }
 
-            stops.Sort();
+            stops.Sort((x, y) =>
+            {
+                if (x > y) return 1;
+                if (x == y) return 0;
+                return -1;
+            });
+            
             for (int i = 0; i < stops.Count; i++)
             {
                 stops[i] = (stops[i] * size) + min;
