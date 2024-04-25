@@ -71,7 +71,7 @@ namespace UnityEngine.UI.Extensions
             float x = 0;
             float y = 1;
             vert.Clear();
-            vert.Add(new Vector2(pivotOffsetX, height - pivotOffsetY));
+            vert.Add(new Vector2(-pivotOffsetX, height - pivotOffsetY));
             while (x < y)
             {
                 y = SquircleFunc(x, true);
@@ -91,7 +91,7 @@ namespace UnityEngine.UI.Extensions
                 y -= delta;
             }
 
-            vert.Add(new Vector2(width - pivotOffsetX, pivotOffsetY));
+            vert.Add(new Vector2(width - pivotOffsetX, -pivotOffsetY));
 
             for (int i = 1; i < vert.Count - 1; i++)
             {
