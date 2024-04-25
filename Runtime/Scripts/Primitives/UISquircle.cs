@@ -31,7 +31,6 @@ namespace UnityEngine.UI.Extensions
         private float a, b;
         private List<Vector2> vert = new List<Vector2>();
 
-
         private float SquircleFunc(float t, bool xByY)
         {
             if (xByY)
@@ -42,12 +41,18 @@ namespace UnityEngine.UI.Extensions
 
         protected override void OnPopulateMesh(VertexHelper vh)
         {
-
             float dx = 0;
             float dy = 0;
 
             float width = rectTransform.rect.width / 2;
             float height = rectTransform.rect.height / 2;
+
+            // Adjust vertices based on pivot offset
+            Vector2 pivotOffset = new Vector2(rectTransform.pivot.x - 0.5f, rectTransform.pivot.y - 0.5f);
+            float pivotOffsetX = pivotOffset.x * rectTransform.rect.width;
+            float pivotOffsetXTimesTwo = pivotOffsetX * 2;
+            float pivotOffsetY = pivotOffset.y * rectTransform.rect.height;
+            float pivotOffsetYTimesTwo = pivotOffsetY * 2;
 
             if (squircleType == Type.Classic)
             {
@@ -63,16 +68,14 @@ namespace UnityEngine.UI.Extensions
                 dy = height - a;
             }
 
-
-
             float x = 0;
             float y = 1;
             vert.Clear();
-            vert.Add(new Vector2(0, height));
+            vert.Add(new Vector2(pivotOffsetX, height - pivotOffsetY));
             while (x < y)
             {
                 y = SquircleFunc(x, true);
-                vert.Add(new Vector2(dx + x, dy + y));
+                vert.Add(new Vector2(dx + x - pivotOffsetX, dy + y - pivotOffsetY));
                 x += delta;
             }
 
@@ -84,11 +87,11 @@ namespace UnityEngine.UI.Extensions
             while (y > 0)
             {
                 x = SquircleFunc(y, false);
-                vert.Add(new Vector2(dx + x, dy + y));
+                vert.Add(new Vector2(dx + x - pivotOffsetX, dy + y - pivotOffsetY));
                 y -= delta;
             }
 
-            vert.Add(new Vector2(width, 0));
+            vert.Add(new Vector2(width - pivotOffsetX, pivotOffsetY));
 
             for (int i = 1; i < vert.Count - 1; i++)
             {
@@ -109,9 +112,9 @@ namespace UnityEngine.UI.Extensions
                     }
                 }
             }
+            vert.AddRange(vert.AsEnumerable().Reverse().Select(t => new Vector2(t.x, -t.y - pivotOffsetYTimesTwo)));
+            vert.AddRange(vert.AsEnumerable().Reverse().Select(t => new Vector2(-t.x - pivotOffsetXTimesTwo, t.y)));
 
-            vert.AddRange(vert.AsEnumerable().Reverse().Select(t => new Vector2(t.x, -t.y)));
-            vert.AddRange(vert.AsEnumerable().Reverse().Select(t => new Vector2(-t.x, t.y)));
 
             vh.Clear();
 
@@ -119,9 +122,9 @@ namespace UnityEngine.UI.Extensions
             {
                 vh.AddVert(vert[i], color, Vector2.zero);
                 vh.AddVert(vert[i + 1], color, Vector2.zero);
-                vh.AddVert(Vector2.zero, color, Vector2.zero);
-
-                vh.AddTriangle(i * 3, i * 3 + 1, i * 3 + 2);
+                vh.AddVert(new Vector2(-pivotOffsetX, -pivotOffsetY), color, Vector2.zero);
+                int timesThree = i * 3;
+                vh.AddTriangle(timesThree, timesThree + 1, timesThree + 2);
             }
         }
 
