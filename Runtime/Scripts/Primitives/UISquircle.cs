@@ -153,6 +153,7 @@ namespace UnityEngine.UI.Extensions
                 {
                     Vector2 reversedVector = _topRightCurvedVert[i];
                     reversedVector.y = -reversedVector.y - pivotOffsetYTimesTwo;
+                    //reversedVector.x = reversedVector.x + pivotOffsetXTimesTwo;
                     vert.Add(reversedVector);
                 }
             }
@@ -167,9 +168,14 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
+            //Reset the vertex pointer to center
+            vert.Add(new Vector2(-pivotOffsetX, -pivotOffsetY));
+
             if (corners.bottomLeft)
             {
                 //vert.AddRange(_topRightCurvedVert.AsEnumerable().Reverse().Select(t => new Vector2(-t.x - pivotOffsetXTimesTwo, -t.y - pivotOffsetYTimesTwo)));
+
+
                 for (int i = _topRightCurvedVert.Count - 1; i >= 0; i--)
                 {
                     Vector2 reversedVector = _topRightCurvedVert[i];
@@ -189,6 +195,9 @@ namespace UnityEngine.UI.Extensions
                     vert.Add(reversedVector);
                 }
             }
+
+            //Reset the vertex pointer to center
+            vert.Add(new Vector2(-pivotOffsetX, -pivotOffsetY));
 
             if (corners.topLeft)
             {
