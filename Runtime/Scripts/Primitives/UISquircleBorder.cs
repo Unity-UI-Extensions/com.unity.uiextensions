@@ -11,12 +11,6 @@ namespace UnityEngine.UI.Extensions
     public class UISquircleBorder : UIPrimitiveBase
     {
         const float C = 1.0f;
-        public enum Type
-        {
-            Classic,
-            Scaled
-        }
-
         [Space]
         public Type squircleType = Type.Scaled;
         [Range(1, 40)]
