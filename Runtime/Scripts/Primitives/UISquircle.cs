@@ -22,11 +22,11 @@ namespace UnityEngine.UI.Extensions
         [Range(1, 40)]
         public float n = 4;
         [Min(0.1f)]
-        public float delta = 5f;
+        public float delta = 0.5f;
         public float quality = 0.1f;
         [Min(0)]
-        public float radius = 1000;
-
+        public float radius = 32;
+        public Corners corners;
 
         private float a, b;
         private List<Vector2> vert = new List<Vector2>();
@@ -70,54 +70,152 @@ namespace UnityEngine.UI.Extensions
 
             float x = 0;
             float y = 1;
-            vert.Clear();
-            vert.Add(new Vector2(-pivotOffsetX, height - pivotOffsetY));
+
+            //create curved vert 1st quadrant
+            List<Vector2> _topRightCurvedVert = new List<Vector2>
+            {
+                new Vector2(-pivotOffsetX, height - pivotOffsetY)
+            };
+
             while (x < y)
             {
                 y = SquircleFunc(x, true);
-                vert.Add(new Vector2(dx + x - pivotOffsetX, dy + y - pivotOffsetY));
+                _topRightCurvedVert.Add(new Vector2(dx + x - pivotOffsetX, dy + y - pivotOffsetY));
                 x += delta;
             }
 
-            if (float.IsNaN(vert.Last().y))
+            if (float.IsNaN(_topRightCurvedVert.Last().y))
             {
-                vert.RemoveAt(vert.Count - 1);
+                _topRightCurvedVert.RemoveAt(_topRightCurvedVert.Count - 1);
             }
 
             while (y > 0)
             {
                 x = SquircleFunc(y, false);
-                vert.Add(new Vector2(dx + x - pivotOffsetX, dy + y - pivotOffsetY));
+                _topRightCurvedVert.Add(new Vector2(dx + x - pivotOffsetX, dy + y - pivotOffsetY));
                 y -= delta;
             }
 
-            vert.Add(new Vector2(width - pivotOffsetX, -pivotOffsetY));
+            _topRightCurvedVert.Add(new Vector2(width - pivotOffsetX, -pivotOffsetY));
 
-            for (int i = 1; i < vert.Count - 1; i++)
+            for (int i = 1; i < _topRightCurvedVert.Count - 1; i++)
             {
-                if (vert[i].x < vert[i].y)
+                if (_topRightCurvedVert[i].x < _topRightCurvedVert[i].y)
                 {
-                    if (vert[i - 1].y - vert[i].y < quality)
+                    if (_topRightCurvedVert[i - 1].y - _topRightCurvedVert[i].y < quality)
                     {
-                        vert.RemoveAt(i);
+                        _topRightCurvedVert.RemoveAt(i);
                         i -= 1;
                     }
                 }
                 else
                 {
-                    if (vert[i].x - vert[i - 1].x < quality)
+                    if (_topRightCurvedVert[i].x - _topRightCurvedVert[i - 1].x < quality)
                     {
-                        vert.RemoveAt(i);
+                        _topRightCurvedVert.RemoveAt(i);
                         i -= 1;
                     }
                 }
             }
-            vert.AddRange(vert.AsEnumerable().Reverse().Select(t => new Vector2(t.x, -t.y - pivotOffsetYTimesTwo)));
-            vert.AddRange(vert.AsEnumerable().Reverse().Select(t => new Vector2(-t.x - pivotOffsetXTimesTwo, t.y)));
+
+
+            //create flat vert 1st quadrant
+            List<Vector2> _topRightFlatVert = null;
+            //Atleast one corner flat
+            if (corners.topRight == false || corners.bottomRight == false || corners.bottomLeft == false || corners.topLeft == false)
+            {
+
+                _topRightFlatVert = new List<Vector2>
+            {
+                _topRightCurvedVert[0],
+                new Vector2(width - pivotOffsetX, height - pivotOffsetY),
+                new Vector2(width - pivotOffsetX, 0 - pivotOffsetY),
+                new Vector2(0 - pivotOffsetX, 0 - pivotOffsetY)
+            };
+            }
+
+            vert.Clear();
+            if (corners.topRight)
+            {
+                vert.AddRange(_topRightCurvedVert);
+            }
+            else
+            {
+                vert.AddRange(_topRightFlatVert);
+            }
+
+
+            //The .Reverse().Select() operation can be optimized. The given line of code creates a new list of Vector2 by reversing _topRightCurvedVert and applying a transformation to each element. However, the operation involves iterating through each element of _topRightCurvedVert twice (once for reversing and once for selecting), which is inefficient.
+            if (corners.bottomRight)
+            {
+                //vert.AddRange(_topRightCurvedVert.AsEnumerable().Reverse().Select(t => new Vector2(t.x, -t.y - pivotOffsetYTimesTwo)));
+                for (int i = _topRightCurvedVert.Count - 1; i >= 0; i--)
+                {
+                    Vector2 reversedVector = _topRightCurvedVert[i];
+                    reversedVector.y = -reversedVector.y - pivotOffsetYTimesTwo;
+                    vert.Add(reversedVector);
+                }
+            }
+            else
+            {
+                //vert.AddRange(_topRightFlatVert.AsEnumerable().Reverse().Select(t => new Vector2(t.x, -t.y - pivotOffsetYTimesTwo)));
+                for (int i = _topRightFlatVert.Count - 1; i >= 0; i--)
+                {
+                    Vector2 reversedVector = _topRightFlatVert[i];
+                    reversedVector.y = -reversedVector.y - pivotOffsetYTimesTwo;
+                    vert.Add(reversedVector);
+                }
+            }
+
+            if (corners.bottomLeft)
+            {
+                //vert.AddRange(_topRightCurvedVert.AsEnumerable().Reverse().Select(t => new Vector2(-t.x - pivotOffsetXTimesTwo, -t.y - pivotOffsetYTimesTwo)));
+                for (int i = _topRightCurvedVert.Count - 1; i >= 0; i--)
+                {
+                    Vector2 reversedVector = _topRightCurvedVert[i];
+                    reversedVector.x = -reversedVector.x - pivotOffsetXTimesTwo;
+                    reversedVector.y = -reversedVector.y - pivotOffsetYTimesTwo;
+                    vert.Add(reversedVector);
+                }
+            }
+            else
+            {
+                //vert.AddRange(_topRightFlatVert.AsEnumerable().Reverse().Select(t => new Vector2(-t.x - pivotOffsetXTimesTwo, -t.y - pivotOffsetYTimesTwo)));
+                for (int i = _topRightFlatVert.Count - 1; i >= 0; i--)
+                {
+                    Vector2 reversedVector = _topRightFlatVert[i];
+                    reversedVector.x = -reversedVector.x - pivotOffsetXTimesTwo;
+                    reversedVector.y = -reversedVector.y - pivotOffsetYTimesTwo;
+                    vert.Add(reversedVector);
+                }
+            }
+
+            if (corners.topLeft)
+            {
+                //vert.AddRange(_topRightCurvedVert.AsEnumerable().Reverse().Select(t => new Vector2(-t.x - pivotOffsetXTimesTwo, t.y)));
+                for (int i = _topRightCurvedVert.Count - 1; i >= 0; i--)
+                {
+                    Vector2 reversedVector = _topRightCurvedVert[i];
+                    reversedVector.x = -reversedVector.x - pivotOffsetXTimesTwo;
+                    vert.Add(reversedVector);
+                }
+            }
+            else
+            {
+
+                //vert.AddRange(_topRightFlatVert.AsEnumerable().Reverse().Select(t => new Vector2(-t.x - pivotOffsetXTimesTwo, t.y)));
+                for (int i = _topRightFlatVert.Count - 1; i >= 0; i--)
+                {
+                    Vector2 reversedVector = _topRightFlatVert[i];
+                    reversedVector.x = -reversedVector.x - pivotOffsetXTimesTwo;
+                    vert.Add(reversedVector);
+                }
+            }
+
+            //vert.AddRange(vert.AsEnumerable().Reverse().Select(t => new Vector2(-t.x - pivotOffsetXTimesTwo, t.y)));
 
 
             vh.Clear();
-
             for (int i = 0; i < vert.Count - 1; i++)
             {
                 vh.AddVert(vert[i], color, Vector2.zero);
@@ -128,6 +226,15 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        [System.Serializable]
+        public class Corners
+        {
+            public bool topLeft = true;
+            public bool topRight = true;
+            public bool bottomLeft = true;
+            public bool bottomRight = true;
+        }
+
 #if UNITY_EDITOR
         [CustomEditor(typeof(UISquircle))]
         public class UISquircleEditor : Editor
@@ -136,6 +243,7 @@ namespace UnityEngine.UI.Extensions
             {
                 DrawDefaultInspector();
                 UISquircle script = (UISquircle)target;
+                GUILayout.Space(10f);
                 GUILayout.Label("Vertex count: " + script.vert.Count().ToString());
             }
         }
