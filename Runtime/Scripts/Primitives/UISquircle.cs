@@ -22,7 +22,7 @@ namespace UnityEngine.UI.Extensions
         [Range(1, 40)]
         public float n = 4;
         [Min(0.1f)]
-        public float delta = 0.5f;
+        public float delta = 1f;
         public float quality = 0.1f;
         [Min(0)]
         public float radius = 32;
