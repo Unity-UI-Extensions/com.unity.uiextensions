@@ -218,7 +218,7 @@ namespace UnityEngine.UI.Extensions
 
                             helper.AddVert(centralVertex);
 
-                            for (int i = 1; i < steps; i++) helper.AddTriangle(i - 1, i, steps);
+                            for (int i = 1; i < steps; i++) helper.AddTriangle(i, i - 1, steps);
                             helper.AddTriangle(0, steps - 1, steps);
                         }
 
