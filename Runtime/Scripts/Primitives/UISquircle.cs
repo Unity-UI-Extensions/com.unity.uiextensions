@@ -175,7 +175,6 @@ namespace UnityEngine.UI.Extensions
             {
                 //vert.AddRange(_topRightCurvedVert.AsEnumerable().Reverse().Select(t => new Vector2(-t.x - pivotOffsetXTimesTwo, -t.y - pivotOffsetYTimesTwo)));
 
-
                 for (int i = _topRightCurvedVert.Count - 1; i >= 0; i--)
                 {
                     Vector2 reversedVector = _topRightCurvedVert[i];
@@ -211,7 +210,6 @@ namespace UnityEngine.UI.Extensions
             }
             else
             {
-
                 //vert.AddRange(_topRightFlatVert.AsEnumerable().Reverse().Select(t => new Vector2(-t.x - pivotOffsetXTimesTwo, t.y)));
                 for (int i = _topRightFlatVert.Count - 1; i >= 0; i--)
                 {
@@ -225,7 +223,8 @@ namespace UnityEngine.UI.Extensions
 
 
             vh.Clear();
-            for (int i = 0; i < vert.Count - 1; i++)
+            int count = vert.Count - 1;
+            for (int i = 0; i < count; i++)
             {
                 vh.AddVert(vert[i], color, Vector2.zero);
                 vh.AddVert(vert[i + 1], color, Vector2.zero);
