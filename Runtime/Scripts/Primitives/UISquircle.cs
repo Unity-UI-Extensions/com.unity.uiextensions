@@ -18,7 +18,7 @@ namespace UnityEngine.UI.Extensions
         [Space]
         public Type squircleType = Type.Scaled;
         [Range(0, 64)]
-        public float segments = 4;
+        public float n = 4;
         [Min(0.1f)]
         public float delta = 1f;
         [Range(0.1f, 40f)]
@@ -28,18 +28,21 @@ namespace UnityEngine.UI.Extensions
 
         [HideInInspector] public bool fillCenter = true;
         [HideInInspector] public float borderWidth = 9f;
-
         [HideInInspector] public Corners corners;
 
         private float a, b;
-        private List<Vector2> vert = new List<Vector2>();
+
+#if UNITY_EDITOR
+        [HideInInspector] public int vertsCount = 0;
+        [HideInInspector] public int trisCount = 0;
+#endif
 
         private float SquircleFunc(float t, bool xByY)
         {
             if (xByY)
-                return (float)System.Math.Pow(c - System.Math.Pow(t / a, segments), 1f / segments) * b;
+                return (float)System.Math.Pow(c - System.Math.Pow(t / a, n), 1f / n) * b;
 
-            return (float)System.Math.Pow(c - System.Math.Pow(t / b, segments), 1f / segments) * a;
+            return (float)System.Math.Pow(c - System.Math.Pow(t / b, n), 1f / n) * a;
         }
 
         protected override void OnPopulateMesh(VertexHelper vh)
@@ -129,14 +132,14 @@ namespace UnityEngine.UI.Extensions
             };
             }
 
-            vert.Clear();
+            List<Vector2> _vert = new List<Vector2>();
             if (corners.topRight)
             {
-                vert.AddRange(_topRightCurvedVert);
+                _vert.AddRange(_topRightCurvedVert);
             }
             else
             {
-                vert.AddRange(_topRightFlatVert);
+                _vert.AddRange(_topRightFlatVert);
             }
 
             if (corners.bottomRight)
@@ -145,7 +148,7 @@ namespace UnityEngine.UI.Extensions
                 {
                     Vector2 reversedVector = _topRightCurvedVert[i];
                     reversedVector.y = -reversedVector.y - pivotOffsetTimesTwo.y;
-                    vert.Add(reversedVector);
+                    _vert.Add(reversedVector);
                 }
             }
             else
@@ -154,7 +157,7 @@ namespace UnityEngine.UI.Extensions
                 {
                     Vector2 reversedVector = _topRightFlatVert[i];
                     reversedVector.y = -reversedVector.y - pivotOffsetTimesTwo.y;
-                    vert.Add(reversedVector);
+                    _vert.Add(reversedVector);
                 }
             }
 
@@ -165,7 +168,7 @@ namespace UnityEngine.UI.Extensions
                     Vector2 reversedVector = _topRightCurvedVert[i];
                     reversedVector.x = -reversedVector.x - pivotOffsetTimesTwo.x;
                     reversedVector.y = -reversedVector.y - pivotOffsetTimesTwo.y;
-                    vert.Add(reversedVector);
+                    _vert.Add(reversedVector);
                 }
             }
             else
@@ -175,7 +178,7 @@ namespace UnityEngine.UI.Extensions
                     Vector2 reversedVector = _topRightFlatVert[i];
                     reversedVector.y = -reversedVector.y - pivotOffsetTimesTwo.y;
                     reversedVector.x = -reversedVector.x - pivotOffsetTimesTwo.x;
-                    vert.Add(reversedVector);
+                    _vert.Add(reversedVector);
                 }
             }
 
@@ -185,7 +188,7 @@ namespace UnityEngine.UI.Extensions
                 {
                     Vector2 reversedVector2 = _topRightCurvedVert[i];
                     reversedVector2.x = -reversedVector2.x - pivotOffsetTimesTwo.x;
-                    vert.Add(reversedVector2);
+                    _vert.Add(reversedVector2);
                 }
             }
             else
@@ -194,20 +197,24 @@ namespace UnityEngine.UI.Extensions
                 {
                     Vector2 reversedVector = _topRightFlatVert[i];
                     reversedVector.x = -reversedVector.x - pivotOffsetTimesTwo.x;
-                    vert.Add(reversedVector);
+                    _vert.Add(reversedVector);
                 }
             }
 
-            int predefinedLength = vert.Count * 2;
+            int predefinedLength = _vert.Count * 2;
             Vector2[] vertFinal = new Vector2[predefinedLength];
-            for (int i = vert.Count - 1; i >= 0; i--)
+            for (int i = _vert.Count - 1; i >= 0; i--)
             {
                 int timesTwo = i * 2;
-                vertFinal[timesTwo] = vert[i];
-                vertFinal[timesTwo + 1] = getInsidePointForAGivenOuterPoint(vert[i], pivotOffset, centerPoint);
+                vertFinal[timesTwo] = _vert[i];
+                vertFinal[timesTwo + 1] = getInsidePointForAGivenOuterPoint(_vert[i], pivotOffset, centerPoint);
             }
 
             vh.Clear();
+#if UNITY_EDITOR
+            vertsCount = 0;
+            trisCount = 0;
+#endif
             for (int i = predefinedLength - 3; i >= 0; i--)
             {
                 vh.AddVert(vertFinal[i + 2], color, Vector2.zero);
@@ -215,6 +222,10 @@ namespace UnityEngine.UI.Extensions
                 vh.AddVert(vertFinal[i], color, Vector2.zero);
                 int timesThree = i * 3;
                 vh.AddTriangle(timesThree, timesThree + 1, timesThree + 2);
+#if UNITY_EDITOR
+                vertsCount += 3;
+                trisCount += 1;
+#endif
             }
         }
 
@@ -309,11 +320,15 @@ namespace UnityEngine.UI.Extensions
         {
             SerializedProperty _fillCenter;
             SerializedProperty _borderWidth;
+            SerializedProperty _vertsCount;
+            SerializedProperty _trisCount;
             private void OnEnable()
             {
                 // This links the _phase SerializedProperty to the according actual field
                 _fillCenter = serializedObject.FindProperty("fillCenter");
                 _borderWidth = serializedObject.FindProperty("borderWidth");
+                _vertsCount = serializedObject.FindProperty("vertsCount");
+                _trisCount = serializedObject.FindProperty("trisCount");
             }
 
             public override void OnInspectorGUI()
@@ -361,7 +376,8 @@ namespace UnityEngine.UI.Extensions
                 }
                 serializedObject.ApplyModifiedProperties();
                 GUILayout.Space(10f);
-                GUILayout.Label("Vertex count: " + squircle.vert.Count.ToString());
+                GUILayout.Label("Vertex count: " + _vertsCount.intValue.ToString());
+                GUILayout.Label("Tris count: " + _trisCount.intValue.ToString());
 
             }
         }
