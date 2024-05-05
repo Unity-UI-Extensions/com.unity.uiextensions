@@ -304,6 +304,7 @@ namespace UnityEngine.UI.Extensions
 
 #if UNITY_EDITOR
         [CustomEditor(typeof(UISquircle))]
+        [CanEditMultipleObjects]
         public class UISquircleEditor : Editor
         {
             SerializedProperty _fillCenter;
