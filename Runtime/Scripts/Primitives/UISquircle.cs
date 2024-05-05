@@ -314,30 +314,43 @@ namespace UnityEngine.UI.Extensions
         }
 
 #if UNITY_EDITOR
+
         [CustomEditor(typeof(UISquircle))]
         [CanEditMultipleObjects]
         public class UISquircleEditor : Editor
         {
-            SerializedProperty _fillCenter;
-            SerializedProperty _borderWidth;
-            SerializedProperty _vertsCount;
-            SerializedProperty _trisCount;
-            private void OnEnable()
-            {
-                // This links the _phase SerializedProperty to the according actual field
-                _fillCenter = serializedObject.FindProperty("fillCenter");
-                _borderWidth = serializedObject.FindProperty("borderWidth");
-                _vertsCount = serializedObject.FindProperty("vertsCount");
-                _trisCount = serializedObject.FindProperty("trisCount");
-            }
-
             public override void OnInspectorGUI()
             {
-                // Draw the default inspector
+                serializedObject.Update();
                 DrawDefaultInspector();
+
+                SerializedProperty fillCenterProp = serializedObject.FindProperty("fillCenter");
+                SerializedProperty borderWidthProp = serializedObject.FindProperty("borderWidth");
+                SerializedProperty cornersProp = serializedObject.FindProperty("corners");
+                SerializedProperty vertsCountProp = serializedObject.FindProperty("vertsCount");
+                SerializedProperty trisCountProp = serializedObject.FindProperty("trisCount");
+
+
+                EditorGUILayout.PropertyField(fillCenterProp);
+                if (!fillCenterProp.boolValue)
+                {
+                    // Get the RectTransform component
+                    RectTransform rectTransform = ((UISquircle)target).GetComponent<RectTransform>();
+                    if (rectTransform != null)
+                    {
+                        // Get the width of the RectTransform
+                        float maxWidth = rectTransform.rect.width;
+                        //EditorGUILayout.PropertyField(borderWidthProp);
+                        EditorGUILayout.Slider(borderWidthProp, 0.1f, maxWidth / 2f, new GUIContent("Border Width"));
+                    }
+                    else
+                    {
+                        EditorGUILayout.HelpBox("No RectTransform found on the target object.", MessageType.Warning);
+                    }
+                }
+
                 EditorGUILayout.Space();
 
-                SerializedProperty cornersProp = serializedObject.FindProperty("corners");
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("  ", GUILayout.Width(60)); // Placeholder for top-left corner
                 EditorGUILayout.LabelField("Left", GUILayout.Width(60));
@@ -347,38 +360,22 @@ namespace UnityEngine.UI.Extensions
 
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Top", GUILayout.Width(67.5f));
-                cornersProp.FindPropertyRelative("topLeft").boolValue = EditorGUILayout.Toggle(cornersProp.FindPropertyRelative("topLeft").boolValue, GUILayout.Width(60));
-                cornersProp.FindPropertyRelative("topRight").boolValue = EditorGUILayout.Toggle(cornersProp.FindPropertyRelative("topRight").boolValue, GUILayout.Width(60));
+                EditorGUILayout.PropertyField(cornersProp.FindPropertyRelative("topLeft"), GUIContent.none, GUILayout.Width(60));
+                EditorGUILayout.PropertyField(cornersProp.FindPropertyRelative("topRight"), GUIContent.none, GUILayout.Width(60));
                 EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Bottom", GUILayout.Width(67.5f));
-                cornersProp.FindPropertyRelative("bottomLeft").boolValue = EditorGUILayout.Toggle(cornersProp.FindPropertyRelative("bottomLeft").boolValue, GUILayout.Width(60));
-                cornersProp.FindPropertyRelative("bottomRight").boolValue = EditorGUILayout.Toggle(cornersProp.FindPropertyRelative("bottomRight").boolValue, GUILayout.Width(60));
+                EditorGUILayout.PropertyField(cornersProp.FindPropertyRelative("bottomLeft"), GUIContent.none, GUILayout.Width(60));
+                EditorGUILayout.PropertyField(cornersProp.FindPropertyRelative("bottomRight"), GUIContent.none, GUILayout.Width(60));
                 EditorGUILayout.EndHorizontal();
 
-                // Cast the target object
-                UISquircle squircle = (UISquircle)target;
+                EditorGUILayout.Space();
 
-                // Get the RectTransform component
-                RectTransform rectTransform = squircle.GetComponent<RectTransform>();
+                EditorGUILayout.LabelField("Vertex count: " + vertsCountProp.intValue.ToString());
+                EditorGUILayout.LabelField("Tris count: " + trisCountProp.intValue.ToString());
 
-                // Get the width of the RectTransform
-                float maxWidth = rectTransform.rect.width;
-                // Draw the fillCenter property field
-                _fillCenter.boolValue = EditorGUILayout.Toggle("Fill Center", squircle.fillCenter);
-
-                // If fillCenter is false, draw the borderWidth property field
-                if (!_fillCenter.boolValue)
-                {
-                    // Draw the borderWidth property field with a range from 0.1f to maxWidth
-                    _borderWidth.floatValue = EditorGUILayout.Slider("Border Width", squircle.borderWidth, 0.1f, maxWidth / 2f);
-                }
                 serializedObject.ApplyModifiedProperties();
-                GUILayout.Space(10f);
-                GUILayout.Label("Vertex count: " + _vertsCount.intValue.ToString());
-                GUILayout.Label("Tris count: " + _trisCount.intValue.ToString());
-
             }
         }
 #endif
