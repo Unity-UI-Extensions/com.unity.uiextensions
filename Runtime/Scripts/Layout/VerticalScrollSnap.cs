@@ -17,14 +17,14 @@ namespace UnityEngine.UI.Extensions
         void Start()
         {
             _isVertical = true;
-            _childAnchorPoint = new Vector2(0.5f,0);
             _currentPage = StartingScreen;
             panelDimensions = gameObject.GetComponent<RectTransform>().rect;
             UpdateLayout();
         }
 
-        void Update()
+        protected override void Update()
         {
+            base.Update();
             updated = false;
 
             if (!_lerp && _scroll_rect.velocity == Vector2.zero)
@@ -57,7 +57,7 @@ namespace UnityEngine.UI.Extensions
             if (!_pointerDown)
             {
                 if (_scroll_rect.velocity.y > 0.01 || _scroll_rect.velocity.y < -0.01)
-            {
+                {
                     // if the pointer is released and is moving slower than the threshold, then just land on a page
                     if (IsRectMovingSlowerThanThreshold(0))
                     {
@@ -89,8 +89,9 @@ namespace UnityEngine.UI.Extensions
                 RectTransform child = _screensContainer.transform.GetChild(i).gameObject.GetComponent<RectTransform>();
                 currentYPosition = _offset + i * pageStepValue;
                 child.sizeDelta = new Vector2(panelDimensions.width, panelDimensions.height);
-                child.anchoredPosition = new Vector2(0f, currentYPosition);
+
                 child.anchorMin = child.anchorMax = child.pivot = _childAnchorPoint;
+                child.anchoredPosition = new Vector2(0f, currentYPosition);
             }
 
             _dimension = currentYPosition + _offset * -1;

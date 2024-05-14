@@ -17,7 +17,7 @@ namespace UnityEngine.UI.Extensions
         internal float _scrollStartPosition;
         internal float _childSize;
         private float _childPos, _maskSize;
-        internal Vector2 _childAnchorPoint;
+        [SerializeField] internal Vector2 _childAnchorPoint = new Vector2(0.5f, 0);
         internal ScrollRect _scroll_rect;
         internal Vector3 _lerp_target;
         internal bool _lerp;
@@ -256,6 +256,11 @@ namespace UnityEngine.UI.Extensions
                     childRect.rotation = _screensContainer.rotation;
                     childRect.localScale = _screensContainer.localScale;
                     childRect.position = _screensContainer.position;
+                    child.GetComponent<Button>().onClick.AddListener(() =>
+                    {
+                        ChangePage(i);
+                    }
+                    );
                 }
 
                 child.transform.SetParent(_screensContainer.transform);
@@ -648,10 +653,9 @@ namespace UnityEngine.UI.Extensions
         #endregion
 
         #region Transition Effects
-
-        private Vector2 GetDisplacementFromCenter(int index)
+        private Vector2 GetDisplacementFromCenter(Transform _child)
         {
-            return _screensContainer.GetChild(index).GetComponent<Transform>().position - _scroll_rect.viewport.transform.position;
+            return _child.position - _scroll_rect.viewport.transform.position;
         }
 
         private void HandleTransitionEffects()
@@ -660,9 +664,10 @@ namespace UnityEngine.UI.Extensions
 
             for (int i = 0; i < _screensContainer.childCount; i++)
             {
-                Vector2 displacement = GetDisplacementFromCenter(i);
+                Transform _child = _screensContainer.GetChild(i);
+                Vector2 displacement = GetDisplacementFromCenter(_child);
                 float d = (_scroll_rect.horizontal ? displacement.x : displacement.y);
-                onTransitionEffects.Invoke(_screensContainer.GetChild(i).gameObject, d);
+                onTransitionEffects.Invoke(_child.gameObject, d);
             }
         }
 
