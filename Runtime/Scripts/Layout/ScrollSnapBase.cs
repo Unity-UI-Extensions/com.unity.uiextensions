@@ -35,6 +35,10 @@ namespace UnityEngine.UI.Extensions
         internal bool _endEventCalled = false;
         internal bool _suspendEvents = false;
 
+        // Events
+        [SerializeField]
+        private UnityEvent<GameObject, float> onTransitionEffects = new UnityEvent<GameObject, float>();
+
         [Serializable]
         public class SelectionChangeStartEvent : UnityEvent { }
         [Serializable]
@@ -300,11 +304,11 @@ namespace UnityEngine.UI.Extensions
                     Debug.Log("Failed to setactive child [" + i + "]");
                 }
             }
-
             //Deactivate items out of visibility at the bottom of the ScrollRect Mask (only on scroll)
             if (_currentPage > _halfNoVisibleItems) ChildObjects[CurrentPage - _bottomItem].SetActive(false);
             //Deactivate items out of visibility at the top of the ScrollRect Mask (only on scroll)
             if (_screensContainer.childCount - _currentPage > _topItem) ChildObjects[CurrentPage + _topItem].SetActive(false);
+
         }
 
         //Function for switching screens with buttons
@@ -641,6 +645,31 @@ namespace UnityEngine.UI.Extensions
             var position = _screensContainer.anchoredPosition;
         }
 
+        #endregion
+
+        #region Transition Effects
+
+        private Vector2 GetDisplacementFromCenter(int index)
+        {
+            return _screensContainer.GetChild(index).GetComponent<Transform>().position - _scroll_rect.viewport.transform.position;
+        }
+
+        private void HandleTransitionEffects()
+        {
+            if (onTransitionEffects.GetPersistentEventCount() == 0) return;
+
+            for (int i = 0; i < _screensContainer.childCount; i++)
+            {
+                Vector2 displacement = GetDisplacementFromCenter(i);
+                float d = (_scroll_rect.horizontal ? displacement.x : displacement.y);
+                onTransitionEffects.Invoke(_screensContainer.GetChild(i).gameObject, d);
+            }
+        }
+
+        protected virtual void Update()
+        {
+            HandleTransitionEffects();
+        }
         #endregion
     }
 }
