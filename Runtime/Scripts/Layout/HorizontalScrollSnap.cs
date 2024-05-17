@@ -17,14 +17,14 @@ namespace UnityEngine.UI.Extensions
         void Start()
         {
             _isVertical = false;
-            _childAnchorPoint = new Vector2(0, 0.5f);
             _currentPage = StartingScreen;
             panelDimensions = gameObject.GetComponent<RectTransform>().rect;
             UpdateLayout();
         }
 
-        void Update()
+        protected override void Update()
         {
+            base.Update();
             updated = false;
 
             if (!_lerp && (_scroll_rect.velocity == Vector2.zero && _scroll_rect.inertia))
