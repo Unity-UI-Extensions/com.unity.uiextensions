@@ -6,7 +6,7 @@ using UnityEditor;
 namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/Primitives/Squircle")]
-    public class UISquircle : MaskableGraphic
+    public class UISquircle : UIPrimitiveBase
     {
         const float c = 1.0f;
         public enum Type
@@ -302,7 +302,6 @@ namespace UnityEngine.UI.Extensions
                 return centerPoint;
             }
         }
-
 
         [System.Serializable]
         public class Corners
