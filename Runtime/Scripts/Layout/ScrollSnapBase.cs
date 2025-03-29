@@ -189,6 +189,11 @@ namespace UnityEngine.UI.Extensions
 
             _screensContainer = _scroll_rect.content;
 
+            //ScrollRect.content RT anchors has to be stretched first in order for HSS/VSS.DistributePages() to have the correct result
+            _screensContainer.anchorMin = Vector2.zero;
+            _screensContainer.anchorMax = Vector2.one;
+            _screensContainer.sizeDelta = Vector2.zero;
+
             InitialiseChildObjects();
 
             if (NextButton)
