@@ -16,6 +16,7 @@ namespace UnityEngine.UI.Extensions
 
         public float LineThickness = 2;
         public bool UseMargins;
+        public bool UsePivot;
         public Vector2 Margin;
         public bool relativeSize;
 
@@ -87,6 +88,13 @@ namespace UnityEngine.UI.Extensions
             capPoint = m_points[m_points.Length - 1] - (m_points[m_points.Length - 1] - m_points[m_points.Length - 2]).normalized * capSize;
             pointList.Add(capPoint);
             pointList.Add(m_points[m_points.Length - 1]);
+
+            // should points be rendered from the pivot
+            if (UsePivot)
+            {
+                offsetX += rectTransform.sizeDelta.x * rectTransform.pivot.x; 
+                offsetY += rectTransform.sizeDelta.y * rectTransform.pivot.y; 
+            }
 
             var Tempm_points = pointList.ToArray();
             if (UseMargins)
