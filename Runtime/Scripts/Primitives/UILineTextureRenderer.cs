@@ -73,23 +73,13 @@ namespace UnityEngine.UI.Extensions
                 sizeX = 1;
                 sizeY = 1;
             }
-            // build a new set of m_points taking into account the cap sizes. 
-            // would be cool to support corners too, but that might be a bit tough :)
+            
             var pointList = new List<Vector2>();
-            pointList.Add(m_points[0]);
-            var capPoint = m_points[0] + (m_points[1] - m_points[0]).normalized * capSize;
-            pointList.Add(capPoint);
-
-            // should bail before the last point to add another cap point
-            for (int i = 1; i < m_points.Length - 1; i++)
+            for (int i = 0; i < m_points.Length; i++)
             {
                 pointList.Add(m_points[i]);
             }
-            capPoint = m_points[m_points.Length - 1] - (m_points[m_points.Length - 1] - m_points[m_points.Length - 2]).normalized * capSize;
-            pointList.Add(capPoint);
-            pointList.Add(m_points[m_points.Length - 1]);
-
-            // should points be rendered from the pivot
+            
             if (UsePivot)
             {
                 offsetX += rectTransform.sizeDelta.x * rectTransform.pivot.x; 
@@ -143,13 +133,7 @@ namespace UnityEngine.UI.Extensions
                 if (i > 1)
                     vh.AddUIVertexQuad(SetVbo(new[] { prevV1, prevV2, v1, v2 }, uvs));
 
-                if (i == 1)
-                    uvs = new[] { uvTopLeft, uvBottomLeft, uvBottomCenter, uvTopCenter };
-                else if (i == Tempm_points.Length - 1)
-                    uvs = new[] { uvTopCenter, uvBottomCenter, uvBottomRight, uvTopRight };
-
                 vh.AddUIVertexQuad(SetVbo(new[] { v1, v2, v3, v4 }, uvs));
-
 
                 prevV1 = v3;
                 prevV2 = v4;
