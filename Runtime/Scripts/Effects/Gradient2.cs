@@ -475,7 +475,7 @@ namespace UnityEngine.UI.Extensions
             var startBoundary = zoomOffset - offset;
             var endBoundary = (1 - zoomOffset) - offset;
 
-            if (_colorKeys == null) _colorKeys = EffectGradient.colorKeys;
+            _colorKeys = EffectGradient.colorKeys;
             
             foreach (var color in _colorKeys)
             {
@@ -485,7 +485,7 @@ namespace UnityEngine.UI.Extensions
                     stops.Add((color.time - startBoundary) * Zoom);
             }
 
-            if (_alphaKeys == null) _alphaKeys = _effectGradient.alphaKeys;
+            _alphaKeys = _effectGradient.alphaKeys;
             
             foreach (var alpha in _alphaKeys)
             {
