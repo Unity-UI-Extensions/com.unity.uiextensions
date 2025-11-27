@@ -1,9 +1,9 @@
 name: Build and test UPM packages for platforms, all branches except main
 
 on:
-  pull_request:
-    branches-ignore:    
-      - 'release'
+  # pull_request:
+  #   branches-ignore:    
+  #     - 'release'
   # Ignore PRs targeting main
 
   # Allows you to run this workflow manually from the Actions tab
