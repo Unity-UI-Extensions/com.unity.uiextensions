@@ -32,10 +32,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         unity-version:
-          - 2019
-          - 2020
-          - 2021
-          - 2022
           - 6000.0.x
           - 6000
         include:
