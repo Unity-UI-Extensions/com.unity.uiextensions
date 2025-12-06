@@ -68,6 +68,9 @@ namespace UnityEngine.UI.Extensions
         public int FocusedElementIndex { get; private set; }
 
         public RectTransform Center { get => center; set => center = value; }
+        public RectTransform ElementSize { get => elementSize; set => elementSize = value; }
+        public ScrollRect ScrollRectComponent { get => scrollRect; set => scrollRect = value; }
+        public GameObject[] ArrayOfElements { get => arrayOfElements; set => arrayOfElements = value; }
 
         public string Result { get; private set; }
 
@@ -93,29 +96,6 @@ namespace UnityEngine.UI.Extensions
             if (!scrollRect)
             {
                 scrollRect = GetComponent<ScrollRect>();
-            }
-
-            if (!center)
-            {
-                Debug.LogError("Please define the RectTransform for the Center viewport of the scrollable area");
-            }
-
-            if (!elementSize)
-            {
-                elementSize = center;
-            }
-
-            if (arrayOfElements == null || arrayOfElements.Length == 0)
-            {
-                var childCount = ScrollingPanel.childCount;
-                if (childCount > 0)
-                {
-                    arrayOfElements = new GameObject[childCount];
-                    for (int i = 0; i < childCount; i++)
-                    {
-                        arrayOfElements[i] = ScrollingPanel.GetChild(i).gameObject;
-                    }
-                }
             }
         }
 
@@ -172,6 +152,30 @@ namespace UnityEngine.UI.Extensions
 
         public void Start()
         {
+            if (!center)
+            {
+                Debug.LogError("Please define the RectTransform for the Center viewport of the scrollable area");
+                return;
+            }
+
+            if (!elementSize)
+            {
+                elementSize = center;
+            }
+
+            if (arrayOfElements == null || arrayOfElements.Length == 0)
+            {
+                var childCount = ScrollingPanel.childCount;
+                if (childCount > 0)
+                {
+                    arrayOfElements = new GameObject[childCount];
+                    for (int i = 0; i < childCount; i++)
+                    {
+                        arrayOfElements[i] = ScrollingPanel.GetChild(i).gameObject;
+                    }
+                }
+            }
+
             if (scrollUpButton)
             {
                 scrollUpButton.GetComponent<Button>().onClick.AddListener(() => ScrollUp());
