@@ -35,10 +35,10 @@ jobs:
           - 6000.0.x
           - 6000
         include:
-          - os: ubuntu-latest
-            build-targets: StandaloneLinux64, Android
+          # - os: ubuntu-latest
+          #   build-targets: StandaloneLinux64, Android
           - os: windows-latest
-            build-targets: StandaloneWindows64
+            build-targets: StandaloneWindows64, Android
           - os: macos-latest
             build-targets: StandaloneOSX, iOS
     steps:
