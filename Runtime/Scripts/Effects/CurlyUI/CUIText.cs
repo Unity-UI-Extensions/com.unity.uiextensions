@@ -4,7 +4,7 @@
 namespace UnityEngine.UI.Extensions
 {
     [RequireComponent(typeof(RectTransform))]
-    [RequireComponent(typeof(TMPro.TMP_Text))]
+    [RequireComponent(typeof(Text))]
     [AddComponentMenu("UI/Effects/Extensions/Curly UI Text")]
     public class CUIText : CUIGraphic
     {
@@ -12,7 +12,7 @@ namespace UnityEngine.UI.Extensions
         {
             if (uiGraphic == null)
             {
-                uiGraphic = GetComponent<TMPro.TMP_Text>();
+                uiGraphic = GetComponent<Text>();
             }
 
             base.ReportSet();
