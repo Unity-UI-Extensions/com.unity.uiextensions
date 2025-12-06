@@ -4,7 +4,6 @@
 
 namespace UnityEngine.UI.Extensions.ColorPicker
 {
-
     [RequireComponent(typeof(TMPro.TMP_Text))]
     public class ColorLabel : MonoBehaviour
     {
@@ -51,7 +50,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
             UpdateValue();
         }
 
-        private void HSVChanged(float hue, float sateration, float value)
+        private void HSVChanged(float hue, float saturation, float value)
         {
             UpdateValue();
         }
