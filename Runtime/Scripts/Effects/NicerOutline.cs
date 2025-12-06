@@ -1,9 +1,5 @@
 
-#if !UNITY_2022_1_OR_NEWER
 using System.Collections.Generic;
-#endif
-
-using System;
 
 /// Credit Melang, Lee Hui
 /// Sourced from - http://forum.unity3d.com/members/melang.593409/
@@ -11,29 +7,20 @@ using System;
 /// NOT supported in Unity 2022
 namespace UnityEngine.UI.Extensions
 {
-#if UNITY_2022_1_OR_NEWER
-	[Obsolete("BestFitOutline is not supported in Unity 2022.1 or newer. Use TMPro instead.")]
-	public class NicerOutline : BaseMeshEffect
-	{
-        public override void ModifyMesh(VertexHelper vh)
-        {
-        }
-    }
-#else
-    //An outline that looks a bit nicer than the default one. It has less "holes" in the outline by drawing more copies of the effect
-    [AddComponentMenu("UI/Effects/Extensions/Nicer Outline")]
+	//An outline that looks a bit nicer than the default one. It has less "holes" in the outline by drawing more copies of the effect
+	[AddComponentMenu("UI/Effects/Extensions/Nicer Outline")]
 	public class NicerOutline : BaseMeshEffect
 	{
 		[SerializeField]
-		private Color m_EffectColor = new Color (0f, 0f, 0f, 0.5f);
+		private Color m_EffectColor = new Color(0f, 0f, 0f, 0.5f);
 
 		[SerializeField]
-		private Vector2 m_EffectDistance = new Vector2 (1f, -1f);
+		private Vector2 m_EffectDistance = new Vector2(1f, -1f);
 
 		[SerializeField]
 		private bool m_UseGraphicAlpha = true;
 
-		private List < UIVertex > m_Verts = new List<UIVertex>();
+		private List<UIVertex> m_Verts = new List<UIVertex>();
 
 		//
 		// Properties
@@ -49,7 +36,7 @@ namespace UnityEngine.UI.Extensions
 				this.m_EffectColor = value;
 				if (base.graphic != null)
 				{
-					base.graphic.SetVerticesDirty ();
+					base.graphic.SetVerticesDirty();
 				}
 			}
 		}
@@ -85,7 +72,7 @@ namespace UnityEngine.UI.Extensions
 				this.m_EffectDistance = value;
 				if (base.graphic != null)
 				{
-					base.graphic.SetVerticesDirty ();
+					base.graphic.SetVerticesDirty();
 				}
 			}
 		}
@@ -101,28 +88,28 @@ namespace UnityEngine.UI.Extensions
 				this.m_UseGraphicAlpha = value;
 				if (base.graphic != null)
 				{
-					base.graphic.SetVerticesDirty ();
+					base.graphic.SetVerticesDirty();
 				}
 			}
 		}
-		
-        public override void ModifyMesh(VertexHelper vh)
-        {
-            if (!this.IsActive ())
+
+		public override void ModifyMesh(VertexHelper vh)
+		{
+			if (!this.IsActive())
 			{
 				return;
 			}
 
-	        m_Verts.Clear();
-            vh.GetUIVertexStream(m_Verts);
+			m_Verts.Clear();
+			vh.GetUIVertexStream(m_Verts);
 
-            Text foundtext = GetComponent<Text>();
+			Text foundtext = GetComponent<Text>();
 
 			float best_fit_adjustment = 1f;
 
 			if (foundtext && foundtext.resizeTextForBestFit)
 			{
-				best_fit_adjustment = (float)foundtext.cachedTextGenerator.fontSizeUsedForBestFit / (foundtext.resizeTextMaxSize-1); //max size seems to be exclusive
+				best_fit_adjustment = (float)foundtext.cachedTextGenerator.fontSizeUsedForBestFit / (foundtext.resizeTextMaxSize - 1); //max size seems to be exclusive
 
 			}
 
@@ -145,8 +132,8 @@ namespace UnityEngine.UI.Extensions
 
 			// Apply self Text stuff
 			start += ApplyText(m_Verts, vh, start);
-        }
-        
+		}
+
 		private int ApplyOutlineNoGC(List<UIVertex> verts, Color32 color, float x, float y, VertexHelper vh, int startIndex)
 		{
 			int length = verts.Count;
@@ -165,12 +152,12 @@ namespace UnityEngine.UI.Extensions
 
 				// Tips: Since two triangles share same two vertices, in theory vertices can reduce to 4 / 6
 				// But VertexHelper.FillMesh forbid, so leave it be.
-				
+
 				vh.AddVert(vt);
 			}
 
 			int triangleCount = length / 3;
-			for(int i=0; i<triangleCount; ++i)
+			for (int i = 0; i < triangleCount; ++i)
 			{
 				int start = startIndex + 3 * i;
 				vh.AddTriangle(start + 0, start + 1, start + 2);
@@ -178,7 +165,7 @@ namespace UnityEngine.UI.Extensions
 
 			return length;
 		}
-		
+
 		private int ApplyText(List<UIVertex> verts, VertexHelper vh, int startIndex)
 		{
 			int length = verts.Count;
@@ -200,12 +187,11 @@ namespace UnityEngine.UI.Extensions
 
 
 #if UNITY_EDITOR
-		protected override void OnValidate ()
+		protected override void OnValidate()
 		{
 			this.effectDistance = this.m_EffectDistance;
-			base.OnValidate ();
+			base.OnValidate();
 		}
 #endif
 	}
-#endif
-    }
+}

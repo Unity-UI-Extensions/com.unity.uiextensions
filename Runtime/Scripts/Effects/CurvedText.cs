@@ -1,17 +1,6 @@
 ﻿
-using System;
-
 namespace UnityEngine.UI.Extensions
 {
-#if UNITY_2022_1_OR_NEWER
-    [Obsolete("CurvedText is not supported in Unity 2022.1 or newer. Use TMPro instead.")]
-    public class CurvedText : BaseMeshEffect
-    {
-        public override void ModifyMesh(VertexHelper vh)
-        {
-        }
-    }
-#else
     [RequireComponent(typeof(Text))]
     [RequireComponent(typeof(RectTransform))]
     [AddComponentMenu("UI/Effects/Extensions/Curved Text")]
@@ -91,5 +80,4 @@ namespace UnityEngine.UI.Extensions
             }
         }
     }
-#endif
 }

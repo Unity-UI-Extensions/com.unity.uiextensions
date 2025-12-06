@@ -20,7 +20,7 @@ namespace UnityEngine.UI.Extensions
         void Awake()
         {
             instance = this;
-            if(!TooltipText) TooltipText = GetComponentInChildren<Text>();
+            if (!TooltipText) TooltipText = GetComponentInChildren<Text>();
             HideTooltip();
         }
 
@@ -47,11 +47,7 @@ namespace UnityEngine.UI.Extensions
             {
                 if (instance == null)
                 {
-#if UNITY_2023_1_OR_NEWER
                     instance = GameObject.FindFirstObjectByType<BoundTooltipItem>();
-#else
-                    instance = GameObject.FindObjectOfType<BoundTooltipItem>();
-#endif
                 }
                 return instance;
             }
@@ -59,4 +55,4 @@ namespace UnityEngine.UI.Extensions
     }
 }
 
- 
+

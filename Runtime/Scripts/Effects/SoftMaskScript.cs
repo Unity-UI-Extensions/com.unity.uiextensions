@@ -47,11 +47,7 @@ namespace UnityEngine.UI.Extensions
                 MaskArea = GetComponent<RectTransform>();
             }
 
-#if UNITY_2022_1_OR_NEWER
             var text = GetComponent<TMPro.TMP_Text>();
-#else
-            var text = GetComponent<Text>();
-#endif
             if (text != null)
             {
                 mat = new Material(ShaderLibrary.GetShaderInstance("UI Extensions/SoftMaskShader"));

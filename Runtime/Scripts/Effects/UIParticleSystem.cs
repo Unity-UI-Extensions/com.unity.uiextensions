@@ -18,7 +18,7 @@ namespace UnityEngine.UI.Extensions
 
         [Tooltip("Enables using Renderer.lengthScale parameter")]
         public bool _useLengthScale = false;
-        
+
         private Transform _transform;
         private ParticleSystem pSystem;
         private ParticleSystem.Particle[] particles;
@@ -94,7 +94,7 @@ namespace UnityEngine.UI.Extensions
                 pRenderer = pSystem.GetComponent<ParticleSystemRenderer>();
                 if (pRenderer != null)
                     pRenderer.enabled = false;
-                
+
                 if (material == null)
                 {
                     var foundShader = ShaderLibrary.GetShaderInstance("UI Extensions/Particles/Additive");
@@ -235,11 +235,7 @@ namespace UnityEngine.UI.Extensions
                             frame = Mathf.FloorToInt(frameProgress * textureSheetAnimation.numTilesX);
 
                             int row = textureSheetAnimation.rowIndex;
-#if UNITY_2019_1_OR_NEWER
                             if (textureSheetAnimation.rowMode == ParticleSystemAnimationRowMode.Random)
-#else
-                            if (textureSheetAnimation.useRandomRow)
-#endif
                             { // FIXME - is this handled internally by rowIndex?
                                 row = Mathf.Abs((int)particle.randomSeed % textureSheetAnimation.numTilesY);
                             }
@@ -281,7 +277,7 @@ namespace UnityEngine.UI.Extensions
                 _quad[3].color = color;
                 _quad[3].uv0 = temp;
 
-                
+
                 float rotation = -particle.rotation * Mathf.Deg2Rad;
                 var lengthScale = pRenderer.lengthScale;
                 if (_useLengthScale)
@@ -294,7 +290,7 @@ namespace UnityEngine.UI.Extensions
                 {
                     lengthScale = 1f;
                 }
-                
+
                 float rotation90 = rotation + Mathf.PI / 2;
 
                 if (rotation == 0)

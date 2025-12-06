@@ -1,7 +1,7 @@
 ﻿/// Credit SimonDarksideJ
 /// Sourced from: https://bitbucket.org/UnityUIExtensions/unity-ui-extensions/issues/348/menu-manager-does-not-work-with-the-new
 
-#if UNITY_2019_1_OR_NEWER && !ENABLE_LEGACY_INPUT_MANAGER
+#if !ENABLE_LEGACY_INPUT_MANAGER
 #define NEW_INPUT_SYSTEM
 #endif
 

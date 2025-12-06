@@ -43,48 +43,40 @@ using System.Collections.Generic;
 #endif
 
 using System;
+using System.Collections.Generic;
 
 /// Credit Deeperbeige
 /// Sourced from - http://forum.unity3d.com/threads/adjustable-character-spacing-free-script.288277/
 namespace UnityEngine.UI.Extensions
 {
-#if UNITY_2022_1_OR_NEWER
-    [Obsolete("LetterSpacing is not supported in Unity 2022.1 or newer. Use TMPro instead.")]
-    public class LetterSpacing : BaseMeshEffect
-    {
-        public override void ModifyMesh(VertexHelper vh)
-        {
-        }
-    }
-#else
     [AddComponentMenu("UI/Effects/Extensions/Letter Spacing")]
     ///Summary
     /// Note, Vertex Count has changed in 5.2.1+, is now 6 (two tris) instead of 4 (tri strip).
     public class LetterSpacing : BaseMeshEffect
-	{
-		[SerializeField]
-		private float m_spacing = 0f;
+    {
+        [SerializeField]
+        private float m_spacing = 0f;
 
-		protected LetterSpacing() { }
-		
+        protected LetterSpacing() { }
+
 #if UNITY_EDITOR
-		protected override void OnValidate()
-		{
-			spacing = m_spacing;
-			base.OnValidate();
-		}
+        protected override void OnValidate()
+        {
+            spacing = m_spacing;
+            base.OnValidate();
+        }
 #endif
-		
-		public float spacing
-		{
-			get { return m_spacing; }
-			set
-			{
-				if (m_spacing == value) return;
-				m_spacing = value;
-				if (graphic != null) graphic.SetVerticesDirty();
-			}
-		}
+
+        public float spacing
+        {
+            get { return m_spacing; }
+            set
+            {
+                if (m_spacing == value) return;
+                m_spacing = value;
+                if (graphic != null) graphic.SetVerticesDirty();
+            }
+        }
 
         protected override void Awake()
         {
@@ -93,7 +85,7 @@ namespace UnityEngine.UI.Extensions
 
         public override void ModifyMesh(VertexHelper vh)
         {
-            if (! IsActive()) return;
+            if (!IsActive()) return;
 
             List<UIVertex> verts = new List<UIVertex>();
             vh.GetUIVertexStream(verts);
@@ -101,16 +93,16 @@ namespace UnityEngine.UI.Extensions
             var text = GetComponent<Text>();
 
             if (text == null)
-			{
-				Debug.LogWarning("LetterSpacing: Missing Text component");
-				return;
-			}
-			
-			string[] lines = text.text.Split('\n');
-			Vector3  pos;
-			float    letterOffset    = spacing * (float)text.fontSize / 100f;
-			float    alignmentFactor = 0;
-			int      glyphIdx        = 0;
+            {
+                Debug.LogWarning("LetterSpacing: Missing Text component");
+                return;
+            }
+
+            string[] lines = text.text.Split('\n');
+            Vector3 pos;
+            float letterOffset = spacing * (float)text.fontSize / 100f;
+            float alignmentFactor = 0;
+            int glyphIdx = 0;
 
             switch (text.alignment)
             {
@@ -132,18 +124,18 @@ namespace UnityEngine.UI.Extensions
                     alignmentFactor = 1f;
                     break;
             }
-      
-            for (int lineIdx=0; lineIdx < lines.Length; lineIdx++)
-			{
-				string line = lines[lineIdx];
-				float lineOffset = (line.Length -1) * letterOffset * alignmentFactor;
 
-				for (int charIdx = 0; charIdx < line.Length; charIdx++)
-				{
-					int idx1 = glyphIdx * 6 + 0;
-					int idx2 = glyphIdx * 6 + 1;
-					int idx3 = glyphIdx * 6 + 2;
-					int idx4 = glyphIdx * 6 + 3;
+            for (int lineIdx = 0; lineIdx < lines.Length; lineIdx++)
+            {
+                string line = lines[lineIdx];
+                float lineOffset = (line.Length - 1) * letterOffset * alignmentFactor;
+
+                for (int charIdx = 0; charIdx < line.Length; charIdx++)
+                {
+                    int idx1 = glyphIdx * 6 + 0;
+                    int idx2 = glyphIdx * 6 + 1;
+                    int idx3 = glyphIdx * 6 + 2;
+                    int idx4 = glyphIdx * 6 + 3;
                     int idx5 = glyphIdx * 6 + 4;
                     int idx6 = glyphIdx * 6 + 5;
 
@@ -167,21 +159,20 @@ namespace UnityEngine.UI.Extensions
                     vert6.position += pos;
 
                     verts[idx1] = vert1;
-					verts[idx2] = vert2;
-					verts[idx3] = vert3;
-					verts[idx4] = vert4;
+                    verts[idx2] = vert2;
+                    verts[idx3] = vert3;
+                    verts[idx4] = vert4;
                     verts[idx5] = vert5;
                     verts[idx6] = vert6;
 
                     glyphIdx++;
-				}
-				
-				// Offset for carriage return character that still generates verts
-				glyphIdx++;
-			}
+                }
+
+                // Offset for carriage return character that still generates verts
+                glyphIdx++;
+            }
             vh.Clear();
             vh.AddUIVertexTriangleStream(verts);
         }
-	}
-#endif
+    }
 }

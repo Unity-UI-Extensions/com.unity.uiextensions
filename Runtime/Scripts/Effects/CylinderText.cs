@@ -6,15 +6,6 @@ using System;
 /// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/#post-1777407
 namespace UnityEngine.UI.Extensions
 {
-#if UNITY_2022_1_OR_NEWER
-    [Obsolete("CylinderText is not supported in Unity 2022.1 or newer. Use TMPro instead.")]
-    public class CylinderText : BaseMeshEffect
-    {
-        public override void ModifyMesh(VertexHelper vh)
-        {
-        }
-    }
-#else
     [RequireComponent(typeof(Text))]
     [RequireComponent(typeof(RectTransform))]
     [AddComponentMenu("UI/Effects/Extensions/Cylinder Text")]
@@ -40,7 +31,7 @@ namespace UnityEngine.UI.Extensions
         }
         public override void ModifyMesh(VertexHelper vh)
         {
-            if (! IsActive()) return;
+            if (!IsActive()) return;
 
             int count = vh.currentVertCount;
             if (!IsActive() || count == 0)
@@ -53,15 +44,14 @@ namespace UnityEngine.UI.Extensions
                 vh.PopulateUIVertex(ref uiVertex, index);
 
                 // get x position
-                var x = uiVertex.position.x;                
+                var x = uiVertex.position.x;
 
                 // calculate bend based on pivot and radius
                 uiVertex.position.z = -radius * Mathf.Cos(x / radius);
                 uiVertex.position.x = radius * Mathf.Sin(x / radius);
-                
+
                 vh.SetUIVertex(uiVertex, index);
             }
         }
     }
-#endif
 }

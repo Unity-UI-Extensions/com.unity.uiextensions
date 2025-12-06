@@ -72,7 +72,7 @@ namespace UnityEngine.UI.Extensions
         public string Result { get; private set; }
 
         //Scrollable area (content of desired ScrollRect)
-        public RectTransform ScrollingPanel{ get { return scrollRect.content; } }
+        public RectTransform ScrollingPanel { get { return scrollRect.content; } }
 
         /// <summary>
         /// Constructor when not used as component but called from other script
@@ -212,19 +212,11 @@ namespace UnityEngine.UI.Extensions
                 if (minDistance == distance[i])
                 {
                     FocusedElementIndex = i;
-#if UNITY_2022_1_OR_NEWER
                     var textComponentTxtMeshPro = arrayOfElements[i].GetComponentInChildren<TMPro.TMP_Text>();
                     if (textComponentTxtMeshPro != null)
                     {
                         Result = textComponentTxtMeshPro.text;
                     }
-#else
-                    var textComponent = arrayOfElements[i].GetComponentInChildren<Text>();
-                    if (textComponent != null)
-                    {
-                        Result = textComponent.text;
-                    }
-#endif
                 }
             }
 

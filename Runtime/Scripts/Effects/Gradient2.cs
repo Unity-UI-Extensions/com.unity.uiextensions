@@ -9,12 +9,8 @@
 /// </summary>
 using System;
 using System.Collections.Generic;
-#if UNITY_2021_2_OR_NEWER
 using System.Buffers;
-#endif
-#if UNITY_2021_1_OR_NEWER
 using UnityEngine.Pool;
-#endif
 
 namespace UnityEngine.UI.Extensions
 {
@@ -44,7 +40,7 @@ namespace UnityEngine.UI.Extensions
 
         private GradientColorKey[] _colorKeys;
         private GradientAlphaKey[] _alphaKeys;
-        
+
         #region Properties
         public Blend BlendMode
         {
@@ -112,11 +108,7 @@ namespace UnityEngine.UI.Extensions
             if (!IsActive() || helper.currentVertCount == 0)
                 return;
 
-#if UNITY_2021_1_OR_NEWER
             List<UIVertex> _vertexList = ListPool<UIVertex>.Get();
-#else
-            List<UIVertex> _vertexList = new List<UIVertex>();
-#endif
 
             helper.GetUIVertexStream(_vertexList);
 
@@ -231,7 +223,7 @@ namespace UnityEngine.UI.Extensions
 
                             helper.AddVert(centralVertex);
 
-                            for (int i = 1; i < steps; i++) helper.AddTriangle(i, i-1, steps);
+                            for (int i = 1; i < steps; i++) helper.AddTriangle(i, i - 1, steps);
                             helper.AddTriangle(0, steps - 1, steps);
                         }
 
@@ -252,9 +244,7 @@ namespace UnityEngine.UI.Extensions
                     break;
             }
 
-#if UNITY_2021_1_OR_NEWER
             ListPool<UIVertex>.Release(_vertexList);
-#endif
         }
 
         Rect GetBounds(List<UIVertex> vertices)
@@ -281,11 +271,7 @@ namespace UnityEngine.UI.Extensions
 
         void SplitTrianglesAtGradientStops(List<UIVertex> _vertexList, Rect bounds, float zoomOffset, VertexHelper helper)
         {
-#if UNITY_2021_1_OR_NEWER
             List<float> stops = FindStops(zoomOffset, bounds, ListPool<float>.Get());
-#else
-            List<float> stops = FindStops(zoomOffset, bounds, new List<float>());
-#endif
             if (stops.Count > 0)
             {
                 helper.Clear();
@@ -293,23 +279,13 @@ namespace UnityEngine.UI.Extensions
                 int nCount = _vertexList.Count;
                 for (int i = 0; i < nCount; i += 3)
                 {
-#if UNITY_2021_2_OR_NEWER
                     var positions = ArrayPool<float>.Shared.Rent(3);
-#else
-                    var positions = new float[3];
-#endif
-                    
+
                     GetPositions(_vertexList, i, ref positions);
-                    
-#if UNITY_2021_1_OR_NEWER
+
                     List<int> originIndices = ListPool<int>.Get();
                     List<UIVertex> starts = ListPool<UIVertex>.Get();
                     List<UIVertex> ends = ListPool<UIVertex>.Get();
-#else
-                    List<int> originIndices = new List<int>(3);
-                    List<UIVertex> starts = new List<UIVertex>(3);
-                    List<UIVertex> ends = new List<UIVertex>(2);
-#endif
 
                     for (int s = 0; s < stops.Count; s++)
                     {
@@ -438,19 +414,13 @@ namespace UnityEngine.UI.Extensions
                         helper.AddTriangle(vertexCount - 3, vertexCount - 2, vertexCount - 1);
                     }
 
-#if UNITY_2021_2_OR_NEWER
                     ArrayPool<float>.Shared.Return(positions);
-#endif
-#if UNITY_2021_1_OR_NEWER
                     ListPool<int>.Release(originIndices);
                     ListPool<UIVertex>.Release(starts);
                     ListPool<UIVertex>.Release(ends);
-#endif
                 }
             }
-#if UNITY_2021_1_OR_NEWER
             ListPool<float>.Release(stops);
-#endif
         }
 
         void GetPositions(List<UIVertex> _vertexList, int index, ref float[] positions)
@@ -468,7 +438,7 @@ namespace UnityEngine.UI.Extensions
                 positions[2] = _vertexList[index + 2].position.y;
             }
         }
-        
+
         List<float> FindStops(float zoomOffset, Rect bounds, List<float> stops)
         {
             var offset = Offset * (1 - zoomOffset);
@@ -476,7 +446,7 @@ namespace UnityEngine.UI.Extensions
             var endBoundary = (1 - zoomOffset) - offset;
 
             _colorKeys = EffectGradient.colorKeys;
-            
+
             foreach (var color in _colorKeys)
             {
                 if (color.time >= endBoundary)
@@ -486,7 +456,7 @@ namespace UnityEngine.UI.Extensions
             }
 
             _alphaKeys = _effectGradient.alphaKeys;
-            
+
             foreach (var alpha in _alphaKeys)
             {
                 if (alpha.time >= endBoundary)
@@ -509,7 +479,7 @@ namespace UnityEngine.UI.Extensions
                 if (x == y) return 0;
                 return -1;
             });
-            
+
             for (int i = 0; i < stops.Count; i++)
             {
                 stops[i] = (stops[i] * size) + min;
