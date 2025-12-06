@@ -6,7 +6,6 @@
 /// Vertical Flow by Ramon Molossi 
 
 using System.Collections.Generic;
-using System.Text;
 
 namespace UnityEngine.UI.Extensions
 {
@@ -18,10 +17,10 @@ namespace UnityEngine.UI.Extensions
 	{
 		public enum Axis { Horizontal = 0, Vertical = 1 }
 
-        private float _layoutHeight;
-        private float _layoutWidth;
+		private float _layoutHeight;
+		private float _layoutWidth;
 
-        public float SpacingX = 0f;
+		public float SpacingX = 0f;
 		public float SpacingY = 0f;
 		public bool ExpandHorizontalSpacing = false;
 		public bool ChildForceExpandWidth = false;

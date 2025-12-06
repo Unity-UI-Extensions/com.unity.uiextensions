@@ -145,7 +145,7 @@ namespace UnityEngine.UI.Extensions
             }
             else
             {
-                Debug.LogWarning("[ToolTip] Couldn't set tooltip text, tooltip has no child Text component");
+                Debug.LogWarning("[ToolTip] Couldn't set tooltip text, tooltip has no child  component");
             }
 
             ContextualTooltipUpdate(refreshCanvasesBeforeGetSize);

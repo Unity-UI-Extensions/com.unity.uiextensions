@@ -1,6 +1,6 @@
 ﻿/// Credit Tomasz Schelenz 
 /// Sourced from - https://bitbucket.org/SimonDarksideJ/unity-ui-extensions/issues/82/scrollrectocclusion
-/// Demo - https://youtu.be/uVTV7Udx78k?t=39s ScrollRectOcclusion - disables the objects outside of the scrollrect viewport. Useful for scrolls with lots of content, reduces geometry and drawcalls (if content is not batched) In some cases it might create a bit of spikes, especially if you have lots of UI.Text objects in the childs. In that case consider to Add CanvasGroup to your childs and instead of calling setActive on game object change CanvasGroup.alpha value. At 0 it is not being rendered hence will also optimize the performance. 
+/// Demo - https://youtu.be/uVTV7Udx78k?t=39s ScrollRectOcclusion - disables the objects outside of the scrollrect viewport. Useful for scrolls with lots of content, reduces geometry and drawcalls (if content is not batched) In some cases it might create a bit of spikes, especially if you have lots of UI. objects in the childs. In that case consider to Add CanvasGroup to your childs and instead of calling setActive on game object change CanvasGroup.alpha value. At 0 it is not being rendered hence will also optimize the performance. 
 
 using System.Collections.Generic;
 
@@ -15,7 +15,7 @@ namespace UnityEngine.UI.Extensions
     /// by calling Init() method
     /// 
     /// Notes
-    /// - In some cases it might create a bit of spikes, especially if you have lots of UI.Text objects in the child's. In that case consider to Add 
+    /// - In some cases it might create a bit of spikes, especially if you have lots of UI. objects in the child's. In that case consider to Add 
     /// CanvasGroup to your child's and instead of calling setActive on game object change CanvasGroup.alpha value. At 0 it is not being rendered hence will 
     /// also optimize the performance. 
     /// - works for both vertical and horizontal scrolls, even at the same time (grid layout)

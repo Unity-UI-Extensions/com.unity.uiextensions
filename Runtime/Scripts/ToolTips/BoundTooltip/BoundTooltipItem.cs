@@ -14,13 +14,13 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        public UnityEngine.UI.Text TooltipText;
+        public TMPro.TMP_Text TooltipText;
         public Vector3 ToolTipOffset;
 
         void Awake()
         {
             instance = this;
-            if (!TooltipText) TooltipText = GetComponentInChildren<Text>();
+            if (!TooltipText) TooltipText = GetComponentInChildren<TMPro.TMP_Text>();
             HideTooltip();
         }
 

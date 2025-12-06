@@ -29,7 +29,7 @@ namespace UnityEngine.UI.Extensions
         private bool _isPanelActive = false;
         private bool _hasDrawnOnce = false;
 
-        private InputField _mainInput;
+        private TMPro.TMP_InputField _mainInput;
         private RectTransform _inputRT;
 
         private RectTransform _rectTransform;
@@ -171,8 +171,8 @@ namespace UnityEngine.UI.Extensions
             try
             {
                 _rectTransform = GetComponent<RectTransform>();
-                _inputRT = _rectTransform.Find("InputField").GetComponent<RectTransform>();
-                _mainInput = _inputRT.GetComponent<InputField>();
+                _mainInput = GetComponentInChildren<TMPro.TMP_InputField>();
+                _inputRT = _mainInput.GetComponent<RectTransform>();
 
                 _overlayRT = _rectTransform.Find("Overlay").GetComponent<RectTransform>();
                 _overlayRT.gameObject.SetActive(false);
