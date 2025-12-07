@@ -54,7 +54,7 @@ namespace UnityEngine.UI.Extensions
         //private bool isInitialized = false;
         private bool _isPanelActive = false;
         private bool _hasDrawnOnce = false;
-        private InputField _mainInput;
+        private TMPro.TMP_InputField _mainInput;
         private RectTransform _inputRT;
         private RectTransform _rectTransform;
         private RectTransform _overlayRT;
@@ -92,7 +92,7 @@ namespace UnityEngine.UI.Extensions
                 RedrawPanel();
             }
         }
-        
+
         public void Awake()
         {
             Initialize();
@@ -115,8 +115,8 @@ namespace UnityEngine.UI.Extensions
             try
             {
                 _rectTransform = GetComponent<RectTransform>();
-                _inputRT = _rectTransform.Find("InputField").GetComponent<RectTransform>();
-                _mainInput = _inputRT.GetComponent<InputField>();
+                _mainInput = GetComponentInChildren<TMPro.TMP_InputField>();
+                _inputRT = _mainInput.GetComponent<RectTransform>();
 
                 _overlayRT = _rectTransform.Find("Overlay").GetComponent<RectTransform>();
                 _overlayRT.gameObject.SetActive(false);
@@ -246,11 +246,7 @@ namespace UnityEngine.UI.Extensions
                 if (i < AvailableOptions.Count)
                 {
                     itemObjs[i].name = "Item " + i + " " + _panelItems[i];
-#if UNITY_2022_1_OR_NEWER
                     itemObjs[i].transform.Find("Text").GetComponent<TMPro.TMP_Text>().text = AvailableOptions[i]; //set the text value
-#else
-                    itemObjs[i].transform.Find("Text").GetComponent<Text>().text = AvailableOptions[i]; //set the text value
-#endif
                     Button itemBtn = itemObjs[i].GetComponent<Button>();
                     itemBtn.onClick.RemoveAllListeners();
                     string textOfItem = _panelItems[i]; //has to be copied for anonymous function or it gets garbage collected away

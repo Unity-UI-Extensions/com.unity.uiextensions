@@ -5,19 +5,11 @@ namespace UnityEngine.UI.Extensions
 {
     public class ReorderableListDebug : MonoBehaviour
     {
-#if UNITY_2022_1_OR_NEWER
         public TMPro.TMP_Text DebugLabel;
-#else
-        public Text DebugLabel;
-#endif
 
         void Awake()
         {
-#if UNITY_2023_1_OR_NEWER
             foreach (var list in FindObjectsByType<ReorderableList>(FindObjectsSortMode.None))
-#else
-            foreach (var list in FindObjectsOfType<ReorderableList>())
-#endif
             {
                 list.OnElementDropped.AddListener(ElementDropped);
             }

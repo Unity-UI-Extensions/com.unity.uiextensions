@@ -5,26 +5,26 @@
 namespace UnityEngine.UI.Extensions.ColorPicker
 {
     [RequireComponent(typeof(Image))]
-public class ColorImage : MonoBehaviour
-{
-    public ColorPickerControl picker;
-
-    private Image image;
-
-    private void Awake()
+    public class ColorImage : MonoBehaviour
     {
-        image = GetComponent<Image>();
-        picker.onValueChanged.AddListener(ColorChanged);
-    }
+        public ColorPickerControl picker;
 
-    private void OnDestroy()
-    {
-        picker.onValueChanged.RemoveListener(ColorChanged);
-    }
+        private Image image;
 
-    private void ColorChanged(Color newColor)
-    {
-        image.color = newColor;
+        private void Awake()
+        {
+            image = GetComponent<Image>();
+            picker.onValueChanged.AddListener(ColorChanged);
+        }
+
+        private void OnDestroy()
+        {
+            picker.onValueChanged.RemoveListener(ColorChanged);
+        }
+
+        private void ColorChanged(Color newColor)
+        {
+            image.color = newColor;
+        }
     }
-}
 }
