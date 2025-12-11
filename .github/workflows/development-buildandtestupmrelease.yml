@@ -3,7 +3,7 @@ name: Build and test UPM packages for platforms, all branches except main
 on:
   pull_request:
     branches-ignore:    
-      - 'release'
+      - 'main'
   # Ignore PRs targeting main
 
   # Allows you to run this workflow manually from the Actions tab
@@ -13,18 +13,75 @@ concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
 
-jobs:
-  # Check Unity version required by the package
-  # Run Unity build unit tests defined in the package for a single version for feature branches
-  Run-Partial-Unit-Tests:
-    name: Run Unity Unit Tests
-    if: github.ref != 'refs/heads/development'
-    uses: ./.github/workflows/rununitysinglebuild.yml    
-    with:
-      unityversion: 2020.3
+# Ensure default token scopes and inherit org-level secrets via env mapping
+permissions:
+  contents: write
+  packages: read
 
-  # Run Unity multi-version build unit tests defined in the package for the development branch
-  Run-Full-Unit-Tests:
-    name: Run Unity Unit Tests
-    if: github.ref == 'refs/heads/development'
-    uses: ./.github/workflows/rununitybuildmultiversion.yml
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GIT_PAT: ${{ secrets.GIT_PAT }}
+
+jobs:
+  test-unity-build:
+    name: Test Unity UPM Build
+    runs-on: ${{ matrix.os }}
+    if: always()
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        unity-version:
+          - 6000.0.x
+          - 6000
+        include:
+          - os: ubuntu-latest
+            build-targets: StandaloneLinux64, Android
+          - os: windows-latest
+            build-targets: StandaloneWindows64
+          - os: macos-latest
+            build-targets: StandaloneOSX, iOS
+    steps:
+      - uses: buildalon/unity-setup@v2
+        id: unity-setup
+        with:
+          version-file: "None"
+          unity-version: ${{ matrix.unity-version }} # overrides version in version-file
+          build-targets: ${{ matrix.build-targets }}
+
+      - run: |
+          echo "Step Outputs:"
+          echo "steps.unity-setup.unity-hub-path: '${{ steps.unity-setup.outputs.unity-hub-path }}'"
+          echo "steps.unity-setup.unity-editors: '${{ steps.unity-setup.outputs.unity-editors }}'"
+          echo "steps.unity-setup.unity-editor-path: '${{ steps.unity-setup.outputs.unity-editor-path }}'"
+          echo "steps.unity-setup.unity-project-path: '${{ steps.unity-setup.outputs.unity-project-path }}'"
+
+          echo "Environment Variables:"
+          echo "UNITY_HUB_PATH: '${{ env.UNITY_HUB_PATH }}'"
+          echo "UNITY_EDITORS: '${{ env.UNITY_EDITORS }}'"
+          echo "UNITY_EDITOR_PATH: '${{ env.UNITY_EDITOR_PATH }}'"
+          echo "UNITY_PROJECT_PATH: '${{ env.UNITY_PROJECT_PATH }}'"
+
+      - uses: buildalon/activate-unity-license@v2
+        if: runner.environment == 'github-hosted'
+        with:
+          license: "Personal" # Choose license type to use [ Personal, Professional, Floating ]
+          username: ${{ secrets.UNITY_USER}}
+          password: ${{ secrets.UNITY_ACC}}
+
+      - uses: buildalon/create-unity-project@v2
+        id: create-unity-project
+        with:
+          project-name: P
+
+      - name: Setup Unity UPM Build
+        uses: realitycollective/reality-collective-actions/setup-unity-upm-build@v1
+        with:
+          unity-project-path: ${{ steps.create-unity-project.outputs.project-path }}
+
+      - name: Run Unity Build
+        uses: realitycollective/reality-collective-actions/run-unity-multitarget-build@v1
+        with:
+          unity-editor-path: ${{ steps.unity-setup.outputs.unity-editor-path }}
+          unity-project-path: ${{ steps.create-unity-project.outputs.project-path }}
+          build-targets: ${{ matrix.build-targets }}

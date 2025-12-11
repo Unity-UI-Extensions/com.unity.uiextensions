@@ -54,7 +54,12 @@ namespace UnityEngine.UI.Extensions
             bool updateLine = lrWorldPos != previousLrPos;
             updateLine = rt.lossyScale != previousGlobalScale;
 
-            if (!updateLine && previousPositions != null && previousPositions.Length == transforms.Length)
+            if (!updateLine)
+            {
+                updateLine = previousPositions.Length != transforms.Length;
+            }
+
+            if (!updateLine && previousPositions != null)
             {
                 for (int i = 0; i < transforms.Length; i++)
                 {
