@@ -5,6 +5,7 @@ namespace UnityEngine.UI.Extensions
 {
     public class ReorderableListDebug : MonoBehaviour
     {
+        public UnityEngine.UI.Text DebugLabelLegacy;
         public TMPro.TMP_Text DebugLabel;
 
         void Awake()
@@ -17,15 +18,6 @@ namespace UnityEngine.UI.Extensions
 
         private void ElementDropped(ReorderableList.ReorderableListEventStruct droppedStruct)
         {
-            // The sample's DebugLabel reference is lost if the scene's label is a legacy
-            // UnityEngine.UI.Text while this field is a TMPro.TMP_Text (incompatible types
-            // serialize to null). Guard so a missing label warns instead of throwing. See issue #502.
-            if (DebugLabel == null)
-            {
-                Debug.LogWarning("[ReorderableListDebug] No DebugLabel (TMP_Text) is assigned; cannot display drop info.", this);
-                return;
-            }
-
             var text = "";
             text += "Dropped Object: " + (droppedStruct.DroppedObject != null ? droppedStruct.DroppedObject.name : "<none>") + "\n";
             text += "Is Clone ?: " + droppedStruct.IsAClone + "\n";
@@ -33,7 +25,19 @@ namespace UnityEngine.UI.Extensions
                 text += "Source Object: " + (droppedStruct.SourceObject != null ? droppedStruct.SourceObject.name : "<none>") + "\n";
             text += string.Format("From {0} at Index {1} \n", droppedStruct.FromList != null ? droppedStruct.FromList.name : "<none>", droppedStruct.FromIndex);
             text += string.Format("To {0} at Index {1} \n", droppedStruct.ToList == null ? "Empty space" : droppedStruct.ToList.name, droppedStruct.ToIndex);
-            DebugLabel.text = text;
+
+            if (DebugLabel != null)
+            {
+                DebugLabel.text = text;
+            }
+            else if (DebugLabelLegacy != null)
+            {
+                DebugLabelLegacy.text = text;
+            }
+            else
+            {
+                Debug.LogWarning("[ReorderableListDebug] No DebugLabel assigned (neither Text nor TMP_Text); cannot display drop info.", this);
+            }
         }
     }
 }
