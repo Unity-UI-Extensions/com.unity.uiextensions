@@ -58,8 +58,9 @@ namespace UnityEngine.UI.Extensions
 
         protected override void OnDisable()
         {
-            m_Tracker.Clear(); // key change - do not restore - false
+            m_Tracker.Clear();
             LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+            base.OnDisable();
         }
 
         void CalculateRadial()
