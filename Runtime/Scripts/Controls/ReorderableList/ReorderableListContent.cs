@@ -14,29 +14,43 @@ namespace UnityEngine.UI.Extensions
         private ReorderableListElement _ele;
         private ReorderableList _extList;
         private RectTransform _rect;
-        private bool _started = false;
+        private Coroutine _refreshCoroutine;
 
         private void OnEnable()
         {
-            if(_rect)StartCoroutine(RefreshChildren());
+            if (_rect) RestartRefresh();
         }
 
         public void OnTransformChildrenChanged()
         {
-            if(this.isActiveAndEnabled)StartCoroutine(RefreshChildren());
+            if (this.isActiveAndEnabled) RestartRefresh();
         }
 
         public void Init(ReorderableList extList)
         {
-            if (_started) { StopCoroutine(RefreshChildren()); }
-
             _extList = extList;
             _rect = GetComponent<RectTransform>();
             _cachedChildren = new List<Transform>();
             _cachedListElement = new List<ReorderableListElement>();
 
-            StartCoroutine(RefreshChildren());
-            _started = true;
+            RestartRefresh();
+        }
+
+        // Restart the child-refresh coroutine, stopping any in-flight run first.
+        // StopCoroutine(RefreshChildren()) does NOT work: it allocates a fresh enumerator
+        // that was never started, so the running coroutine is never cancelled and multiple
+        // refreshes can stack up (e.g. during a drag that reparents children each frame).
+        private void RestartRefresh()
+        {
+            if (_refreshCoroutine != null)
+            {
+                StopCoroutine(_refreshCoroutine);
+                _refreshCoroutine = null;
+            }
+            if (_rect != null && isActiveAndEnabled)
+            {
+                _refreshCoroutine = StartCoroutine(RefreshChildren());
+            }
         }
 
         private IEnumerator RefreshChildren()

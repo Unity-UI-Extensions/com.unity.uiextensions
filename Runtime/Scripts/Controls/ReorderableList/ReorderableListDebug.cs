@@ -17,13 +17,23 @@ namespace UnityEngine.UI.Extensions
 
         private void ElementDropped(ReorderableList.ReorderableListEventStruct droppedStruct)
         {
-            DebugLabel.text = "";
-            DebugLabel.text += "Dropped Object: " + droppedStruct.DroppedObject.name + "\n";
-            DebugLabel.text += "Is Clone ?: " + droppedStruct.IsAClone + "\n";
+            // The sample's DebugLabel reference is lost if the scene's label is a legacy
+            // UnityEngine.UI.Text while this field is a TMPro.TMP_Text (incompatible types
+            // serialize to null). Guard so a missing label warns instead of throwing. See issue #502.
+            if (DebugLabel == null)
+            {
+                Debug.LogWarning("[ReorderableListDebug] No DebugLabel (TMP_Text) is assigned; cannot display drop info.", this);
+                return;
+            }
+
+            var text = "";
+            text += "Dropped Object: " + (droppedStruct.DroppedObject != null ? droppedStruct.DroppedObject.name : "<none>") + "\n";
+            text += "Is Clone ?: " + droppedStruct.IsAClone + "\n";
             if (droppedStruct.IsAClone)
-                DebugLabel.text += "Source Object: " + droppedStruct.SourceObject.name + "\n";
-            DebugLabel.text += string.Format("From {0} at Index {1} \n", droppedStruct.FromList.name, droppedStruct.FromIndex);
-            DebugLabel.text += string.Format("To {0} at Index {1} \n", droppedStruct.ToList == null ? "Empty space" : droppedStruct.ToList.name, droppedStruct.ToIndex);
+                text += "Source Object: " + (droppedStruct.SourceObject != null ? droppedStruct.SourceObject.name : "<none>") + "\n";
+            text += string.Format("From {0} at Index {1} \n", droppedStruct.FromList != null ? droppedStruct.FromList.name : "<none>", droppedStruct.FromIndex);
+            text += string.Format("To {0} at Index {1} \n", droppedStruct.ToList == null ? "Empty space" : droppedStruct.ToList.name, droppedStruct.ToIndex);
+            DebugLabel.text = text;
         }
     }
 }

@@ -153,6 +153,12 @@ namespace UnityEngine.UI.Extensions
             }
             //Set dragging object on cursor
             var canvas = _draggingObject.GetComponentInParent<Canvas>();
+            if (canvas == null)
+            {
+                // The dragging object is not parented under a Canvas (e.g. a misconfigured
+                // DraggableArea); can't map the cursor to a world point, so skip this frame.
+                return;
+            }
             Vector3 worldPoint;
             RectTransformUtility.ScreenPointToWorldPointInRectangle(canvas.GetComponent<RectTransform>(), eventData.position,
                 canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null, out worldPoint);
@@ -361,7 +367,7 @@ namespace UnityEngine.UI.Extensions
             {
                 //If we have a ReorderableList that is dropable
                 //Put the dragged object into the content and at the right index
-                if (_currentReorderableListRaycasted != null && _fakeElement.parent == _currentReorderableListRaycasted.Content)
+                if (_currentReorderableListRaycasted != null && _fakeElement != null && _fakeElement.parent == _currentReorderableListRaycasted.Content)
                 {
                     var args = new ReorderableList.ReorderableListEventStruct
                     {
