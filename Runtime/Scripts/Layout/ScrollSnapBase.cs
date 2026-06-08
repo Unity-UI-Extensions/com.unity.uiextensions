@@ -94,6 +94,13 @@ namespace UnityEngine.UI.Extensions
         {
             get
             {
+                //When an Infinite Scroll is attached, children are relocated and re-ordered at runtime,
+                //so the cached page (derived from cumulative scroll displacement) no longer maps to the
+                //child actually on screen. Resolve the page from the centred child instead. See issue #254.
+                if (_isInfinite)
+                {
+                    return GetClosestPage();
+                }
                 return _currentPage;
             }
 
@@ -294,7 +301,7 @@ namespace UnityEngine.UI.Extensions
             }
 
             //Set the active items active
-            for (int i = CurrentPage - _bottomItem; i < CurrentPage + _topItem; i++)
+            for (int i = _currentPage - _bottomItem; i < _currentPage + _topItem; i++)
             {
                 try
                 {
@@ -307,9 +314,9 @@ namespace UnityEngine.UI.Extensions
             }
 
             //Deactivate items out of visibility at the bottom of the ScrollRect Mask (only on scroll)
-            if (_currentPage > _halfNoVisibleItems) ChildObjects[CurrentPage - _bottomItem].SetActive(false);
+            if (_currentPage > _halfNoVisibleItems) ChildObjects[_currentPage - _bottomItem].SetActive(false);
             //Deactivate items out of visibility at the top of the ScrollRect Mask (only on scroll)
-            if (_screensContainer.childCount - _currentPage > _topItem) ChildObjects[CurrentPage + _topItem].SetActive(false);
+            if (_screensContainer.childCount - _currentPage > _topItem) ChildObjects[_currentPage + _topItem].SetActive(false);
         }
 
         //Function for switching screens with buttons
@@ -384,6 +391,42 @@ namespace UnityEngine.UI.Extensions
             return _isVertical ?
                 (int)Math.Round((_scrollStartPosition - pos.y) / _childSize) :
                 (int)Math.Round((_scrollStartPosition - pos.x) / _childSize);
+        }
+
+        /// <summary>
+        /// Resolves the page index of the child currently closest to the centre of the viewport.
+        /// Unlike <see cref="GetPageforPosition"/>, which assumes children keep their original sibling
+        /// order and grid positions, this inspects the live child positions. This is required for
+        /// Infinite Scroll, where UI_InfiniteScroll relocates and re-orders children at runtime.
+        /// </summary>
+        /// <returns>Sibling index of the child nearest the current scroll position</returns>
+        internal int GetClosestPage()
+        {
+            if (_screensContainer == null || _screensContainer.childCount == 0)
+            {
+                return _currentPage;
+            }
+
+            //The container-local coordinate that is currently centred in the viewport.
+            //Matches the numerator GetPageforPosition uses, so a settled page lands exactly on a child.
+            float targetPosition = _isVertical ?
+                _scrollStartPosition - _screensContainer.anchoredPosition.y :
+                _scrollStartPosition - _screensContainer.anchoredPosition.x;
+
+            int closestPage = 0;
+            float closestDistance = float.MaxValue;
+            for (int i = 0; i < _screensContainer.childCount; i++)
+            {
+                RectTransform child = (RectTransform)_screensContainer.GetChild(i);
+                float childPosition = _isVertical ? child.anchoredPosition.y : child.anchoredPosition.x;
+                float distance = Math.Abs(targetPosition - childPosition);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestPage = i;
+                }
+            }
+            return closestPage;
         }
 
         /// <summary>
@@ -552,7 +595,7 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         internal void ScreenChange()
         {
-            OnSelectionPageChangedEvent.Invoke(_currentPage);
+            OnSelectionPageChangedEvent.Invoke(CurrentPage);
         }
 
         /// <summary>
@@ -567,7 +610,7 @@ namespace UnityEngine.UI.Extensions
                 _endEventCalled = true;
                 _startEventCalled = false;
                 _settled = true;
-                OnSelectionChangeEndEvent.Invoke(_currentPage);
+                OnSelectionChangeEndEvent.Invoke(CurrentPage);
             }
         }
 
