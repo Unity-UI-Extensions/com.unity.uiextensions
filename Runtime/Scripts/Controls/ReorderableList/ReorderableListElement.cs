@@ -137,6 +137,13 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
+            if (!_reorderableList.CloneDraggedObject)
+            {
+                _fakeElement.SetParent(_reorderableList.Content, false);
+                _fakeElement.SetSiblingIndex(_fromIndex);
+                LayoutRebuilder.ForceRebuildLayoutImmediate(_reorderableList.Content);
+            }
+
             _isDragging = true;
         }
         #endregion
