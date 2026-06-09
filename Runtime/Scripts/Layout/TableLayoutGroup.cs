@@ -285,10 +285,17 @@ namespace UnityEngine.UI.Extensions
             preferredRowHeights = null;
         }
 
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
+        }
+
         protected override void OnDisable()
         {
-            m_Tracker.Clear(); // key change - do not restore - false
+            m_Tracker.Clear();
             LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+            base.OnDisable();
         }
     }
 }

@@ -470,10 +470,17 @@ namespace UnityEngine.UI.Extensions
 			return max;
 		}
 
+		protected override void OnEnable()
+		{
+			base.OnEnable();
+			LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
+		}
+
 		protected override void OnDisable()
 		{
 			m_Tracker.Clear();
 			LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+			base.OnDisable();
 		}
 	}
 }

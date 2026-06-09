@@ -216,7 +216,8 @@ namespace UnityEngine.UI.Extensions
         private void SetScrollContainerPosition()
         {
             _scrollStartPosition = _screensContainer.anchoredPosition.x;
-            _scroll_rect.horizontalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
+            //Guard against a single (or no) page producing a divide-by-zero / NaN normalized position.
+            _scroll_rect.horizontalNormalizedPosition = _screens > 1 ? (float)(_currentPage) / (_screens - 1) : 0;
             OnCurrentScreenChange(_currentPage);
         }
 

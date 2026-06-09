@@ -82,7 +82,7 @@ namespace UnityEngine.UI.Extensions
 
                 if (selectedSegment)
                 {
-                    var segment = selectedSegment.GetComponent<Segment>();
+                    var segment = selectedSegment.GetComponent<SegmentedControlSegment>();
                     if (segment)
                     {
                         segment.selected = false;
@@ -93,7 +93,7 @@ namespace UnityEngine.UI.Extensions
                 if (value != -1)
                 {
                     selectedSegment = segments[value];
-                    var segment = selectedSegment.GetComponent<Segment>();
+                    var segment = selectedSegment.GetComponent<SegmentedControlSegment>();
                     if (segment)
                     {
                         segment.selected = true;
@@ -159,7 +159,7 @@ namespace UnityEngine.UI.Extensions
 
             for (int i = 0; i < buttons.Length; i++)
             {
-                var segment = buttons[i].GetComponent<Segment>();
+                var segment = buttons[i].GetComponent<SegmentedControlSegment>();
                 if (segment != null)
                 {
                     segment.index = i;
@@ -178,7 +178,7 @@ namespace UnityEngine.UI.Extensions
                     continue;
 
                 var sprite = CutSprite(segments[i].image.sprite, i == 0, i == segments.Length - 1);
-                var segment = segments[i].GetComponent<Segment>();
+                var segment = segments[i].GetComponent<SegmentedControlSegment>();
                 if (segment)
                 {
                     segment.cutSprite = sprite;
