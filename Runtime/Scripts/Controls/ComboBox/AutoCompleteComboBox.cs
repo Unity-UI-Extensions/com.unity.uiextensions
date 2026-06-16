@@ -29,7 +29,10 @@ namespace UnityEngine.UI.Extensions
         private bool _isPanelActive = false;
         private bool _hasDrawnOnce = false;
 
-        private TMPro.TMP_InputField _mainInput;
+#if UNITY_6000_0_OR_NEWER
+        private TMPro.TMP_InputField _mainInput;        // TextMeshPro input field (if present)
+#endif
+        private InputField _mainInputLegacy;            // legacy Unity UI input field (if present)
         private RectTransform _inputRT;
 
         private RectTransform _rectTransform;
@@ -41,7 +44,6 @@ namespace UnityEngine.UI.Extensions
         private RectTransform _scrollHandleRT;
         private RectTransform _itemsPanelRT;
         private Canvas _canvas;
-        private RectTransform _canvasRT;
 
         private ScrollRect _scrollRect;
 
@@ -171,8 +173,19 @@ namespace UnityEngine.UI.Extensions
             try
             {
                 _rectTransform = GetComponent<RectTransform>();
+                // Support either a TextMeshPro or a legacy Unity UI input field.
+#if UNITY_6000_0_OR_NEWER
                 _mainInput = GetComponentInChildren<TMPro.TMP_InputField>();
-                _inputRT = _mainInput.GetComponent<RectTransform>();
+                if (_mainInput != null)
+                {
+                    _inputRT = _mainInput.GetComponent<RectTransform>();
+                }
+                else
+#endif
+                {
+                    _mainInputLegacy = GetComponentInChildren<InputField>();
+                    _inputRT = _mainInputLegacy.GetComponent<RectTransform>();
+                }
 
                 _overlayRT = _rectTransform.Find("Overlay").GetComponent<RectTransform>();
                 _overlayRT.gameObject.SetActive(false);
@@ -185,7 +198,6 @@ namespace UnityEngine.UI.Extensions
                 _itemsPanelRT = _scrollPanelRT.Find("Items").GetComponent<RectTransform>();
 
                 _canvas = GetComponentInParent<Canvas>();
-                _canvasRT = _canvas.GetComponent<RectTransform>();
 
                 _scrollRect = _scrollPanelRT.GetComponent<ScrollRect>();
                 _scrollRect.scrollSensitivity = _rectTransform.sizeDelta.y / 2;
@@ -339,7 +351,7 @@ namespace UnityEngine.UI.Extensions
                 if (i < AvailableOptions.Count)
                 {
                     itemObjs[i].name = "Item " + i + " " + _panelItems[i];
-                    itemObjs[i].transform.Find("Text").GetComponent<TMPro.TMP_Text>().text = AvailableOptions[i]; //set the text value
+                    itemObjs[i].transform.SetChildTextValue("Text", AvailableOptions[i]); //set the text value (TMP or legacy Text)
                     Button itemBtn = itemObjs[i].GetComponent<Button>();
                     itemBtn.onClick.RemoveAllListeners();
                     string textOfItem = _panelItems[i]; //has to be copied for anonymous function or it gets garbage collected away
@@ -360,7 +372,7 @@ namespace UnityEngine.UI.Extensions
         private void OnItemClicked(string item)
         {
             Text = item;
-            _mainInput.text = Text;
+            SetMainInputText(Text);
             ToggleDropdownPanel(true);
             OnItemSelected?.Invoke(Text);
         }
@@ -388,9 +400,14 @@ namespace UnityEngine.UI.Extensions
                     new Vector2(0, -(dropdownOffset + _rectTransform.sizeDelta.y));
 
                 //make the overlay fill the screen
+                //Stretch-anchor the overlay to fill the canvas rather than sizing it to the canvas
+                //dimensions. Sizing left it positioned relative to the dropdown, so it never covered
+                //the whole screen and appeared to move with the dropdown's position. (Fixes #477)
                 _overlayRT.SetParent(_canvas.transform, false);
-                _overlayRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _canvasRT.sizeDelta.x);
-                _overlayRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _canvasRT.sizeDelta.y);
+                _overlayRT.anchorMin = Vector2.zero;
+                _overlayRT.anchorMax = Vector2.one;
+                _overlayRT.offsetMin = Vector2.zero;
+                _overlayRT.offsetMax = Vector2.zero;
 
                 _overlayRT.SetParent(transform, true);
                 _scrollPanelRT.SetParent(_overlayRT, true);
@@ -446,17 +463,39 @@ namespace UnityEngine.UI.Extensions
             {
                 if (_selectionIsValid)
                 {
-                    _mainInput.textComponent.color = ValidSelectionTextColor;
+                    SetMainInputTextColor(ValidSelectionTextColor);
                 }
                 else if (_panelItems.Count > 0)
                 {
-                    _mainInput.textComponent.color = MatchingItemsRemainingTextColor;
+                    SetMainInputTextColor(MatchingItemsRemainingTextColor);
                 }
                 else
                 {
-                    _mainInput.textComponent.color = NoItemsRemainingTextColor;
+                    SetMainInputTextColor(NoItemsRemainingTextColor);
                 }
             }
+        }
+
+        /// <summary>
+        /// Sets the displayed text on whichever input field (TextMeshPro or legacy UI) is present.
+        /// </summary>
+        private void SetMainInputText(string value)
+        {
+#if UNITY_6000_0_OR_NEWER
+            if (_mainInput != null) { _mainInput.text = value; return; }
+#endif
+            if (_mainInputLegacy != null) { _mainInputLegacy.text = value; }
+        }
+
+        /// <summary>
+        /// Sets the text colour on whichever input field's text component (TextMeshPro or legacy UI) is present.
+        /// </summary>
+        private void SetMainInputTextColor(Color color)
+        {
+#if UNITY_6000_0_OR_NEWER
+            if (_mainInput != null && _mainInput.textComponent != null) { _mainInput.textComponent.color = color; return; }
+#endif
+            if (_mainInputLegacy != null && _mainInputLegacy.textComponent != null) { _mainInputLegacy.textComponent.color = color; }
         }
 
         /// <summary>

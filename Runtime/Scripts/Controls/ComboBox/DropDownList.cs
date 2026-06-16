@@ -41,7 +41,6 @@ namespace UnityEngine.UI.Extensions
 		private RectTransform _scrollHandleRT;
 		private RectTransform _itemsPanelRT;
 		private Canvas _canvas;
-		private RectTransform _canvasRT;
 
 		private ScrollRect _scrollRect;
 
@@ -124,7 +123,7 @@ namespace UnityEngine.UI.Extensions
 				_rectTransform = GetComponent<RectTransform>();
 				_mainButton = new DropDownListButton(_rectTransform.Find("MainButton").gameObject);
 
-				_defaultMainButtonCaption = _mainButton.txt.text;
+				_defaultMainButtonCaption = _mainButton.Caption;
 				_defaultNormalColor = _mainButton.btn.colors.normalColor;
 
 				_overlayRT = _rectTransform.Find("Overlay").GetComponent<RectTransform>();
@@ -137,7 +136,6 @@ namespace UnityEngine.UI.Extensions
 				//itemPanelLayout = itemsPanelRT.gameObject.GetComponent<LayoutGroup>();
 
 				_canvas = GetComponentInParent<Canvas>();
-				_canvasRT = _canvas.GetComponent<RectTransform>();
 
 				_scrollRect = _scrollPanelRT.GetComponent<ScrollRect>();
 				_scrollRect.scrollSensitivity = _rectTransform.sizeDelta.y / 2;
@@ -279,7 +277,7 @@ namespace UnityEngine.UI.Extensions
 				return;
 			}
 
-			_mainButton.txt.text = _defaultMainButtonCaption;
+			_mainButton.Caption = _defaultMainButtonCaption;
 			for (int i = 0; i < _itemsPanelRT.childCount; i++)
 			{
 				_panelItems[i].btnImg.color = _defaultNormalColor;
@@ -325,8 +323,8 @@ namespace UnityEngine.UI.Extensions
 				{
 					DropDownListItem item = Items[i];
 
-					_panelItems[i].txt.text = item.Caption;
-					if (item.IsDisabled) _panelItems[i].txt.color = disabledTextColor;
+					_panelItems[i].Caption = item.Caption;
+					if (item.IsDisabled) _panelItems[i].CaptionColor = disabledTextColor;
 
 					if (_panelItems[i].btnImg != null) _panelItems[i].btnImg.sprite = null;//hide the button image
 					_panelItems[i].img.sprite = item.Image;
@@ -371,7 +369,7 @@ namespace UnityEngine.UI.Extensions
 				_mainButton.img.sprite = null;
 			}
 
-			_mainButton.txt.text = SelectedItem.Caption;
+			_mainButton.Caption = SelectedItem.Caption;
 
 			//update selected index color
 			if (OverrideHighlighted)
@@ -406,9 +404,14 @@ namespace UnityEngine.UI.Extensions
 					new Vector2(0, -(dropdownOffset + _rectTransform.sizeDelta.y));
 
 				//make the overlay fill the screen
+				//Stretch-anchor the overlay to fill the canvas rather than sizing it to the canvas
+				//dimensions. Sizing left it positioned relative to the dropdown, so it never covered
+				//the whole screen and appeared to move with the dropdown's position. (Fixes #477)
 				_overlayRT.SetParent(_canvas.transform, false);
-				_overlayRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _canvasRT.sizeDelta.x);
-				_overlayRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, _canvasRT.sizeDelta.y);
+				_overlayRT.anchorMin = Vector2.zero;
+				_overlayRT.anchorMax = Vector2.one;
+				_overlayRT.offsetMin = Vector2.zero;
+				_overlayRT.offsetMax = Vector2.zero;
 
 				_overlayRT.SetParent(transform, true);
 				_scrollPanelRT.SetParent(_overlayRT, true);
