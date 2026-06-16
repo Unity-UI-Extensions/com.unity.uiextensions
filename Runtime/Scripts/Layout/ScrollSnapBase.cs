@@ -106,7 +106,10 @@ namespace UnityEngine.UI.Extensions
 
             internal set
             {
-                if (_isInfinite)
+                //Guard childCount > 0: when content has been cleared at runtime (e.g. RemoveAllChildren)
+                //the integer divide/modulo below would throw DivideByZeroException. With no children the
+                //window calculation is meaningless, so skip it and let value fall through as 0. See issue #237.
+                if (_isInfinite && _screensContainer.childCount > 0)
                 {
                     //Work out which infinite window we are in
                     float infWindow = (float)value / (float)_screensContainer.childCount;
