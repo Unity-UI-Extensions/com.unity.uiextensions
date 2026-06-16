@@ -80,7 +80,7 @@ namespace UnityEngine.UI.Extensions
 
             float _offset = 0;
             float _dimension = 0;
-            Rect panelDimensions = gameObject.GetComponent<RectTransform>().rect;
+            panelDimensions = gameObject.GetComponent<RectTransform>().rect;
             float currentXPosition = 0;
             var pageStepValue = _childSize = (int)panelDimensions.width * ((PageStep == 0) ? 3 : PageStep);
 
@@ -96,6 +96,7 @@ namespace UnityEngine.UI.Extensions
             _dimension = currentXPosition + _offset * -1;
 
             _screensContainer.GetComponent<RectTransform>().offsetMax = new Vector2(_dimension, 0f);
+            _screensContainer.GetComponent<RectTransform>().offsetMin = Vector2.zero;
         }
 
         /// <summary>

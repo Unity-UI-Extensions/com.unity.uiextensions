@@ -332,13 +332,15 @@ namespace UnityEngine.UI.Extensions
                 _lerp = true;
                 if (_isInfinite)
                 {
-                    CurrentPage = GetPageforPosition(_screensContainer.anchoredPosition) + 1;
+                    int targetPage = GetPageforPosition(_screensContainer.anchoredPosition) + 1;
+                    CurrentPage = targetPage;
+                    GetInfinitePositionforPage(targetPage, ref _lerp_target);
                 }
                 else
                 {
                     CurrentPage = _currentPage + 1;
+                    GetPositionforPage(_currentPage, ref _lerp_target);
                 }
-                GetPositionforPage(_currentPage, ref _lerp_target);
                 ScreenChange();
             }
 
@@ -354,13 +356,15 @@ namespace UnityEngine.UI.Extensions
                 _lerp = true;
                 if (_isInfinite)
                 {
-                    CurrentPage = GetPageforPosition(_screensContainer.anchoredPosition) - 1;
+                    int targetPage = GetPageforPosition(_screensContainer.anchoredPosition) - 1;
+                    CurrentPage = targetPage;
+                    GetInfinitePositionforPage(targetPage, ref _lerp_target);
                 }
                 else
                 {
                     CurrentPage = _currentPage - 1;
+                    GetPositionforPage(_currentPage, ref _lerp_target);
                 }
-                GetPositionforPage(_currentPage, ref _lerp_target);
                 ScreenChange();
             }
         }
@@ -463,6 +467,30 @@ namespace UnityEngine.UI.Extensions
                 _infiniteOffset = _screensContainer.anchoredPosition.x < 0 ? -_screensContainer.sizeDelta.x * _infiniteWindow : _screensContainer.sizeDelta.x * _infiniteWindow;
                 _infiniteOffset = _infiniteOffset == 0 ? 0 : _infiniteOffset < 0 ? _infiniteOffset - _childSize * _infiniteWindow : _infiniteOffset + _childSize * _infiniteWindow;
                 target.x = _childPos + _scrollStartPosition + _infiniteOffset;
+            }
+        }
+
+        /// <summary>
+        /// Returns the local position for an absolute "displacement page" when an Infinite Scroll is
+        /// attached. The content moves under an Unrestricted ScrollRect, so the displacement page
+        /// (as produced by <see cref="GetPageforPosition"/>) maps straight back to a content position -
+        /// this is the exact inverse of that getter, so button navigation lands on the same grid the
+        /// drag-settle logic uses. Unlike <see cref="GetPositionforPage"/> it does NOT rebuild the
+        /// target from a wrapped page + _infiniteWindow + a sign test, which is what caused button
+        /// navigation to "take the long way" across a window boundary. See issue #257.
+        /// </summary>
+        /// <param name="displacementPage">Absolute (un-wrapped) displacement page to move to</param>
+        /// <param name="target">Outputs the local position for that page</param>
+        internal void GetInfinitePositionforPage(int displacementPage, ref Vector3 target)
+        {
+            float position = _scrollStartPosition - _childSize * displacementPage;
+            if (_isVertical)
+            {
+                target.y = position;
+            }
+            else
+            {
+                target.x = position;
             }
         }
 
