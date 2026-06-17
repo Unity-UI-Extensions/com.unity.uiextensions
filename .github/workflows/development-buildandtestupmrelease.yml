@@ -32,10 +32,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         unity-version:
-          - 6000.0
-          - 6000.1
-          - 6000.2
-          - 6000.3
+          - '6000.0.x'
+          - '6000.1'
+          - '6000.2'
+          - '6000.3'
         include:
           - os: ubuntu-latest
             build-targets: StandaloneLinux64, Android
