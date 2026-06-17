@@ -202,10 +202,12 @@ namespace UnityEngine.UI.Extensions
 			}
 		}
 
+#if UNITY_EDITOR
 		protected override void OnValidate()
 		{
 			SetAllDirty();
 			base.OnValidate();
 		}
+#endif
 	}
 }
