@@ -226,7 +226,7 @@ Just ensure:
 
 ## [License](https://raw.githubusercontent.com/Unity-UI-Extensions/com.unity.uiextensions/release/LICENSE.md)
 
-All scripts conform to the BSD3 license and are free to use / distribute.  See the [LICENSE](https://raw.githubusercontent.com/Unity-UI-Extensions/com.unity.uiextensions/release/LICENSE.md) file for more information =
+All scripts conform to the BSD-3-Clause license and are free to use / distribute.  See the [LICENSE](https://raw.githubusercontent.com/Unity-UI-Extensions/com.unity.uiextensions/release/LICENSE.md) file for more information =
 
 ## [Like what you see?](https://unity-ui-extensions.github.io/FurtherInfo)
 

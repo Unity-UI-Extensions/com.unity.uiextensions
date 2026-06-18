@@ -8,7 +8,7 @@ namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/Segmented Control/Segment")]
     [RequireComponent(typeof(Selectable))]
-    public class Segment :
+    public class SegmentedControlSegment :
         UIBehaviour,
         IPointerClickHandler,
         ISubmitHandler,
@@ -41,7 +41,7 @@ namespace UnityEngine.UI.Extensions
 
         internal Sprite cutSprite;
 
-        protected Segment()
+        protected SegmentedControlSegment()
         { }
 
         protected override void Start()
@@ -128,7 +128,7 @@ namespace UnityEngine.UI.Extensions
                 {
                     if (segmentedControl.selectedSegment)
                     {
-                        var segment = segmentedControl.selectedSegment.GetComponent<Segment>();
+                        var segment = segmentedControl.selectedSegment.GetComponent<SegmentedControlSegment>();
                         segmentedControl.selectedSegment = null;
                         if (segment)
                         {

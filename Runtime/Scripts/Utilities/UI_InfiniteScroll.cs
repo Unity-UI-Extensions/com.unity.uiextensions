@@ -77,6 +77,10 @@ namespace UnityEngine.UI.Extensions
 
         private void SetItems()
         {
+            //Clear first so Init() can be safely re-run after dynamic content changes,
+            //otherwise stale (destroyed) items remain in the list. See issue #237.
+            items.Clear();
+
             //Remove Pivots from content as they mess up translation
             foreach (RectTransform transform in _scrollRect.content.transform)
             {
@@ -96,6 +100,9 @@ namespace UnityEngine.UI.Extensions
             if (GetComponent<ScrollRect>() != null)
             {
                 _scrollRect = GetComponent<ScrollRect>();
+                //Remove first to keep Init() idempotent - re-initialising after dynamic content
+                //changes would otherwise register OnScroll multiple times. See issue #237.
+                _scrollRect.onValueChanged.RemoveListener(OnScroll);
                 _scrollRect.onValueChanged.AddListener(OnScroll);
                 _scrollRect.movementType = ScrollRect.MovementType.Unrestricted;
 
@@ -158,6 +165,11 @@ namespace UnityEngine.UI.Extensions
         {
             if (!_hasDisabledGridComponents)
                 DisableGridComponents();
+
+            //Nothing to reposition (e.g. content was cleared at runtime); avoid GetChild() on
+            //an empty container, which would throw. See issue #237.
+            if (items.Count == 0)
+                return;
 
             var firstChild = _scrollRect.content.GetChild(0).GetComponent<RectTransform>();
             var lastChild = _scrollRect.content.GetChild(_itemCount - 1).GetComponent<RectTransform>();

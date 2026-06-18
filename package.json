@@ -31,7 +31,7 @@
       "path": "Examples~"
     }
   ],
-  "license": "BSD3",
+  "license": "BSD-3-Clause",
   "dependencies": {
     "com.unity.ugui": "2.0.0"
   }

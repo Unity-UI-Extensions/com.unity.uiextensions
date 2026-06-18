@@ -1,4 +1,4 @@
-# Unity UI Extensions License (BSD3)
+# Unity UI Extensions License (BSD-3-Clause)
 
 Copyright (c) 2019
 

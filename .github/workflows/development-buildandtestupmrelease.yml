@@ -24,7 +24,7 @@ env:
 
 jobs:
   test-unity-build:
-    name: Test Unity UPM Build
+    name: Test Unity UPM Build (${{ matrix.os }}, Unity ${{ matrix.unity-version }})
     runs-on: ${{ matrix.os }}
     if: always()
     strategy:
@@ -32,11 +32,13 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         unity-version:
-          - 6000.0.x
-          - 6000
+          - '6000.0.x'
+          - '6000.1'
+          - '6000.2'
+          - '6000.3'
         include:
-          # - os: ubuntu-latest
-          #   build-targets: StandaloneLinux64, Android
+          - os: ubuntu-latest
+            build-targets: StandaloneLinux64, Android
           - os: windows-latest
             build-targets: StandaloneWindows64, Android
           - os: macos-latest
@@ -49,7 +51,9 @@ jobs:
           unity-version: ${{ matrix.unity-version }} # overrides version in version-file
           build-targets: ${{ matrix.build-targets }}
 
-      - run: |
+      - name: Inspect Unity setup outputs
+        shell: pwsh
+        run: |
           echo "Step Outputs:"
           echo "steps.unity-setup.unity-hub-path: '${{ steps.unity-setup.outputs.unity-hub-path }}'"
           echo "steps.unity-setup.unity-editors: '${{ steps.unity-setup.outputs.unity-editors }}'"
@@ -57,10 +61,10 @@ jobs:
           echo "steps.unity-setup.unity-project-path: '${{ steps.unity-setup.outputs.unity-project-path }}'"
 
           echo "Environment Variables:"
-          echo "UNITY_HUB_PATH: '${{ env.UNITY_HUB_PATH }}'"
-          echo "UNITY_EDITORS: '${{ env.UNITY_EDITORS }}'"
-          echo "UNITY_EDITOR_PATH: '${{ env.UNITY_EDITOR_PATH }}'"
-          echo "UNITY_PROJECT_PATH: '${{ env.UNITY_PROJECT_PATH }}'"
+          echo "UNITY_HUB_PATH: '$env:UNITY_HUB_PATH'"
+          echo "UNITY_EDITORS: '$env:UNITY_EDITORS'"
+          echo "UNITY_EDITOR_PATH: '$env:UNITY_EDITOR_PATH'"
+          echo "UNITY_PROJECT_PATH: '$env:UNITY_PROJECT_PATH'"
 
       - uses: buildalon/activate-unity-license@v2
         if: runner.environment == 'github-hosted'

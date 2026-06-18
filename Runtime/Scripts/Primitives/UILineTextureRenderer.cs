@@ -61,7 +61,6 @@ namespace UnityEngine.UI.Extensions
             // requires sets of quads
             if (m_points == null || m_points.Length < 2)
                 m_points = new[] { new Vector2(0, 0), new Vector2(1, 1) };
-            var capSize = 24;
             var sizeX = rectTransform.rect.width;
             var sizeY = rectTransform.rect.height;
             var offsetX = -rectTransform.pivot.x * rectTransform.rect.width;

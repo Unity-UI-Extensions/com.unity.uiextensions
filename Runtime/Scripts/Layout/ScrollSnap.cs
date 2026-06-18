@@ -17,7 +17,7 @@ namespace UnityEngine.UI.Extensions
     [ExecuteInEditMode]
     [RequireComponent(typeof(ScrollRect))]
     [AddComponentMenu("UI/Extensions/Scroll Snap")]
-    public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler, IScrollSnap
+    public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler, IScrollHandler, IScrollSnap
     {
         // needed because of reversed behaviour of axis Y compared to X
         // (positions of children lower in children list in horizontal directions grows when in vertical it gets smaller)
@@ -154,12 +154,12 @@ namespace UnityEngine.UI.Extensions
             if (direction == ScrollSnap.ScrollDirection.Horizontal)
             {
                 size = _scrollRectTransform.rect.width / ItemsVisibleAtOnce;
-                currentSize = _listContainerRectTransform.rect.width / _itemsCount;
+                currentSize = _itemsCount > 0 ? _listContainerRectTransform.rect.width / _itemsCount : 0;
             }
             else
             {
                 size = _scrollRectTransform.rect.height / ItemsVisibleAtOnce;
-                currentSize = _listContainerRectTransform.rect.height / _itemsCount;
+                currentSize = _itemsCount > 0 ? _listContainerRectTransform.rect.height / _itemsCount : 0;
             }
 
             _itemSize = size;
@@ -348,20 +348,32 @@ namespace UnityEngine.UI.Extensions
             {
                 UpdateScrollbar(false);
 
-                _listContainerTransform.localPosition = Vector3.Lerp(_listContainerTransform.localPosition, _lerpTarget, 7.5f * Time.deltaTime);
+                var nextPosition = Vector3.Lerp(_listContainerTransform.localPosition, _lerpTarget, 7.5f * Time.deltaTime);
 
-                if (Vector3.Distance(_listContainerTransform.localPosition, _lerpTarget) < 0.001f)
+                //Guard against a corrupt (NaN/Infinity) lerp value being latched into the transform.
+                //Once content.localPosition becomes NaN the RectTransform bounds are NaN and the state never recovers.
+                if (!IsFinite(nextPosition))
                 {
-                    _listContainerTransform.localPosition = _lerpTarget;
                     _lerp = false;
-
                     UpdateScrollbar(LinkScrolbarSteps);
                 }
-
-                //change the info bullets at the bottom of the screen. Just for visual effect
-                if (Vector3.Distance(_listContainerTransform.localPosition, _lerpTarget) < 10f)
+                else
                 {
-                    PageChanged(CurrentPage());
+                    _listContainerTransform.localPosition = nextPosition;
+
+                    if (Vector3.Distance(_listContainerTransform.localPosition, _lerpTarget) < 0.001f)
+                    {
+                        _listContainerTransform.localPosition = _lerpTarget;
+                        _lerp = false;
+
+                        UpdateScrollbar(LinkScrolbarSteps);
+                    }
+
+                    //change the info bullets at the bottom of the screen. Just for visual effect
+                    if (Vector3.Distance(_listContainerTransform.localPosition, _lerpTarget) < 10f)
+                    {
+                        PageChanged(CurrentPage());
+                    }
                 }
             }
 
@@ -445,6 +457,13 @@ namespace UnityEngine.UI.Extensions
             {
                 pos = _listContainerTransform.localPosition.y - _listContainerMinPosition;
                 pos = Mathf.Clamp(pos, 0, _listContainerSize);
+            }
+
+            //Guard against degenerate item sizing (e.g. a Content Size Fitter momentarily reporting a
+            //zero-sized viewport/content) which would otherwise produce a 0/0 = NaN page value.
+            if (_itemSize <= 0)
+            {
+                return 0;
             }
 
             float page = pos / _itemSize;
@@ -566,7 +585,25 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        public void OnScroll(PointerEventData eventData)
+        {
+            //A mouse-wheel / trackpad scroll is handled directly by the ScrollRect and never raises OnDrag,
+            //so without this the snap would keep lerping to its target and fight the user's scroll input
+            //(the source of the "scroll is unresponsive after pressing a button" behaviour and the NaN race).
+            _lerp = false;
+        }
+
         public void StartScreenChange() { }
         #endregion
+
+        /// <summary>
+        /// Returns true only when every component of the vector is a real, finite number (no NaN / Infinity).
+        /// </summary>
+        private static bool IsFinite(Vector3 value)
+        {
+            return !float.IsNaN(value.x) && !float.IsInfinity(value.x)
+                && !float.IsNaN(value.y) && !float.IsInfinity(value.y)
+                && !float.IsNaN(value.z) && !float.IsInfinity(value.z);
+        }
     }
 }

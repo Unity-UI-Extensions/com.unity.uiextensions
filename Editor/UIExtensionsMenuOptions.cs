@@ -3,16 +3,14 @@
 #endif
 
 using TMPro;
-using UnityEngine;
+using UnityEditor;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
-using UnityEngine.UI.Extensions;
 
 #if NEW_INPUT_SYSTEM
 using UnityEngine.InputSystem.UI;
 #endif
 
-namespace UnityEditor.UI
+namespace UnityEngine.UI.Extensions
 {
 	/// <summary>
 	/// This script adds the Extensions UI menu options to the Unity Editor.
@@ -879,10 +877,10 @@ namespace UnityEditor.UI
 			GameObject autoCompleteComboBoxRoot = CreateUIElementRoot("AutoCompleteComboBox", menuCommand, s_ThickGUIElementSize);
 
 			//Create Template
-			GameObject itemTemplate = AddButtonAsChild(autoCompleteComboBoxRoot);
+			GameObject itemTemplate = AddComboBoxButtonAsChild(autoCompleteComboBoxRoot);
 
 			//Create Inputfield
-			GameObject inputField = AddInputFieldAsChild(autoCompleteComboBoxRoot);
+			GameObject inputField = AddComboBoxInputFieldAsChild(autoCompleteComboBoxRoot);
 
 			//Create Overlay
 			GameObject overlay = CreateUIObject("Overlay", autoCompleteComboBoxRoot);
@@ -891,7 +889,7 @@ namespace UnityEditor.UI
 			GameObject overlayScrollPanelScrollBar = AddScrollbarAsChild(overlayScrollPanel);
 
 			//Create Arrow Button
-			GameObject arrowButton = AddButtonAsChild(autoCompleteComboBoxRoot);
+			GameObject arrowButton = AddComboBoxButtonAsChild(autoCompleteComboBoxRoot);
 
 			//Setup ComboBox
 			var autoCompleteComboBox = autoCompleteComboBoxRoot.AddComponent<AutoCompleteComboBox>();
@@ -913,7 +911,7 @@ namespace UnityEditor.UI
 			inputFieldRT.anchorMin = Vector2.zero;
 			inputFieldRT.anchorMax = Vector2.one;
 			inputFieldRT.sizeDelta = Vector2.zero;
-			Events.UnityEventTools.AddPersistentListener<string>(inputField.GetComponent<InputField>().onValueChanged, new UnityEngine.Events.UnityAction<string>(autoCompleteComboBox.OnValueChanged));
+			WireComboBoxInput(inputField, autoCompleteComboBox.OnValueChanged);
 
 			//Setup Overlay
 			var overlayRT = overlay.GetComponent<RectTransform>();
@@ -922,7 +920,7 @@ namespace UnityEditor.UI
 			overlayRT.sizeDelta = new Vector2(0f, 1f);
 			overlayRT.pivot = new Vector2(0f, 1f);
 			overlay.AddComponent<Image>().color = new Color(0.243f, 0.871f, 0f, 0f);
-			Events.UnityEventTools.AddBoolPersistentListener(overlay.AddComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(autoCompleteComboBox.ToggleDropdownPanel), true);
+			UnityEditor.Events.UnityEventTools.AddBoolPersistentListener(overlay.AddComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(autoCompleteComboBox.ToggleDropdownPanel), true);
 			//Overlay Scroll Panel
 			var overlayScrollPanelRT = overlayScrollPanel.GetComponent<RectTransform>();
 			overlayScrollPanelRT.position += new Vector3(0, -cbbRT.sizeDelta.y, 0);
@@ -964,8 +962,8 @@ namespace UnityEditor.UI
 			arrowButtonRT.anchorMax = Vector2.one;
 			arrowButtonRT.sizeDelta = new Vector2(cbbRT.sizeDelta.y, cbbRT.sizeDelta.y);
 			arrowButtonRT.pivot = Vector2.one;
-			Events.UnityEventTools.AddBoolPersistentListener(arrowButton.GetComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(autoCompleteComboBox.ToggleDropdownPanel), true);
-			arrowButton.GetComponentInChildren<Text>().text = "▼";
+			UnityEditor.Events.UnityEventTools.AddBoolPersistentListener(arrowButton.GetComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(autoCompleteComboBox.ToggleDropdownPanel), true);
+			SetComboBoxArrowLabel(arrowButton, "▼");
 
 			Selection.activeGameObject = autoCompleteComboBoxRoot;
 		}
@@ -976,10 +974,10 @@ namespace UnityEditor.UI
 			GameObject comboBoxRoot = CreateUIElementRoot("ComboBox", menuCommand, s_ThickGUIElementSize);
 
 			//Create Template
-			GameObject itemTemplate = AddButtonAsChild(comboBoxRoot);
+			GameObject itemTemplate = AddComboBoxButtonAsChild(comboBoxRoot);
 
 			//Create Inputfield
-			GameObject inputField = AddInputFieldAsChild(comboBoxRoot);
+			GameObject inputField = AddComboBoxInputFieldAsChild(comboBoxRoot);
 
 			//Create Overlay
 			GameObject overlay = CreateUIObject("Overlay", comboBoxRoot);
@@ -988,7 +986,7 @@ namespace UnityEditor.UI
 			GameObject overlayScrollPanelScrollBar = AddScrollbarAsChild(overlayScrollPanel);
 
 			//Create Arrow Button
-			GameObject arrowButton = AddButtonAsChild(comboBoxRoot);
+			GameObject arrowButton = AddComboBoxButtonAsChild(comboBoxRoot);
 
 			//Setup ComboBox
 			var comboBox = comboBoxRoot.AddComponent<ComboBox>();
@@ -1010,7 +1008,7 @@ namespace UnityEditor.UI
 			inputFieldRT.anchorMin = Vector2.zero;
 			inputFieldRT.anchorMax = Vector2.one;
 			inputFieldRT.sizeDelta = Vector2.zero;
-			Events.UnityEventTools.AddPersistentListener<string>(inputField.GetComponent<InputField>().onValueChanged, new UnityEngine.Events.UnityAction<string>(comboBox.OnValueChanged));
+			WireComboBoxInput(inputField, comboBox.OnValueChanged);
 
 			//Setup Overlay
 			var overlayRT = overlay.GetComponent<RectTransform>();
@@ -1019,7 +1017,7 @@ namespace UnityEditor.UI
 			overlayRT.sizeDelta = new Vector2(0f, 1f);
 			overlayRT.pivot = new Vector2(0f, 1f);
 			overlay.AddComponent<Image>().color = new Color(0.243f, 0.871f, 0f, 0f);
-			Events.UnityEventTools.AddBoolPersistentListener(overlay.AddComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(comboBox.ToggleDropdownPanel), true);
+			UnityEditor.Events.UnityEventTools.AddBoolPersistentListener(overlay.AddComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(comboBox.ToggleDropdownPanel), true);
 			//Overlay Scroll Panel
 			var overlayScrollPanelRT = overlayScrollPanel.GetComponent<RectTransform>();
 			overlayScrollPanelRT.position += new Vector3(0, -cbbRT.sizeDelta.y, 0);
@@ -1061,8 +1059,8 @@ namespace UnityEditor.UI
 			arrowButtonRT.anchorMax = Vector2.one;
 			arrowButtonRT.sizeDelta = new Vector2(cbbRT.sizeDelta.y, cbbRT.sizeDelta.y);
 			arrowButtonRT.pivot = Vector2.one;
-			Events.UnityEventTools.AddBoolPersistentListener(arrowButton.GetComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(comboBox.ToggleDropdownPanel), true);
-			arrowButton.GetComponentInChildren<Text>().text = "▼";
+			UnityEditor.Events.UnityEventTools.AddBoolPersistentListener(arrowButton.GetComponent<Button>().onClick, new UnityEngine.Events.UnityAction<bool>(comboBox.ToggleDropdownPanel), true);
+			SetComboBoxArrowLabel(arrowButton, "▼");
 
 			Selection.activeGameObject = comboBoxRoot;
 		}
@@ -1073,12 +1071,12 @@ namespace UnityEditor.UI
 			GameObject dropDownListRoot = CreateUIElementRoot("DropDownList", menuCommand, s_ThickGUIElementSize);
 
 			//Create Template
-			GameObject itemTemplate = AddButtonAsChild(dropDownListRoot);
+			GameObject itemTemplate = AddComboBoxButtonAsChild(dropDownListRoot);
 			GameObject itemTemplateImage = AddImageAsChild(itemTemplate);
 			itemTemplateImage.GetComponent<Transform>().SetSiblingIndex(0);
 
 			//Create Main Button
-			GameObject mainButton = AddButtonAsChild(dropDownListRoot);
+			GameObject mainButton = AddComboBoxButtonAsChild(dropDownListRoot);
 			GameObject mainButtonImage = AddImageAsChild(mainButton);
 			mainButtonImage.GetComponent<Transform>().SetSiblingIndex(0);
 
@@ -1089,7 +1087,7 @@ namespace UnityEditor.UI
 			GameObject overlayScrollPanelScrollBar = AddScrollbarAsChild(overlayScrollPanel);
 
 			//Create Arrow Button
-			GameObject arrowText = AddTextAsChild(dropDownListRoot);
+			GameObject arrowText = AddComboBoxTextAsChild(dropDownListRoot);
 
 			//Setup DropDownList
 			var dropDownList = dropDownListRoot.AddComponent<DropDownList>();
@@ -1121,11 +1119,8 @@ namespace UnityEditor.UI
 			mainButtonRT.anchorMin = Vector2.zero;
 			mainButtonRT.anchorMax = Vector2.one;
 			mainButtonRT.sizeDelta = Vector2.zero;
-			Events.UnityEventTools.AddPersistentListener(mainButton.GetComponent<Button>().onClick, dropDownList.ToggleDropdownPanel);
-			var mainButtonText = mainButton.GetComponentInChildren<Text>();
-			mainButtonText.alignment = TextAnchor.MiddleLeft;
-			mainButtonText.text = "Select Item...";
-			var mainButtonTextRT = mainButtonText.GetComponent<RectTransform>();
+			UnityEditor.Events.UnityEventTools.AddPersistentListener(mainButton.GetComponent<Button>().onClick, dropDownList.ToggleDropdownPanel);
+			var mainButtonTextRT = ConfigureComboBoxMainButtonLabel(mainButton, "Select Item...");
 			mainButtonTextRT.anchorMin = Vector2.zero;
 			mainButtonTextRT.anchorMin = Vector2.zero;
 			mainButtonTextRT.pivot = new Vector2(0f, 1f);
@@ -1149,7 +1144,7 @@ namespace UnityEditor.UI
 			overlayRT.sizeDelta = new Vector2(0f, 1f);
 			overlayRT.pivot = new Vector2(0f, 1f);
 			overlay.AddComponent<Image>().color = new Color(0.243f, 0.871f, 0f, 0f);
-			Events.UnityEventTools.AddPersistentListener(overlay.AddComponent<Button>().onClick, dropDownList.ToggleDropdownPanel);
+			UnityEditor.Events.UnityEventTools.AddPersistentListener(overlay.AddComponent<Button>().onClick, dropDownList.ToggleDropdownPanel);
 			//Overlay Scroll Panel
 			var overlayScrollPanelRT = overlayScrollPanel.GetComponent<RectTransform>();
 			overlayScrollPanelRT.position += new Vector3(0, -cbbRT.sizeDelta.y, 0);
@@ -1191,9 +1186,7 @@ namespace UnityEditor.UI
 			arrowTextRT.anchorMax = Vector2.one;
 			arrowTextRT.sizeDelta = new Vector2(cbbRT.sizeDelta.y, cbbRT.sizeDelta.y);
 			arrowTextRT.pivot = new Vector2(1f, 0.5f);
-			var arrowTextComponent = arrowText.GetComponent<Text>();
-			arrowTextComponent.text = "▼";
-			arrowTextComponent.alignment = TextAnchor.MiddleCenter;
+			SetComboBoxArrowLabel(arrowText, "▼");
 			var arrowTextCanvasGroup = arrowText.AddComponent<CanvasGroup>();
 			arrowTextCanvasGroup.interactable = false;
 			arrowTextCanvasGroup.blocksRaycasts = false;
@@ -1922,7 +1915,7 @@ namespace UnityEditor.UI
 			for (int i = 0; i < 3; i++)
 			{
 				var button = AddButtonAsChild(go).GetComponent<Button>();
-				button.gameObject.AddComponent<Segment>();
+				button.gameObject.AddComponent<SegmentedControlSegment>();
 				button.name = "Segment " + (i + 1);
 
 				var colors = button.colors;
@@ -2373,6 +2366,118 @@ namespace UnityEditor.UI
 
 			return buttonRoot;
 		}
+
+		#region ComboBox family text/input helpers
+		// Creates a Button with a caption child.
+		private static GameObject AddComboBoxButtonAsChild(GameObject parent)
+		{
+#if UNITY_6000_0_OR_NEWER
+			GameObject buttonRoot = CreateUIObject("Button", parent);
+
+			GameObject childText = new GameObject("Text");
+			GameObjectUtility.SetParentAndAlign(childText, buttonRoot);
+
+			Image image = buttonRoot.AddComponent<Image>();
+			image.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
+			image.type = Image.Type.Sliced;
+			image.color = s_DefaultSelectableColor;
+
+			Button bt = buttonRoot.AddComponent<Button>();
+			SetDefaultColorTransitionValues(bt);
+
+			TextMeshProUGUI text = childText.AddComponent<TextMeshProUGUI>();
+			text.text = "Button";
+			text.alignment = TextAlignmentOptions.Center;
+			text.color = s_TextColor;
+
+			RectTransform textRectTransform = childText.GetComponent<RectTransform>();
+			textRectTransform.anchorMin = Vector2.zero;
+			textRectTransform.anchorMax = Vector2.one;
+			textRectTransform.sizeDelta = Vector2.zero;
+
+			return buttonRoot;
+#else
+			return AddButtonAsChild(parent);
+#endif
+		}
+
+		// Creates a standalone caption GameObject.
+		private static GameObject AddComboBoxTextAsChild(GameObject parent)
+		{
+#if UNITY_6000_0_OR_NEWER
+			GameObject go = CreateUIObject("Text", parent);
+
+			TextMeshProUGUI lbl = go.AddComponent<TextMeshProUGUI>();
+			lbl.text = "New Text";
+			lbl.color = s_TextColor;
+
+			return go;
+#else
+			return AddTextAsChild(parent);
+#endif
+		}
+
+		// Creates the main input field for the ComboBox / AutoCompleteComboBox.
+		private static GameObject AddComboBoxInputFieldAsChild(GameObject parent)
+		{
+#if UNITY_6000_0_OR_NEWER
+			TMP_DefaultControls.Resources resources = new TMP_DefaultControls.Resources
+			{
+				standard = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath),
+				background = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpriteResourcePath),
+				inputField = AssetDatabase.GetBuiltinExtraResource<Sprite>(kInputFieldBackgroundPath)
+			};
+			GameObject root = TMP_DefaultControls.CreateInputField(resources);
+			root.name = "InputField";
+			GameObjectUtility.SetParentAndAlign(root, parent);
+			return root;
+#else
+			return AddInputFieldAsChild(parent);
+#endif
+		}
+
+		// Configures the DropDownList main button caption (left aligned) and returns its RectTransform.
+		private static RectTransform ConfigureComboBoxMainButtonLabel(GameObject mainButton, string caption)
+		{
+#if UNITY_6000_0_OR_NEWER
+			TextMeshProUGUI label = mainButton.GetComponentInChildren<TextMeshProUGUI>();
+			label.alignment = TextAlignmentOptions.Left;
+			label.text = caption;
+			return label.GetComponent<RectTransform>();
+#else
+			Text label = mainButton.GetComponentInChildren<Text>();
+			label.alignment = TextAnchor.MiddleLeft;
+			label.text = caption;
+			return label.GetComponent<RectTransform>();
+#endif
+		}
+
+		// Sets the dropdown arrow glyph (centre aligned) on whichever caption type the control uses.
+		private static void SetComboBoxArrowLabel(GameObject host, string glyph)
+		{
+#if UNITY_6000_0_OR_NEWER
+			TextMeshProUGUI label = host.GetComponentInChildren<TextMeshProUGUI>();
+			label.text = glyph;
+			label.alignment = TextAlignmentOptions.Center;
+#else
+			Text label = host.GetComponentInChildren<Text>();
+			label.text = glyph;
+			label.alignment = TextAnchor.MiddleCenter;
+#endif
+		}
+
+		// Wires the input field's onValueChanged to the supplied callback for whichever input type the control uses.
+		private static void WireComboBoxInput(GameObject inputFieldRoot, UnityEngine.Events.UnityAction<string> callback)
+		{
+#if UNITY_6000_0_OR_NEWER
+			TMP_InputField input = inputFieldRoot.GetComponent<TMP_InputField>();
+			UnityEditor.Events.UnityEventTools.AddPersistentListener<string>(input.onValueChanged, callback);
+#else
+			InputField input = inputFieldRoot.GetComponent<InputField>();
+			UnityEditor.Events.UnityEventTools.AddPersistentListener<string>(input.onValueChanged, callback);
+#endif
+		}
+		#endregion
 
 		private static RectTransform SetAnchorsAndStretch(GameObject root)
 		{
