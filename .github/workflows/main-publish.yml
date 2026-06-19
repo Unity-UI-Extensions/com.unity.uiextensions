@@ -57,7 +57,10 @@ jobs:
     secrets: inherit
 
   release-Complete:
-    if: ${{ always() }}
+    # Only succeed if no upstream release job actually failed. Skipped siblings
+    # (the build-types that didn't match the PR title) are tolerated; a real
+    # failure makes this job skip so it can no longer report a false "success".
+    if: ${{ !failure() && !cancelled() }}
     needs: [upversion-major-Package, upversion-minor-Package, upversion-patch-Package, release-Package-only]   
     name: Release complete
     runs-on: ubuntu-latest
@@ -67,19 +70,24 @@ jobs:
 
   # Refresh the development branch with the main publish
   refresh-development:
-    if: ${{ always() }}
+    # Skip if the release didn't actually complete, so we never refresh
+    # development from a half-finished or failed release.
+    if: ${{ needs.release-Complete.result == 'success' }}
     needs: [release-Complete]
     name: Refresh development branch
     uses: ./.github/workflows/refreshbranch.yml
     with:
       build-host: ubuntu-latest
       target-branch: development
-      source-branch: main
+      # The branch this release PR merged into (the trigger pins this to the
+      # release branch). Avoids hardcoding a branch name that doesn't exist.
+      source-branch: ${{ github.event.pull_request.base.ref }}
     secrets: inherit
 
   # Up version the development branch ready for future development
   upversion-development:
-    if: ${{ always() }}
+    # Only re-version development once it has been refreshed successfully.
+    if: ${{ needs.refresh-development.result == 'success' }}
     needs: [refresh-development]
     name: UpVersion the development branch for the next release
     uses: ./.github/workflows/upversionandtagrelease.yml
