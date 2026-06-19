@@ -99,6 +99,8 @@ jobs:
       - name: Create tag and push
         run: |
           $tagVersion = "${{ inputs.version }}"
-          git tag -fa "v$tagVersion" "${GITHUB_SHA}" -m "v$tagVersion Release [skip ci]"
-          git push origin "v$tagVersion" --force       
+          # Tag HEAD (the checked-out release commit). pwsh reads env vars as
+          # $env:GITHUB_SHA, not ${GITHUB_SHA} (which is an empty pwsh variable).
+          git tag -fa "v$tagVersion" -m "v$tagVersion Release [skip ci]"
+          git push origin "v$tagVersion" --force
         shell: pwsh

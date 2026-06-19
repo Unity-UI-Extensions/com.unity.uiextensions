@@ -203,6 +203,9 @@ jobs:
         if: ${{inputs.createTag == true}}
         run: |
           $outputVersion = '${{steps.getpackageversion.outputs.packageversion }}'
-          git tag -fa "v$outputVersion" "${GITHUB_SHA}" -m "v$outputVersion Release"
-          git push origin "v$outputVersion" --force --tags
+          # Tag HEAD (the version-bump commit just pushed). It holds the final
+          # stripped version in package.json. Note: pwsh reads env vars as
+          # $env:GITHUB_SHA, not ${GITHUB_SHA} (which is an empty pwsh variable).
+          git tag -fa "v$outputVersion" -m "v$outputVersion Release"
+          git push origin "v$outputVersion" --force
         shell: pwsh
