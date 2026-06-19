@@ -1,0 +1,91 @@
+name: Publish main branch and increment version
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - release
+
+jobs:
+  # Get Version to tag and release the branch, no up-version - [no-ver] included in PR title
+  validate-environment:
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'no-ver')
+    name: Get Version from UPM package
+    uses: ./.github/workflows/getpackageversionfrompackage.yml
+    with:
+      build-host: ubuntu-latest
+
+  # Perform tagging
+  release-Package-only:
+    needs: validate-environment
+    name: Release package only, no upversion
+    uses: ./.github/workflows/tagrelease.yml
+    with:
+      build-host: ubuntu-latest
+      version: ${{ needs.validate-environment.outputs.packageversion }}
+    secrets: inherit
+
+  # Up version the release and publish major release
+  upversion-major-Package:
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'no-ver') == false && contains(github.event.pull_request.title, 'major-release')
+    name: Major Version package and release
+    uses: ./.github/workflows/upversionandtagrelease.yml
+    with:
+      build-host: ubuntu-latest
+      build-type: major
+    secrets: inherit
+
+  # Up version the release and publish minor release
+  upversion-minor-Package:
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'no-ver') == false && contains(github.event.pull_request.title, 'minor-release')
+    name: Minor Version package and release
+    uses: ./.github/workflows/upversionandtagrelease.yml
+    with:
+      build-host: ubuntu-latest
+      build-type: minor
+    secrets: inherit
+
+  # Up version the release and publish patch release (default)
+  upversion-patch-Package:
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.title, 'no-ver') == false && contains(github.event.pull_request.title, 'minor-release') == false && contains(github.event.pull_request.title, 'major-release') == false
+    name: Patch Version package and release
+    uses: ./.github/workflows/upversionandtagrelease.yml
+    with:
+      build-host: ubuntu-latest
+      build-type: patch-release
+    secrets: inherit
+
+  release-Complete:
+    if: ${{ always() }}
+    needs: [upversion-major-Package, upversion-minor-Package, upversion-patch-Package, release-Package-only]   
+    name: Release complete
+    runs-on: ubuntu-latest
+    steps:
+      - name: Script Version
+        run: echo "Release done, updating Development"
+
+  # Refresh the development branch with the main publish
+  refresh-development:
+    if: ${{ always() }}
+    needs: [release-Complete]
+    name: Refresh development branch
+    uses: ./.github/workflows/refreshbranch.yml
+    with:
+      build-host: ubuntu-latest
+      target-branch: development
+      source-branch: main
+    secrets: inherit
+
+  # Up version the development branch ready for future development
+  upversion-development:
+    if: ${{ always() }}
+    needs: [refresh-development]
+    name: UpVersion the development branch for the next release
+    uses: ./.github/workflows/upversionandtagrelease.yml
+    with:
+      build-host: ubuntu-latest
+      build-type: patch
+      target-branch: development
+      createTag: false
+    secrets: inherit
