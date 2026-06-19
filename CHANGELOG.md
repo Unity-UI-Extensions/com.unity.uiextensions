@@ -4,6 +4,49 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## Release 3.0.0 - Unity 6, reimagined - 2026/06
+
+The V3 relaunch brings **full Unity 6 support**, a refreshed brand, and the start of a two-package ecosystem — the proven uGUI library you know, now joined by a modern UI Toolkit companion.
+
+> **Two packages. One ecosystem.** These notes cover the **uGUI** package (`com.unity.uiextensions`). Meet its new companion: [UI Toolkit Extensions](https://github.com/Unity-UI-Extensions/com.unity.uitoolkitextensions).
+
+### Highlights
+
+- **Full Unity 6 support** — the whole library verified and updated for Unity 6, with legacy dependencies cleared out and the examples refreshed.
+- **Two-package ecosystem** — the new UI Toolkit Extensions package launches alongside under the shared 3.0 banner.
+
+### Added
+
+- New control: **GridRawImage**
+- New control: **UI Knob 2** (`UI_Knob2`)
+- New control: **UI Segmented Circle** / Segmented Control
+- New control: **UI Graphic Selector**
+- UILineConnector: the pivot can now be used as the reference point when drawing lines (#490)
+- UILineConnector: new "close line" option to finish a line off and fill any gaps at the end
+- BoxSlider: added `SetXWithoutNotify` and `SetYWithoutNotify`
+
+### Changed / Fixed
+
+- Reorderable List: fixed a null-reference exception, and resolved element-stacking when moving elements slightly
+- Scroll Snap: resolved a race condition that could raise a NaN error when lerping; made rescaling and full-screen scroll snap more resilient
+- HSS/VSS: guarded against a divide-by-zero when the scroll snap has a single page; `GetCurrentPage` made more resilient
+- Infinite Scroll: resolved out-of-bounds issues
+- Flow Layout Group: addressed layout issues and fixed the last line overflowing the rect bounds
+- UI Particle System: new "CullingMode" option to resolve unscaled delta time (#486 / #487)
+- Gradient2: optimised `ModifyMesh`; fixed radial triangle add order (#384)
+- ScrollRect: force `ScrollRect.content` setup (#485)
+- UILineConnector: improved point-array calculation (#495); refresh on global scale change
+- Layout groups now rebuild on disable/enable
+- General TMPro/Text compatibility housekeeping (#477)
+- Compile-flag support for Unity 6 (#493)
+
+### Contributors
+
+Huge thanks to everyone who contributed to this release:
+[@SimonDarksideJ](https://github.com/SimonDarksideJ), [@bluefallsky](https://github.com/bluefallsky), [@hugoymh](https://github.com/hugoymh), [@JavierMonton](https://github.com/JavierMonton), [@Dover8](https://github.com/Dover8), [@fgrg2801](https://github.com/fgrg2801), [@Moderbord](https://github.com/Moderbord).
+
+-----
+
 ## Release 2.3.2 - Rejuvenation - 2023/11/26
 
 2023 is certainly an interesting year to keep you on your toes, and finding time to keep managing all the requests and updates that come in are taking their toll, especially for a FREE project, but nonetheless, I still do it.
