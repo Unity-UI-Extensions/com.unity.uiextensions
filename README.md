@@ -74,6 +74,10 @@ To get started with the project, here's a little guide:
 
 ## [Updates:](https://unity-ui-extensions.github.io/ReleaseNotes/RELEASENOTES)
 
+## Release 2.4.0 - Unity supports Unity UI - 2025/11/20
+
+Stay tuned as we begin work on a Unity 6 update, to verify Unity 6 support and possibly get some new controls in the mix.
+
 ## Release 2.3.2 - Rejuvenation - 2023/11/26
 
 2023 is certainly an interesting year to keep you on your toes, and finding time to keep managing all the requests and updates that come in are taking their toll, especially for a FREE project, but nonetheless, I still do it.
@@ -222,7 +226,7 @@ Just ensure:
 
 ## [License](https://raw.githubusercontent.com/Unity-UI-Extensions/com.unity.uiextensions/release/LICENSE.md)
 
-All scripts conform to the BSD3 license and are free to use / distribute.  See the [LICENSE](https://raw.githubusercontent.com/Unity-UI-Extensions/com.unity.uiextensions/release/LICENSE.md) file for more information =
+All scripts conform to the BSD-3-Clause license and are free to use / distribute.  See the [LICENSE](https://raw.githubusercontent.com/Unity-UI-Extensions/com.unity.uiextensions/release/LICENSE.md) file for more information =
 
 ## [Like what you see?](https://unity-ui-extensions.github.io/FurtherInfo)
 

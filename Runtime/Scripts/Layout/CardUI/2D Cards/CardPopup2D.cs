@@ -57,8 +57,12 @@ public class CardPopup2D : MonoBehaviour
         {
             isFalling = false;
             rbody.useGravity = false;
-            rbody.velocity = Vector3.zero;
-            transform.position = new Vector3(0, 8, startZPos);
+#if UNITY_6000_0_OR_NEWER
+                rbody.linearVelocity = Vector3.zero;
+#else
+                rbody.velocity = Vector3.zero;
+#endif
+                transform.position = new Vector3(0, 8, startZPos);
             if (singleScene)
             {
                 CardEnter();

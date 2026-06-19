@@ -27,7 +27,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 
 		protected Texture2D screenCapture;
 
-		public ColorChangedEvent oncolorSelected = new ColorChangedEvent();
+		public ColorChangedEvent onColorSelected = new ColorChangedEvent();
 
 		protected Color color;
 
@@ -71,8 +71,8 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 
 		protected virtual void SelectColor()
 		{
-			if (oncolorSelected != null)
-				oncolorSelected.Invoke(color);
+			if (onColorSelected != null)
+				onColorSelected.Invoke(color);
 
 			enabled = false;
 		}

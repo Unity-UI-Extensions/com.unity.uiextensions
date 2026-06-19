@@ -5,6 +5,25 @@
 namespace UnityEngine.UI.Extensions
 {
 #if UNITY_5_3_OR_NEWER
+    /// <summary>
+    /// Controls how the <see cref="UIParticleSystem"/> advances its simulation, in particular how it
+    /// handles a large time-step such as the one produced when the application returns from the
+    /// background. Mirrors the naming of Unity's ParticleSystemCullingMode options. For this manual
+    /// simulation the four options collapse to two behaviours: Automatic/Pause clamp the step
+    /// (freeze-safe), while PauseAndCatchup/AlwaysSimulate replay the full elapsed time.
+    /// </summary>
+    public enum UIParticleSystemCullingMode
+    {
+        /// <summary>Default. Simulates continuously and clamps a catastrophic catch-up (e.g. returning from the background) to maxSimulationDeltaTime so it cannot freeze the app (issue #486). Mirrors Unity's default culling mode.</summary>
+        Automatic,
+        /// <summary>Clamp the simulation step (see maxSimulationDeltaTime); behaves the same as Automatic for this manual simulation.</summary>
+        Pause,
+        /// <summary>Replay the full elapsed time on the next frame. Original behaviour - can freeze the app after a long pause (issue #486).</summary>
+        PauseAndCatchup,
+        /// <summary>Replay the full elapsed time; behaves the same as PauseAndCatchup for this manual simulation.</summary>
+        AlwaysSimulate
+    }
+
     [ExecuteInEditMode]
     [RequireComponent(typeof(CanvasRenderer), typeof(ParticleSystem))]
     [AddComponentMenu("UI/Effects/Extensions/UIParticleSystem")]
@@ -18,7 +37,16 @@ namespace UnityEngine.UI.Extensions
 
         [Tooltip("Enables using Renderer.lengthScale parameter")]
         public bool _useLengthScale = false;
-        
+
+        [Tooltip("Use scaled time (Time.deltaTime) instead of unscaled time. When disabled (the default) the effect keeps animating while Time.timeScale is 0, matching the original behaviour.")]
+        public bool useTimeScale = false;
+
+        [Tooltip("How to handle a large simulation step, e.g. when the app resumes from the background.\n- Automatic / Pause: clamp the step (default, prevents freezes - see issue #486).\n- PauseAndCatchup / AlwaysSimulate: replay the full elapsed time (original behaviour, may freeze after a long pause).")]
+        public UIParticleSystemCullingMode cullingMode = UIParticleSystemCullingMode.Automatic;
+
+        [Tooltip("Maximum time (in seconds) the particle system may simulate in a single frame when using the Pause or Automatic culling mode. This caps the catch-up after a stall (e.g. returning from the background) so it cannot freeze the app - mirroring how Time.deltaTime is already capped by the project's 'Maximum Allowed Timestep'. Set to 0 to track that project setting (Time.maximumDeltaTime). Default 0.333.")]
+        public float maxSimulationDeltaTime = 0.333f;
+
         private Transform _transform;
         private ParticleSystem pSystem;
         private ParticleSystem.Particle[] particles;
@@ -94,7 +122,7 @@ namespace UnityEngine.UI.Extensions
                 pRenderer = pSystem.GetComponent<ParticleSystemRenderer>();
                 if (pRenderer != null)
                     pRenderer.enabled = false;
-                
+
                 if (material == null)
                 {
                     var foundShader = ShaderLibrary.GetShaderInstance("UI Extensions/Particles/Additive");
@@ -235,11 +263,7 @@ namespace UnityEngine.UI.Extensions
                             frame = Mathf.FloorToInt(frameProgress * textureSheetAnimation.numTilesX);
 
                             int row = textureSheetAnimation.rowIndex;
-#if UNITY_2019_1_OR_NEWER
                             if (textureSheetAnimation.rowMode == ParticleSystemAnimationRowMode.Random)
-#else
-                            if (textureSheetAnimation.useRandomRow)
-#endif
                             { // FIXME - is this handled internally by rowIndex?
                                 row = Mathf.Abs((int)particle.randomSeed % textureSheetAnimation.numTilesY);
                             }
@@ -281,7 +305,7 @@ namespace UnityEngine.UI.Extensions
                 _quad[3].color = color;
                 _quad[3].uv0 = temp;
 
-                
+
                 float rotation = -particle.rotation * Mathf.Deg2Rad;
                 var lengthScale = pRenderer.lengthScale;
                 if (_useLengthScale)
@@ -294,7 +318,7 @@ namespace UnityEngine.UI.Extensions
                 {
                     lengthScale = 1f;
                 }
-                
+
                 float rotation90 = rotation + Mathf.PI / 2;
 
                 if (rotation == 0)
@@ -370,11 +394,32 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        /// <summary>
+        /// Returns the time-step used to advance the particle simulation this frame.
+        /// In the clamping culling modes the step is capped so that resuming from a long
+        /// background pause does not replay the whole elapsed time in a single frame, which
+        /// would freeze the application (issue #486).
+        /// </summary>
+        private float GetSimulationDeltaTime()
+        {
+            float deltaTime = useTimeScale ? Time.deltaTime : Time.unscaledDeltaTime;
+
+            if (cullingMode == UIParticleSystemCullingMode.Pause || cullingMode == UIParticleSystemCullingMode.Automatic)
+            {
+                // A value of 0 (including components serialized before this field existed) tracks the
+                // project's "Maximum Allowed Timestep", the same cap Unity already applies to Time.deltaTime.
+                float maxStep = maxSimulationDeltaTime > 0f ? maxSimulationDeltaTime : Time.maximumDeltaTime;
+                deltaTime = Mathf.Min(deltaTime, maxStep);
+            }
+
+            return deltaTime;
+        }
+
         private void Update()
         {
             if (!fixedTime && Application.isPlaying)
             {
-                pSystem.Simulate(Time.unscaledDeltaTime, false, false, true);
+                pSystem.Simulate(GetSimulationDeltaTime(), false, false, true);
                 SetAllDirty();
 
                 if ((currentMaterial != null && currentTexture != currentMaterial.mainTexture) ||
@@ -396,7 +441,7 @@ namespace UnityEngine.UI.Extensions
             {
                 if (fixedTime)
                 {
-                    pSystem.Simulate(Time.unscaledDeltaTime, false, false, true);
+                    pSystem.Simulate(GetSimulationDeltaTime(), false, false, true);
                     SetAllDirty();
                     if ((currentMaterial != null && currentTexture != currentMaterial.mainTexture) ||
                         (material != null && currentMaterial != null && material.shader != currentMaterial.shader))

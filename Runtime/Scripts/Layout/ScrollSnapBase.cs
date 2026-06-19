@@ -94,12 +94,22 @@ namespace UnityEngine.UI.Extensions
         {
             get
             {
+                //When an Infinite Scroll is attached, children are relocated and re-ordered at runtime,
+                //so the cached page (derived from cumulative scroll displacement) no longer maps to the
+                //child actually on screen. Resolve the page from the centred child instead. See issue #254.
+                if (_isInfinite)
+                {
+                    return GetClosestPage();
+                }
                 return _currentPage;
             }
 
             internal set
             {
-                if (_isInfinite)
+                //Guard childCount > 0: when content has been cleared at runtime (e.g. RemoveAllChildren)
+                //the integer divide/modulo below would throw DivideByZeroException. With no children the
+                //window calculation is meaningless, so skip it and let value fall through as 0. See issue #237.
+                if (_isInfinite && _screensContainer.childCount > 0)
                 {
                     //Work out which infinite window we are in
                     float infWindow = (float)value / (float)_screensContainer.childCount;
@@ -188,6 +198,11 @@ namespace UnityEngine.UI.Extensions
             }
 
             _screensContainer = _scroll_rect.content;
+
+            //ScrollRect.content RT anchors has to be stretched first in order for HSS/VSS.DistributePages() to have the correct result
+            _screensContainer.anchorMin = Vector2.zero;
+            _screensContainer.anchorMax = Vector2.one;
+            _screensContainer.sizeDelta = Vector2.zero;
 
             InitialiseChildObjects();
 
@@ -289,7 +304,7 @@ namespace UnityEngine.UI.Extensions
             }
 
             //Set the active items active
-            for (int i = CurrentPage - _bottomItem; i < CurrentPage + _topItem; i++)
+            for (int i = _currentPage - _bottomItem; i < _currentPage + _topItem; i++)
             {
                 try
                 {
@@ -302,9 +317,9 @@ namespace UnityEngine.UI.Extensions
             }
 
             //Deactivate items out of visibility at the bottom of the ScrollRect Mask (only on scroll)
-            if (_currentPage > _halfNoVisibleItems) ChildObjects[CurrentPage - _bottomItem].SetActive(false);
+            if (_currentPage > _halfNoVisibleItems) ChildObjects[_currentPage - _bottomItem].SetActive(false);
             //Deactivate items out of visibility at the top of the ScrollRect Mask (only on scroll)
-            if (_screensContainer.childCount - _currentPage > _topItem) ChildObjects[CurrentPage + _topItem].SetActive(false);
+            if (_screensContainer.childCount - _currentPage > _topItem) ChildObjects[_currentPage + _topItem].SetActive(false);
         }
 
         //Function for switching screens with buttons
@@ -317,13 +332,15 @@ namespace UnityEngine.UI.Extensions
                 _lerp = true;
                 if (_isInfinite)
                 {
-                    CurrentPage = GetPageforPosition(_screensContainer.anchoredPosition) + 1;
+                    int targetPage = GetPageforPosition(_screensContainer.anchoredPosition) + 1;
+                    CurrentPage = targetPage;
+                    GetInfinitePositionforPage(targetPage, ref _lerp_target);
                 }
                 else
                 {
                     CurrentPage = _currentPage + 1;
+                    GetPositionforPage(_currentPage, ref _lerp_target);
                 }
-                GetPositionforPage(_currentPage, ref _lerp_target);
                 ScreenChange();
             }
 
@@ -339,13 +356,15 @@ namespace UnityEngine.UI.Extensions
                 _lerp = true;
                 if (_isInfinite)
                 {
-                    CurrentPage = GetPageforPosition(_screensContainer.anchoredPosition) - 1;
+                    int targetPage = GetPageforPosition(_screensContainer.anchoredPosition) - 1;
+                    CurrentPage = targetPage;
+                    GetInfinitePositionforPage(targetPage, ref _lerp_target);
                 }
                 else
                 {
                     CurrentPage = _currentPage - 1;
+                    GetPositionforPage(_currentPage, ref _lerp_target);
                 }
-                GetPositionforPage(_currentPage, ref _lerp_target);
                 ScreenChange();
             }
         }
@@ -382,6 +401,42 @@ namespace UnityEngine.UI.Extensions
         }
 
         /// <summary>
+        /// Resolves the page index of the child currently closest to the centre of the viewport.
+        /// Unlike <see cref="GetPageforPosition"/>, which assumes children keep their original sibling
+        /// order and grid positions, this inspects the live child positions. This is required for
+        /// Infinite Scroll, where UI_InfiniteScroll relocates and re-orders children at runtime.
+        /// </summary>
+        /// <returns>Sibling index of the child nearest the current scroll position</returns>
+        internal int GetClosestPage()
+        {
+            if (_screensContainer == null || _screensContainer.childCount == 0)
+            {
+                return _currentPage;
+            }
+
+            //The container-local coordinate that is currently centred in the viewport.
+            //Matches the numerator GetPageforPosition uses, so a settled page lands exactly on a child.
+            float targetPosition = _isVertical ?
+                _scrollStartPosition - _screensContainer.anchoredPosition.y :
+                _scrollStartPosition - _screensContainer.anchoredPosition.x;
+
+            int closestPage = 0;
+            float closestDistance = float.MaxValue;
+            for (int i = 0; i < _screensContainer.childCount; i++)
+            {
+                RectTransform child = (RectTransform)_screensContainer.GetChild(i);
+                float childPosition = _isVertical ? child.anchoredPosition.y : child.anchoredPosition.x;
+                float distance = Math.Abs(targetPosition - childPosition);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestPage = i;
+                }
+            }
+            return closestPage;
+        }
+
+        /// <summary>
         /// Validates if the current Scroll Rect container position is within the bounds for a page
         /// </summary>
         /// <param name="pos">Position to test, normally the Scroll Rect container Local position</param>
@@ -412,6 +467,30 @@ namespace UnityEngine.UI.Extensions
                 _infiniteOffset = _screensContainer.anchoredPosition.x < 0 ? -_screensContainer.sizeDelta.x * _infiniteWindow : _screensContainer.sizeDelta.x * _infiniteWindow;
                 _infiniteOffset = _infiniteOffset == 0 ? 0 : _infiniteOffset < 0 ? _infiniteOffset - _childSize * _infiniteWindow : _infiniteOffset + _childSize * _infiniteWindow;
                 target.x = _childPos + _scrollStartPosition + _infiniteOffset;
+            }
+        }
+
+        /// <summary>
+        /// Returns the local position for an absolute "displacement page" when an Infinite Scroll is
+        /// attached. The content moves under an Unrestricted ScrollRect, so the displacement page
+        /// (as produced by <see cref="GetPageforPosition"/>) maps straight back to a content position -
+        /// this is the exact inverse of that getter, so button navigation lands on the same grid the
+        /// drag-settle logic uses. Unlike <see cref="GetPositionforPage"/> it does NOT rebuild the
+        /// target from a wrapped page + _infiniteWindow + a sign test, which is what caused button
+        /// navigation to "take the long way" across a window boundary. See issue #257.
+        /// </summary>
+        /// <param name="displacementPage">Absolute (un-wrapped) displacement page to move to</param>
+        /// <param name="target">Outputs the local position for that page</param>
+        internal void GetInfinitePositionforPage(int displacementPage, ref Vector3 target)
+        {
+            float position = _scrollStartPosition - _childSize * displacementPage;
+            if (_isVertical)
+            {
+                target.y = position;
+            }
+            else
+            {
+                target.x = position;
             }
         }
 
@@ -547,7 +626,7 @@ namespace UnityEngine.UI.Extensions
         /// </summary>
         internal void ScreenChange()
         {
-            OnSelectionPageChangedEvent.Invoke(_currentPage);
+            OnSelectionPageChangedEvent.Invoke(CurrentPage);
         }
 
         /// <summary>
@@ -562,7 +641,7 @@ namespace UnityEngine.UI.Extensions
                 _endEventCalled = true;
                 _startEventCalled = false;
                 _settled = true;
-                OnSelectionChangeEndEvent.Invoke(_currentPage);
+                OnSelectionChangeEndEvent.Invoke(CurrentPage);
             }
         }
 

@@ -137,6 +137,13 @@ namespace UnityEngine.UI.Extensions
                 }
             }
 
+            if (!_reorderableList.CloneDraggedObject)
+            {
+                _fakeElement.SetParent(_reorderableList.Content, false);
+                _fakeElement.SetSiblingIndex(_fromIndex);
+                LayoutRebuilder.ForceRebuildLayoutImmediate(_reorderableList.Content);
+            }
+
             _isDragging = true;
         }
         #endregion
@@ -153,6 +160,12 @@ namespace UnityEngine.UI.Extensions
             }
             //Set dragging object on cursor
             var canvas = _draggingObject.GetComponentInParent<Canvas>();
+            if (canvas == null)
+            {
+                // The dragging object is not parented under a Canvas (e.g. a misconfigured
+                // DraggableArea); can't map the cursor to a world point, so skip this frame.
+                return;
+            }
             Vector3 worldPoint;
             RectTransformUtility.ScreenPointToWorldPointInRectangle(canvas.GetComponent<RectTransform>(), eventData.position,
                 canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null, out worldPoint);
@@ -266,7 +279,10 @@ namespace UnityEngine.UI.Extensions
                 _displacedObjectLE.preferredWidth = _draggingObjectOriginalSize.x;
                 _displacedObjectLE.preferredHeight = _draggingObjectOriginalSize.y;
                 _displacedObject.SetParent(_reorderableList.Content, false);
-                _displacedObject.rotation = _reorderableList.transform.rotation;
+                if (!_reorderableList.KeepItemRotation)
+                {
+                    _displacedObject.rotation = _reorderableList.transform.rotation;
+                }
                 _displacedObject.SetSiblingIndex(_fromIndex);
                 // Force refreshing both lists because otherwise we get inappropriate FromList in ReorderableListEventStruct 
                 _reorderableList.Refresh();
@@ -310,7 +326,10 @@ namespace UnityEngine.UI.Extensions
             _displacedObjectLE.preferredWidth = _displacedObjectOriginalSize.x;
             _displacedObjectLE.preferredHeight = _displacedObjectOriginalSize.y;
             _displacedObject.SetParent(_displacedObjectOriginList.Content, false);
-            _displacedObject.rotation = _displacedObjectOriginList.transform.rotation;
+            if (!_reorderableList.KeepItemRotation)
+            {
+                _displacedObject.rotation = _displacedObjectOriginList.transform.rotation;
+            }
             _displacedObject.SetSiblingIndex(_displacedFromIndex);
             _displacedObject.gameObject.SetActive(true);
 
@@ -355,7 +374,7 @@ namespace UnityEngine.UI.Extensions
             {
                 //If we have a ReorderableList that is dropable
                 //Put the dragged object into the content and at the right index
-                if (_currentReorderableListRaycasted != null && _fakeElement.parent == _currentReorderableListRaycasted.Content)
+                if (_currentReorderableListRaycasted != null && _fakeElement != null && _fakeElement.parent == _currentReorderableListRaycasted.Content)
                 {
                     var args = new ReorderableList.ReorderableListEventStruct
                     {
@@ -382,7 +401,10 @@ namespace UnityEngine.UI.Extensions
 
                     RefreshSizes();
                     _draggingObject.SetParent(_currentReorderableListRaycasted.Content, false);
-                    _draggingObject.rotation = _currentReorderableListRaycasted.transform.rotation;
+                    if (!_reorderableList.KeepItemRotation)
+                    {
+                        _draggingObject.rotation = _currentReorderableListRaycasted.transform.rotation;
+                    }
                     _draggingObject.SetSiblingIndex(_fakeElement.GetSiblingIndex());
 
                     //If the item is transferable, it can be dragged out again
@@ -474,7 +496,10 @@ namespace UnityEngine.UI.Extensions
             {
                 RefreshSizes();
                 _draggingObject.SetParent(_reorderableList.Content, false);
-                _draggingObject.rotation = _reorderableList.Content.transform.rotation;
+                if (!_reorderableList.KeepItemRotation)
+                {
+                    _draggingObject.rotation = _reorderableList.Content.transform.rotation;
+                }
                 _draggingObject.SetSiblingIndex(_fromIndex);
 
 

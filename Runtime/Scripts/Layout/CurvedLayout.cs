@@ -34,6 +34,7 @@ namespace UnityEngine.UI.Extensions
         {
             m_Tracker.Clear();
             LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+            base.OnDisable();
         }
 
         public override void SetLayoutHorizontal() {

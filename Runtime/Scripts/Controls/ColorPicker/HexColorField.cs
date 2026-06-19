@@ -5,24 +5,23 @@ using System.Globalization;
 
 namespace UnityEngine.UI.Extensions.ColorPicker
 {
-
-    [RequireComponent(typeof(InputField))]
+    [RequireComponent(typeof(TMPro.TMP_InputField))]
     public class HexColorField : MonoBehaviour
     {
         public ColorPickerControl ColorPicker;
 
         public bool displayAlpha;
 
-        private InputField hexInputField;
+        private TMPro.TMP_InputField hexInputField;
 
         private const string hexRegex = "^#?(?:[0-9a-fA-F]{3,4}){1,2}$";
 
         private void Awake()
         {
-            hexInputField = GetComponent<InputField>();
+            hexInputField = GetComponent<TMPro.TMP_InputField>();
 
             // Add listeners to keep text (and color) up to date
-            hexInputField.onEndEdit.AddListener(UpdateColor);
+            hexInputField.onValueChanged.AddListener(UpdateColor);
             ColorPicker.onValueChanged.AddListener(UpdateHex);
         }
 
@@ -39,8 +38,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 
         private void UpdateColor(string newHex)
         {
-            Color32 color;
-            if (HexToColor(newHex, out color))
+            if (HexToColor(newHex, out Color32 color))
                 ColorPicker.CurrentColor = color;
             else
                 Debug.Log("hex value is in the wrong format, valid formats are: #RGB, #RGBA, #RRGGBB and #RRGGBBAA (# is optional)");

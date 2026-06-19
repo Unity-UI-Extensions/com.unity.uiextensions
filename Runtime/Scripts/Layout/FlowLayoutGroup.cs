@@ -6,7 +6,6 @@
 /// Vertical Flow by Ramon Molossi 
 
 using System.Collections.Generic;
-using System.Text;
 
 namespace UnityEngine.UI.Extensions
 {
@@ -18,14 +17,20 @@ namespace UnityEngine.UI.Extensions
 	{
 		public enum Axis { Horizontal = 0, Vertical = 1 }
 
-        private float _layoutHeight;
-        private float _layoutWidth;
+		private float _layoutHeight;
+		private float _layoutWidth;
 
-        public float SpacingX = 0f;
+		public float SpacingX = 0f;
 		public float SpacingY = 0f;
 		public bool ExpandHorizontalSpacing = false;
 		public bool ChildForceExpandWidth = false;
 		public bool ChildForceExpandHeight = false;
+
+		[Tooltip("When enabled, children fill the container on BOTH axes by distributing any leftover space on the wrap (cross) axis evenly across the bars, instead of each bar only matching its largest child. " +
+			"Requires the cross-axis force expand to also be enabled: ChildForceExpandHeight when StartAxis is Horizontal, or ChildForceExpandWidth when StartAxis is Vertical. " +
+			"Has no effect when the cross axis is already constrained to content (e.g. by a ContentSizeFitter), as there is no leftover space to distribute.")]
+		public bool ChildForceExpandCrossAxis = false;
+
 		public bool invertOrder = false;
 
 		[SerializeField]
@@ -150,6 +155,22 @@ namespace UnityEngine.UI.Extensions
 				spacingBetweenElements = SpacingY;
 			}
 
+			float extraBarSpace = 0f;
+			bool crossForceExpand = StartAxis == Axis.Horizontal ? ChildForceExpandHeight : ChildForceExpandWidth;
+			if (!layoutInput && ChildForceExpandCrossAxis && crossForceExpand)
+			{
+				MeasureBars(workingSize, spacingBetweenElements, spacingBetweenBars, offset, counterOffset, out int barCount, out float contentCrossSize);
+				if (barCount > 0)
+				{
+					float containerCrossSize = StartAxis == Axis.Horizontal ? groupHeight : groupWidth;
+					float leftover = containerCrossSize - contentCrossSize;
+					if (leftover > 0f)
+					{
+						extraBarSpace = leftover / barCount;
+					}
+				}
+			}
+
 			var currentBarSize = 0f;
 			var currentBarSpace = 0f;
 
@@ -194,21 +215,23 @@ namespace UnityEngine.UI.Extensions
 					{
 						if (StartAxis == Axis.Horizontal)
 						{
-							float newOffset = CalculateRowVerticalOffset(groupSize, offset, currentBarSpace);
-							LayoutRow(_itemList, currentBarSize, currentBarSpace, workingSize, padding.left, newOffset, axis);
+							float barThickness = currentBarSpace + extraBarSpace;
+							float newOffset = extraBarSpace > 0f && IsMiddleAlign ? offset : CalculateRowVerticalOffset(groupSize, offset, barThickness);
+							LayoutRow(_itemList, currentBarSize, barThickness, workingSize, padding.left, newOffset, axis);
 						}
 						else if (StartAxis == Axis.Vertical)
 						{
-							float newOffset = CalculateColHorizontalOffset(groupSize, offset, currentBarSpace);
-							LayoutCol(_itemList, currentBarSpace, currentBarSize, workingSize, newOffset, padding.top, axis);
+							float barThickness = currentBarSpace + extraBarSpace;
+							float newOffset = extraBarSpace > 0f && IsCenterAlign ? offset : CalculateColHorizontalOffset(groupSize, offset, barThickness);
+							LayoutCol(_itemList, barThickness, currentBarSize, workingSize, newOffset, padding.top, axis);
 						}
 					}
 
 					// Clear existing bar
 					_itemList.Clear();
 
-					// Add the current bar space to total barSpace accumulator, and reset to 0 for the next row
-					offset += currentBarSpace;
+					// Add the current bar space (plus any cross-axis fill) to total barSpace accumulator, and reset to 0 for the next row
+					offset += currentBarSpace + extraBarSpace;
 					offset += spacingBetweenBars;
 
 					currentBarSpace = 0;
@@ -229,15 +252,17 @@ namespace UnityEngine.UI.Extensions
 			{
 				if (StartAxis == Axis.Horizontal)
 				{
-					float newOffset = CalculateRowVerticalOffset(groupHeight, offset, currentBarSpace);
+					float barThickness = currentBarSpace + extraBarSpace;
+					float newOffset = extraBarSpace > 0f && IsMiddleAlign ? offset : CalculateRowVerticalOffset(groupHeight, offset, barThickness);
 					currentBarSize -= spacingBetweenElements;
-					LayoutRow(_itemList, currentBarSize, currentBarSpace, workingSize, padding.left, newOffset, axis);
+					LayoutRow(_itemList, currentBarSize, barThickness, workingSize, padding.left, newOffset, axis);
 				}
 				else if (StartAxis == Axis.Vertical)
 				{
-					float newOffset = CalculateColHorizontalOffset(groupWidth, offset, currentBarSpace);
+					float barThickness = currentBarSpace + extraBarSpace;
+					float newOffset = extraBarSpace > 0f && IsCenterAlign ? offset : CalculateColHorizontalOffset(groupWidth, offset, barThickness);
 					currentBarSize -= spacingBetweenElements;
-					LayoutCol(_itemList, currentBarSpace, currentBarSize, workingSize, newOffset, padding.top, axis);
+					LayoutCol(_itemList, barThickness, currentBarSize, workingSize, newOffset, padding.top, axis);
 				}
 			}
 
@@ -252,6 +277,75 @@ namespace UnityEngine.UI.Extensions
 				SetLayoutInputForAxis(offset, offset, -1, axis);
 			}
 			return offset;
+		}
+
+		/// <summary>
+		/// Measures how many bars the children wrap into and the natural size they occupy on the
+		/// wrap (cross) axis, using the exact same wrapping rules as <see cref="SetLayout"/>.
+		/// Used to evenly share leftover cross-axis space across the bars when
+		/// <see cref="ChildForceExpandCrossAxis"/> is enabled.
+		/// </summary>
+		private void MeasureBars(float workingSize, float spacingBetweenElements, float spacingBetweenBars, float leadingPadding, float trailingPadding, out int barCount, out float contentCrossSize)
+		{
+			barCount = 0;
+			contentCrossSize = 0f;
+			if (rectChildren.Count == 0)
+			{
+				return;
+			}
+
+			barCount = 1;
+			float sumBarSpace = 0f;
+			float currentBarSize = 0f;
+			float currentBarSpace = 0f;
+
+			for (var i = 0; i < rectChildren.Count; i++)
+			{
+				int index = i;
+				var child = rectChildren[index];
+				float childSize;
+				float childOtherSize;
+
+				if (StartAxis == Axis.Horizontal)
+				{
+					if (invertOrder)
+					{
+						index = IsLowerAlign ? rectChildren.Count - 1 - i : i;
+					}
+					child = rectChildren[index];
+					childSize = LayoutUtility.GetPreferredSize(child, 0);
+					childSize = Mathf.Min(childSize, workingSize);
+					childOtherSize = LayoutUtility.GetPreferredSize(child, 1);
+				}
+				else
+				{
+					if (invertOrder)
+					{
+						index = IsRightAlign ? rectChildren.Count - 1 - i : i;
+					}
+					child = rectChildren[index];
+					childSize = LayoutUtility.GetPreferredSize(child, 1);
+					childSize = Mathf.Min(childSize, workingSize);
+					childOtherSize = LayoutUtility.GetPreferredSize(child, 0);
+				}
+
+				if (currentBarSize + childSize > workingSize)
+				{
+					barCount++;
+					sumBarSpace += currentBarSpace;
+					currentBarSpace = 0f;
+					currentBarSize = 0f;
+				}
+
+				currentBarSize += childSize;
+				currentBarSpace = childOtherSize > currentBarSpace ? childOtherSize : currentBarSpace;
+				currentBarSize += spacingBetweenElements;
+			}
+
+			// Account for the final bar, which is laid out after the loop in SetLayout.
+			sumBarSpace += currentBarSpace;
+
+			contentCrossSize = leadingPadding + trailingPadding + sumBarSpace + spacingBetweenBars * (barCount - 1);
 		}
 
 		private float CalculateRowVerticalOffset(float groupHeight, float yOffset, float currentRowHeight)
@@ -471,10 +565,17 @@ namespace UnityEngine.UI.Extensions
 			return max;
 		}
 
+		protected override void OnEnable()
+		{
+			base.OnEnable();
+			LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
+		}
+
 		protected override void OnDisable()
 		{
 			m_Tracker.Clear();
 			LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
+			base.OnDisable();
 		}
 	}
 }

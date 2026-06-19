@@ -32,6 +32,9 @@ namespace UnityEngine.UI.Extensions
         [Tooltip("Should items being dragged over this list have their sizes equalized?")]
         public bool EqualizeSizesOnDrag = false;
 
+        [Tooltip("Should items keep the original rotation?")]
+        public bool KeepItemRotation = false;
+
         [Tooltip("Maximum number of items this container can hold")]
         public int maxItems = int.MaxValue;
 

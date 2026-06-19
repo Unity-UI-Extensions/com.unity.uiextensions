@@ -65,5 +65,31 @@ namespace UnityEngine.UI.Extensions
             return input.worldCamera == null ? Camera.main : input.worldCamera;
 
         }
+
+        /// <summary>
+        /// Sets the displayed text on a child named <paramref name="childName"/>, supporting either a
+        /// TextMeshPro (TMP_Text) or a legacy Unity UI Text component. Safe no-op if neither is found.
+        /// </summary>
+        public static void SetChildTextValue(this Transform parent, string childName, string value)
+        {
+            if (parent == null) { return; }
+            Transform child = parent.Find(childName);
+            if (child == null) { return; }
+
+#if UNITY_6000_0_OR_NEWER
+            TMPro.TMP_Text tmpText = child.GetComponent<TMPro.TMP_Text>();
+            if (tmpText != null)
+            {
+                tmpText.text = value;
+                return;
+            }
+#endif
+
+            Text uiText = child.GetComponent<Text>();
+            if (uiText != null)
+            {
+                uiText.text = value;
+            }
+        }
     }
 }

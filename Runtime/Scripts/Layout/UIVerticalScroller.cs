@@ -68,11 +68,14 @@ namespace UnityEngine.UI.Extensions
         public int FocusedElementIndex { get; private set; }
 
         public RectTransform Center { get => center; set => center = value; }
+        public RectTransform ElementSize { get => elementSize; set => elementSize = value; }
+        public ScrollRect ScrollRectComponent { get => scrollRect; set => scrollRect = value; }
+        public GameObject[] ArrayOfElements { get => arrayOfElements; set => arrayOfElements = value; }
 
         public string Result { get; private set; }
 
         //Scrollable area (content of desired ScrollRect)
-        public RectTransform ScrollingPanel{ get { return scrollRect.content; } }
+        public RectTransform ScrollingPanel { get { return scrollRect.content; } }
 
         /// <summary>
         /// Constructor when not used as component but called from other script
@@ -93,29 +96,6 @@ namespace UnityEngine.UI.Extensions
             if (!scrollRect)
             {
                 scrollRect = GetComponent<ScrollRect>();
-            }
-
-            if (!center)
-            {
-                Debug.LogError("Please define the RectTransform for the Center viewport of the scrollable area");
-            }
-
-            if (!elementSize)
-            {
-                elementSize = center;
-            }
-
-            if (arrayOfElements == null || arrayOfElements.Length == 0)
-            {
-                var childCount = ScrollingPanel.childCount;
-                if (childCount > 0)
-                {
-                    arrayOfElements = new GameObject[childCount];
-                    for (int i = 0; i < childCount; i++)
-                    {
-                        arrayOfElements[i] = ScrollingPanel.GetChild(i).gameObject;
-                    }
-                }
             }
         }
 
@@ -172,6 +152,30 @@ namespace UnityEngine.UI.Extensions
 
         public void Start()
         {
+            if (!center)
+            {
+                Debug.LogError("Please define the RectTransform for the Center viewport of the scrollable area");
+                return;
+            }
+
+            if (!elementSize)
+            {
+                elementSize = center;
+            }
+
+            if (arrayOfElements == null || arrayOfElements.Length == 0)
+            {
+                var childCount = ScrollingPanel.childCount;
+                if (childCount > 0)
+                {
+                    arrayOfElements = new GameObject[childCount];
+                    for (int i = 0; i < childCount; i++)
+                    {
+                        arrayOfElements[i] = ScrollingPanel.GetChild(i).gameObject;
+                    }
+                }
+            }
+
             if (scrollUpButton)
             {
                 scrollUpButton.GetComponent<Button>().onClick.AddListener(() => ScrollUp());
@@ -212,19 +216,11 @@ namespace UnityEngine.UI.Extensions
                 if (minDistance == distance[i])
                 {
                     FocusedElementIndex = i;
-#if UNITY_2022_1_OR_NEWER
                     var textComponentTxtMeshPro = arrayOfElements[i].GetComponentInChildren<TMPro.TMP_Text>();
                     if (textComponentTxtMeshPro != null)
                     {
                         Result = textComponentTxtMeshPro.text;
                     }
-#else
-                    var textComponent = arrayOfElements[i].GetComponentInChildren<Text>();
-                    if (textComponent != null)
-                    {
-                        Result = textComponent.text;
-                    }
-#endif
                 }
             }
 

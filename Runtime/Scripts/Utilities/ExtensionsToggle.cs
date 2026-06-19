@@ -89,12 +89,7 @@ namespace UnityEngine.UI
             base.OnValidate();
             Set(m_IsOn, false);
             PlayEffect(toggleTransition == ToggleTransition.None);
-#if UNITY_2018_3_OR_NEWER
             if (!Application.isPlaying)
-#else
-            var prefabType = UnityEditor.PrefabUtility.GetPrefabType(this);
-            if (prefabType != UnityEditor.PrefabType.Prefab && !Application.isPlaying)
-#endif
             {
                 CanvasUpdateRegistry.RegisterCanvasElementForLayoutRebuild(this);
             }

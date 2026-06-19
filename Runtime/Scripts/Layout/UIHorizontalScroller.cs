@@ -158,7 +158,7 @@ namespace UnityEngine.UI.Extensions
 
                 RectTransform r = this.arrayOfElements[i].GetComponent<RectTransform>();
                 r.anchorMax = r.anchorMin = r.pivot = new Vector2(0.5f, 0.5f);
-                r.localPosition = new Vector2(i * elementSize.rect.size.x,0);
+                r.localPosition = new Vector2(i * elementSize.rect.size.x, 0);
                 r.sizeDelta = elementSize.rect.size;
             }
 
@@ -209,19 +209,11 @@ namespace UnityEngine.UI.Extensions
                 if (minDistance == distance[i])
                 {
                     FocusedElementIndex = i;
-#if UNITY_2022_1_OR_NEWER
                     var textComponentTxtMeshPro = arrayOfElements[i].GetComponentInChildren<TMPro.TMP_Text>();
                     if (textComponentTxtMeshPro != null)
                     {
                         Result = textComponentTxtMeshPro.text;
                     }
-#else
-                    var textComponent = arrayOfElements[i].GetComponentInChildren<Text>();
-                    if (textComponent != null)
-                    {
-                        Result = textComponent.text;
-                    }
-#endif
                 }
             }
 

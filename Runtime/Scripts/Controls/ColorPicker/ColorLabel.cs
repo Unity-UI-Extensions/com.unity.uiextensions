@@ -4,12 +4,7 @@
 
 namespace UnityEngine.UI.Extensions.ColorPicker
 {
-
-#if UNITY_2022_1_OR_NEWER
     [RequireComponent(typeof(TMPro.TMP_Text))]
-#else
-    [RequireComponent(typeof(Text))]
-#endif
     public class ColorLabel : MonoBehaviour
     {
         public ColorPickerControl picker;
@@ -22,18 +17,10 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 
         public int precision = 0;
 
-#if UNITY_2022_1_OR_NEWER
         private TMPro.TMP_Text label;
-#else
-        private Text label;
-#endif
         private void Awake()
         {
-#if UNITY_2022_1_OR_NEWER
             label = GetComponent<TMPro.TMP_Text>();
-#else
-            label = GetComponent<Text>();
-#endif
             if (!label)
             {
                 Debug.LogError($"{gameObject.name} does not have a Text component assigned for the {nameof(ColorLabel)}");
@@ -63,7 +50,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
             UpdateValue();
         }
 
-        private void HSVChanged(float hue, float sateration, float value)
+        private void HSVChanged(float hue, float saturation, float value)
         {
             UpdateValue();
         }

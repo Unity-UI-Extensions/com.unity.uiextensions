@@ -80,7 +80,7 @@ namespace UnityEngine.UI.Extensions
 
             float _offset = 0;
             float _dimension = 0;
-            Rect panelDimensions = gameObject.GetComponent<RectTransform>().rect;
+            panelDimensions = gameObject.GetComponent<RectTransform>().rect;
             float currentYPosition = 0;
             var pageStepValue = _childSize = (int)panelDimensions.height * ((PageStep == 0) ? 3 : PageStep);
 
@@ -96,6 +96,7 @@ namespace UnityEngine.UI.Extensions
             _dimension = currentYPosition + _offset * -1;
 
             _screensContainer.GetComponent<RectTransform>().offsetMax = new Vector2(0f, _dimension);
+            _screensContainer.GetComponent<RectTransform>().offsetMin = Vector2.zero;
         }
 
         /// <summary>
@@ -211,7 +212,8 @@ namespace UnityEngine.UI.Extensions
         private void SetScrollContainerPosition()
         {
             _scrollStartPosition = _screensContainer.anchoredPosition.y;
-            _scroll_rect.verticalNormalizedPosition = (float)(_currentPage) / (_screens - 1);
+            //Guard against a single (or no) page producing a divide-by-zero / NaN normalized position.
+            _scroll_rect.verticalNormalizedPosition = _screens > 1 ? (float)(_currentPage) / (_screens - 1) : 0;
             OnCurrentScreenChange(_currentPage);
         }
 
