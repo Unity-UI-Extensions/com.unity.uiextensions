@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <code>100+ controls</code> · <code>21 example scenes</code> · <code>battle-tested since 2015</code> · <code>100% free · BSD-3-Clause</code>
+  <code>100+ controls</code> · <code>22 example scenes</code> · <code>battle-tested since 2015</code> · <code>100% free · BSD-3-Clause</code>
 </p>
 
 <p align="center">

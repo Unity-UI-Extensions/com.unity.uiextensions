@@ -27,13 +27,21 @@ namespace UnityEngine.UI.Extensions
 		[SerializeField]
 		ulong data4;
 
-		/// <summary>Number of elements in the bit array.</summary>
+		/// <summary>
+		/// Number of elements in the bit array.
+		/// </summary>
 		public readonly uint Capacity => 256u;
-		/// <summary>True if all bits are 0.</summary>
+		/// <summary>
+		/// True if all bits are 0.
+		/// </summary>
 		public readonly bool AllFalse => data1 == 0uL && data2 == 0uL && data3 == 0uL && data4 == 0uL;
-		/// <summary>True if all bits are 1.</summary>
+		/// <summary>
+		/// True if all bits are 1.
+		/// </summary>
 		public readonly bool AllTrue => data1 == ulong.MaxValue && data2 == ulong.MaxValue && data3 == ulong.MaxValue && data4 == ulong.MaxValue;
-		/// <summary>Returns the bit array in a human readable form.</summary>
+		/// <summary>
+		/// Returns the bit array in a human readable form.
+		/// </summary>
 		public readonly string HumanizedData =>
 			System.Text.RegularExpressions.Regex.Replace(String.Format("{0, " + 64u + "}", Convert.ToString((long)data4, 2)).Replace(' ', '0'), ".{8}", "$0.")
 			+ System.Text.RegularExpressions.Regex.Replace(String.Format("{0, " + 64u + "}", Convert.ToString((long)data3, 2)).Replace(' ', '0'), ".{8}", "$0.")

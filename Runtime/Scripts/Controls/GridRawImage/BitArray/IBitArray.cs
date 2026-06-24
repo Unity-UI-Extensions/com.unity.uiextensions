@@ -5,11 +5,17 @@ namespace UnityEngine.UI.Extensions
 {
     public interface IBitArray
     {
-        /// <summary>Number of elements in the bit array.</summary>
+        /// <summary>
+        /// Number of elements in the bit array.
+        /// </summary>
         uint Capacity { get; }
-        /// <summary>True if all bits are 0.</summary>
+        /// <summary>
+        /// True if all bits are 0.
+        /// </summary>
         bool AllFalse { get; }
-        /// <summary>True if all bits are 1.</summary>
+        /// <summary>
+        /// True if all bits are 1.
+        /// </summary>
         bool AllTrue { get; }
         /// <summary>
         /// Returns the state of the bit at a specific index.
@@ -17,7 +23,9 @@ namespace UnityEngine.UI.Extensions
         /// <param name="index">Index of the bit.</param>
         /// <returns>State of the bit at the provided index.</returns>
         bool this[uint index] { get; set; }
-        /// <summary>Returns the bit array in a human readable form.</summary>
+        /// <summary>
+        /// Returns the bit array in a human readable form.
+        /// </summary>
         string HumanizedData { get; }
 
         /// <summary>

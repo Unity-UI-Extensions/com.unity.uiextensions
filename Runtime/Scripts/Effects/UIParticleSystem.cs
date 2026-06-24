@@ -14,13 +14,21 @@ namespace UnityEngine.UI.Extensions
     /// </summary>
     public enum UIParticleSystemCullingMode
     {
-        /// <summary>Default. Simulates continuously and clamps a catastrophic catch-up (e.g. returning from the background) to maxSimulationDeltaTime so it cannot freeze the app (issue #486). Mirrors Unity's default culling mode.</summary>
+        /// <summary>
+        /// Default. Simulates continuously and clamps a catastrophic catch-up (e.g. returning from the background) to maxSimulationDeltaTime so it cannot freeze the app (issue #486). Mirrors Unity's default culling mode.
+        /// </summary>
         Automatic,
-        /// <summary>Clamp the simulation step (see maxSimulationDeltaTime); behaves the same as Automatic for this manual simulation.</summary>
+        /// <summary>
+        /// Clamp the simulation step (see maxSimulationDeltaTime); behaves the same as Automatic for this manual simulation.
+        /// </summary>
         Pause,
-        /// <summary>Replay the full elapsed time on the next frame. Original behaviour - can freeze the app after a long pause (issue #486).</summary>
+        /// <summary>
+        /// Replay the full elapsed time on the next frame. Original behaviour - can freeze the app after a long pause (issue #486).
+        /// </summary>
         PauseAndCatchup,
-        /// <summary>Replay the full elapsed time; behaves the same as PauseAndCatchup for this manual simulation.</summary>
+        /// <summary>
+        /// Replay the full elapsed time; behaves the same as PauseAndCatchup for this manual simulation.
+        /// </summary>
         AlwaysSimulate
     }
 

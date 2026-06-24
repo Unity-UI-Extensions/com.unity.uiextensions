@@ -21,13 +21,21 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         byte data;
 
-        /// <summary>Number of elements in the bit array.</summary>
+        /// <summary>
+        /// Number of elements in the bit array.
+        /// </summary>
         public uint Capacity => 8u;
-        /// <summary>True if all bits are 0.</summary>
+        /// <summary>
+        /// True if all bits are 0.
+        /// </summary>
         public bool AllFalse => data == 0u;
-        /// <summary>True if all bits are 1.</summary>
+        /// <summary>
+        /// True if all bits are 1.
+        /// </summary>
         public bool AllTrue => data == byte.MaxValue;
-        /// <summary>Returns the bit array in a human readable form.</summary>
+        /// <summary>
+        /// Returns the bit array in a human readable form.
+        /// </summary>
         public string HumanizedData => String.Format("{0, " + Capacity + "}", Convert.ToString(data, 2)).Replace(' ', '0');
 
         /// <summary>
