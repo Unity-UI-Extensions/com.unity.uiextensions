@@ -72,7 +72,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
         private string ConvertToDisplayString(float value)
         {
             if (precision > 0)
-                return value.ToString("f " + precision);
+                return value.ToString("f" + precision);
             else
                 return Mathf.FloorToInt(value).ToString();
         }
