@@ -74,15 +74,11 @@ To get started with the project, here's a little guide:
 
 ## [Updates:](https://unity-ui-extensions.github.io/ReleaseNotes/RELEASENOTES)
 
-## Release 2.4.0 - Unity supports Unity UI - 2025/11/20
+## Release 3.0.0 - Unity 6, reimagined - 2026/06/19
 
-Stay tuned as we begin work on a Unity 6 update, to verify Unity 6 support and possibly get some new controls in the mix.
+The V3 relaunch brings **full Unity 6 support**, a refreshed brand, and the start of a two-package ecosystem — the proven uGUI library you know, now joined by a modern UI Toolkit companion.
 
-## Release 2.3.2 - Rejuvenation - 2023/11/26
-
-2023 is certainly an interesting year to keep you on your toes, and finding time to keep managing all the requests and updates that come in are taking their toll, especially for a FREE project, but nonetheless, I still do it.
-
-Mainly bugfixes for the end of year update, promoting some resolutions that have been verified and tested since the last release.
+> **Two packages. One ecosystem.** These notes cover the **uGUI** package (`com.unity.uiextensions`). Meet its new companion: [UI Toolkit Extensions](https://github.com/Unity-UI-Extensions/com.unity.uitoolkitextensions).
 
 To get up to speed with the Unity UI Extensions, check out the [Getting Started](https://unity-ui-extensions.github.io/GettingStarted.html) Page.
 
@@ -93,33 +89,58 @@ To get up to speed with the Unity UI Extensions, check out the [Getting Started]
 >
 > Much easier that posting a question / issue on YouTube, Twitter or Facebook :D
 
-## Breaking changes
+### Added
 
-For customers upgrading from earlier versions of Unity to Unity 2020, please be aware of the Breaking change related to Text Based components.  You will need to manually replace any UI using the older ```Text``` component and replace them with ```TextMeshPro``` versions. This is unavoidable due to Unity deprecating the Text component.
+- Full support for Unity 6, updating all controls and editor components for the new Unity UI framework, including compile flag support for the updated Unity 6 API (#493, #497)
+- Added new GridRawImage control, applying a texture as a repeating grid on a RawImage
+- Added new UI_Knob2 control, an updated take on the rotary UI Knob
+- Added new UISegmentedCircle control, for drawing segmented circular UI
+- Added new UI Graphic Selector control
+- Added SetXWithoutNotify and SetYWithoutNotify methods to the BoxSlider, to set values without firing OnValueChanged (@Kurante2801)
+- The Pivot can now be used as the reference point when drawing lines with the UILineRenderer (#490)
+- Added a "close line" option to the UILineRenderer which finishes the line off with a closer to fill any gaps at the end - Resolves: #449
+- Added a new "CullingMode" option to the UI Particle System that when enabled alters the control to resolve unscaled delta time issues - Fixes #486, #487
 
-> New users to 2022 are unaffected as all the Editor commands have been updated to use the newer TextMeshPro versions.
+### Changed
 
-For more details, see the [deprecation notice](https://github.com/Unity-UI-Extensions/com.unity.uiextensions/discussions/428) on GitHub.
+- fix: Optimized Gradient2 when ModifyMesh is called, and it now responds to gradient key updates in both the inspector and at runtime (@bluefallsky)
+- fix: Corrected the radial triangle add order (#384) (@bluefallsky)
+- fix: The UILineConnector now refreshes when the global scale changes and its point array calculation has been corrected (#495) (@hugoymh)
+- fix: The ReorderableList now keeps an item's rotation configuration while dragging (@JavierMonton)
+- fix: Addressed a null reference exception in the ReorderableList
+- fix: Resolved a stacking issue with the ReorderableList when moving elements "slightly" - Resolves: #470
+- fix: Force ScrollRect.content setup on initialization (#485)
+- fix: Resolved a race condition in the ScrollSnap controls which could raise a NaN error when lerping - Resolves: #452 / #508
+- fix: Patched the HSS/VSS against a potential divide by zero error if the scroll snap has a single page
+- fix: Updated GetCurrentPage on the ScrollSnaps to be more resilient - Fixes #254
+- fix: Updated the ScrollSnaps to be more resilient to rescaling and patched the full screen scroll snap RIF - Fixes #257, #260
+- fix: Resolved out of bounds issues with the Infinite scroll control - Fixes #237
+- fix: Addressed layout issues with the FlowLayoutGroup - Fixes #456
+- Layout groups updated to rebuild on disable/enable - Resolves: #468
+- Updated the UIVertical Scroller to be more efficient for Unity 6 and updated its example
+- Updated the Picker control and samples to the latest version
+- Removed cap points from the line renderers as they caused LOD and jagged-texture issues
+- Renamed Segment to SegmentedControlSegment to avoid class name conflicts
+- Updated components to maintain both Text and TextMeshPro compatibility where possible, including a debug option to allow both (#477)
+- Reverted Curly Text back to the old Text component as it is not compatible with TextMeshPro - alternatives are being investigated
 
-## Added
+### Deprecated
 
-- Add CalculatePointOnCurve for uilinerenderer (@victornor)
+- With the move to Unity 6, the old legacy Text based controls have been cleared out as they are no longer valid, along with a general script clean-up to remove legacy dependencies.  For any affected component, use the TextMeshPro alternatives.
 
-## Changed
+## Additional Notes
 
-- fix: Fixed an null reference exception with the ResetSelectableHighlight (@FejZa)
-- fix: Resolved an issue where the last line in a flow layout group would overflow the rect bounds.
-- fix: GetPosition when Segments is null (@victornor)
-- fix: Fix Bug! NicerOutline color.a Loss when m_UseGraphicAlpha is true (wanliyun)
-- fix: Update to force Enumerated start for Accordion elements, Resolves: #455
-- Added argument to the UpdateLayout method for the HSS/VSS to move to a new starting page.
-- Updated implementations to handle 2023 support, with 2023 moving in to public release.
-- Added extra event on the AutoCompleteComboBox, to fire when an item in the list is selected, with its display name.
-- FlowLayoutGroup components updated to latest (likely the last as the author has stopped development)
+### [Installation Instructions](https://unity-ui-extensions.github.io/UPMInstallation.html)
 
-## Deprecated
+The recommended way to add the Unity UI Extensions project to your solution is to use the Unity package Manager. Simply use the Unity Package Manager to reference the project to install it
 
-- All deprecated Text based components now have "obsolete" tags, to avoid breaking code.  Note, these do not function in 2022 and above, as Unity have "changed" things.  For any affected component, I recommend updating to use TextMeshPro native features.
+New for 2020, we have added OpenUPM support and the package can be installed using the following [OpenUPM CLI](https://openupm.com/docs/) command:
+
+```cli
+`openupm add com.unity.uiextensions`
+```
+
+> For more details on using [OpenUPM CLI, check the docs here](https://github.com/openupm/openupm-cli#installation).
 
 - [UI Extensions Issue log](https://github.com/Unity-UI-Extensions/com.unity.uiextensions/issues)
 
@@ -151,44 +172,43 @@ There are almost 70+ extension controls / effect and other utilities in the proj
 
 [Controls](https://unity-ui-extensions.github.io/Controls.html#controls)
 
-|Accordion|ColorPicker|Selection Box|UI Flippable|ComboBox|
+|Accordion|ColorPicker|Selection Box|Segmented Control|ComboBox|
 |-|-|-|-|-|
 |AutoComplete ComboBox|DropDown List|BoundToolTip|UIWindowBase|UI Knob|
-|TextPic|Input Focus|Box Slider|Cooldown Button|Segmented Control|
-|Stepper|Range Slider|Radial Slider|MultiTouch Scroll Rect|MinMax SLider|
+|UI Knob2|TextPic|Input Focus|Box Slider|Cooldown Button|
+|Stepper|Range Slider|Radial Slider|MultiTouch Scroll Rect|MinMax Slider|
+|GridRawImage|UICircleSegmented|UIGraphicSector|||
 
 [Primitives](https://unity-ui-extensions.github.io/Controls.html#primitives)
 
-|UILineRenderer|UILineTextureRenderer|UICircle|DiamondGraph|UICornerCut|
+|UILineRenderer|UILineTextureRenderer|UILineRendererFIFO|UILineRendererList|UICircle|
 |-|-|-|-|-|
-|UIPolygon|UISquircle||||
+|DiamondGraph|UICornerCut|UIPolygon|UISquircle|UIGridRenderer|
 
 [Layouts](https://unity-ui-extensions.github.io/Controls.html#layouts)
 
 |Horizontal Scroll Snap|Vertical Scroll Snap|Flow Layout Group|Radial Layout|Tile Size Fitter|
 |-|-|-|-|-|
-|Scroll Snap (alt implementation)|Reorderable List|UI Vertical Scroller|Curved Layout|Table Layout|
-|FancyScrollView|Card UI|Scroll Position Controller (obsolete)|Content Scroll Snap Horizontal|Scroller|
-|ResizePanel|RescalePanel|RescaleDragPanel|||
+|Scroll Snap (alt implementation)|Reorderable List|UI Vertical Scroller|UI Horizontal Scroller|Curved Layout|
+|Table Layout|FancyScrollView|Card UI|Scroll Position Controller (obsolete)|Content Scroll Snap Horizontal|
+|Scroller|ResizePanel|RescalePanel|RescaleDragPanel||
 
 [Effects](https://unity-ui-extensions.github.io/Controls.html#effect-components)
 
-|Best Fit Outline|Curved Text|Gradient|Gradient2|Letter Spacing|
+|Gradient|Gradient2|RaycastMask|SoftAlphaMask|UIFlippable|
 |-|-|-|-|-|
-|NicerOutline|RaycastMask|UIFlippable|UIImageCrop|SoftAlphaMask|
-|CylinderText|UIParticleSystem|CurlyUI|Shine Effect|Shader Effects|
+|UIImageCrop|UIParticleSystem|CurlyUI|Shine Effect|Shader Effects|
 
-> Text Effects are not supported with TextMeshPro due to its architecture, try using the native TextMeshPro effects instead.
+> The legacy Text based effects (Best Fit Outline, Curved Text, Letter Spacing, NicerOutline and CylinderText) were removed in V3.0.0 as they are not supported with TextMeshPro due to its architecture, try using the native TextMeshPro effects instead.
 
 [Additional Components](https://unity-ui-extensions.github.io/Controls.html#additional-components)
 
 |ReturnKeyTrigger|TabNavigation|uGUITools|ScrollRectTweener|ScrollRectLinker|
 |-|-|-|-|-|
 |ScrollRectEx|UI_InfiniteScroll|UI_ScrollRectOcclusion|UIScrollToSelection|UISelectableExtension|
-|switchToRectTransform|ScrollConflictManager|CLFZ2 (Encryption)|DragCorrector|PPIViewer|
-|UI_TweenScale|UI_MagneticInfiniteScroll|UI_ScrollRectOcclusion|NonDrawingGraphic|
-|UILineConnector|
-|UIHighlightable|Menu Manager|Pagination Manager|||
+|switchToRectTransform|ScrollConflictManager|CLFZ2 (Compression)|DragCorrector|PPIViewer|
+|UI_TweenScale|UI_MagneticInfiniteScroll|NonDrawingGraphic|UILineConnector|UIHighlightable|
+|Menu Manager|Pagination Manager|ResetSelectableHighlight|SelectableScaler|InputFieldEnterSubmit|
 
 *More to come*
 
