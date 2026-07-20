@@ -24,10 +24,14 @@ namespace UnityEngine.UI.Extensions
             return
                 !gameObject.scene.IsValid() &&
                 !gameObject.scene.isLoaded &&
+#if UNITY_6000_5_OR_NEWER
+                gameObject.GetEntityId().IsValid() &&
+#else
                 gameObject.GetInstanceID() >= 0 &&
+#endif
                 // I noticed that ones with IDs under 0 were objects I didn't recognize
                 !gameObject.hideFlags.HasFlag(HideFlags.HideInHierarchy);
-                    // I don't care about GameObjects *inside* prefabs, just the overall prefab.
+            // I don't care about GameObjects *inside* prefabs, just the overall prefab.
         }
 
         /// <summary>
@@ -46,7 +50,7 @@ namespace UnityEngine.UI.Extensions
             }
             if (value.CompareTo(max) > 0)
             {
-                value =  max;
+                value = max;
             }
 
             return value;

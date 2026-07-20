@@ -66,6 +66,7 @@ namespace UnityEngine.UI.Extensions
 		private IBoxSelectable clickedAfterDrag;
 
 		//Custom UnityEvent so we can add Listeners to this instance when Selections are changed.
+		[System.Serializable]
 		public class SelectionEvent : UnityEvent<IBoxSelectable[]> { }
 		public SelectionEvent onSelectionChange = new SelectionEvent();
 
@@ -181,7 +182,11 @@ namespace UnityEngine.UI.Extensions
 			// If we do not have a group of selectables already set, we'll just loop through every object that's a monobehaviour, and look for selectable interfaces in them
 			if (selectableGroup == null)
 			{
+#if UNITY_6000_5_OR_NEWER
+				behavioursToGetSelectionsFrom = GameObject.FindObjectsByType<MonoBehaviour>();
+#else
 				behavioursToGetSelectionsFrom = GameObject.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
+#endif
 			}
 			else
 			{
@@ -313,7 +318,7 @@ namespace UnityEngine.UI.Extensions
 			boxRect.anchoredPosition = startPoint;
 			boxRect.sizeDelta = difference;
 
-			//Then we check our list of Selectables to see if they're being preselected or not.
+			// Then we check our list of Selectables to see if they're being preselected or not.
 			foreach (var selectable in selectables)
 			{
 
@@ -387,14 +392,14 @@ namespace UnityEngine.UI.Extensions
 
 		}
 
-		/*
-	 * Finding the camera used to calculate the screenPoint of an object causes a couple of problems:
-	 * 
-	 * If it has a rectTransform, the root Canvas that the rectTransform is a descendant of will give unusable
-	 * screen points depending on the Canvas.RenderMode, if we don't do any further calculation.
-	 * 
-	 * This function solves that problem. 
-	 */
+		/// <summary>
+		/// Finding the camera used to calculate the screenPoint of an object causes a couple of problems:
+		/// If it has a rectTransform, the root Canvas that the rectTransform is a descendant of will give unusable
+		/// screen points depending on the Canvas.RenderMode, if we don't do any further calculation.
+		/// This function solves that problem. 
+		/// </summary>
+		/// <param name="rectTransform"></param>
+		/// <returns></returns>
 		Camera GetScreenPointCamera(RectTransform rectTransform)
 		{
 

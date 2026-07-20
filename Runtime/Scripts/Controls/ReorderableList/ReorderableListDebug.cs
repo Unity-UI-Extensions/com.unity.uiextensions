@@ -10,7 +10,11 @@ namespace UnityEngine.UI.Extensions
 
         void Awake()
         {
+#if UNITY_6000_5_OR_NEWER
+            foreach (var list in FindObjectsByType<ReorderableList>())
+#else
             foreach (var list in FindObjectsByType<ReorderableList>(FindObjectsSortMode.None))
+#endif
             {
                 list.OnElementDropped.AddListener(ElementDropped);
             }

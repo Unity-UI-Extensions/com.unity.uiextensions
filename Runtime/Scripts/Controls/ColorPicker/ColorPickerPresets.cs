@@ -35,7 +35,11 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 
 		protected virtual void Reset()
 		{
+#if UNITY_6000_5_OR_NEWER
+			playerPrefsKey = "colorpicker_" + GetEntityId().ToString();
+#else
 			playerPrefsKey = "colorpicker_" + GetInstanceID().ToString();
+#endif
 		}
 
 		protected virtual void Awake()
@@ -75,7 +79,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 					break;
 				default:
 					throw new System.NotImplementedException(saveType.ToString());
-			}	
+			}
 
 			if (!string.IsNullOrEmpty(jsonData))
 			{
@@ -159,7 +163,7 @@ namespace UnityEngine.UI.Extensions.ColorPicker
 			newPresetButton.transform.SetAsLastSibling();
 			newPresetButton.SetActive(true);
 			newPresetButton.GetComponent<Image>().color = color;
-			
+
 			createPresetImage.color = Color.white;
 
 			if (!loading)

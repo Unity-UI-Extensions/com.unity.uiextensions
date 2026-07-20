@@ -98,7 +98,9 @@ namespace UnityEngine.UI.Extensions
 
 		public float multipliedPixelsPerUnit => pixelsPerUnit * Settings.PixelsPerUnitMultiplier;
 
+#if !UNITY_6000_6_OR_NEWER
 		protected Sector() => useLegacyMeshGeneration = false;
+#endif
 
 		protected override void OnEnable()
 		{
