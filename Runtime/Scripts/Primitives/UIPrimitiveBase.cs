@@ -43,7 +43,9 @@ namespace UnityEngine.UI.Extensions
 
         protected UIPrimitiveBase()
         {
+#if !UNITY_6000_6_OR_NEWER
             useLegacyMeshGeneration = false;
+#endif
         }
 
         /// <summary>
@@ -241,6 +243,14 @@ namespace UnityEngine.UI.Extensions
 
         public virtual int layoutPriority { get { return 0; } }
 
+#if UNITY_6000_6_OR_NEWER
+        /// <inheritdoc/>
+        public virtual float maxWidth { get { return LayoutUtility.DefaultMaxSize; } }
+
+        /// <inheritdoc/>
+        public virtual float maxHeight { get { return LayoutUtility.DefaultMaxSize; } }
+#endif
+
         #endregion
 
         #region ICanvasRaycastFilter Interface
@@ -297,7 +307,7 @@ namespace UnityEngine.UI.Extensions
         {
             Rect spriteRect = sprite.rect;
             //if (type == Type.Simple || type == Type.Filled)
-                return new Vector2(local.x * rect.width, local.y * rect.height);
+            return new Vector2(local.x * rect.width, local.y * rect.height);
 
             //Vector4 border = sprite.border;
             //Vector4 adjustedBorder = GetAdjustedBorders(border / pixelsPerUnit, rect);

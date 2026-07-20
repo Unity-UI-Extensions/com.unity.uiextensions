@@ -120,8 +120,11 @@ namespace UnityEngine.UI.Extensions
             }
 
             horizontalSize -= columnSpacing;
-
+#if UNITY_6000_6_OR_NEWER
+            SetLayoutInputForAxis(horizontalSize, horizontalSize, 0, 0, 0);
+#else
             SetLayoutInputForAxis(horizontalSize, horizontalSize, 0, 0);
+#endif
         }
 
         public override void CalculateLayoutInputVertical()
@@ -183,7 +186,11 @@ namespace UnityEngine.UI.Extensions
             }
 
             totalPreferredHeight = Mathf.Max(totalMinHeight, totalPreferredHeight);
+#if UNITY_6000_6_OR_NEWER
+            SetLayoutInputForAxis(totalMinHeight, totalPreferredHeight, 1, 1, 1);
+#else
             SetLayoutInputForAxis(totalMinHeight, totalPreferredHeight, 1, 1);
+#endif            
         }
 
         public override void SetLayoutHorizontal()
