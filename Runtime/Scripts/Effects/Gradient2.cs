@@ -26,6 +26,7 @@ namespace UnityEngine.UI.Extensions
         [SerializeField]
         [Tooltip("Add vertices to display complex gradients. Turn off if your shape is already very complex, like text.")]
         bool _modifyVertices = true;
+        Color _baseVertexColor;
 
         [SerializeField]
         [Range(-1, 1)]
@@ -111,6 +112,7 @@ namespace UnityEngine.UI.Extensions
             List<UIVertex> _vertexList = ListPool<UIVertex>.Get();
 
             helper.GetUIVertexStream(_vertexList);
+            _baseVertexColor = _vertexList[0].color;
 
             int nCount = _vertexList.Count;
             switch (GradientType)
@@ -510,7 +512,7 @@ namespace UnityEngine.UI.Extensions
                 splitVertex.position = new Vector3(stop, splitY, vertex1.position.z);
                 splitVertex.normal = vertex1.normal;
                 splitVertex.uv0 = new Vector2(vertex1.uv0.x - (uvx * ratio), vertex1.uv0.y - (uvy * ratio));
-                splitVertex.color = Color.white;
+                splitVertex.color = _baseVertexColor;
                 return splitVertex;
             }
             else
@@ -527,7 +529,7 @@ namespace UnityEngine.UI.Extensions
                 splitVertex.position = new Vector3(splitX, stop, vertex1.position.z);
                 splitVertex.normal = vertex1.normal;
                 splitVertex.uv0 = new Vector2(vertex1.uv0.x - (uvx * ratio), vertex1.uv0.y - (uvy * ratio));
-                splitVertex.color = Color.white;
+                splitVertex.color = _baseVertexColor;
                 return splitVertex;
             }
         }
