@@ -120,8 +120,10 @@ namespace UnityEngine.UI.Extensions
             }
 
             horizontalSize -= columnSpacing;
+
 #if UNITY_6000_6_OR_NEWER
-            SetLayoutInputForAxis(horizontalSize, horizontalSize, 0, 0, 0);
+            // Unity 6.6+: (min, max, preferred, flexible, axis) — fixed column width, so max == preferred
+            SetLayoutInputForAxis(horizontalSize, horizontalSize, horizontalSize, 0, 0);
 #else
             SetLayoutInputForAxis(horizontalSize, horizontalSize, 0, 0);
 #endif
@@ -187,10 +189,11 @@ namespace UnityEngine.UI.Extensions
 
             totalPreferredHeight = Mathf.Max(totalMinHeight, totalPreferredHeight);
 #if UNITY_6000_6_OR_NEWER
-            SetLayoutInputForAxis(totalMinHeight, totalPreferredHeight, 1, 1, 1);
+            // flexible=1 → can grow, so max is unconstrained
+            SetLayoutInputForAxis(totalMinHeight, LayoutUtility.DefaultMaxSize, totalPreferredHeight, 1, 1);
 #else
             SetLayoutInputForAxis(totalMinHeight, totalPreferredHeight, 1, 1);
-#endif            
+#endif
         }
 
         public override void SetLayoutHorizontal()

@@ -45,7 +45,8 @@ namespace UnityEngine.UI.Extensions
 				base.CalculateLayoutInputHorizontal();
 				var minWidth = GetGreatestMinimumChildWidth() + padding.left + padding.right;
 #if UNITY_6000_6_OR_NEWER
-				SetLayoutInputForAxis(minWidth, -1, -1, 0, 0);
+				// Unity 6.6+: (min, max, preferred, flexible, axis)
+				SetLayoutInputForAxis(minWidth, LayoutUtility.DefaultMaxSize, -1, -1, 0);
 #else
 				SetLayoutInputForAxis(minWidth, -1, -1, 0);
 #endif
@@ -78,10 +79,10 @@ namespace UnityEngine.UI.Extensions
 				base.CalculateLayoutInputHorizontal();
 				var minHeight = GetGreatestMinimumChildHeigth() + padding.bottom + padding.top;
 #if UNITY_6000_6_OR_NEWER
-				SetLayoutInputForAxis(minHeight, -1, -1, 1, 1);
+				SetLayoutInputForAxis(minHeight, LayoutUtility.DefaultMaxSize, -1, -1, 1);
 #else
 				SetLayoutInputForAxis(minHeight, -1, -1, 1);
-#endif				
+#endif
 			}
 		}
 
@@ -283,7 +284,7 @@ namespace UnityEngine.UI.Extensions
 			if (layoutInput)
 			{
 #if UNITY_6000_6_OR_NEWER
-				SetLayoutInputForAxis(offset, offset, -1, axis, 0);
+				SetLayoutInputForAxis(offset, LayoutUtility.DefaultMaxSize, offset, -1, axis);
 #else
 				SetLayoutInputForAxis(offset, offset, -1, axis);
 #endif
