@@ -513,7 +513,7 @@ namespace UnityEngine.UI.Extensions
         }
 
 #if !UNITY_6000_7_OR_NEWER
-#if UNITY_6000_6_OR_NEWER
+#if UNITY_6000_6_OR_NEWER && !UNITY_6000_7_OR_NEWER
         [System.Obsolete("Use Refresh() instead.")]
 #endif
         public override void ModifyMesh(Mesh _mesh)
