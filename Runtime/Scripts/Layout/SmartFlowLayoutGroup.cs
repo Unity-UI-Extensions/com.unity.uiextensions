@@ -126,7 +126,11 @@ namespace UnityEngine.UI.Extensions
             if (m_StartAxis == Axis.Horizontal)
             {
                 float min = GetGreatestMinimumChildWidth() + padding.left + padding.right;
+#if UNITY_6000_6_OR_NEWER
+                SetLayoutInputForAxis(min, LayoutUtility.DefaultMaxSize, -1, -1, 0);
+#else
                 SetLayoutInputForAxis(min, -1, -1, 0);
+#endif
             }
             else
             {
@@ -143,7 +147,11 @@ namespace UnityEngine.UI.Extensions
             else
             {
                 float min = GetGreatestMinimumChildHeight() + padding.top + padding.bottom;
+#if UNITY_6000_6_OR_NEWER
+                SetLayoutInputForAxis(min, LayoutUtility.DefaultMaxSize, -1, -1, 1);
+#else
                 SetLayoutInputForAxis(min, -1, -1, 1);
+#endif
             }
         }
 
@@ -265,12 +273,20 @@ namespace UnityEngine.UI.Extensions
                 if (horizontal)
                 {
                     _layoutHeight = totalCross;
+#if UNITY_6000_6_OR_NEWER
+                    SetLayoutInputForAxis(totalCross, LayoutUtility.DefaultMaxSize, totalCross, -1, 1);
+#else
                     SetLayoutInputForAxis(totalCross, totalCross, -1, 1);
+#endif
                 }
                 else
                 {
                     _layoutWidth = totalCross;
+#if UNITY_6000_6_OR_NEWER
+                    SetLayoutInputForAxis(totalCross, LayoutUtility.DefaultMaxSize, totalCross, -1, 0);
+#else
                     SetLayoutInputForAxis(totalCross, totalCross, -1, 0);
+#endif
                 }
             }
 
