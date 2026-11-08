@@ -512,10 +512,7 @@ namespace UnityEngine.UI.Extensions
             // use tangent and start and end time to derive control point 2 and 3
         }
 
-#if !UNITY_6000_7_OR_NEWER
-#if UNITY_6000_6_OR_NEWER && !UNITY_6000_7_OR_NEWER
-        [System.Obsolete("Use Refresh() instead.")]
-#endif
+#if !UNITY_6000_6_OR_NEWER
         public override void ModifyMesh(Mesh _mesh)
         {
 
