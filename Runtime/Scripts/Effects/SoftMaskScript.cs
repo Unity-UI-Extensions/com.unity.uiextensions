@@ -11,6 +11,7 @@ namespace UnityEngine.UI.Extensions
     public class SoftMaskScript : MonoBehaviour
     {
         Material mat;
+        Graphic cachedGraphic;
 
         Canvas cachedCanvas = null;
         Transform cachedCanvasTransform = null;
@@ -63,13 +64,14 @@ namespace UnityEngine.UI.Extensions
                 return;
             }
 
-            var graphic = GetComponent<Graphic>();
-            if (graphic != null)
+            cachedGraphic = GetComponent<Graphic>();
+            if (cachedGraphic != null)
             {
                 mat = new Material(ShaderLibrary.GetShaderInstance("UI Extensions/SoftMaskShader"));
-                graphic.material = mat;
-                cachedCanvas = graphic.canvas;
+                cachedCanvas = cachedGraphic.canvas;
                 cachedCanvasTransform = cachedCanvas.transform;
+                SetMask();
+                cachedGraphic.material = mat;
             }
         }
 
@@ -85,18 +87,38 @@ namespace UnityEngine.UI.Extensions
         {
             var worldRect = GetCanvasRect();
             var size = worldRect.size;
+            if (size.x == 0f || size.y == 0f)
+                return;
+
             maskScale.Set(1.0f / size.x, 1.0f / size.y);
             maskOffset = -worldRect.min;
             maskOffset.Scale(maskScale);
 
-            mat.SetTextureOffset("_AlphaMask", maskOffset);
-            mat.SetTextureScale("_AlphaMask", maskScale);
-            mat.SetTexture("_AlphaMask", AlphaMask);
+            ApplyMask(mat);
 
-            mat.SetFloat("_HardBlend", HardBlend ? 1 : 0);
-            mat.SetInt("_FlipAlphaMask", FlipAlphaMask ? 1 : 0);
-            mat.SetInt("_NoOuterClip", DontClipMaskScalingRect ? 1 : 0);
-            mat.SetFloat("_CutOff", CutOff);
+            if (cachedGraphic == null || !cachedGraphic.isActiveAndEnabled || cachedGraphic.material != mat)
+                return;
+
+            // A parent Mask can give the renderer a cached stencil copy of our material.
+            var renderer = cachedGraphic.canvasRenderer;
+            if (renderer.materialCount == 0)
+                return;
+
+            var renderingMaterial = renderer.GetMaterial(0);
+            if (renderingMaterial != null && renderingMaterial != mat && renderingMaterial.shader == mat.shader)
+                ApplyMask(renderingMaterial);
+        }
+
+        void ApplyMask(Material material)
+        {
+            material.SetTextureOffset("_AlphaMask", maskOffset);
+            material.SetTextureScale("_AlphaMask", maskScale);
+            material.SetTexture("_AlphaMask", AlphaMask);
+
+            material.SetFloat("_HardBlend", HardBlend ? 1 : 0);
+            material.SetInt("_FlipAlphaMask", FlipAlphaMask ? 1 : 0);
+            material.SetInt("_NoOuterClip", DontClipMaskScalingRect ? 1 : 0);
+            material.SetFloat("_CutOff", CutOff);
         }
 
         public Rect GetCanvasRect()
