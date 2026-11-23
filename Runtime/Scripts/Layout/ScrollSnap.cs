@@ -59,6 +59,9 @@ namespace UnityEngine.UI.Extensions
 
         private float _itemSize;
 
+        // spacing between list items, taken from a Horizontal/Vertical Layout Group on the list container (if any)
+        private float _itemSpacing;
+
         private int _itemsCount = 0;
 
         // drag related
@@ -102,6 +105,12 @@ namespace UnityEngine.UI.Extensions
         public event PageSnapChange onPageChange;
 
         public ScrollDirection direction = ScrollDirection.Horizontal;
+
+        // distance the list container has to move to advance by one page (item size plus layout group spacing)
+        private float PageStep
+        {
+            get { return _itemSize + _itemSpacing; }
+        }
 
         // Use this for initialization
         void Start()
@@ -163,6 +172,9 @@ namespace UnityEngine.UI.Extensions
             }
 
             _itemSize = size;
+
+            var layoutGroup = _listContainerTransform.GetComponent<HorizontalOrVerticalLayoutGroup>();
+            _itemSpacing = layoutGroup != null ? layoutGroup.spacing : 0;
 
             if (LinkScrolrectScrollSensitivity)
             {
@@ -246,7 +258,7 @@ namespace UnityEngine.UI.Extensions
                         for (var i = 0; i < _pages; i++)
                         {
                             _pageAnchorPositions[i] = new Vector3(
-                                _listContainerMaxPosition - _itemSize * i,
+                                _listContainerMaxPosition - PageStep * i,
                                 _listContainerTransform.localPosition.y,
                                 _listContainerTransform.localPosition.z
                             );
@@ -267,7 +279,7 @@ namespace UnityEngine.UI.Extensions
                         {
                             _pageAnchorPositions[i] = new Vector3(
                                 _listContainerTransform.localPosition.x,
-                                _listContainerMinPosition + _itemSize * i,
+                                _listContainerMinPosition + PageStep * i,
                                 _listContainerTransform.localPosition.z
                             );
                         }
@@ -461,12 +473,13 @@ namespace UnityEngine.UI.Extensions
 
             //Guard against degenerate item sizing (e.g. a Content Size Fitter momentarily reporting a
             //zero-sized viewport/content) which would otherwise produce a 0/0 = NaN page value.
-            if (_itemSize <= 0)
+            float step = PageStep;
+            if (_itemSize <= 0 || step <= 0)
             {
                 return 0;
             }
 
-            float page = pos / _itemSize;
+            float page = pos / step;
 
             return Mathf.Clamp(Mathf.RoundToInt(page), 0, _pages);
         }
