@@ -12,6 +12,7 @@ namespace UnityEngine.UI.Extensions
     {
         Material mat;
 
+        Graphic cachedGraphic = null;
         Canvas cachedCanvas = null;
         Transform cachedCanvasTransform = null;
         readonly Vector3[] m_WorldCorners = new Vector3[4];
@@ -52,6 +53,7 @@ namespace UnityEngine.UI.Extensions
             {
                 mat = new Material(ShaderLibrary.GetShaderInstance("UI Extensions/SoftMaskShader"));
                 text.material = mat;
+                cachedGraphic = text;
                 cachedCanvas = text.canvas;
                 cachedCanvasTransform = cachedCanvas.transform;
                 // For some reason, having the mask control on the parent and disabled stops the mouse interacting
@@ -68,6 +70,7 @@ namespace UnityEngine.UI.Extensions
             {
                 mat = new Material(ShaderLibrary.GetShaderInstance("UI Extensions/SoftMaskShader"));
                 graphic.material = mat;
+                cachedGraphic = graphic;
                 cachedCanvas = graphic.canvas;
                 cachedCanvasTransform = cachedCanvas.transform;
             }
@@ -89,14 +92,36 @@ namespace UnityEngine.UI.Extensions
             maskOffset = -worldRect.min;
             maskOffset.Scale(maskScale);
 
-            mat.SetTextureOffset("_AlphaMask", maskOffset);
-            mat.SetTextureScale("_AlphaMask", maskScale);
-            mat.SetTexture("_AlphaMask", AlphaMask);
+            ApplyMaskProperties(mat);
 
-            mat.SetFloat("_HardBlend", HardBlend ? 1 : 0);
-            mat.SetInt("_FlipAlphaMask", FlipAlphaMask ? 1 : 0);
-            mat.SetInt("_NoOuterClip", DontClipMaskScalingRect ? 1 : 0);
-            mat.SetFloat("_CutOff", CutOff);
+            // When the graphic is maskable and sits under a Unity Mask, the material actually
+            // rendered is a stencil copy of "mat" created by the StencilMaterial cache.
+            // That copy does not pick up later changes made to "mat", so the mask would be
+            // stuck with stale values (or not shown at all). Update the rendered material too.
+            if (cachedGraphic != null)
+            {
+                var canvasRenderer = cachedGraphic.canvasRenderer;
+                if (canvasRenderer != null && canvasRenderer.materialCount > 0)
+                {
+                    var renderMaterial = canvasRenderer.GetMaterial();
+                    if (renderMaterial != null && renderMaterial != mat && renderMaterial.shader == mat.shader)
+                    {
+                        ApplyMaskProperties(renderMaterial);
+                    }
+                }
+            }
+        }
+
+        void ApplyMaskProperties(Material material)
+        {
+            material.SetTextureOffset("_AlphaMask", maskOffset);
+            material.SetTextureScale("_AlphaMask", maskScale);
+            material.SetTexture("_AlphaMask", AlphaMask);
+
+            material.SetFloat("_HardBlend", HardBlend ? 1 : 0);
+            material.SetInt("_FlipAlphaMask", FlipAlphaMask ? 1 : 0);
+            material.SetInt("_NoOuterClip", DontClipMaskScalingRect ? 1 : 0);
+            material.SetFloat("_CutOff", CutOff);
         }
 
         public Rect GetCanvasRect()
